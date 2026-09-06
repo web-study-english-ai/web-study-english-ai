@@ -25,7 +25,7 @@ describe('CardsService', () => {
 
   beforeEach(async () => {
     vi.clearAllMocks();
-    prismaMock.user.findUnique.mockResolvedValue({ newWordsPerDay: 20 });
+    prismaMock.user.findUnique.mockResolvedValue({ newWordsPerDay: 20, maxReviewsPerDay: 50 });
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [CardsService, { provide: PrismaService, useValue: prismaMock }],
@@ -128,6 +128,49 @@ describe('CardsService', () => {
         userId: USER_ID,
         state: 'NEW',
       });
+    });
+  });
+
+  describe('listDueCards', () => {
+    it('chỉ lấy thẻ đến hạn của đúng người dùng, loại thẻ NEW', async () => {
+      prismaMock.$transaction.mockResolvedValue([15, 5]);
+      prismaMock.userCard.findMany.mockResolvedValue([]);
+
+      await service.listDueCards(USER_ID, {});
+
+      const where = prismaMock.userCard.findMany.mock.calls[0][0].where;
+      expect(where.userId).toBe(USER_ID);
+      expect(where.state).toEqual({ in: ['LEARNING', 'REVIEW', 'RELEARNING'] });
+      expect(where.dueAt.lte).toBeInstanceOf(Date);
+    });
+
+    it('trừ số thẻ đã ôn hôm nay khỏi hạn mức', async () => {
+      prismaMock.$transaction.mockResolvedValue([100, 45]); // 100 đến hạn, đã ôn 45/50
+      prismaMock.userCard.findMany.mockResolvedValue([]);
+
+      const result = await service.listDueCards(USER_ID, {});
+
+      expect(prismaMock.userCard.findMany.mock.calls[0][0].take).toBe(5);
+      expect(result.meta.remaining).toBe(5);
+      expect(result.meta.sessionTotal).toBe(145);
+    });
+
+    it('hết hạn mức thì trả rỗng, không truy vấn danh sách', async () => {
+      prismaMock.$transaction.mockResolvedValue([30, 50]);
+
+      const result = await service.listDueCards(USER_ID, {});
+
+      expect(result.items).toEqual([]);
+      expect(prismaMock.userCard.findMany).not.toHaveBeenCalled();
+    });
+
+    it('không cho xin quá hạn mức còn lại', async () => {
+      prismaMock.$transaction.mockResolvedValue([100, 0]);
+      prismaMock.userCard.findMany.mockResolvedValue([]);
+
+      await service.listDueCards(USER_ID, { limit: 100 });
+
+      expect(prismaMock.userCard.findMany.mock.calls[0][0].take).toBe(50);
     });
   });
 

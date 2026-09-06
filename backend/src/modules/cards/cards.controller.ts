@@ -15,6 +15,7 @@ import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { CardsService } from './cards.service';
 import { AddCardsDto } from './dto/add-cards.dto';
 import { ListCardsDto } from './dto/list-cards.dto';
+import { ListDueCardsDto } from './dto/list-due-cards.dto';
 
 @ApiTags('cards')
 @ApiBearerAuth()
@@ -50,6 +51,12 @@ export class CardsController {
     return this.cardsService.listNewCards(userId, limit ? Number(limit) : undefined);
   }
 
+  @Get('due')
+  @ApiOperation({ summary: 'Thẻ đã đến hạn ôn, sắp theo thứ tự ưu tiên' })
+  @ApiQuery({ name: 'limit', required: false, example: 20 })
+  listDueCards(@CurrentUser('id') userId: string, @Query() query: ListDueCardsDto) {
+    return this.cardsService.listDueCards(userId, query);
+  }
   @Delete(':id')
   @ApiOperation({ summary: 'Bỏ một từ khỏi bộ thẻ' })
   @ApiResponse({ status: 404, description: 'Không tìm thấy thẻ' })
