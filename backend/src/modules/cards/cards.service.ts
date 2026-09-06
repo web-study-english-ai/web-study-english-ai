@@ -3,6 +3,7 @@ import { CardState, Prisma } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
 import { AddCardsDto } from './dto/add-cards.dto';
 import { ListCardsDto } from './dto/list-cards.dto';
+import { ListDueCardsDto } from './dto/list-due-cards.dto';
 
 const cardSelect = {
   id: true,
@@ -133,6 +134,54 @@ export class CardsService {
     });
 
     return { items, dailyLimit: user.newWordsPerDay, count: items.length };
+  }
+
+  async listDueCards(userId: string, query: ListDueCardsDto) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { maxReviewsPerDay: true },
+    });
+    if (!user) throw new NotFoundException('Không tìm thấy người dùng');
+
+    const now = new Date();
+
+    const dueWhere: Prisma.UserCardWhereInput = {
+      userId,
+      state: { in: [CardState.LEARNING, CardState.REVIEW, CardState.RELEARNING] },
+      dueAt: { lte: now },
+    };
+
+    const [totalDue, reviewedToday] = await this.prisma.$transaction([
+      this.prisma.userCard.count({ where: dueWhere }),
+      this.prisma.userCard.count({
+        where: { userId, lastReviewedAt: { gte: this.startOfTodayVn(now) } },
+      }),
+    ]);
+
+    const remaining = Math.max(user.maxReviewsPerDay - reviewedToday, 0);
+    const take = Math.min(query.limit ?? remaining, remaining);
+
+    const items =
+      take === 0
+        ? []
+        : await this.prisma.userCard.findMany({
+            where: dueWhere,
+            select: cardSelect,
+            orderBy: [{ dueAt: 'asc' }, { stability: { sort: 'asc', nulls: 'first' } }],
+            take,
+          });
+
+    return {
+      items,
+      meta: {
+        totalDue,
+        reviewedToday,
+        sessionTotal: totalDue + reviewedToday,
+        dailyLimit: user.maxReviewsPerDay,
+        remaining,
+        returned: items.length,
+      },
+    };
   }
 
   async removeCard(userId: string, cardId: string) {
