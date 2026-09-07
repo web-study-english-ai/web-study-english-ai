@@ -18,3 +18,12 @@ export interface VocabularyFilters {
   topic: string | "all";
   level: string | "all";
 }
+
+export type SRSRating = "forgot" | "hard" | "medium" | "easy";
+
+export interface WordProgressRecord {
+  wordId: string;
+  rating: SRSRating;
+  reviewedAt: string; // ISO date
+  nextReviewAt: string; // ISO date, dùng cho trang "Ôn tập theo lịch" sau này
+}

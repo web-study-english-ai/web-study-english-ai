@@ -9,13 +9,13 @@ import { cn } from "@/lib/utils";
 import { UserMenu } from "@/components/shared/UserMenu";
 
 const navItems = [
-  { href: "/dashboard", label: "Tổng quan" },
-  { href: "/lessons", label: "Bài học" },
-  { href: "/vocabulary", label: "Từ vựng" },
-  { href: "/ai-chat", label: "Luyện nói với AI" },
-  { href: "/image-learning", label: "Học qua hình ảnh" },
-  { href: "/weakness", label: "Điểm yếu" },
-  { href: "/profile", label: "Hồ sơ" },
+  { href: "/vocabulary", label: "Quản lý từ vựng" },
+  { href: "/learn-words", label: "Học từ mới" },
+  { href: "/reviews", label: "Ôn tập theo lịch" },
+  { href: "/progress", label: "Tiến trình học tập" },
+  { href: "/lessons", label: "Bài tập đọc hiểu" },
+  { href: "/image-learning", label: "Nhận diện từ vựng" },
+  { href: "/ai-chat", label: "Hỏi đáp với trợ lí AI" },
 ];
 
 export function Header() {
