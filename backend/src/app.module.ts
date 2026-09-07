@@ -12,6 +12,7 @@ import { VocabularyModule } from '@modules/vocabulary/vocabulary.module';
 import { CardsModule } from '@modules/cards/cards.module';
 import { DictionaryModule } from '@modules/dictionary/dictionary.module';
 import { HealthModule } from '@modules/health/health.module';
+import { ReviewsModule } from '@modules/reviews/reviews.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { HealthModule } from '@modules/health/health.module';
     CardsModule,
     DictionaryModule,
     HealthModule,
+    ReviewsModule,
   ],
   controllers: [AppController],
   providers: [
