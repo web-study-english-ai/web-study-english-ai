@@ -2,6 +2,10 @@ import { VocabularyFilters, VocabularyItem } from "../types/vocabulary_types";
 
 const FAKE_DELAY = 400;
 
+import { SRSRating, WordProgressRecord } from "../types/vocabulary_types";
+
+const FAKE_DELAY_SHORT = 250;
+
 const MOCK_VOCABULARY: VocabularyItem[] = [
   {
     id: "1",
@@ -136,4 +140,34 @@ export async function searchVocabularyMock(
 export async function addToDeckMock(wordId: string): Promise<{ success: true }> {
   await delay(300);
   return { success: true };
+}
+
+const INTERVAL_DAYS: Record<SRSRating, number> = {
+  forgot: 0, // xem lại ngay trong phiên học tiếp theo
+  hard: 1,
+  medium: 3,
+  easy: 7,
+};
+
+export async function getNewWordsBatchMock(count = 20): Promise<VocabularyItem[]> {
+  await delay(FAKE_DELAY_SHORT);
+  return MOCK_VOCABULARY.slice(0, count);
+}
+
+export async function saveWordProgressMock(
+  wordId: string,
+  rating: SRSRating
+): Promise<WordProgressRecord> {
+  await delay(FAKE_DELAY_SHORT);
+
+  const now = new Date();
+  const nextReview = new Date(now);
+  nextReview.setDate(now.getDate() + INTERVAL_DAYS[rating]);
+
+  return {
+    wordId,
+    rating,
+    reviewedAt: now.toISOString(),
+    nextReviewAt: nextReview.toISOString(),
+  };
 }

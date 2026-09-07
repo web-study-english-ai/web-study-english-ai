@@ -7,7 +7,7 @@ const images = [
   { src: "/images/bg1.png", alt: "Học sinh học tiếng Anh cùng laptop" },
   { src: "/images/bg2.png", alt: "Học sinh làm bài tập từ vựng" },
   { src: "/images/bg3.jpg", alt: "Học sinh luyện nghe nói" },
-  { src: "/images/bg41cd.jpg", alt: "Học sinh ôn tập cùng flashcard" },
+  { src: "/images/bg42.jpg", alt: "Học sinh ôn tập cùng flashcard" },
 ];
 
 const INTERVAL_MS = 2000;
