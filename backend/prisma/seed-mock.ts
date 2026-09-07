@@ -252,7 +252,44 @@ async function main() {
     });
     activeCardsCount++;
   }
-  console.log(`   ✔ Đã gán ${activeCardsCount} thẻ học đa dạng kịch bản cho active@gmail.com`);
+
+  // Kịch bản F: 3 thẻ REVIEW có CÙNG dueAt để kiểm thử tie-breaker stability cho API GET /cards/due (WSEA-70)
+  // dueAt dùng chung 1 biến Date duy nhất tính sẵn ngoài vòng lặp để tránh lệch mili-giây
+  const tieBreakDueAt = new Date(now.getTime() - 90 * 60 * 1000); // 90 phút trước (đã đến hạn)
+  const lastRev3Days = new Date(now.getTime() - 3 * 24 * 60 * 60 * 1000); // 3 ngày trước
+  const stabilityCases: (number | null)[] = [2.0, 8.0, null];
+
+  for (let i = 0; i < 3; i++) {
+    const word = wordsB1[50 + i];
+    if (!word) break;
+    const stability = stabilityCases[i];
+    await prisma.userCard.upsert({
+      where: { userId_wordId: { userId: activeUserId, wordId: word.id } },
+      update: {
+        state: CardState.REVIEW,
+        reps: 4,
+        lapses: 1,
+        difficulty: 0.5,
+        stability,
+        lastReviewedAt: lastRev3Days,
+        dueAt: tieBreakDueAt,
+      },
+      create: {
+        userId: activeUserId,
+        wordId: word.id,
+        state: CardState.REVIEW,
+        reps: 4,
+        lapses: 1,
+        difficulty: 0.5,
+        stability,
+        lastReviewedAt: lastRev3Days,
+        dueAt: tieBreakDueAt,
+      },
+    });
+    activeCardsCount++;
+  }
+
+  console.log(`   ✔ Đã gán ${activeCardsCount} thẻ học đa dạng kịch bản cho active@gmail.com (bao gồm 3 thẻ test stability tie-breaker)`);
 
   // 5. Tạo dữ liệu học tập cho "pro@gmail.com" (Trình độ B2)
   console.log('\n🏆 5. Đang tạo dữ liệu thẻ cho pro@gmail.com...');
