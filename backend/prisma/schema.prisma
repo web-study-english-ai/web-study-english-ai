@@ -48,6 +48,12 @@ enum DictionaryStatus {
   FOUND
   NOT_FOUND
 }
+
+enum SchedulerSource {
+  FSRS_AI
+  FALLBACK_TS
+  SM2
+}
 model User {
   id              String       @id @default(uuid())
   email           String       @unique
@@ -67,6 +73,7 @@ model User {
 
   refreshTokens RefreshToken[]
   cards UserCard[]
+  reviews Review[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -121,6 +128,7 @@ model Word {
 
   topic Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
   cards UserCard[]
+  reviews Review[]
 
   @@index([cefr])
   @@index([topicId])
@@ -144,6 +152,7 @@ model UserCard {
 
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  reviews Review[]
 
   @@unique([userId, wordId])
   @@index([userId, state])
@@ -162,4 +171,47 @@ model DictionaryEntry {
   fetchedAt    DateTime         @default(now()) @map("fetched_at")
 
   @@map("dictionary_entries")
+}
+
+model Review {
+  id String @id @default(uuid())
+
+  userId String  @map("user_id")
+  cardId String? @map("card_id")
+  wordId String  @map("word_id")
+
+  reviewedAt DateTime @map("reviewed_at")
+  reviewTh   Int      @map("review_th")
+  rating     Int
+
+  /// CHECK (IS NULL OR 0..1095) — ràng buộc viết tay trong migration add_reviews
+  elapsedDays   Float? @map("elapsed_days")
+  scheduledDays Float? @map("scheduled_days")
+  /// CHECK (0..600000) — app clamp ở 60000
+  durationMs    Int    @map("duration_ms")
+
+  stateBefore      CardState @map("state_before")
+  difficultyBefore Float?    @map("difficulty_before")
+  stabilityBefore  Float?    @map("stability_before")
+  /// CHECK (IS NULL OR 0..1) — ràng buộc viết tay trong migration add_reviews
+  predictedRetrievability Float? @map("predicted_retrievability")
+
+  stateAfter       CardState @map("state_after")
+  difficultyAfter  Float?    @map("difficulty_after")
+  stabilityAfter   Float?    @map("stability_after")
+  nextIntervalDays Float?    @map("next_interval_days")
+
+  scheduler    SchedulerSource
+  modelVersion String?         @map("model_version")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card UserCard? @relation(fields: [cardId], references: [id], onDelete: SetNull)
+  word Word      @relation(fields: [wordId], references: [id], onDelete: Restrict)
+
+  @@unique([cardId, reviewTh])
+  @@index([userId, reviewedAt])
+  @@index([scheduler])
+  @@map("reviews")
 }
