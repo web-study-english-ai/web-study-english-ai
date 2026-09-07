@@ -137,7 +137,7 @@ export async function searchVocabularyMock(
   });
 }
 
-export async function addToDeckMock(wordId: string): Promise<{ success: true }> {
+export async function addToDeckMock(_wordId: string): Promise<{ success: true }> {
   await delay(300);
   return { success: true };
 }
@@ -156,7 +156,9 @@ export async function getNewWordsBatchMock(count = 20): Promise<VocabularyItem[]
 
 export async function saveWordProgressMock(
   wordId: string,
-  rating: SRSRating
+  rating: SRSRating,
+  responseTimeMs: number,
+  isIdle: boolean
 ): Promise<WordProgressRecord> {
   await delay(FAKE_DELAY_SHORT);
 
@@ -167,6 +169,8 @@ export async function saveWordProgressMock(
   return {
     wordId,
     rating,
+    responseTimeMs,
+    isIdle,
     reviewedAt: now.toISOString(),
     nextReviewAt: nextReview.toISOString(),
   };

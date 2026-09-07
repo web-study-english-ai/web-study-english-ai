@@ -14,7 +14,7 @@ export interface VocabularyItem {
 }
 
 export interface VocabularyFilters {
-  query: string;
+  query: string;  
   topic: string | "all";
   level: string | "all";
 }
@@ -24,6 +24,8 @@ export type SRSRating = "forgot" | "hard" | "medium" | "easy";
 export interface WordProgressRecord {
   wordId: string;
   rating: SRSRating;
+  responseTimeMs: number;
+  isIdle: boolean; // true nếu người học rời màn hình quá lâu trong lúc xem thẻ này
   reviewedAt: string; // ISO date
   nextReviewAt: string; // ISO date, dùng cho trang "Ôn tập theo lịch" sau này
 }
