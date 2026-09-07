@@ -137,7 +137,7 @@ export async function searchVocabularyMock(
   });
 }
 
-export async function addToDeckMock(wordId: string): Promise<{ success: true }> {
+export async function addToDeckMock(_wordId: string): Promise<{ success: true }> {
   await delay(300);
   return { success: true };
 }
