@@ -1,6 +1,6 @@
 import { AuthVisual } from "@/features/auth/components/AuthVisual";
 import { LoginForm } from "@/features/auth/components/LoginForm";
-
+import { Suspense } from "react";
 export default function LoginPage() {
   return (
     <>
@@ -13,7 +13,9 @@ export default function LoginPage() {
         variant="full"
       />
       <div className="flex flex-1 items-center justify-center bg-auth-surface p-6">
+      <Suspense fallback={null}>
         <LoginForm />
+      </Suspense>
       </div>
     </>
   );

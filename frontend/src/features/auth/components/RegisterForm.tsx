@@ -62,9 +62,17 @@ export function RegisterForm() {
   const passwordValue = useWatch({ control, name: "password" }) || "";
   const strength = getPasswordStrength(passwordValue);
 
-  const onSubmit = (values: RegisterValues) =>
-    registerUser({ name: values.name, email: values.email, password: values.password });
-
+    const onSubmit = (values: RegisterValues) =>
+    registerUser({
+      name: values.name,
+      email: values.email,
+      password: values.password,
+      confirmPassword: values.confirmPassword,
+    });
+    function dangNhapGoogle() {
+    const apiUrl = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+    window.location.href = `${apiUrl}/auth/google`;
+  }
   return (
     <div className="w-full max-w-[400px]">
       <div className="mb-6 flex items-center gap-2 lg:hidden">
@@ -198,7 +206,7 @@ export function RegisterForm() {
       </div>
 
       <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" type="button" className="rounded-full py-5">
+        <Button variant="outline" type="button" className="rounded-full py-5 " onClick={dangNhapGoogle}>
           <svg className="mr-2 h-4 w-4" viewBox="0 0 48 48">
             <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.5 5.6 29.5 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5 44.5 35.3 44.5 24c0-1.2-.1-2.4-.3-3.5z"/>
             <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 18.9 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34.5 7.1 29.5 5 24 5c-7.3 0-13.6 4.1-16.7 10.1z"/>

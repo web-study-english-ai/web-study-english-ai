@@ -4,6 +4,7 @@ import "./globals.css";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toast";
 import { QueryProvider } from "@/components/providers/QueryProvider";
+import { SessionProvider } from "@/components/providers/SessionProvider";
 
 const sourceSans3Heading = Source_Sans_3({
   subsets: ['latin', 'vietnamese'],
@@ -33,8 +34,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
     >
       <body className="min-h-full flex flex-col">
         <QueryProvider>
-          {children}
-          <Toaster />
+          <SessionProvider>
+            {children}
+            <Toaster />
+          </SessionProvider>
         </QueryProvider>
       </body>
     </html>

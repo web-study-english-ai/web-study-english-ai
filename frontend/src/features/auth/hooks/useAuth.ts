@@ -2,28 +2,22 @@
 
 import { useRouter } from "next/navigation";
 import { useMutation } from "@tanstack/react-query";
-import { loginMock, registerMock } from "../api/auth_mock";
+import { loginApi, registerApi, logoutApi, toAuthError } from "../api/auth_api";
 import { AuthError, LoginPayload, RegisterPayload, User } from "../types/auth_types";
 
-const TOKEN_KEY = "auth_token";
 const USER_KEY = "auth_user";
+const SESSION_COOKIE = "has_session";
 
-function persistSession(token: string, user: User) {
-  localStorage.setItem(TOKEN_KEY, token);
+function persistSession(user: User) {
   localStorage.setItem(USER_KEY, JSON.stringify(user));
-  document.cookie = `${TOKEN_KEY}=${token}; path=/; max-age=${60 * 60 * 24 * 7}`;
+  document.cookie = `${SESSION_COOKIE}=1; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+  window.dispatchEvent(new Event("auth-user-updated"));
 }
 
 function clearSession() {
-  localStorage.removeItem(TOKEN_KEY);
   localStorage.removeItem(USER_KEY);
-  document.cookie = `${TOKEN_KEY}=; path=/; max-age=0`;
-}
-
-function normalizeAuthError(err: unknown): AuthError {
-  return err instanceof AuthError
-    ? err
-    : new AuthError("UNKNOWN", "Đã có lỗi xảy ra, vui lòng thử lại.");
+  document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`;
+  window.dispatchEvent(new Event("auth-user-updated"));
 }
 
 export function useAuth() {
@@ -32,13 +26,13 @@ export function useAuth() {
   const loginMutation = useMutation({
     mutationFn: async (payload: LoginPayload) => {
       try {
-        return await loginMock(payload);
+        return await loginApi(payload);
       } catch (err) {
-        throw normalizeAuthError(err);
+        throw toAuthError(err);
       }
     },
     onSuccess: (res) => {
-      persistSession(res.token, res.user);
+      persistSession(res.user);
       router.push("/dashboard");
     },
   });
@@ -46,20 +40,23 @@ export function useAuth() {
   const registerMutation = useMutation({
     mutationFn: async (payload: RegisterPayload) => {
       try {
-        return await registerMock(payload);
+        await registerApi(payload);
       } catch (err) {
-        throw normalizeAuthError(err);
+        throw toAuthError(err);
       }
     },
-    onSuccess: (res) => {
-      persistSession(res.token, res.user);
-      router.push("/dashboard");
+    onSuccess: () => {
+      router.push("/login?registered=1");
     },
   });
 
-  function logout() {
-    clearSession();
-    router.push("/login");
+  async function logout() {
+    try {
+      await logoutApi();
+    } finally {
+      clearSession();
+      router.push("/");
+    }
   }
 
   function updateUser(updates: Partial<User>) {
@@ -71,9 +68,9 @@ export function useAuth() {
     window.dispatchEvent(new Event("auth-user-updated"));
   }
 
-  return {
-    login: loginMutation.mutateAsync,
-    register: registerMutation.mutateAsync,
+    return {
+    login: loginMutation.mutate,
+    register: registerMutation.mutate,
     logout,
     updateUser,
     isLoading: loginMutation.isPending || registerMutation.isPending,

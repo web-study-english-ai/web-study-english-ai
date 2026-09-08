@@ -15,7 +15,7 @@ const PROTECTED_PREFIXES = [
 const AUTH_PAGES = ["/login", "/register"];
 
 export function proxy(request: NextRequest) {
-  const token = request.cookies.get("auth_token")?.value;
+  const token = request.cookies.get("has_session")?.value;
   const { pathname } = request.nextUrl;
 
   const isProtectedRoute = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 import {
   LayoutGrid,
   BookPlus,
@@ -14,6 +14,7 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const navItems = [
   { href: "/vocabulary", label: "Quản lý từ vựng", icon: LayoutGrid },
@@ -27,12 +28,7 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const router = useRouter();
-
-  function handleLogout() {
-    localStorage.removeItem("auth_token");
-    router.push("/login");
-  }
+  const { logout } = useAuth();
 
   return (
     <aside className="hidden h-full w-64 shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar md:flex">
@@ -69,7 +65,7 @@ export function Sidebar() {
 
       <div className="border-t border-sidebar-border p-3">
         <button
-          onClick={handleLogout}
+                    onClick={() => void logout()}
           className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
         >
           <LogOut className="h-4.5 w-4.5" />
