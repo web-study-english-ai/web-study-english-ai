@@ -8,6 +8,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { LoginDto } from './dto/login.dto';
+import { AuthProvider } from '@prisma/client';
 @Injectable()
 export class AuthService {
   constructor(
@@ -59,6 +60,85 @@ export class AuthService {
     const matched = await bcrypt.compare(dto.password, user.passwordHash);
     if (!matched) {
       throw new UnauthorizedException('Email hoặc mật khẩu không đúng');
+    }
+
+    if (!user.isActive) {
+      throw new UnauthorizedException('Tài khoản đã bị khoá');
+    }
+
+    const accessToken = await this.jwt.signAsync({
+      sub: user.id,
+      email: user.email,
+      role: user.role,
+    });
+
+    const refreshToken = await this.issueRefreshToken(user.id, meta);
+
+    return {
+      user: {
+        id: user.id,
+        email: user.email,
+        fullName: user.fullName,
+        avatarUrl: user.avatarUrl,
+        role: user.role,
+      },
+      accessToken,
+      refreshToken,
+    };
+  }
+
+  async loginWithProvider(
+    profile: {
+      provider: AuthProvider;
+      providerId: string;
+      email: string;
+      emailVerified: boolean;
+      fullName: string;
+      avatarUrl: string | null;
+    },
+    meta: { userAgent?: string; ipAddress?: string },
+  ) {
+    let user = await this.prisma.user.findUnique({
+      where: {
+        provider_providerId: {
+          provider: profile.provider,
+          providerId: profile.providerId,
+        },
+      },
+    });
+
+    if (!user) {
+      const trungEmail = await this.prisma.user.findUnique({
+        where: { email: profile.email },
+      });
+
+      if (trungEmail) {
+        // Chỉ gộp tài khoản khi nhà cung cấp khẳng định email đã xác minh
+        if (!profile.emailVerified) {
+          throw new ConflictException(
+            'Email này đã có tài khoản. Vui lòng đăng nhập bằng mật khẩu.',
+          );
+        }
+        user = await this.prisma.user.update({
+          where: { id: trungEmail.id },
+          data: {
+            provider: profile.provider,
+            providerId: profile.providerId,
+            avatarUrl: trungEmail.avatarUrl ?? profile.avatarUrl,
+          },
+        });
+      } else {
+        user = await this.prisma.user.create({
+          data: {
+            email: profile.email,
+            fullName: profile.fullName,
+            avatarUrl: profile.avatarUrl,
+            provider: profile.provider,
+            providerId: profile.providerId,
+            passwordHash: null,
+          },
+        });
+      }
     }
 
     if (!user.isActive) {

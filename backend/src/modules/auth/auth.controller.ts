@@ -10,6 +10,9 @@ import { ApiBearerAuth } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import type { AuthUser } from './strategies/jwt.strategy';
+import { AuthGuard } from '@nestjs/passport';
+import { HttpException } from '@nestjs/common';
+import type { OAuthProfile } from './strategies/google.strategy';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -63,6 +66,34 @@ export class AuthController {
   register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
+
+  @Get('google')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Bắt đầu đăng nhập bằng Google' })
+  googleAuth() {
+    // Guard tự chuyển hướng sang Google, thân hàm không bao giờ chạy
+  }
+
+  @Get('google/callback')
+  @UseGuards(AuthGuard('google'))
+  @ApiOperation({ summary: 'Google gọi lại sau khi người dùng đồng ý' })
+  async googleCallback(@Req() req: Request, @Res() res: Response) {
+    const frontendUrl = this.config.getOrThrow<string>('FRONTEND_URL');
+
+    try {
+      const result = await this.authService.loginWithProvider(
+        req.user as OAuthProfile,
+        this.requestMeta(req),
+      );
+
+      this.setRefreshCookie(res, result.refreshToken.token, result.refreshToken.expiresAt);
+      return res.redirect(`${frontendUrl}/auth/callback`);
+    } catch (e) {
+      const message = e instanceof HttpException ? e.message : 'Đăng nhập bằng Google thất bại';
+      return res.redirect(`${frontendUrl}/login?oauth_error=${encodeURIComponent(message)}`);
+    }
+  }
+
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
