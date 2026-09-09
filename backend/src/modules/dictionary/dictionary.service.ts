@@ -8,17 +8,18 @@ export type Pronunciation = {
   phoneticText: string | null;
   audioUrl: string | null;
   definitions: { partOfSpeech: string; definition: string }[];
-  source: 'cache' | 'dictionaryapi.dev' | 'fallback';
+  source: 'cache' | 'merriam-webster' | 'fallback';
   available: boolean;
 };
 
-type ApiPhonetic = { text?: string; audio?: string };
-type ApiMeaning = { partOfSpeech?: string; definitions?: { definition?: string }[] };
-type ApiEntry = {
-  word?: string;
-  phonetic?: string;
-  phonetics?: ApiPhonetic[];
-  meanings?: ApiMeaning[];
+type MwEntry = {
+  meta?: { id?: string };
+  fl?: string;
+  shortdef?: string[];
+  hwi?: {
+    hw?: string;
+    prs?: { mw?: string; sound?: { audio?: string } }[];
+  };
 };
 
 @Injectable()
@@ -58,7 +59,7 @@ export class DictionaryService {
       update: { ...fetched, fetchedAt: new Date() },
     });
 
-    return this.toPronunciation(term, saved, 'dictionaryapi.dev', fallbackIpa);
+    return this.toPronunciation(term, saved, 'merriam-webster', fallbackIpa);
   }
 
   private isCacheUsable(entry: { status: DictionaryStatus; fetchedAt: Date }): boolean {
@@ -69,16 +70,37 @@ export class DictionaryService {
   }
 
   /** Trả dữ liệu để lưu, hoặc null khi dịch vụ lỗi (phân biệt với "tra không thấy") */
+  /** Trả dữ liệu để lưu, hoặc null khi dịch vụ lỗi (phân biệt với "tra không thấy") */
   private async fetchFromApi(term: string) {
     const baseUrl = this.config.get<string>('DICTIONARY_API_URL');
+    const apiKey = this.config.get<string>('DICTIONARY_API_KEY');
     const timeoutMs = Number(this.config.get('DICTIONARY_TIMEOUT_MS') ?? 3000);
 
-    try {
-      const response = await fetch(`${baseUrl}/${encodeURIComponent(term)}`, {
-        signal: AbortSignal.timeout(timeoutMs),
-      });
+    if (!apiKey) {
+      this.logger.warn('Thiếu DICTIONARY_API_KEY, bỏ qua tra từ điển');
+      return null;
+    }
 
-      if (response.status === 404) {
+    try {
+      const url = `${baseUrl}/${encodeURIComponent(term)}?key=${apiKey}`;
+      const response = await fetch(url, { signal: AbortSignal.timeout(timeoutMs) });
+
+      if (!response.ok) {
+        this.logger.warn(`Từ điển trả mã ${response.status} cho từ "${term}"`);
+        return null;
+      }
+
+      const raw = await response.text();
+
+      if (raw.startsWith('Invalid API key')) {
+        this.logger.error('DICTIONARY_API_KEY không hợp lệ hoặc chưa kích hoạt');
+        return null;
+      }
+
+      const body = JSON.parse(raw) as unknown;
+
+      // Không tìm thấy: API trả mảng rỗng, hoặc mảng chuỗi gợi ý thay vì mảng object
+      if (!Array.isArray(body) || body.length === 0 || typeof body[0] === 'string') {
         return {
           phoneticText: null,
           audioUrl: null,
@@ -87,18 +109,11 @@ export class DictionaryService {
         };
       }
 
-      if (!response.ok) {
-        this.logger.warn(`Từ điển trả mã ${response.status} cho từ "${term}"`);
-        return null;
-      }
-
-      const entries = (await response.json()) as ApiEntry[];
-      const entry = entries?.[0];
-      if (!entry) return null;
+      const entry = body[0] as MwEntry;
 
       return {
-        phoneticText: this.pickPhoneticText(entry),
-        audioUrl: this.pickAudioUrl(entry),
+        phoneticText: entry.hwi?.prs?.find((p) => p.mw)?.mw ?? null,
+        audioUrl: this.buildAudioUrl(entry),
         definitions: this.pickDefinitions(entry) as Prisma.InputJsonValue,
         status: DictionaryStatus.FOUND,
       };
@@ -108,23 +123,27 @@ export class DictionaryService {
     }
   }
 
-  private pickPhoneticText(entry: ApiEntry): string | null {
-    if (entry.phonetic) return entry.phonetic;
-    return entry.phonetics?.find((p) => p.text)?.text ?? null;
+  /**
+   * Merriam-Webster chỉ trả tên file audio, phải tự dựng URL.
+   * Thư mục con theo quy tắc riêng của họ, không phải lúc nào cũng là chữ cái đầu.
+   */
+  private buildAudioUrl(entry: MwEntry): string | null {
+    const audio = entry.hwi?.prs?.find((p) => p.sound?.audio)?.sound?.audio;
+    if (!audio) return null;
+
+    let subdir: string;
+    if (audio.startsWith('bix')) subdir = 'bix';
+    else if (audio.startsWith('gg')) subdir = 'gg';
+    else if (/^[^a-zA-Z]/.test(audio)) subdir = 'number';
+    else subdir = audio[0];
+
+    return `https://media.merriam-webster.com/audio/prons/en/us/mp3/${subdir}/${audio}.mp3`;
   }
 
-  private pickAudioUrl(entry: ApiEntry): string | null {
-    // Phần tử đầu thường có audio rỗng -> phải tìm phần tử đầu tiên CÓ audio
-    return entry.phonetics?.find((p) => p.audio && p.audio.length > 0)?.audio ?? null;
-  }
-
-  private pickDefinitions(entry: ApiEntry) {
-    return (entry.meanings ?? [])
+  private pickDefinitions(entry: MwEntry) {
+    return (entry.shortdef ?? [])
       .slice(0, 3)
-      .map((m) => ({
-        partOfSpeech: m.partOfSpeech ?? '',
-        definition: m.definitions?.[0]?.definition ?? '',
-      }))
+      .map((definition) => ({ partOfSpeech: entry.fl ?? '', definition }))
       .filter((d) => d.definition);
   }
 
@@ -136,7 +155,7 @@ export class DictionaryService {
       definitions: unknown;
       status: DictionaryStatus;
     },
-    source: 'cache' | 'dictionaryapi.dev',
+    source: 'cache' | 'merriam-webster',
     fallbackIpa?: string | null,
   ): Pronunciation {
     const found = entry.status === DictionaryStatus.FOUND;

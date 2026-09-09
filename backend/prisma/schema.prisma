@@ -166,7 +166,7 @@ model DictionaryEntry {
   phoneticText String?          @map("phonetic_text")
   audioUrl     String?          @map("audio_url")
   definitions  Json?
-  source       String           @default("dictionaryapi.dev")
+  source       String           @default("merriam-webster")
   status       DictionaryStatus @default(FOUND)
   fetchedAt    DateTime         @default(now()) @map("fetched_at")
 
