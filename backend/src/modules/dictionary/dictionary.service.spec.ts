@@ -1,3 +1,4 @@
+import { Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@/prisma/prisma.service';
@@ -10,7 +11,8 @@ const prismaMock = {
 const configMock = {
   get: vi.fn((key: string) => {
     const values: Record<string, string> = {
-      DICTIONARY_API_URL: 'https://api.dictionaryapi.dev/api/v2/entries/en',
+      DICTIONARY_API_URL: 'https://www.dictionaryapi.com/api/v3/references/learners/json',
+      DICTIONARY_API_KEY: 'test-key',
       DICTIONARY_TIMEOUT_MS: '3000',
       DICTIONARY_NEGATIVE_CACHE_DAYS: '7',
     };
@@ -20,13 +22,13 @@ const configMock = {
 
 const apiResponse = [
   {
-    word: 'book',
-    phonetic: '/bʊk/',
-    phonetics: [
-      { text: '/bʊk/', audio: '' },
-      { text: '/bʊk/', audio: 'https://media/book-us.mp3' },
-    ],
-    meanings: [{ partOfSpeech: 'noun', definitions: [{ definition: 'A written work' }] }],
+    meta: { id: 'book' },
+    fl: 'noun',
+    shortdef: ['a set of printed sheets of paper bound together'],
+    hwi: {
+      hw: 'book',
+      prs: [{ mw: 'ˈbu̇k', sound: { audio: 'book0001' } }],
+    },
   },
 ];
 
@@ -36,6 +38,8 @@ describe('DictionaryService', () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     vi.stubGlobal('fetch', vi.fn());
+    // Chặn log của Nest để terminal khi chạy test không bị lẫn WARN/ERROR giả lập
+    vi.spyOn(Logger.prototype, 'warn').mockImplementation(() => {});
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -67,12 +71,12 @@ describe('DictionaryService', () => {
     expect(result.term).toBe('book');
   });
 
-  it('lấy audio đầu tiên khác rỗng, bỏ qua phần tử audio rỗng', async () => {
+  it('dựng đúng URL audio từ tên file của Merriam-Webster', async () => {
     prismaMock.dictionaryEntry.findUnique.mockResolvedValue(null);
     (fetch as any).mockResolvedValue({
       ok: true,
       status: 200,
-      json: () => Promise.resolve(apiResponse),
+      text: () => Promise.resolve(JSON.stringify(apiResponse)),
     });
     prismaMock.dictionaryEntry.upsert.mockImplementation(({ create }: any) => ({
       ...create,
@@ -81,13 +85,19 @@ describe('DictionaryService', () => {
 
     const result = await service.lookup('book');
 
-    expect(result.audioUrl).toBe('https://media/book-us.mp3');
+    expect(result.audioUrl).toBe(
+      'https://media.merriam-webster.com/audio/prons/en/us/mp3/b/book0001.mp3',
+    );
     expect(result.available).toBe(true);
   });
 
-  it('ghi cache trạng thái NOT_FOUND khi API trả 404', async () => {
+  it('ghi cache NOT_FOUND khi API trả mảng gợi ý thay vì kết quả', async () => {
     prismaMock.dictionaryEntry.findUnique.mockResolvedValue(null);
-    (fetch as any).mockResolvedValue({ ok: false, status: 404, json: () => Promise.resolve({}) });
+    (fetch as any).mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve(JSON.stringify(['buzz', 'bizz'])),
+    });
     prismaMock.dictionaryEntry.upsert.mockImplementation(({ create }: any) => create);
 
     const result = await service.lookup('zzzzqq');
@@ -105,6 +115,23 @@ describe('DictionaryService', () => {
     expect(result.source).toBe('fallback');
     expect(result.phoneticText).toBe('/bˈʊk/');
     expect(result.audioUrl).toBeNull();
+    expect(prismaMock.dictionaryEntry.upsert).not.toHaveBeenCalled();
+  });
+
+  it('trả fallback và ghi log khi API báo key không hợp lệ', async () => {
+    const errorSpy = vi.spyOn(Logger.prototype, 'error').mockImplementation(() => {});
+    prismaMock.dictionaryEntry.findUnique.mockResolvedValue(null);
+    (fetch as any).mockResolvedValue({
+      ok: true,
+      status: 200,
+      text: () => Promise.resolve('Invalid API key. Not for print or non-JavaScript use.'),
+    });
+
+    const result = await service.lookup('book', '/bˈʊk/');
+
+    expect(result.source).toBe('fallback');
+    expect(result.phoneticText).toBe('/bˈʊk/');
+    expect(errorSpy).toHaveBeenCalled();
     expect(prismaMock.dictionaryEntry.upsert).not.toHaveBeenCalled();
   });
 
