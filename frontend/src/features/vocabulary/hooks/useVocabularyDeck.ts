@@ -1,57 +1,70 @@
 "use client";
 
-import { useSyncExternalStore } from "react";
-import { VocabularyItem } from "../types/vocabulary_types";
+import { useState } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { ApiError } from "@/lib/api/client";
+import { addCardsApi, listCardsApi, removeCardApi } from "../api/cards_api";
+import { DeckCard } from "../types/vocabulary_types";
 
-const DECK_KEY = "vocabulary_deck";
-
-let cachedRaw: string | null = null;
-let cachedDeck: VocabularyItem[] = [];
-
-function getSnapshot(): VocabularyItem[] {
-  const raw = localStorage.getItem(DECK_KEY);
-  if (raw === cachedRaw) return cachedDeck;
-
-  cachedRaw = raw;
-  try {
-    cachedDeck = raw ? JSON.parse(raw) : [];
-  } catch {
-    cachedDeck = [];
-  }
-  return cachedDeck;
-}
-
-function getServerSnapshot(): VocabularyItem[] {
-  return [];
-}
-
-function subscribe(callback: () => void) {
-  window.addEventListener("vocabulary-deck-updated", callback);
-  return () => window.removeEventListener("vocabulary-deck-updated", callback);
-}
-
-function writeDeck(newDeck: VocabularyItem[]) {
-  localStorage.setItem(DECK_KEY, JSON.stringify(newDeck));
-  window.dispatchEvent(new Event("vocabulary-deck-updated"));
+interface CanhBaoHanMuc {
+  wordId: string;
+  message: string;
 }
 
 export function useVocabularyDeck() {
-  const deck = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  const queryClient = useQueryClient();
+  const [canhBaoHanMuc, setCanhBaoHanMuc] = useState<CanhBaoHanMuc | null>(null);
 
-  function addToDeck(item: VocabularyItem) {
-    const current = getSnapshot();
-    if (current.some((w) => w.id === item.id)) return;
-    writeDeck([...current, item]);
+  const { data, isLoading, isError } = useQuery({
+    queryKey: ["cards"],
+    queryFn: () => listCardsApi(),
+    staleTime: 60 * 1000,
+  });
+
+  const deck: DeckCard[] = data?.items ?? [];
+  const wordIdsTrongBoThe = new Set(deck.map((c) => c.word.id));
+
+  const lamMoiBoThe = () => queryClient.invalidateQueries({ queryKey: ["cards"] });
+
+  const themMutation = useMutation({
+    mutationFn: ({ wordId, force }: { wordId: string; force: boolean }) =>
+      addCardsApi([wordId], force),
+    onSuccess: lamMoiBoThe,
+  });
+
+  const xoaMutation = useMutation({
+    mutationFn: (cardId: string) => removeCardApi(cardId),
+    onSuccess: lamMoiBoThe,
+  });
+
+  async function themTu(wordId: string) {
+    try {
+      await themMutation.mutateAsync({ wordId, force: false });
+    } catch (err) {
+      // 409 = vượt hạn mức từ mới trong ngày, hỏi lại người dùng thay vì báo lỗi
+      if (err instanceof ApiError && err.status === 409) {
+        setCanhBaoHanMuc({ wordId, message: err.message });
+        return;
+      }
+      throw err;
+    }
   }
 
-  function removeFromDeck(id: string) {
-    const current = getSnapshot();
-    writeDeck(current.filter((w) => w.id !== id));
+  async function themDuVuotHanMuc() {
+    if (!canhBaoHanMuc) return;
+    await themMutation.mutateAsync({ wordId: canhBaoHanMuc.wordId, force: true });
+    setCanhBaoHanMuc(null);
   }
 
-  function isInDeck(id: string) {
-    return deck.some((w) => w.id === id);
-  }
-
-  return { deck, addToDeck, removeFromDeck, isInDeck };
+  return {
+    deck,
+    isLoading,
+    isError,
+    isInDeck: (wordId: string) => wordIdsTrongBoThe.has(wordId),
+    themTu,
+    xoaThe: (cardId: string) => xoaMutation.mutateAsync(cardId),
+    canhBaoHanMuc,
+    themDuVuotHanMuc,
+    boQuaCanhBao: () => setCanhBaoHanMuc(null),
+  };
 }

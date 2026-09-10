@@ -3,10 +3,10 @@
 import { useState } from "react";
 import { Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { SRSRating, VocabularyItem } from "../types/vocabulary_types";
+import { POS_LABEL, SRSRating, DeckCard } from "../types/vocabulary_types";
 
 interface Props {
-  word: VocabularyItem;
+  card: DeckCard;
   onRate: (rating: SRSRating) => void;
 }
 
@@ -23,12 +23,12 @@ const RATING_OPTIONS: {
   { value: "easy", label: "Dễ", hint: "Giãn cách xa", className: "text-green-600 border-green-300 hover:bg-green-50", key: "4" },
 ];
 
-export function LearnWordCard({ word, onRate }: Props) {
+export function LearnWordCard({ card, onRate }: Props) {
   const [flipped, setFlipped] = useState(false);
 
   function speak(e: React.MouseEvent) {
     e.stopPropagation();
-    const utter = new SpeechSynthesisUtterance(word.word);
+    const utter = new SpeechSynthesisUtterance(card.word.term);
     utter.lang = "en-US";
     window.speechSynthesis.speak(utter);
   }
@@ -49,10 +49,10 @@ export function LearnWordCard({ word, onRate }: Props) {
           style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
         >
           <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-border bg-white p-10 text-center shadow-sm [backface-visibility:hidden]">
-            <h2 className="font-heading text-4xl font-bold text-foreground">{word.word}</h2>
+            <h2 className="font-heading text-4xl font-bold text-foreground">{card.word.term}</h2>
             <div className="mt-2 flex items-center justify-center gap-2 text-muted-foreground">
-              <span>{word.ipa}</span>
-              <span>({word.type})</span>
+              <span>{card.word.ipa}</span>
+              <span>({POS_LABEL[card.word.pos]})</span>
               <button onClick={speak} aria-label="Phát âm" className="text-primary">
                 <Volume2 className="h-4 w-4" />
               </button>
@@ -64,9 +64,8 @@ export function LearnWordCard({ word, onRate }: Props) {
             className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-primary/30 bg-primary/5 p-10 text-center shadow-sm [backface-visibility:hidden]"
             style={{ transform: "rotateY(180deg)" }}
           >
-            <p className="text-lg font-semibold text-primary">{word.meaningVi}</p>
-            <p className="mt-3 text-sm italic text-muted-foreground">&ldquo;{word.exampleEn}&rdquo;</p>
-            <p className="mt-1 text-sm text-muted-foreground">{word.exampleVi}</p>
+            <p className="text-lg font-semibold text-primary">{card.word.meaningVi}</p>
+            <p className="mt-3 text-sm italic text-muted-foreground">&ldquo;{card.word.exampleEn}&rdquo;</p>
           </div>
         </div>
       </div>

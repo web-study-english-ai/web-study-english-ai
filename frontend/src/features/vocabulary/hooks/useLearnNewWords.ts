@@ -1,110 +1,107 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { getNewWordsBatchMock, saveWordProgressMock } from "../api/vocabulary_mock";
-import { SRSRating, VocabularyItem, WordProgressRecord } from "../types/vocabulary_types";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { listNewCardsApi } from "../api/cards_api";
+import { createReviewApi } from "@/features/reviews/api/reviews_api";
+import { DeckCard, RATING_VALUE, SRSRating } from "../types/vocabulary_types";
 
-const PROGRESS_KEY = "learn_words_progress";
 const IDLE_THRESHOLD_MS = 60_000;
 const MAX_RESPONSE_TIME_MS = 120_000;
 
-function persistProgress(record: WordProgressRecord) {
-    const raw = localStorage.getItem(PROGRESS_KEY);
-    const list: WordProgressRecord[] = raw ? JSON.parse(raw) : [];
-    const filtered = list.filter((r) => r.wordId !== record.wordId);
-    localStorage.setItem(PROGRESS_KEY, JSON.stringify([...filtered, record]));
-}
-
 export function useLearnNewWords() {
-    const [words, setWords] = useState<VocabularyItem[]>([]);
-    const [currentIndex, setCurrentIndex] = useState(0);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isFinished, setIsFinished] = useState(false);
-    const [isAway, setIsAway] = useState(false); // true = đang hiện popup "Chào mừng quay lại"
+  const queryClient = useQueryClient();
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isFinished, setIsFinished] = useState(false);
+  const [isAway, setIsAway] = useState(false);
 
-    const startTimeRef = useRef<number>(0);
-    const hiddenAccumMs = useRef<number>(0);
-    const hiddenSinceRef = useRef<number | null>(null);
-    const wasIdleRef = useRef<boolean>(false);
+  const startTimeRef = useRef<number>(0);
+  const hiddenAccumMs = useRef<number>(0);
+  const hiddenSinceRef = useRef<number | null>(null);
 
-    useEffect(() => {
-        getNewWordsBatchMock(20).then((data) => {
-            setWords(data);
-            setIsLoading(false);
-        });
-    }, []);
+    const { data, isLoading } = useQuery({
+    queryKey: ["cards", "new"],
+    queryFn: () => listNewCardsApi(),
+    refetchOnWindowFocus: false,
+    refetchOnReconnect: false,   // mạng chập chờn cũng không được nạp lại giữa buổi
+  });
 
-    useEffect(() => {
-        if (!isLoading && words.length > 0) {
-            startTimeRef.current = Date.now();
-            hiddenAccumMs.current = 0;
-            hiddenSinceRef.current = null;
-            wasIdleRef.current = false;
+  const cards: DeckCard[] = data?.items ?? [];
+  const currentCard = cards[currentIndex] ?? null;
+  const total = cards.length;
+  const learnedCount = currentIndex;
 
-            (async () => {
-                setIsAway(false);
-            })();
-        }
-    }, [currentIndex, isLoading, words.length]);
+    const guiMutation = useMutation({
+    mutationFn: createReviewApi,
+    // exact: true để KHÔNG đụng vào ["cards","new"] đang dùng dở.
+    // Thiếu nó thì danh sách bị nạp lại giữa buổi và lệch với currentIndex.
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["cards"], exact: true }),
+  });
 
-    useEffect(() => {
-        function handleVisibilityChange() {
-            if (document.hidden) {
-                hiddenSinceRef.current = Date.now();
-            } else if (hiddenSinceRef.current) {
-                const hiddenDuration = Date.now() - hiddenSinceRef.current;
-                hiddenSinceRef.current = null;
-
-                if (hiddenDuration > IDLE_THRESHOLD_MS) {
-                    // Rời quá lâu — chặn lại, chờ xác nhận, KHÔNG cộng dồn thời gian ẩn vào bộ đếm
-                    wasIdleRef.current = true;
-                    setIsAway(true);
-                } else {
-                    // Rời ngắn — chấp nhận, chỉ trừ ra khỏi thời gian phản hồi
-                    hiddenAccumMs.current += hiddenDuration;
-                }
-            }
-        }
-        document.addEventListener("visibilitychange", handleVisibilityChange);
-        return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
-    }, []);
-
-    // Người dùng bấm "Tiếp tục" trên popup — reset đồng hồ cho công bằng, không tính thời gian đã rời đi
-    function confirmReturn() {
-        startTimeRef.current = Date.now();
-        hiddenAccumMs.current = 0;
-        setIsAway(false);
+  // Bắt đầu bấm giờ lại mỗi khi sang thẻ mới
+  useEffect(() => {
+    if (!isLoading && total > 0) {
+      startTimeRef.current = Date.now();
+      hiddenAccumMs.current = 0;
+      hiddenSinceRef.current = null;
     }
+  }, [currentIndex, isLoading, total]);
 
-    const currentWord = words[currentIndex] ?? null;
-    const total = words.length;
-    const learnedCount = currentIndex;
+  useEffect(() => {
+    function handleVisibilityChange() {
+      if (document.hidden) {
+        hiddenSinceRef.current = Date.now();
+      } else if (hiddenSinceRef.current) {
+        const hiddenDuration = Date.now() - hiddenSinceRef.current;
+        hiddenSinceRef.current = null;
 
-    async function rateCurrentWord(rating: SRSRating) {
-        if (!currentWord || isAway) return; // chặn đánh giá khi popup đang mở
-
-        const rawElapsed = Date.now() - startTimeRef.current - hiddenAccumMs.current;
-        const responseTimeMs = Math.min(Math.max(rawElapsed, 0), MAX_RESPONSE_TIME_MS);
-        const isIdle = wasIdleRef.current;
-
-        const record = await saveWordProgressMock(currentWord.id, rating, responseTimeMs, isIdle);
-        persistProgress(record);
-
-        if (currentIndex + 1 >= total) {
-            setIsFinished(true);
+        if (hiddenDuration > IDLE_THRESHOLD_MS) {
+          // Rời quá lâu — chặn lại chờ xác nhận, không cộng dồn vào bộ đếm
+          setIsAway(true);
         } else {
-            setCurrentIndex((i) => i + 1);
+          // Rời ngắn — chỉ trừ ra khỏi thời gian phản hồi
+          hiddenAccumMs.current += hiddenDuration;
         }
+      }
     }
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () => document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, []);
 
-    return {
-        currentWord,
-        total,
-        learnedCount,
-        isLoading,
-        isFinished,
-        isAway,
-        confirmReturn,
-        rateCurrentWord,
-    };
+  function confirmReturn() {
+    startTimeRef.current = Date.now();
+    hiddenAccumMs.current = 0;
+    setIsAway(false);
+  }
+
+  async function rateCurrentWord(rating: SRSRating) {
+    if (!currentCard || isAway || guiMutation.isPending) return;
+
+    const rawElapsed = Date.now() - startTimeRef.current - hiddenAccumMs.current;
+    const durationMs = Math.min(Math.max(rawElapsed, 0), MAX_RESPONSE_TIME_MS);
+
+    await guiMutation.mutateAsync({
+      cardId: currentCard.id,
+      rating: RATING_VALUE[rating],
+      durationMs,
+    });
+
+    if (currentIndex + 1 >= total) {
+      setIsFinished(true);
+    } else {
+      setCurrentIndex((i) => i + 1);
+    }
+  }
+
+  return {
+    currentCard,
+    total,
+    learnedCount,
+    isLoading,
+    isFinished,
+    isAway,
+    isSubmitting: guiMutation.isPending,
+    confirmReturn,
+    rateCurrentWord,
+  };
 }

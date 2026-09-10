@@ -9,18 +9,28 @@ import { VocabularyDetailPanel } from "@/features/vocabulary/components/Vocabula
 import { VocabularyDeckList } from "@/features/vocabulary/components/VocabularyDeckList";
 import { useVocabularySearch } from "@/features/vocabulary/hooks/useVocabularySearch";
 import { useVocabularyDeck } from "@/features/vocabulary/hooks/useVocabularyDeck";
-import { addToDeckMock } from "@/features/vocabulary/api/vocabulary_mock";
-import { VocabularyItem } from "@/features/vocabulary/types/vocabulary_types";
+import { useTopics } from "@/features/vocabulary/hooks/useTopics";
+import { DeckCard } from "@/features/vocabulary/types/vocabulary_types";
 import { toast } from "@/components/ui/toast";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { EmptyState } from "@/components/shared/EmptyState";
+import { Button } from "@/components/ui/button";
 
 export default function VocabularyPage() {
   const { filters, setFilters, results, selected, setSelected, isLoading, isError, error, refetch } =
     useVocabularySearch();
-  const { deck, addToDeck, removeFromDeck, isInDeck } = useVocabularyDeck();
-  const [selectedDeckItem, setSelectedDeckItem] = useState<VocabularyItem | null>(null);
+   const {
+    deck,
+    isInDeck,
+    themTu,
+    xoaThe,
+    canhBaoHanMuc,
+    themDuVuotHanMuc,
+    boQuaCanhBao,
+  } = useVocabularyDeck();
+  const [selectedDeckItem, setSelectedDeckItem] = useState<DeckCard | null>(null);
+  const topics = useTopics();
 
   return (
     <PageContainer>
@@ -28,7 +38,19 @@ export default function VocabularyPage() {
       <p className="mt-1 text-sm text-muted-foreground">
         Tìm kiếm, lọc và thêm từ vựng vào bộ thẻ học của bạn.
       </p>
-
+          {canhBaoHanMuc && (
+        <div className="mt-4 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
+          <p className="text-sm text-amber-800">{canhBaoHanMuc.message}</p>
+          <div className="mt-3 flex gap-2">
+            <Button size="sm" onClick={() => void themDuVuotHanMuc()}>
+              Vẫn thêm
+            </Button>
+            <Button size="sm" variant="outline" onClick={boQuaCanhBao}>
+              Để mai học
+            </Button>
+          </div>
+        </div>
+      )}
       <Tabs defaultValue="search" className="mt-6">
         <TabsList>
           <TabsTrigger value="search">Tìm kiếm & khám phá</TabsTrigger>
@@ -36,7 +58,7 @@ export default function VocabularyPage() {
         </TabsList>
 
         <TabsContent value="search" className="mt-4">
-          <VocabularySearchBar filters={filters} onChange={setFilters} />
+          <VocabularySearchBar filters={filters} topics={topics} onChange={setFilters} />
 
           <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
             <div className="space-y-3">
@@ -64,10 +86,8 @@ export default function VocabularyPage() {
                     onSelect={() => setSelected(item)}
                     onAdd={async () => {
                       try {
-                        await addToDeckMock(item.id);
-                        addToDeck(item);
-                      } catch (err) {
-                        console.error("Add to deck failed:", err);
+                        await themTu(item.id);
+                      } catch {
                         toast.add({
                           title: "Không thể thêm từ vào bộ thẻ",
                           description: "Vui lòng thử lại.",
@@ -80,7 +100,7 @@ export default function VocabularyPage() {
             </div>
 
             <div className="lg:sticky lg:top-20 lg:self-start">
-              <VocabularyDetailPanel item={selected} />
+              <VocabularyDetailPanel wordId={selected?.id ?? null} />
             </div>
           </div>
         </TabsContent>
@@ -91,14 +111,17 @@ export default function VocabularyPage() {
               deck={deck}
               selected={selectedDeckItem}
               onSelect={setSelectedDeckItem}
-              onRemove={(id) => {
-                removeFromDeck(id);
-                if (selectedDeckItem?.id === id) setSelectedDeckItem(null);
+              onRemove={async (cardId) => {
+                await xoaThe(cardId);
+                if (selectedDeckItem?.id === cardId) setSelectedDeckItem(null);
               }}
             />
 
             <div className="lg:sticky lg:top-20 lg:self-start">
-              <VocabularyDetailPanel item={selectedDeckItem} />
+              <VocabularyDetailPanel
+                wordId={selectedDeckItem?.word.id ?? null}
+                onClose={() => setSelectedDeckItem(null)}
+              />
             </div>
           </div>
         </TabsContent>
