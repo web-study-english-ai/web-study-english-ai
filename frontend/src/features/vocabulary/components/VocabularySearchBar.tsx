@@ -9,17 +9,17 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { VocabularyFilters } from "../types/vocabulary_types";
+import { Topic, VocabularyFilters, CefrLevel } from "../types/vocabulary_types";
 
 interface Props {
   filters: VocabularyFilters;
+  topics: Topic[];
   onChange: (filters: VocabularyFilters) => void;
 }
 
-const TOPICS = ["Giao tiếp", "Công việc", "Du lịch", "Học thuật"];
-const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
+const LEVELS: CefrLevel[] = ["A1", "A2", "B1", "B2"];
 
-export function VocabularySearchBar({ filters, onChange }: Props) {
+export function VocabularySearchBar({ filters, topics, onChange }: Props) {
   return (
     <div className="flex flex-col gap-3 sm:flex-row">
       <div className="relative flex-1">
@@ -33,26 +33,34 @@ export function VocabularySearchBar({ filters, onChange }: Props) {
       </div>
 
       <Select
-        value={filters.topic}
-        onValueChange={(v) => onChange({ ...filters, topic: v ?? "all" })}
+        value={filters.topicId}
+        onValueChange={(v) => onChange({ ...filters, topicId: v ?? "all" })}
       >
         <SelectTrigger className="w-full sm:w-44">
-          <SelectValue placeholder="Chủ đề" />
+          <SelectValue placeholder="Chủ đề">
+            {(value: string) =>
+              value === "all"
+                ? "Tất cả chủ đề"
+                : (topics.find((t) => t.id === value)?.name ?? "Chủ đề")
+            }
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Tất cả chủ đề</SelectItem>
-          {TOPICS.map((t) => (
-            <SelectItem key={t} value={t}>{t}</SelectItem>
+          {topics.map((t) => (
+            <SelectItem key={t.id} value={t.id}>{t.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>
 
       <Select
         value={filters.level}
-        onValueChange={(v) => onChange({ ...filters, level: v ?? "all" })}
+        onValueChange={(v) => onChange({ ...filters, level: (v as CefrLevel) ?? "all" })}
       >
         <SelectTrigger className="w-full sm:w-36">
-          <SelectValue placeholder="Trình độ" />
+          <SelectValue placeholder="Trình độ">
+            {(value: string) => (value === "all" ? "Tất cả trình độ" : value)}
+          </SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">Tất cả trình độ</SelectItem>

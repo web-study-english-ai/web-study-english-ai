@@ -4,13 +4,13 @@ import { Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { VocabularyItem } from "../types/vocabulary_types";
+import { POS_LABEL, DeckCard } from "../types/vocabulary_types";
 
 interface Props {
-  deck: VocabularyItem[];
-  selected: VocabularyItem | null;
-  onSelect: (item: VocabularyItem) => void;
-  onRemove: (id: string) => void;
+  deck: DeckCard[];
+  selected: DeckCard | null;
+  onSelect: (card: DeckCard) => void;
+  onRemove: (cardId: string) => void;
 }
 
 export function VocabularyDeckList({ deck, selected, onSelect, onRemove }: Props) {
@@ -39,11 +39,11 @@ export function VocabularyDeckList({ deck, selected, onSelect, onRemove }: Props
         >
           <div>
             <div className="flex items-center gap-2">
-              <p className="font-semibold text-foreground">{item.word}</p>
-              <Badge variant="secondary" className="text-xs">{item.type}</Badge>
-              <span className="text-xs text-muted-foreground">{item.ipa}</span>
+              <p className="font-semibold text-foreground">{item.word.term}</p>
+              <Badge variant="secondary" className="text-xs">{POS_LABEL[item.word.pos]}</Badge>
+              <span className="text-xs text-muted-foreground">{item.word.ipa}</span>
             </div>
-            <p className="text-sm text-muted-foreground">{item.meaningVi}</p>
+              <p className="text-sm text-muted-foreground">{item.word.meaningVi}</p>
           </div>
 
           <Button
