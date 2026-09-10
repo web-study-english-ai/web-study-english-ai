@@ -23,8 +23,8 @@ const KEY_TO_RATING: Record<string, SRSRating> = {
 };
 
 export default function LearnWordsPage() {
-  const {
-    currentWord,
+    const {
+    currentCard,
     total,
     learnedCount,
     isLoading,
@@ -38,13 +38,13 @@ export default function LearnWordsPage() {
     function handleKeyDown(e: KeyboardEvent) {
       if (isAway) return; // chặn phím tắt khi popup đang mở
       const rating = KEY_TO_RATING[e.key];
-      if (rating && currentWord && !isFinished) {
+      if (rating && currentCard && !isFinished) {
         rateCurrentWord(rating);
       }
     }
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [currentWord, isFinished, isAway, rateCurrentWord]);
+  }, [currentCard, isFinished, isAway, rateCurrentWord]);
 
   return (
     <PageContainer>
@@ -64,7 +64,7 @@ export default function LearnWordsPage() {
           </div>
         )}
 
-        {!isLoading && !isFinished && currentWord && (
+        {!isLoading && !isFinished && currentCard && (
           <>
             <div className="mb-6">
               <div className="flex items-center justify-between text-sm">
@@ -82,7 +82,7 @@ export default function LearnWordsPage() {
             </div>
 
             <div className={isAway ? "pointer-events-none opacity-40" : ""}>
-              <LearnWordCard key={currentWord.id} word={currentWord} onRate={rateCurrentWord} />
+              <LearnWordCard key={currentCard.id} card={currentCard} onRate={rateCurrentWord} />
             </div>
 
             <p className="mt-4 text-center text-xs text-muted-foreground">
@@ -90,6 +90,13 @@ export default function LearnWordsPage() {
               <kbd className="rounded bg-muted px-1.5 py-0.5">4</kbd> để đánh giá nhanh
             </p>
           </>
+        )}
+        {!isLoading && !isFinished && total === 0 && (
+          <div className="rounded-xl border border-dashed border-border p-10 text-center">
+            <p className="text-sm text-muted-foreground">
+              Chưa có từ mới nào để học. Hãy thêm từ vào bộ thẻ ở màn Quản lý từ vựng.
+            </p>
+          </div>
         )}
       </div>
 
