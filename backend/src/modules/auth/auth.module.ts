@@ -48,4 +48,3 @@ const googleStrategyProvider: Provider = {
   providers: [AuthService, JwtStrategy, googleStrategyProvider],
 })
 export class AuthModule {}
-
