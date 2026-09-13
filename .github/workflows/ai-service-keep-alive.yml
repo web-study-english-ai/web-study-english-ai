@@ -1,0 +1,66 @@
+name: AI Service Keep Alive
+
+on:
+  schedule:
+    # Chạy mỗi 14 phút một lần (tần suất từ 10-15 phút để chống ngủ cho free tier)
+    - cron: "*/14 * * * *"
+  workflow_dispatch:
+    # Cho phép kích hoạt thủ công từ giao diện GitHub Actions bất kỳ lúc nào
+    inputs:
+      target_url:
+        description: "URL kiểm tra sức khoẻ (để trống sẽ dùng Secret AI_SERVICE_HEALTH_URL)"
+        required: false
+        default: ""
+
+jobs:
+  ping-health:
+    name: Ping AI Service Health
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Xác định URL kiểm tra
+        id: get-url
+        run: |
+          URL="${{ github.event.inputs.target_url }}"
+          if [ -z "$URL" ]; then
+            URL="${{ secrets.AI_SERVICE_HEALTH_URL }}"
+          fi
+
+          if [ -z "$URL" ]; then
+            echo "::warning::Chưa cấu hình Secret 'AI_SERVICE_HEALTH_URL' trong Repository Settings > Secrets and variables > Actions. Vui lòng thêm URL để kích hoạt ping tự động."
+            echo "has_url=false" >> $GITHUB_OUTPUT
+          else
+            echo "has_url=true" >> $GITHUB_OUTPUT
+            echo "target_url=$URL" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Ping endpoint kiểm tra sức khoẻ (/health)
+        if: steps.get-url.outputs.has_url == 'true'
+        run: |
+          URL="${{ steps.get-url.outputs.target_url }}"
+          echo "Bắt đầu ping endpoint kiểm tra sức khoẻ..."
+
+          # Thực hiện curl với retry 2 lần, timeout 45s (phòng trường hợp dịch vụ đang khởi động lại/cold start)
+          RESPONSE=$(curl -sS -w "\nHTTP_STATUS:%{http_code}\nTIME_TOTAL:%{time_total}s" \
+            --connect-timeout 15 \
+            --max-time 45 \
+            --retry 2 \
+            --retry-delay 5 \
+            -H "User-Agent: GitHubActions-KeepAlive/1.0" \
+            "$URL")
+            
+          HTTP_CODE=$(echo "$RESPONSE" | grep "HTTP_STATUS:" | cut -d':' -f2)
+          TIME_TOTAL=$(echo "$RESPONSE" | grep "TIME_TOTAL:" | cut -d':' -f2)
+          BODY=$(echo "$RESPONSE" | grep -v "HTTP_STATUS:" | grep -v "TIME_TOTAL:")
+
+          echo "Thời gian phản hồi: $TIME_TOTAL"
+          echo "Mã trạng thái HTTP: $HTTP_CODE"
+          echo "Nội dung phản hồi: $BODY"
+
+          if [ "$HTTP_CODE" -ge 200 ] && [ "$HTTP_CODE" -lt 300 ]; then
+            echo "✅ Dịch vụ AI đang hoạt động bình thường (Status: $HTTP_CODE)."
+          else
+            echo "::error::Ping thất bại hoặc dịch vụ trả về mã lỗi HTTP: $HTTP_CODE"
+            exit 1
+          fi
