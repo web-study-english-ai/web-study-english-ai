@@ -57,6 +57,12 @@ export class CardsController {
   listDueCards(@CurrentUser('id') userId: string, @Query() query: ListDueCardsDto) {
     return this.cardsService.listDueCards(userId, query);
   }
+
+  @Get('summary')
+  @ApiOperation({ summary: 'Tóm tắt nhắc ôn tập cho trang chủ' })
+  getReviewSummary(@CurrentUser('id') userId: string) {
+    return this.cardsService.getReviewSummary(userId);
+  }
   @Delete(':id')
   @ApiOperation({ summary: 'Bỏ một từ khỏi bộ thẻ' })
   @ApiResponse({ status: 404, description: 'Không tìm thấy thẻ' })

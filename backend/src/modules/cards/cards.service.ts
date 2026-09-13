@@ -5,6 +5,11 @@ import { AddCardsDto } from './dto/add-cards.dto';
 import { ListCardsDto } from './dto/list-cards.dto';
 import { ListDueCardsDto } from './dto/list-due-cards.dto';
 
+const MOT_NGAY_MS = 24 * 60 * 60 * 1000;
+
+/** Quá hạn từ ngần này ngày thì banner trang chủ chuyển sang mức khẩn */
+const NGUONG_KHAN_NGAY = 3;
+
 const cardSelect = {
   id: true,
   state: true,
@@ -181,6 +186,54 @@ export class CardsService {
         remaining,
         returned: items.length,
       },
+    };
+  }
+
+  async getReviewSummary(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: { maxReviewsPerDay: true },
+    });
+    if (!user) throw new NotFoundException('Không tìm thấy người dùng');
+
+    const now = new Date();
+
+    const dueWhere: Prisma.UserCardWhereInput = {
+      userId,
+      state: { in: [CardState.LEARNING, CardState.REVIEW, CardState.RELEARNING] },
+      dueAt: { lte: now },
+    };
+
+    // Bốn truy vấn đếm, gửi trong một lượt kết nối. Không lấy dòng nào về ứng dụng.
+    const [dueCount, reviewedToday, newCount, moc] = await this.prisma.$transaction([
+      this.prisma.userCard.count({ where: dueWhere }),
+      this.prisma.userCard.count({
+        where: { userId, lastReviewedAt: { gte: this.startOfTodayVn(now) } },
+      }),
+      this.prisma.userCard.count({ where: { userId, state: CardState.NEW } }),
+      this.prisma.userCard.aggregate({ where: dueWhere, _min: { dueAt: true } }),
+    ]);
+
+    const oldestDueAt = moc._min.dueAt;
+    const overdueDays = oldestDueAt
+      ? Math.floor((now.getTime() - oldestDueAt.getTime()) / MOT_NGAY_MS)
+      : 0;
+
+    const remaining = Math.max(user.maxReviewsPerDay - reviewedToday, 0);
+    const sessionCount = Math.min(dueCount, remaining);
+
+    const urgency = dueCount === 0 ? 'NONE' : overdueDays >= NGUONG_KHAN_NGAY ? 'HIGH' : 'NORMAL';
+
+    return {
+      dueCount,
+      sessionCount,
+      cappedBySessionLimit: sessionCount < dueCount,
+      reviewedToday,
+      dailyLimit: user.maxReviewsPerDay,
+      oldestDueAt,
+      overdueDays,
+      urgency,
+      newCount,
     };
   }
 

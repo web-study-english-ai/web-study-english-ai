@@ -10,6 +10,7 @@ const prismaMock = {
     findMany: vi.fn(),
     findUnique: vi.fn(),
     count: vi.fn(),
+    aggregate: vi.fn(),
     createMany: vi.fn(),
     delete: vi.fn(),
   },
@@ -171,6 +172,55 @@ describe('CardsService', () => {
       await service.listDueCards(USER_ID, { limit: 100 });
 
       expect(prismaMock.userCard.findMany.mock.calls[0][0].take).toBe(50);
+    });
+  });
+  describe('getReviewSummary', () => {
+    it('phiên ôn bị chặn bởi hạn mức còn lại trong ngày', async () => {
+      // 100 thẻ đến hạn, đã ôn 45/50 hôm nay, 7 thẻ chưa học
+      prismaMock.$transaction.mockResolvedValue([100, 45, 7, { _min: { dueAt: new Date() } }]);
+
+      const kq = await service.getReviewSummary(USER_ID);
+
+      expect(kq.dueCount).toBe(100);
+      expect(kq.sessionCount).toBe(5);
+      expect(kq.cappedBySessionLimit).toBe(true);
+    });
+
+    it('không có thẻ đến hạn thì mức khẩn là NONE và vẫn báo số thẻ chưa học', async () => {
+      prismaMock.$transaction.mockResolvedValue([0, 0, 3, { _min: { dueAt: null } }]);
+
+      const kq = await service.getReviewSummary(USER_ID);
+
+      expect(kq.urgency).toBe('NONE');
+      expect(kq.overdueDays).toBe(0);
+      expect(kq.newCount).toBe(3);
+    });
+
+    it('quá hạn từ 3 ngày trở lên thì chuyển sang mức khẩn', async () => {
+      const bonNgayTruoc = new Date(Date.now() - 4 * 24 * 60 * 60 * 1000);
+      prismaMock.$transaction.mockResolvedValue([5, 0, 0, { _min: { dueAt: bonNgayTruoc } }]);
+
+      const kq = await service.getReviewSummary(USER_ID);
+
+      expect(kq.overdueDays).toBe(4);
+      expect(kq.urgency).toBe('HIGH');
+    });
+
+    it('quá hạn dưới ngưỡng thì chỉ ở mức thường', async () => {
+      const motNgayTruoc = new Date(Date.now() - 1 * 24 * 60 * 60 * 1000);
+      prismaMock.$transaction.mockResolvedValue([5, 0, 0, { _min: { dueAt: motNgayTruoc } }]);
+
+      const kq = await service.getReviewSummary(USER_ID);
+
+      expect(kq.urgency).toBe('NORMAL');
+    });
+
+    it('không đếm thẻ của người khác', async () => {
+      prismaMock.$transaction.mockResolvedValue([0, 0, 0, { _min: { dueAt: null } }]);
+
+      await service.getReviewSummary(USER_ID);
+
+      expect(prismaMock.userCard.count.mock.calls[0][0].where.userId).toBe(USER_ID);
     });
   });
 
