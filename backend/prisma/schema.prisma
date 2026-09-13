@@ -1,0 +1,217 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AuthProvider {
+  LOCAL
+  GOOGLE
+  FACEBOOK
+}
+
+enum CefrLevel {
+  A1
+  A2
+  B1
+  B2
+}
+
+enum PartOfSpeech {
+  NOUN
+  VERB
+  ADJECTIVE
+  ADVERB
+  PREPOSITION
+  PRONOUN
+  CONJUNCTION
+  INTERJECTION
+  NUMERAL
+}
+
+enum CardState {
+  NEW
+  LEARNING
+  REVIEW
+  RELEARNING
+}
+
+enum DictionaryStatus {
+  FOUND
+  NOT_FOUND
+}
+
+enum SchedulerSource {
+  FSRS_AI
+  FALLBACK_TS
+  SM2
+}
+model User {
+  id              String       @id @default(uuid())
+  email           String       @unique
+  passwordHash    String?      @map("password_hash")
+  provider        AuthProvider @default(LOCAL)
+  providerId      String?      @map("provider_id")
+  fullName        String       @map("full_name")
+  avatarUrl       String?      @map("avatar_url")
+  level            CefrLevel @default(A1)
+  newWordsPerDay   Int       @default(20) @map("new_words_per_day")
+  maxReviewsPerDay Int       @default(50) @map("max_reviews_per_day")
+  role            UserRole     @default(USER)
+  isActive        Boolean      @default(true) @map("is_active")
+  acceptedTermsAt DateTime?    @map("accepted_terms_at")
+  createdAt       DateTime     @default(now()) @map("created_at")
+  updatedAt       DateTime     @updatedAt @map("updated_at")
+
+  refreshTokens RefreshToken[]
+  cards UserCard[]
+  reviews Review[]
+
+  @@unique([provider, providerId])
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid())
+  tokenHash String    @unique @map("token_hash")
+  userId    String    @map("user_id")
+  expiresAt DateTime  @map("expires_at")
+  revokedAt DateTime? @map("revoked_at")
+  userAgent String?   @map("user_agent")
+  ipAddress String?   @map("ip_address")
+  createdAt DateTime  @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("refresh_tokens")
+}
+
+model Topic {
+  id          String   @id @default(uuid())
+  slug        String   @unique
+  name        String
+  nameEn      String?  @map("name_en")
+  description String?
+  sortOrder   Int      @default(0) @map("sort_order")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  words Word[]
+
+  @@map("topics")
+}
+
+model Word {
+  id             String       @id @default(uuid())
+  term           String       @unique
+  rank           Int          @unique
+  cefr           CefrLevel
+  pos            PartOfSpeech
+  ipa            String?
+  meaningVi      String       @map("meaning_vi")
+  exampleEn      String?      @map("example_en")
+  isConcreteNoun Boolean      @default(false) @map("is_concrete_noun")
+  freqPerMillion Int?         @map("freq_per_million")
+  sfi            Decimal?     @db.Decimal(5, 2)
+  topicId        String?      @map("topic_id")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+
+  topic Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  cards UserCard[]
+  reviews Review[]
+
+  @@index([cefr])
+  @@index([topicId])
+  @@index([rank])
+  @@map("words")
+}
+
+model UserCard {
+  id             String    @id @default(uuid())
+  userId         String    @map("user_id")
+  wordId         String    @map("word_id")
+  state          CardState @default(NEW)
+  difficulty     Float?
+  stability      Float?
+  reps           Int       @default(0)
+  lapses         Int       @default(0)
+  dueAt          DateTime? @map("due_at")
+  lastReviewedAt DateTime? @map("last_reviewed_at")
+  createdAt      DateTime  @default(now()) @map("created_at")
+  updatedAt      DateTime  @updatedAt @map("updated_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  reviews Review[]
+
+  @@unique([userId, wordId])
+  @@index([userId, state])
+  @@index([userId, dueAt])
+  @@map("user_cards")
+}
+
+model DictionaryEntry {
+  id           String           @id @default(uuid())
+  term         String           @unique
+  phoneticText String?          @map("phonetic_text")
+  audioUrl     String?          @map("audio_url")
+  definitions  Json?
+  source       String           @default("merriam-webster")
+  status       DictionaryStatus @default(FOUND)
+  fetchedAt    DateTime         @default(now()) @map("fetched_at")
+
+  @@map("dictionary_entries")
+}
+
+model Review {
+  id String @id @default(uuid())
+
+  userId String  @map("user_id")
+  cardId String? @map("card_id")
+  wordId String  @map("word_id")
+
+  reviewedAt DateTime @map("reviewed_at")
+  reviewTh   Int      @map("review_th")
+  rating     Int
+
+  /// CHECK (IS NULL OR 0..1095) — ràng buộc viết tay trong migration add_reviews
+  elapsedDays   Float? @map("elapsed_days")
+  scheduledDays Float? @map("scheduled_days")
+  /// CHECK (0..600000) — app clamp ở 60000
+  durationMs    Int    @map("duration_ms")
+
+  stateBefore      CardState @map("state_before")
+  difficultyBefore Float?    @map("difficulty_before")
+  stabilityBefore  Float?    @map("stability_before")
+  /// CHECK (IS NULL OR 0..1) — ràng buộc viết tay trong migration add_reviews
+  predictedRetrievability Float? @map("predicted_retrievability")
+
+  stateAfter       CardState @map("state_after")
+  difficultyAfter  Float?    @map("difficulty_after")
+  stabilityAfter   Float?    @map("stability_after")
+  nextIntervalDays Float?    @map("next_interval_days")
+
+  scheduler    SchedulerSource
+  modelVersion String?         @map("model_version")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  card UserCard? @relation(fields: [cardId], references: [id], onDelete: SetNull)
+  word Word      @relation(fields: [wordId], references: [id], onDelete: Restrict)
+
+  @@unique([cardId, reviewTh])
+  @@index([userId, reviewedAt])
+  @@index([scheduler])
+  @@map("reviews")
+}

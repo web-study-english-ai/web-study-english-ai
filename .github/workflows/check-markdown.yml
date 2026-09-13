@@ -1,0 +1,25 @@
+name: Check Markdown Format
+
+on:
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - "README.md"
+      - "CONTRIBUTING.md"
+
+  push:
+    branches: [develop]
+    paths:
+      - "README.md"
+      - "CONTRIBUTING.md"
+
+jobs:
+  lint-markdown:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Check project documentation
+        run: npx markdownlint-cli@0.49.1 "README.md" "CONTRIBUTING.md"

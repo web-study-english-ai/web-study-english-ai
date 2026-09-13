@@ -1,0 +1,35 @@
+# compiled output
+/dist
+/node_modules
+/build
+
+# Logs
+logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+
+# Tests
+/coverage
+/.nyc_output
+
+# IDE
+.idea
+*.sw?
+
+# Env
+.env
+.env.local
+.env.*.local
+# Tài liệu Prisma dành cho trợ lý AI, không thuộc mã nguồn dự án
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+prisma/sample-words.sql
+
