@@ -1,0 +1,32 @@
+# moi truong
+.env
+.env.*
+!.env.example
+venv/
+.venv/
+__pycache__/
+*.pyc
+
+# trong so mo hinh - tai tu HF Hub luc khoi dong
+weights/
+*.pt
+*.bin
+*.safetensors
+
+# du lieu tho
+data/
+*.csv
+!tests/fixtures/*.csv
+
+# notebook output
+.ipynb_checkpoints/
+
+# claude code - cai dat rieng tung may
+.claude/settings.local.json
+
+# he thong
+.DS_Store
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
