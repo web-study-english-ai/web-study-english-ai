@@ -1,5 +1,16 @@
 --extra-index-url https://download.pytorch.org/whl/cpu
+
+# --- API ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-multipart==0.0.20
+
+# --- Model ML (torch ban CPU) ---
 torch
 numpy
 pandas
+
+# --- Test ---
 pytest
