@@ -118,27 +118,20 @@ export function LoginForm() {
         <span className="h-px flex-1 bg-border" />
       </div>
 
-      <div className="grid grid-cols-2 gap-3">
-        <Button variant="outline" type="button" className="rounded-full py-5"  onClick={dangNhapGoogle}>
-          <svg className="mr-2 h-4 w-4" viewBox="0 0 48 48">
-            <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.5 5.6 29.5 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5 44.5 35.3 44.5 24c0-1.2-.1-2.4-.3-3.5z"/>
-            <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 18.9 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34.5 7.1 29.5 5 24 5c-7.3 0-13.6 4.1-16.7 10.1z"/>
-            <path fill="#4CAF50" d="M24 44.5c5.4 0 10.3-1.9 14-5.6l-6.5-5.4c-2 1.4-4.6 2.2-7.5 2.2-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.5 39.6 16.2 44.5 24 44.5z"/>
-            <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.5 5.4C41.5 36 44.5 30.6 44.5 24c0-1.2-.1-2.4-.3-3.5z"/>
-          </svg>
-          Google
-        </Button>
-        <Button variant="outline" type="button" className="rounded-full py-5">
-  <svg
-    className="mr-2 h-4 w-4"
-    viewBox="0 0 24 24"
-    fill="#1877F2"
-  >
-    <path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.099 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.413c0-3.025 1.792-4.697 4.533-4.697 1.313 0 2.686.236 2.686.236v2.953h-1.514c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.099 24 12.073z" />
+     <Button
+  variant="outline"
+  type="button"
+  className="w-full rounded-full py-5"
+  onClick={dangNhapGoogle}
+>
+  <svg className="mr-2 h-4 w-4" viewBox="0 0 48 48">
+    <path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.6-6 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3 0 5.8 1.1 7.9 3l5.7-5.7C34.5 5.6 29.5 3.5 24 3.5 12.7 3.5 3.5 12.7 3.5 24S12.7 44.5 24 44.5 44.5 35.3 44.5 24c0-1.2-.1-2.4-.3-3.5z"/>
+    <path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.6 16 18.9 13 24 13c3 0 5.8 1.1 7.9 3l5.7-5.7C34.5 7.1 29.5 5 24 5c-7.3 0-13.6 4.1-16.7 10.1z"/>
+    <path fill="#4CAF50" d="M24 44.5c5.4 0 10.3-1.9 14-5.6l-6.5-5.4c-2 1.4-4.6 2.2-7.5 2.2-5.3 0-9.7-3.4-11.3-8.1l-6.6 5.1C9.5 39.6 16.2 44.5 24 44.5z"/>
+    <path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.2 4.2-4 5.6l6.5 5.4C41.5 36 44.5 30.6 44.5 24c0-1.2-.1-2.4-.3-3.5z"/>
   </svg>
-  Facebook
+  Google
 </Button>
-      </div>
 
       <p className="mt-6 text-center text-sm text-muted-foreground">
         Chưa có tài khoản?{" "}
