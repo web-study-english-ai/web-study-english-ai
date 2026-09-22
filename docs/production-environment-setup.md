@@ -20,13 +20,13 @@
 └──────────────────────────────────────┘     └────────────────────┬────────────────────┘
                                                                   │ (Internal / SSL Connection)
                                                                   ▼
-                                             ┌─────────────────────────────────────────┐
-                                             │      Database PostgreSQL Production     │
-                                             │  • Nền tảng: Render PostgreSQL (SG)     │
-                                             │  • DB: study_english_prod               │
-                                             │  • Tách biệt 100% với Staging DB        │
-                                             │  • Dữ liệu: 22 Topics & 2,000 Từ gốc    │
-                                             └─────────────────────────────────────────┘
+                                              ┌─────────────────────────────────────────┐
+                                              │      Database PostgreSQL Production     │
+                                              │  • Nền tảng: Supabase PostgreSQL (SG)   │
+                                              │  • Project: study-english-prod          │
+                                              │  • Tách biệt 100% với Staging DB        │
+                                              │  • Dữ liệu: 22 Topics & 2,000 Từ gốc    │
+                                              └─────────────────────────────────────────┘
 ```
 
 ---
@@ -40,7 +40,7 @@ Vào **Render Dashboard** ➔ Chọn Web Service `web-study-english-ai-prod` ➔
 | Tên biến (Key)                   | Giá trị Production (Value)                                                                           | Mục đích / Ràng buộc kỹ thuật                                        |
 | :------------------------------- | :--------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------- |
 | `NODE_ENV`                       | `production`                                                                                         | Bật chế độ tối ưu hóa Production của NestJS & Node                   |
-| `DATABASE_URL`                   | `postgresql://postgres_prod:***@dpg-dajbi7ojo6nc73d7amq0-a/study_english_prod?schema=public`         | Chuỗi kết nối nội bộ đến **Database PostgreSQL Production**          |
+| `DATABASE_URL`                   | `postgresql://postgres.liuwgkvetzjvyslwgbxu:***@aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres` | Chuỗi kết nối Session Pooler đến **Supabase PostgreSQL Production** (Singapore) |
 | `JWT_ACCESS_SECRET`              | `wsea_prod_jwt_secret_key_2026_super_secure_anti_leak`                                               | Khóa bí mật ký JWT riêng cho Production (không dùng lại key dev)     |
 | `JWT_ACCESS_EXPIRES_IN`          | `900`                                                                                                | Thời hạn Access Token (15 phút = 900 giây)                           |
 | `REFRESH_TOKEN_TTL_DAYS`         | `7`                                                                                                  | Thời hạn Refresh Token lưu trong DB (7 ngày)                         |
@@ -72,9 +72,9 @@ Vào **Vercel Dashboard** ➔ Chọn Project `web-study-english-ai` ➔ **Settin
 ## 3. Quy Trình Triển Khai Thực Tế Đã Hoàn Thành
 
 ### Bước 1: Database PostgreSQL Production Riêng
-- **Nền tảng:** Render PostgreSQL (Singapore).
-- **Service Name:** `wsea-postgres-prod` (Database: `study_english_prod`).
-- **Trạng thái:** Hoạt động ổn định, kết nối nội bộ Private Network độ trễ thấp (~3ms - 46ms).
+- **Nền tảng:** Supabase PostgreSQL (Singapore - `ap-southeast-1`).
+- **Project Name:** `study-english-prod` (Host: `aws-0-ap-southeast-1.pooler.supabase.com:5432`).
+- **Trạng thái:** Hoạt động vĩnh viễn (Free Tier không giới hạn 30 ngày), kết nối Session Pooler IPv4 độ trễ cực thấp (~41ms).
 
 ### Bước 2: Web Service Backend Production trên Render
 - **Service Name:** `web-study-english-ai-prod`
@@ -109,7 +109,7 @@ Vào **Vercel Dashboard** ➔ Chọn Project `web-study-english-ai` ➔ **Settin
 
 | STT | Kịch bản kiểm thử                | Thao tác thực hiện                                                  | Kết quả thực tế                                                                              | Trạng thái |
 | :-: | :------------------------------- | :------------------------------------------------------------------ | :------------------------------------------------------------------------------------------- | :--------: |
-|  1  | **Kiểm tra Sức khỏe Hệ thống**   | `GET https://web-study-english-ai-prod.onrender.com/health`          | Trả về HTTP 200: `status: ok`, `environment: production`, `database.status: up`, latency 3ms |  [x] Đạt   |
+|  1  | **Kiểm tra Sức khỏe Hệ thống**   | `GET https://web-study-english-ai-prod.onrender.com/health`          | Trả về HTTP 200: `status: ok`, `environment: production`, `database.status: up`, latency 41ms |  [x] Đạt   |
 |  2  | **Tài liệu API (Swagger)**       | Truy cập `https://web-study-english-ai-prod.onrender.com/api/docs`  | Giao diện Swagger UI hiển thị đầy đủ tài liệu API, bảo mật JWT Bearer Auth                   |  [x] Đạt   |
 |  3  | **Đăng ký Tài khoản Người Dùng** | Tạo tài khoản người dùng thực tế trên web Production                | Đăng ký thành công, mã hóa mật khẩu bcrypt muối 12 chuẩn, ghi nhận User #1 trong DB          |  [x] Đạt   |
 |  4  | **Đăng nhập & Quản lý Phiên**    | Đăng nhập tài khoản vừa tạo tại `/login`                            | Nhận JWT Access Token, Cookie Refresh `wsea_rt_prod` lưu `Secure; SameSite=None`             |  [x] Đạt   |
