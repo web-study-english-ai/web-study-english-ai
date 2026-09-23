@@ -33,3 +33,4 @@ export function searchWordsApi(
 export function getWordByIdApi(id: string): Promise<VocabularyDetail> {
   return apiFetch<VocabularyDetail>(`/words/${id}`);
 }
+
