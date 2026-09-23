@@ -26,7 +26,7 @@ export function useReviewSession() {
  
   const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   // Thời điểm thẻ hiện tại bắt đầu hiển thị, dùng để tính durationMs
-  const cardStartRef = useRef<number>(Date.now());
+  const cardStartRef = useRef<number>(0);
  
   // Tải các thẻ đến hạn từ backend
   useEffect(() => {
