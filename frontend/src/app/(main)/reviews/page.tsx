@@ -6,6 +6,7 @@ import { ReviewCard } from "@/features/reviews/components/ReviewCard";
 import { ReviewRatingBar } from "@/features/reviews/components/ReviewRatingBar";
 import { VocabularyDetailPanel } from "@/features/vocabulary/components/VocabularyDetailPanel";
 import { useReviewSession } from "@/features/reviews/hooks/useReviewSession";
+import { ReviewSummary } from "@/features/reviews/components/ReviewSummary";
 
 export default function ReviewsPage() {
   const {
@@ -19,6 +20,7 @@ export default function ReviewsPage() {
     rateCurrentCard,
     reviewedCount,
     totalDue,
+    ratingCounts,
     elapsedLabel,
   } = useReviewSession();
 
@@ -43,11 +45,11 @@ export default function ReviewsPage() {
       )}
 
       {!isLoading && !isEmpty && isFinished && (
-        <div className="mt-8 rounded-2xl border border-border bg-white p-10 text-center">
-          <h2 className="font-heading text-xl font-semibold text-foreground">
-            🎉 Bạn đã ôn xong {totalDue} từ đến hạn hôm nay!
-          </h2>
-        </div>
+        <ReviewSummary
+          totalCards={totalDue}
+          elapsedLabel={elapsedLabel}
+          ratingCounts={ratingCounts}
+        />
       )}
 
       {!isLoading && !isEmpty && !isFinished && currentCard && (
@@ -70,7 +72,7 @@ export default function ReviewsPage() {
             </div>
           </div>
 
-           <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
+          <div className="mt-4 grid grid-cols-1 gap-6 lg:grid-cols-2">
             <ReviewCard card={currentCard} revealed={revealed} onReveal={revealAnswer} />
             {revealed ? (
               <VocabularyDetailPanel wordId={currentCard.word.id} />
