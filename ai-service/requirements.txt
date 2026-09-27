@@ -14,3 +14,4 @@ pandas
 
 # --- Test ---
 pytest
+huggingface_hub==2.0.0
