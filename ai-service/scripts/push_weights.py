@@ -1,10 +1,11 @@
 import json, os, sys, torch
 from huggingface_hub import HfApi
 
-HF_USER = "Hieusss"   # <-- SỬA thành tên tài khoản ở bước C2
+# Ten repo chua trong so, dat qua FSRS_WEIGHTS_REPO trong .env
+DEFAULT_REPO = "Hieusss/wsea-fsrs-weights"
 
 run_dir, version = sys.argv[1], sys.argv[2]
-repo = f"{HF_USER}/wsea-fsrs-weights"
+repo = os.environ.get("FSRS_WEIGHTS_REPO") or DEFAULT_REPO
 api = HfApi(token=os.environ["HF_TOKEN"])
 
 # 1. Tạo kho chứa trọng số (riêng tư)
