@@ -22,8 +22,9 @@ async def verify_internal_api_key(
             detail=f"Thieu header {API_KEY_HEADER}",
         )
 
-    # so sanh chong timing attack
-    if not secrets.compare_digest(x_internal_api_key, settings.internal_api_key):
+     # so sanh chong timing attack; so tren bytes de khong nem TypeError voi ky tu ngoai ASCII
+    expected = settings.internal_api_key.get_secret_value().encode()
+    if not secrets.compare_digest(x_internal_api_key.encode(), expected):
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
             detail="Khoa API noi bo khong hop le",

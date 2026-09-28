@@ -28,7 +28,7 @@ class Settings(BaseSettings):
     environment: str = "development"
 
     # Khoa API noi bo: backend NestJS phai gui kem khi goi ai-service
-    internal_api_key: str = "dev-internal-key"
+    internal_api_key: str 
 
     # Duong dan model ML (se dung o cac giai doan sau)
     models_dir: Path = BASE_DIR / "app" / "models"
