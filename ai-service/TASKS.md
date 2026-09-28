@@ -302,13 +302,16 @@
 
 ## Đợt 5 · D13–D15 — Triển khai dịch vụ AI
 
-### [ ] WSEA-64 · Xây dựng endpoint dự báo trong dịch vụ AI
-6h · Ưu tiên: Highest · `ai/WSEA-64-...`
+### [x] WSEA-64 · Xây dựng endpoint dự báo trong dịch vụ AI
+6h · Ưu tiên: Highest · `ai/WSEA-81-xay-dung-endpoint`
 
-- [ ] 1. Viết lớp nạp trọng số mô hình khi khởi động ứng dụng
-- [ ] 2. Viết endpoint nhận danh sách thẻ và trả về kết quả dự báo
-- [ ] 3. Xử lý đầu vào không hợp lệ và giới hạn giá trị đầu ra
-- [ ] 4. Viết kiểm thử bằng Pytest cho endpoint
+> Mã Jira thật của task này là **WSEA-81**, không phải WSEA-64. Đánh số trong file
+> này đã lệch với Jira — cần rà lại toàn bộ, xem `PROGRESS.md` mục 4.
+
+- [x] 1. Viết lớp nạp trọng số mô hình khi khởi động ứng dụng — `app/models/weights.py`
+- [x] 2. Viết endpoint nhận danh sách thẻ và trả về kết quả dự báo — `app/routers/retention.py`
+- [x] 3. Xử lý đầu vào không hợp lệ và giới hạn giá trị đầu ra — `extra="forbid"`, `allow_inf_nan=False`, kiểm tra `isfinite` đầu ra
+- [x] 4. Viết kiểm thử bằng Pytest cho endpoint — 80 test mới, độ phủ `app/` 98%
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -321,7 +324,10 @@
 
 </details>
 
-**Minh chứng Jira:** 
+**Minh chứng Jira:** WSEA-81 — nhánh `ai/WSEA-81-xay-dung-endpoint`.
+`POST /predict-retention` chạy với trọng số v1 từ HF Hub; `pytest -q` 107 pass,
+độ phủ `app/` 98%. Hợp đồng API lên 0.2 (bỏ `due_date`, S/D nullable) — **cần báo
+Thạc Duy Anh trước khi backend tích hợp**.
 
 ### [ ] WSEA-65 · Triển khai dịch vụ AI lên Hugging Face Spaces
 6h · Ưu tiên: Highest · `ai/WSEA-65-...`
