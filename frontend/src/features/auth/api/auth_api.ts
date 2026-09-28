@@ -1,4 +1,4 @@
-import { apiFetch, setAccessToken, ApiError } from "@/lib/api/client";
+import { apiFetch, setAccessToken, ApiError, lamMoiPhien } from "@/lib/api/client";
 import {
   AuthError,
   AuthResponse,
@@ -70,11 +70,7 @@ export async function logoutApi(): Promise<void> {
 
 /** Khôi phục phiên sau khi tải lại trang, dựa vào refresh cookie */
 export async function restoreSessionApi(): Promise<AuthResponse | null> {
-  try {
-    const res = await apiFetch<BackendAuth>("/auth/refresh", { method: "POST" }, false);
-    setAccessToken(res.accessToken);
-    return { user: mapUser(res.user), token: res.accessToken };
-  } catch {
-    return null;
-  }
+  const res = await lamMoiPhien();
+  if (!res) return null;
+  return { user: mapUser(res.user), token: res.accessToken };
 }
