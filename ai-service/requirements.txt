@@ -14,4 +14,5 @@ pandas
 
 # --- Test ---
 pytest
+httpx
 huggingface_hub==2.0.0
