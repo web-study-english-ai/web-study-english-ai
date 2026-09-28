@@ -17,20 +17,32 @@ export class ApiError extends Error {
 }
 
 // Nhiều request cùng nhận 401 thì chỉ gọi refresh một lần
-let dangLamMoi: Promise<boolean> | null = null;
+export interface KetQuaLamMoi {
+  user: {
+    id: string;
+    email: string;
+    fullName: string;
+    avatarUrl: string | null;
+    role: string;
+  };
+  accessToken: string;
+}
 
-function lamMoiMotLan(): Promise<boolean> {
+let dangLamMoi: Promise<KetQuaLamMoi | null> | null = null;
+
+/** Đường DUY NHẤT gọi /auth/refresh. Mọi nơi cần làm mới phiên đều phải đi qua đây. */
+export function lamMoiPhien(): Promise<KetQuaLamMoi | null> {
   dangLamMoi ??= fetch(`${API_URL}/auth/refresh`, {
     method: "POST",
     credentials: "include",
   })
     .then(async (res) => {
-      if (!res.ok) return false;
-      const data = await res.json();
+      if (!res.ok) return null;
+      const data = (await res.json()) as KetQuaLamMoi;
       accessToken = data.accessToken;
-      return true;
+      return data;
     })
-    .catch(() => false)
+    .catch(() => null)
     .finally(() => {
       dangLamMoi = null;
     });
@@ -61,9 +73,9 @@ export async function apiFetch<T>(
     throw new ApiError(0, "Không thể kết nối tới máy chủ.");
   }
 
-  if (res.status === 401 && choPhepThuLai && !path.startsWith("/auth/")) {
-    const ok = await lamMoiMotLan();
-    if (ok) return apiFetch<T>(path, init, false);
+    if (res.status === 401 && choPhepThuLai && !path.startsWith("/auth/")) {
+    const ketQua = await lamMoiPhien();
+    if (ketQua) return apiFetch<T>(path, init, false);
   }
 
   if (res.status === 204) return undefined as T;
