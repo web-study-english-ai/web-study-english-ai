@@ -13,6 +13,31 @@ DEFAULT_W = [0.4, 0.9, 2.3, 10.9, 4.93, 0.94, 0.86, 0.01,
 S_MIN, S_MAX = 0.01, 36500.0
 D_MIN, D_MAX = 1.0, 10.0
 
+# Bien duoi / bien tren cho 17 tham so w0..w16.
+# Nguon: quy uoc cua cong dong FSRS (fsrs-optimizer). Coi day la gia tri
+# khoi diem hop ly, khong phai chan ly - truoc khi nop bao cao nen doi chieu
+# lai voi repo goc va ghi ro phien ban da doi chieu.
+#
+# Dat o day chu khong o training/config.py vi day la thuoc tinh cua MO HINH,
+# khong phai cua quy trinh huan luyen: Dockerfile chi COPY app/ nen code chay
+# tren production khong nhin thay training/. training/config.py import nguoc lai.
+W_MIN = [
+    0.001, 0.001, 0.001, 0.001,   # w0..w3  do ben ban dau theo 4 muc danh gia
+    1.0,   0.001, 0.001, 0.001,   # w4..w7  do kho ban dau + cap nhat do kho
+    0.0,   0.0,   0.001,          # w8..w10 cap nhat do ben khi nho duoc
+    0.001, 0.001, 0.001, 0.0,     # w11..w14 cap nhat do ben khi quen
+    0.0,   1.0,                   # w15, w16 he so phat Kho / thuong De
+]
+W_MAX = [
+    100.0, 100.0, 100.0, 100.0,
+    10.0,  4.0,   4.0,   0.75,
+    4.5,   0.8,   3.5,
+    5.0,   0.25,  0.9,   4.0,
+    1.0,   6.0,
+]
+
+N_PARAMS = len(DEFAULT_W)
+
 
 class FSRSModel(nn.Module):
     def __init__(self, w=None):
@@ -82,3 +107,60 @@ class FSRSModel(nn.Module):
     def next_interval(self, s, target_retention=0.9):
         """Bai toan nguoc: cho nguong xac suat, tim so ngay."""
         return s / FACTOR * (target_retention ** (1 / DECAY) - 1)
+
+    @torch.no_grad()
+    def predict_step(
+        self,
+        stability: torch.Tensor,
+        difficulty: torch.Tensor,
+        elapsed_days: torch.Tensor,
+        rating: torch.Tensor,
+        is_new: torch.Tensor,
+        max_interval: float = S_MAX,
+        target_retention: float = 0.9,
+    ) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, torch.Tensor]:
+        """Suy luan MOT luot on cho ca lo the. Dung cho endpoint /predict-retention.
+
+        Khac forward(): forward() chay ca chuoi nhieu luot de huan luyen, con ham nay
+        nhan trang thai hien tai cua the (S, D do backend luu) va tra trang thai sau
+        luot on vua roi. Ca hai dung chung dung cac ham cong thuc ben tren, khong
+        chep lai cong thuc lan hai - de endpoint khong bao gio lech voi ban huan luyen.
+
+        Tham so:
+            stability, difficulty : (B,) float. Voi the moi thi bi bo qua, truyen gi cung duoc.
+            elapsed_days          : (B,) float, so ngay ke tu lan on truoc.
+            rating                : (B,) long 1..4, diem nguoi hoc vua cham.
+            is_new                : (B,) bool, True = the chua tung on.
+            max_interval          : tran so ngay. La THAM SO chu khong doc tu app.config -
+                                    module nay bi code huan luyen import, ma app.config
+                                    doi INTERNAL_API_KEY ngay luc import.
+
+        Tra ve (retrievability, new_stability, new_difficulty, interval_days).
+        retrievability cua the moi la NaN: chua co lan on truoc nen dai luong nay
+        khong ton tai. Router doi thanh null, khong bia so.
+        """
+        # The moi khong co S/D that. Thay bang gia tri giu cho HOP LE truoc khi tinh
+        # de tranh chia cho 0 hoac luy thua so am -> NaN lan sang ca the cu trong lo.
+        s = torch.where(is_new, torch.ones_like(stability), stability)
+        d = torch.where(is_new, torch.full_like(difficulty, 5.0), difficulty)
+
+        r = self.retrievability(elapsed_days, s)
+
+        # Ca hai nhanh deu tinh cho toan lo roi moi chon bang where: giu vector hoa,
+        # khong re nhanh bang Python (quy tac 11).
+        s_succ = self.stability_on_success(s, d, r, rating)
+        s_lapse = self.stability_on_lapse(s, d, r)
+        s_review = torch.where(rating > 1, s_succ, s_lapse)
+        d_review = self.next_difficulty(d, rating)
+
+        new_stability = torch.where(is_new, self.init_stability(rating), s_review)
+        new_difficulty = torch.where(is_new, self.init_difficulty(rating), d_review)
+
+        retrievability = torch.where(is_new, torch.full_like(r, float("nan")), r)
+
+        # round chu khong ceil: S'=1.1 ma tra 2 ngay thi luc den han R ~ 0.84,
+        # da tut duoi nguong 0.9 truoc khi nguoi hoc kip on.
+        interval = self.next_interval(new_stability, target_retention)
+        interval_days = interval.round().clamp(1.0, float(max_interval))
+
+        return retrievability, new_stability, new_difficulty, interval_days

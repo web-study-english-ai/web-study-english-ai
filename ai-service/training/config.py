@@ -15,23 +15,11 @@ import numpy as np
 import torch
 
 # Bien duoi / bien tren cho 17 tham so w0..w16.
-# Nguon: quy uoc cua cong dong FSRS (fsrs-optimizer). Coi day la gia tri
-# khoi diem hop ly, khong phai chan ly - truoc khi nop bao cao nen doi chieu
-# lai voi repo goc va ghi ro phien ban da doi chieu.
-W_MIN = [
-    0.001, 0.001, 0.001, 0.001,   # w0..w3  do ben ban dau theo 4 muc danh gia
-    1.0,   0.001, 0.001, 0.001,   # w4..w7  do kho ban dau + cap nhat do kho
-    0.0,   0.0,   0.001,          # w8..w10 cap nhat do ben khi nho duoc
-    0.001, 0.001, 0.001, 0.0,     # w11..w14 cap nhat do ben khi quen
-    0.0,   1.0,                   # w15, w16 he so phat Kho / thuong De
-]
-W_MAX = [
-    100.0, 100.0, 100.0, 100.0,
-    10.0,  4.0,   4.0,   0.75,
-    4.5,   0.8,   3.5,
-    5.0,   0.25,  0.9,   4.0,
-    1.0,   6.0,
-]
+# Dinh nghia that nam trong app/models/fsrs.py - chung la thuoc tinh cua mo hinh,
+# khong phai cua quy trinh huan luyen. Docker chi COPY app/ nen ma chay tren
+# production khong nhin thay thu muc training/; de o day thi service se ImportError.
+# Re-export de cac duong import cu (trainer.py, tests/) khong phai sua.
+from app.models.fsrs import W_MAX, W_MIN  # noqa: F401
 
 
 @dataclass
