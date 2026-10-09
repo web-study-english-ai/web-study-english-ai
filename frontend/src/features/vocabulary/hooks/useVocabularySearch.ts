@@ -7,18 +7,25 @@ import { VocabularyFilters, VocabularyItem } from "../types/vocabulary_types";
 import { useDebouncedValue } from "@/lib/hooks/useDebouncedValue";
 
 export function useVocabularySearch() {
-  const [filters, setFilters] = useState<VocabularyFilters>({
+  const [filters, setFiltersRaw] = useState<VocabularyFilters>({
     query: "",
     topicId: "all",
     level: "all",
   });
+  const [page, setPage] = useState(1);
   const [selected, setSelected] = useState<VocabularyItem | null>(null);
 
   const debouncedFilters = useDebouncedValue(filters, 300);
 
+  // Đổi bộ lọc thì luôn quay về trang 1, tránh kẹt ở trang trống
+  function setFilters(update: VocabularyFilters | ((prev: VocabularyFilters) => VocabularyFilters)) {
+    setFiltersRaw(update);
+    setPage(1);
+  }
+
   const { data, isLoading, isError, error, refetch } = useQuery({
-    queryKey: ["vocabulary", debouncedFilters],
-    queryFn: () => searchWordsApi(debouncedFilters),
+    queryKey: ["vocabulary", debouncedFilters, page],
+    queryFn: () => searchWordsApi(debouncedFilters, page),
     placeholderData: keepPreviousData,
     staleTime: 5 * 60 * 1000,
   });
@@ -29,6 +36,8 @@ export function useVocabularySearch() {
   return {
     filters,
     setFilters,
+    page,
+    setPage,
     results,
     meta: data?.meta,
     selected: effectiveSelected,
