@@ -16,10 +16,10 @@ import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function VocabularyPage() {
-  const { filters, setFilters, results, selected, setSelected, isLoading, isError, error, refetch } =
-    useVocabularySearch();
+  const { filters, setFilters, results, selected, setSelected, isLoading, isError, error, page, setPage, meta, refetch } = useVocabularySearch();
    const {
     deck,
     isInDeck,
@@ -97,6 +97,32 @@ export default function VocabularyPage() {
                     }}
                   />
                 ))}
+
+                 {!isLoading && !isError && meta && meta.totalPages > 1 && (
+                <div className="mt-4 flex items-center justify-center gap-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => p - 1)}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Trước
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    Trang {meta.page} / {meta.totalPages}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={page >= meta.totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    Sau
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className="lg:sticky lg:top-20 lg:self-start">
