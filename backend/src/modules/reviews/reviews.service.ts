@@ -12,21 +12,64 @@ const MOT_NGAY_MS = 24 * 60 * 60 * 1000;
 const CUA_SO_GUI_TRUNG_MS = 10_000;
 /** Bước học lại trong phiên, giữ nguyên dù AI chỉ trả khoảng tính bằng ngày */
 const KHOANG_HOC_LAI_NGAY = 10 / 1440;
-
+interface TheLapLich {
+  id: string;
+  state: CardState;
+  difficulty: number | null;
+  stability: number | null;
+  pendingIntervalDays: number | null;
+}
 @Injectable()
 export class ReviewsService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly aiClient: AiSchedulerClient,
   ) {}
+  /**
+   * Thẻ đang ở bước học lại thì không gọi AI: lượt này cách lượt trước chỉ 10 phút
+   * nên R ≈ 1, gửi sang AI chỉ làm D bị trừ lần thứ hai cho cùng một lần quên.
+   * Khoảng ôn thật đã được AI trả từ lúc thẻ bị quên và treo ở pendingIntervalDays.
+   */
+  private lapLichBuocHocLai(
+    card: TheLapLich,
+    rating: number,
+    scheduledDays: number | null,
+    moc: Date,
+  ): KetQuaLapLich {
+    const laQuen = rating === 1;
+
+    const khoang = laQuen
+      ? KHOANG_HOC_LAI_NGAY
+      : (card.pendingIntervalDays ??
+        tinhLich(card.state, rating, scheduledDays, moc).nextIntervalDays);
+
+    return {
+      stateAfter: tinhTrangThaiSau(card.state, rating),
+      nextIntervalDays: khoang,
+      dueAt: new Date(moc.getTime() + khoang * MOT_NGAY_MS),
+      laQuen,
+      difficultyAfter: card.difficulty,
+      stabilityAfter: card.stability,
+      predictedRetrievability: null,
+      // Vẫn chưa nhớ thì giữ khoảng treo, qua được rồi thì xoá
+      pendingIntervalDaysAfter: laQuen ? card.pendingIntervalDays : null,
+      scheduler: SchedulerSource.RELEARN_STEP,
+      modelVersion: null,
+    };
+  }
+
   /** Gọi dịch vụ AI, hỏng thì rơi về công thức dự phòng. Luôn trả về kết quả dùng được. */
   private async lapLich(
-    card: { id: string; state: CardState; difficulty: number | null; stability: number | null },
+    card: TheLapLich,
     rating: number,
     scheduledDays: number | null,
     elapsedDays: number | null,
     moc: Date,
   ): Promise<KetQuaLapLich> {
+    if (card.state === CardState.LEARNING || card.state === CardState.RELEARNING) {
+      return this.lapLichBuocHocLai(card, rating, scheduledDays, moc);
+    }
+
     // Hợp đồng bắt S và D phải cùng có hoặc cùng vắng, gửi lệch là 422
     const coDuDS = card.difficulty !== null && card.stability !== null;
 
@@ -49,6 +92,7 @@ export class ReviewsService {
         difficultyAfter: card.difficulty,
         stabilityAfter: card.stability,
         predictedRetrievability: null,
+        pendingIntervalDaysAfter: null,
         scheduler: SchedulerSource.FALLBACK_TS,
         modelVersion: null,
       };
@@ -56,8 +100,8 @@ export class ReviewsService {
 
     const laQuen = rating === 1;
 
-    // Dịch vụ AI chỉ trả khoảng tính bằng ngày, nhỏ nhất là 1. Nhưng UC009 luồng 6a
-    // bắt thẻ "Chưa nhớ" quay lại ngay trong phiên, nên backend giữ bước 10 phút.
+    // UC009 luồng 6a bắt thẻ "Chưa nhớ" quay lại ngay trong phiên, nên backend
+    // giữ bước 10 phút và treo khoảng của AI lại để dùng khi qua được bước đó.
     const nextIntervalDays = laQuen ? KHOANG_HOC_LAI_NGAY : ketQua.interval_days;
 
     return {
@@ -68,6 +112,7 @@ export class ReviewsService {
       difficultyAfter: ketQua.new_difficulty,
       stabilityAfter: ketQua.new_stability,
       predictedRetrievability: ketQua.retrievability,
+      pendingIntervalDaysAfter: laQuen ? ketQua.interval_days : null,
       scheduler: SchedulerSource.FSRS_AI,
       modelVersion: phanHoi.model_version,
     };
@@ -93,6 +138,7 @@ export class ReviewsService {
         reps: true,
         difficulty: true,
         stability: true,
+        pendingIntervalDays: true,
         lastReviewedAt: true,
         dueAt: true,
         lapses: true,
@@ -170,6 +216,7 @@ export class ReviewsService {
           data: {
             difficulty: lich.difficultyAfter,
             stability: lich.stabilityAfter,
+            pendingIntervalDays: lich.pendingIntervalDaysAfter,
             state: lich.stateAfter,
             reps: { increment: 1 },
             ...(lich.laQuen ? { lapses: { increment: 1 } } : {}),

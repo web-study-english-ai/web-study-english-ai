@@ -51,6 +51,7 @@ const theDangOn = {
   lapses: 1,
   difficulty: 0.45,
   stability: 3.2,
+  pendingIntervalDays: null,
   dueAt: new Date('2026-09-06T10:00:00.000Z'),
   lastReviewedAt: new Date('2026-09-05T10:00:00.000Z'),
 };
@@ -73,7 +74,7 @@ describe('ReviewsService', () => {
       nextIntervalDays: 4,
     });
     txMock.review.create.mockResolvedValue({ id: 'review-1' });
-        txMock.userCard.update.mockResolvedValue({ id: CARD_ID });
+    txMock.userCard.update.mockResolvedValue({ id: CARD_ID });
     aiMock.duBao.mockResolvedValue(null);
 
     const module: TestingModule = await Test.createTestingModule({
@@ -82,7 +83,7 @@ describe('ReviewsService', () => {
         { provide: PrismaService, useValue: prismaMock },
         { provide: AiSchedulerClient, useValue: aiMock },
       ],
-        }).compile();
+    }).compile();
 
     service = module.get<ReviewsService>(ReviewsService);
   });
@@ -336,6 +337,88 @@ describe('ReviewsService', () => {
       ]);
     });
   });
+  describe('bước học lại', () => {
+    const theHocLai = {
+      ...theDangOn,
+      state: 'RELEARNING' as const,
+      pendingIntervalDays: 12,
+      lastReviewedAt: new Date('2026-09-07T09:50:00.000Z'),
+    };
+
+    it('qua được bước học lại thì dùng khoảng AI đã treo, không gọi AI lần nữa', async () => {
+      prismaMock.userCard.findUnique.mockResolvedValue(theHocLai);
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 3, durationMs: 4500 });
+
+      expect(aiMock.duBao).not.toHaveBeenCalled();
+      expect(duLieuGhi().scheduler).toBe('RELEARN_STEP');
+      expect(duLieuGhi().nextIntervalDays).toBe(12);
+
+      const data = txMock.userCard.update.mock.calls[0][0].data;
+      expect(data.state).toBe('REVIEW');
+      expect(data.dueAt).toEqual(new Date('2026-09-19T10:00:00.000Z'));
+      expect(data.pendingIntervalDays).toBeNull();
+      expect(data.difficulty).toBe(0.45);
+      expect(data.stability).toBe(3.2);
+    });
+
+    it('vẫn chưa nhớ thì ở nguyên bước học lại và giữ khoảng treo', async () => {
+      prismaMock.userCard.findUnique.mockResolvedValue(theHocLai);
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 1, durationMs: 4500 });
+
+      expect(aiMock.duBao).not.toHaveBeenCalled();
+
+      const data = txMock.userCard.update.mock.calls[0][0].data;
+      expect(data.state).toBe('RELEARNING');
+      expect(data.dueAt).toEqual(new Date('2026-09-07T10:10:00.000Z'));
+      expect(data.pendingIntervalDays).toBe(12);
+    });
+
+    it('không có khoảng treo (lúc quên AI đang chết) thì lấy công thức dự phòng', async () => {
+      prismaMock.userCard.findUnique.mockResolvedValue({
+        ...theHocLai,
+        state: 'LEARNING',
+        pendingIntervalDays: null,
+      });
+      prismaMock.review.findFirst.mockResolvedValue({
+        id: 'review-truoc',
+        rating: 1,
+        reviewedAt: new Date('2026-09-07T09:50:00.000Z'),
+        nextIntervalDays: 10 / 1440,
+      });
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 3, durationMs: 4500 });
+
+      expect(aiMock.duBao).not.toHaveBeenCalled();
+
+      const data = txMock.userCard.update.mock.calls[0][0].data;
+      expect(data.state).toBe('REVIEW');
+      expect(data.dueAt).toEqual(new Date('2026-09-11T10:00:00.000Z'));
+    });
+
+    it('thẻ bị quên từ REVIEW thì treo lại khoảng AI vừa trả', async () => {
+      aiMock.duBao.mockResolvedValue({
+        model_version: 'fsrs-v1.0.0',
+        results: [
+          {
+            card_id: CARD_ID,
+            retrievability: 0.3,
+            new_stability: 1.2,
+            new_difficulty: 0.7,
+            interval_days: 12,
+          },
+        ],
+      });
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 1, durationMs: 4500 });
+
+      expect(aiMock.duBao).toHaveBeenCalled();
+
+      const data = txMock.userCard.update.mock.calls[0][0].data;
+      expect(data.state).toBe('RELEARNING');
+      expect(data.dueAt).toEqual(new Date('2026-09-07T10:10:00.000Z'));
+      expect(data.pendingIntervalDays).toBe(12);
+    });
+  });
 });
-
-

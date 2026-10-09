@@ -31,6 +31,7 @@ export interface KetQuaLapLich {
   difficultyAfter: number | null;
   stabilityAfter: number | null;
   predictedRetrievability: number | null;
+  pendingIntervalDaysAfter: number | null;
   scheduler: SchedulerSource;
   modelVersion: string | null;
 }
