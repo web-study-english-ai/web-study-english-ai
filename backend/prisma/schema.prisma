@@ -53,6 +53,7 @@ enum SchedulerSource {
   FSRS_AI
   FALLBACK_TS
   SM2
+  RELEARN_STEP
 }
 model User {
   id              String       @id @default(uuid())
@@ -143,6 +144,8 @@ model UserCard {
   state          CardState @default(NEW)
   difficulty     Float?
   stability      Float?
+  /// Khoảng AI trả lúc thẻ bị quên, treo lại để dùng khi qua bước học lại
+  pendingIntervalDays Float?    @map("pending_interval_days")
   reps           Int       @default(0)
   lapses         Int       @default(0)
   dueAt          DateTime? @map("due_at")
