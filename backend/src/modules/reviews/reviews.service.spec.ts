@@ -3,7 +3,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { Prisma } from '@prisma/client';
 import { PrismaService } from '@/prisma/prisma.service';
 import { ReviewsService } from './reviews.service';
-
+import { AiSchedulerClient } from './ai-scheduler.client';
 const txMock = {
   review: { create: vi.fn() },
   userCard: { update: vi.fn() },
@@ -14,7 +14,7 @@ const prismaMock = {
   review: { findFirst: vi.fn(), findUnique: vi.fn() },
   $transaction: vi.fn((cb: any) => cb(txMock)),
 };
-
+const aiMock = { duBao: vi.fn() };
 const USER_ID = 'user-1';
 const CARD_ID = 'aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa';
 const WORD_ID = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
@@ -73,11 +73,16 @@ describe('ReviewsService', () => {
       nextIntervalDays: 4,
     });
     txMock.review.create.mockResolvedValue({ id: 'review-1' });
-    txMock.userCard.update.mockResolvedValue({ id: CARD_ID });
+        txMock.userCard.update.mockResolvedValue({ id: CARD_ID });
+    aiMock.duBao.mockResolvedValue(null);
 
     const module: TestingModule = await Test.createTestingModule({
-      providers: [ReviewsService, { provide: PrismaService, useValue: prismaMock }],
-    }).compile();
+      providers: [
+        ReviewsService,
+        { provide: PrismaService, useValue: prismaMock },
+        { provide: AiSchedulerClient, useValue: aiMock },
+      ],
+        }).compile();
 
     service = module.get<ReviewsService>(ReviewsService);
   });
@@ -259,4 +264,78 @@ describe('ReviewsService', () => {
 
     expect(txMock.review.create).not.toHaveBeenCalled();
   });
+  describe('đường AI và đường dự phòng', () => {
+    const duBaoAI = {
+      model_version: 'fsrs-v1.0.0',
+      results: [
+        {
+          card_id: CARD_ID,
+          retrievability: 0.87,
+          new_stability: 9.5,
+          new_difficulty: 0.4,
+          interval_days: 12,
+        },
+      ],
+    };
+
+    it('AI trả kết quả thì ghi số của AI và đánh dấu FSRS_AI', async () => {
+      aiMock.duBao.mockResolvedValue(duBaoAI);
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 3, durationMs: 4500 });
+
+      expect(duLieuGhi().scheduler).toBe('FSRS_AI');
+      expect(duLieuGhi().modelVersion).toBe('fsrs-v1.0.0');
+      expect(duLieuGhi().predictedRetrievability).toBe(0.87);
+      expect(duLieuGhi().nextIntervalDays).toBe(12);
+
+      const data = txMock.userCard.update.mock.calls[0][0].data;
+      expect(data.difficulty).toBe(0.4);
+      expect(data.stability).toBe(9.5);
+      expect(data.dueAt).toEqual(new Date('2026-09-19T10:00:00.000Z'));
+    });
+
+    it('Chưa nhớ thì giữ bước 10 phút dù AI trả khoảng tính bằng ngày', async () => {
+      aiMock.duBao.mockResolvedValue(duBaoAI);
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 1, durationMs: 4500 });
+
+      const data = txMock.userCard.update.mock.calls[0][0].data;
+      expect(data.dueAt).toEqual(new Date('2026-09-07T10:10:00.000Z'));
+      expect(data.state).toBe('RELEARNING');
+      expect(data.lapses).toEqual({ increment: 1 });
+    });
+
+    it('AI không trả được thì rơi về dự phòng, giữ nguyên D/S cũ của thẻ', async () => {
+      aiMock.duBao.mockResolvedValue(null);
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 3, durationMs: 4500 });
+
+      expect(duLieuGhi().scheduler).toBe('FALLBACK_TS');
+      expect(duLieuGhi().modelVersion).toBeNull();
+      expect(duLieuGhi().predictedRetrievability).toBeNull();
+      expect(duLieuGhi().difficultyAfter).toBe(0.45);
+      expect(duLieuGhi().stabilityAfter).toBe(3.2);
+    });
+
+    it('thẻ mới gửi S và D cùng null theo hợp đồng v0.2', async () => {
+      prismaMock.userCard.findUnique.mockResolvedValue({
+        ...theDangOn,
+        state: 'NEW',
+        reps: 0,
+        lastReviewedAt: null,
+        difficulty: null,
+        stability: null,
+        dueAt: null,
+      });
+      prismaMock.review.findFirst.mockResolvedValue(null);
+
+      await service.createReview(USER_ID, { cardId: CARD_ID, rating: 3, durationMs: 4500 });
+
+      expect(aiMock.duBao).toHaveBeenCalledWith([
+        { card_id: CARD_ID, stability: null, difficulty: null, elapsed_days: 0, rating: 3 },
+      ]);
+    });
+  });
 });
+
+
