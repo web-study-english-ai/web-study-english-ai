@@ -45,21 +45,21 @@
 ## 2. Quy Chuẩn Header & Xử Lý Xác Thực
 
 ### 2.1. Tên Header Quy Định
-- **Header gửi từ Backend NestJS:** `x-api-key` *(theo hợp đồng API v0.2 được Backend triển khai tại `ai-scheduler.client.ts`)*
-- **Header tương thích:** `X-Internal-Api-Key` *(AI Service tại `deps.py` chấp nhận song song cả 2 header để đảm bảo an toàn tuyệt đối)*
+- **Header chuẩn:** `X-Internal-Api-Key`
+- **Header tương thích ngược:** `x-api-key` *(hỗ trợ hợp đồng API cũ trong `ai-service/docs/API_CONTRACT.md`)*
 
 ### 2.2. Bảng Phân Loại Endpoint Bảo Vệ
 
 | Phương thức | Đường dẫn | Cần khóa bảo mật? | Mã phản hồi khi vi phạm | Mục đích kỹ thuật |
 | :---: | :--- | :---: | :---: | :--- |
 | `GET` | `/health` | ❌ **Không (Public)** | — | Phục vụ GitHub Actions keep-alive định kỳ và kiểm tra sống còn của hạ tầng |
-| `POST` | `/predict-retention` | ✅ **Bắt buộc** | `401 Unauthorized` (Thiếu hoặc Sai) | Bảo vệ tài nguyên tính toán mô hình dự báo quên từ FSRS |
-| `POST` | `/recognize/image` | ✅ **Bắt buộc** | `401 Unauthorized` (Thiếu hoặc Sai) | Bảo vệ tài nguyên mô hình thị giác máy tính nhận diện từ vựng qua ảnh |
-| `POST` | `/assistant/ask` | ✅ **Bắt buộc** | `401 Unauthorized` (Thiếu hoặc Sai) | Bảo vệ hạn ngạch LLM và dữ liệu tri thức RAG |
+| `POST` | `/predict/forgetting` | ✅ **Bắt buộc** | `401` (Thiếu) / `403` (Sai) | Bảo vệ tài nguyên tính toán mô hình dự báo quên từ FSRS |
+| `POST` | `/recognize/image` | ✅ **Bắt buộc** | `401` (Thiếu) / `403` (Sai) | Bảo vệ tài nguyên mô hình thị giác máy tính nhận diện từ vựng qua ảnh |
+| `POST` | `/assistant/ask` | ✅ **Bắt buộc** | `401` (Thiếu) / `403` (Sai) | Bảo vệ hạn ngạch LLM và dữ liệu tri thức RAG |
 
 ### 2.3. Quy Chuẩn Mã Lỗi HTTP
 - **Thiếu header xác thực:** Trả về `401 Unauthorized` kèm thông báo `{"detail": "Thieu header X-Internal-Api-Key"}`.
-- **Header có nhưng sai khóa:** Trả về `401 Unauthorized` kèm thông báo `{"detail": "Khoa API noi bo khong hop le"}`. *(Thống nhất dùng 401 cho cả 2 trường hợp để bảo mật, tránh làm lộ thông tin cho kẻ dò khóa)*.
+- **Header có nhưng sai khóa:** Trả về `403 Forbidden` kèm thông báo `{"detail": "Khoa API noi bo khong hop le"}`.
 
 ---
 
@@ -67,9 +67,9 @@
 
 | Thành phần | Tên biến | Mẫu giá trị (Example) | Mô tả |
 | :--- | :--- | :--- | :--- |
-| **ai-service** | `INTERNAL_API_KEY` | `d1d30e825cddc90440cd3fc8c2547dc4239216eb...` | Khóa bí mật nội bộ mà ai-service dùng để đối chiếu (>= 32 ký tự) |
+| **ai-service** | `INTERNAL_API_KEY` | `d1d30e825cddc90440cd3fc8c2547dc4239216eb...` | Khóa bí mật nội bộ mà ai-service dùng để đối chiếu |
 | **backend** | `AI_SERVICE_URL` | `http://localhost:7860` (Dev) / `https://<space>.hf.space` (Prod) | Địa chỉ URL gọi đến AI Service |
-| **backend** | `AI_SERVICE_KEY` / `INTERNAL_API_KEY` | *(Cùng giá trị với ai-service)* | Khóa bí mật gửi kèm header `x-api-key` (>= 32 ký tự) |
+| **backend** | `INTERNAL_API_KEY` | *(Cùng giá trị với ai-service)* | Khóa bí mật gửi kèm header `X-Internal-Api-Key` |
 | **frontend** | *(Không có)* | — | **Tuyệt đối không khai báo** `INTERNAL_API_KEY` hoặc biến `NEXT_PUBLIC_*` liên quan đến AI |
 
 ---
@@ -86,7 +86,7 @@ configfile: pytest.ini
 
 ai-service\tests\test_auth.py::test_health_endpoint_is_public PASSED                   [ 16%]
 ai-service\tests\test_auth.py::test_predict_forgetting_missing_key_returns_401 PASSED  [ 33%]
-ai-service\tests\test_auth.py::test_predict_forgetting_wrong_key_returns_401 PASSED    [ 50%]
+ai-service\tests\test_auth.py::test_predict_forgetting_wrong_key_returns_403 PASSED    [ 50%]
 ai-service\tests\test_auth.py::test_predict_forgetting_valid_internal_key_passes_auth PASSED [ 66%]
 ai-service\tests\test_auth.py::test_legacy_x_api_key_header_passes_auth PASSED        [ 83%]
 ai-service\tests\test_auth.py::test_vision_and_rag_endpoints_require_auth PASSED      [100%]
