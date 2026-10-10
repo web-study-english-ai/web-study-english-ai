@@ -163,8 +163,8 @@ npm run build
    * File `.env` chứa thông tin nhạy cảm (JWT Secret, Database Credentials, API Keys).
    * Mọi cấu hình mới phải được khai báo mẫu vào file `.env.example` và thông báo cho DevOps.
 2. **Bảo mật giao tiếp nội bộ (Internal Security - WSEA-94):**
-   * Mọi API giao tiếp giữa Backend và AI Service phải gửi kèm header `X-Internal-Api-Key`.
-   * Sử dụng thuật toán so sánh hằng số thời gian (`secrets.compare_digest`) để ngăn chặn tấn công kênh phụ (Timing Attack).
+   * Mọi API giao tiếp giữa Backend và AI Service gửi kèm header `x-api-key` (hỗ trợ song song `X-Internal-Api-Key`) với khóa bí mật `AI_SERVICE_KEY` (chuỗi dài >= 32 ký tự).
+   * Sử dụng thuật toán so sánh hằng số thời gian (`secrets.compare_digest`) để ngăn chặn tấn công kênh phụ (Timing Attack). Sai hoặc thiếu khóa đều trả `401 Unauthorized`.
 3. **Database Connection Pooling:**
    * Môi trường Serverless / Cloud Hosting (Render) kết nối tới Supabase phải đi qua cổng Connection Pooler (`5432` Session Mode hoặc `6543` Transaction Mode) để tránh hiện tượng tràn số lượng kết nối tối đa (Max Connections Exhaustion).
 

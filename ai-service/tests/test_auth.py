@@ -25,21 +25,21 @@ def test_predict_forgetting_missing_key_returns_401():
     assert "Thieu header" in response.json()["detail"]
 
 
-def test_predict_forgetting_wrong_key_returns_403():
-    """Goi endpoint AI voi khoa sai phai bi chan voi 403 Forbidden."""
-    headers = {"X-Internal-Api-Key": "sai-khoa-bao-mat-123456"}
+def test_predict_forgetting_wrong_key_returns_401():
+    """Goi endpoint AI voi khoa sai phai bi chan voi 401 Unauthorized (theo hop dong API)."""
+    headers = {"X-Internal-Api-Key": "sai-khoa-bao-mat-123456-dai-hon-32-ky-tu"}
     response = client.post(
         "/predict/forgetting",
         headers=headers,
         json={"card_id": "test-card"},
     )
-    assert response.status_code == 403
+    assert response.status_code == 401
     assert response.json()["detail"] == "Khoa API noi bo khong hop le"
 
 
 def test_predict_forgetting_valid_internal_key_passes_auth():
     """Goi endpoint AI voi dung khoa noi bo phai vuot qua lop xac thuc (qua auth guard)."""
-    headers = {"X-Internal-Api-Key": settings.internal_api_key}
+    headers = {"X-Internal-Api-Key": settings.internal_api_key.get_secret_value()}
     response = client.post(
         "/predict/forgetting",
         headers=headers,
@@ -60,7 +60,7 @@ def test_predict_forgetting_valid_internal_key_passes_auth():
 
 def test_legacy_x_api_key_header_passes_auth():
     """Header x-api-key theo hop dong API cu van phai duoc chap nhan."""
-    headers = {"x-api-key": settings.internal_api_key}
+    headers = {"x-api-key": settings.internal_api_key.get_secret_value()}
     response = client.post(
         "/predict/forgetting",
         headers=headers,
