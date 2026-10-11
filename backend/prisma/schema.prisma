@@ -206,7 +206,8 @@ model Review {
 
   scheduler    SchedulerSource
   modelVersion String?         @map("model_version")
-
+  /// Mã do client sinh mỗi lần bấm đánh giá, dùng để nhận ra yêu cầu gửi lại
+  clientEventId String?        @unique @map("client_event_id")
   createdAt DateTime @default(now()) @map("created_at")
 
   user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
