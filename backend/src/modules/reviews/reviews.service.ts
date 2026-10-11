@@ -9,6 +9,8 @@ import { KetQuaLapLich } from './ai-scheduler.types';
 const CLAMP_DURATION_MS = 60_000;
 const TRAN_ELAPSED_NGAY = 1095;
 const MOT_NGAY_MS = 24 * 60 * 60 * 1000;
+/** Cho phép client gửi lượt ôn lùi tối đa 7 ngày, đủ cho một đợt mất mạng dài */
+const TRAN_LUI_MS = 7 * MOT_NGAY_MS;
 const CUA_SO_GUI_TRUNG_MS = 10_000;
 /** Bước học lại trong phiên, giữ nguyên dù AI chỉ trả khoảng tính bằng ngày */
 const KHOANG_HOC_LAI_NGAY = 10 / 1440;
@@ -123,7 +125,7 @@ export class ReviewsService {
     if (!gui) return bayGio;
     const guiMs = new Date(gui).getTime();
     if (Number.isNaN(guiMs)) return bayGio;
-    const somNhat = bayGio.getTime() - MOT_NGAY_MS;
+    const somNhat = bayGio.getTime() - TRAN_LUI_MS;
     return new Date(Math.min(Math.max(guiMs, somNhat), bayGio.getTime()));
   }
 
@@ -145,6 +147,26 @@ export class ReviewsService {
       },
     });
     if (!card || card.userId !== userId) throw new NotFoundException('Không tìm thấy thẻ');
+    // Mã do client sinh: một lần bấm đánh giá là một mã, gửi lại bao nhiêu lần cũng mang mã đó.
+    // Chính xác hơn cửa sổ thời gian, và là thứ duy nhất đúng khi gửi lại hàng loạt sau offline.
+    if (dto.clientEventId) {
+      const daGhi = await this.prisma.review.findUnique({
+        where: { clientEventId: dto.clientEventId },
+      });
+      if (daGhi) {
+        return {
+          review: daGhi,
+          card: {
+            id: card.id,
+            state: card.state,
+            dueAt: card.dueAt,
+            reps: card.reps,
+            lapses: card.lapses,
+          },
+          trungLap: true,
+        };
+      }
+    }
 
     const moc = this.mocOnTap(dto.reviewedAt);
     const reviewTh = card.reps + 1;
@@ -156,9 +178,10 @@ export class ReviewsService {
     });
     const scheduledDays = luotTruoc?.nextIntervalDays ?? null;
 
-    // Gửi lại sau khi lượt đầu đã ghi xong: ràng buộc unique không bắt được
-    // vì reps đã tăng, nên chặn bằng cửa sổ thời gian.
+    // Client chưa gửi clientEventId thì vẫn phải đoán bằng cửa sổ thời gian:
+    // ràng buộc unique không bắt được vì reps đã tăng.
     if (
+      !dto.clientEventId &&
       luotTruoc &&
       luotTruoc.rating === dto.rating &&
       moc.getTime() - luotTruoc.reviewedAt.getTime() <= CUA_SO_GUI_TRUNG_MS
@@ -208,6 +231,7 @@ export class ReviewsService {
             nextIntervalDays: lich.nextIntervalDays,
             scheduler: lich.scheduler,
             modelVersion: lich.modelVersion,
+            clientEventId: dto.clientEventId ?? null,
           },
         });
 
@@ -230,13 +254,31 @@ export class ReviewsService {
       });
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
-        return this.xuLyGuiTrung(card.id, reviewTh, dto.rating);
+        return this.xuLyGuiTrung(card.id, reviewTh, dto.rating, dto.clientEventId);
       }
       throw e;
     }
   }
 
-  private async xuLyGuiTrung(cardId: string, reviewTh: number, rating: number) {
+  private async xuLyGuiTrung(
+    cardId: string,
+    reviewTh: number,
+    rating: number,
+    clientEventId?: string,
+  ) {
+    // Hai yêu cầu giống hệt chạy song song: cái thứ hai đụng khoá client,
+    // trả lại bản ghi mà cái thứ nhất vừa tạo.
+    if (clientEventId) {
+      const theoKhoa = await this.prisma.review.findUnique({ where: { clientEventId } });
+      if (theoKhoa) {
+        const theHienTai = await this.prisma.userCard.findUnique({
+          where: { id: cardId },
+          select: { id: true, state: true, dueAt: true, reps: true, lapses: true },
+        });
+        return { review: theoKhoa, card: theHienTai, trungLap: true };
+      }
+    }
+
     const daCo = await this.prisma.review.findUnique({
       where: { cardId_reviewTh: { cardId, reviewTh } },
     });

@@ -40,6 +40,7 @@ const TRUONG_BAT_BUOC = [
   'nextIntervalDays',
   'scheduler',
   'modelVersion',
+  'clientEventId',
 ].sort();
 
 const theDangOn = {
@@ -91,7 +92,7 @@ describe('ReviewsService', () => {
   afterEach(() => vi.useRealTimers());
 
   describe('ghi bản ghi nhật ký', () => {
-    it('ghi đủ 19 trường, không thừa không thiếu', async () => {
+    it('ghi đủ 20 trường, không thừa không thiếu', async () => {
       await service.createReview(USER_ID, { cardId: CARD_ID, rating: 3, durationMs: 4500 });
       expect(Object.keys(duLieuGhi()).sort()).toEqual(TRUONG_BAT_BUOC);
     });
@@ -419,6 +420,101 @@ describe('ReviewsService', () => {
       expect(data.state).toBe('RELEARNING');
       expect(data.dueAt).toEqual(new Date('2026-09-07T10:10:00.000Z'));
       expect(data.pendingIntervalDays).toBe(12);
+    });
+  });
+
+  describe('khoá chống trùng do client sinh', () => {
+    const KHOA = '11111111-1111-4111-8111-111111111111';
+
+    it('mã đã ghi rồi thì trả bản cũ, không ghi thêm', async () => {
+      prismaMock.review.findUnique.mockResolvedValue({ id: 'review-cu', rating: 3 });
+
+      const kq = await service.createReview(USER_ID, {
+        cardId: CARD_ID,
+        rating: 3,
+        durationMs: 4500,
+        clientEventId: KHOA,
+      });
+
+      expect(kq.trungLap).toBe(true);
+      expect(kq.review).toMatchObject({ id: 'review-cu' });
+      expect(txMock.review.create).not.toHaveBeenCalled();
+      expect(txMock.userCard.update).not.toHaveBeenCalled();
+    });
+
+    it('mã mới thì ghi bình thường và lưu lại mã', async () => {
+      prismaMock.review.findUnique.mockResolvedValue(null);
+
+      await service.createReview(USER_ID, {
+        cardId: CARD_ID,
+        rating: 3,
+        durationMs: 4500,
+        clientEventId: KHOA,
+      });
+
+      expect(duLieuGhi().clientEventId).toBe(KHOA);
+    });
+
+    it('có mã thì cửa sổ 10 giây không nuốt mất lượt ôn thật', async () => {
+      prismaMock.review.findUnique.mockResolvedValue(null);
+      prismaMock.review.findFirst.mockResolvedValue({
+        id: 'review-truoc',
+        rating: 3,
+        reviewedAt: new Date('2026-09-07T09:59:55.000Z'),
+        nextIntervalDays: 4,
+      });
+
+      const kq = await service.createReview(USER_ID, {
+        cardId: CARD_ID,
+        rating: 3,
+        durationMs: 4500,
+        clientEventId: KHOA,
+      });
+
+      expect(kq.trungLap).toBe(false);
+      expect(txMock.review.create).toHaveBeenCalled();
+    });
+
+    it('không gửi mã thì vẫn dùng cửa sổ 10 giây như cũ', async () => {
+      prismaMock.review.findFirst.mockResolvedValue({
+        id: 'review-truoc',
+        rating: 3,
+        reviewedAt: new Date('2026-09-07T09:59:55.000Z'),
+        nextIntervalDays: 4,
+      });
+
+      const kq = await service.createReview(USER_ID, {
+        cardId: CARD_ID,
+        rating: 3,
+        durationMs: 4500,
+      });
+
+      expect(kq.trungLap).toBe(true);
+      expect(txMock.review.create).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('thời điểm ôn khi đồng bộ offline', () => {
+    it('giữ nguyên thời điểm lùi 3 ngày', async () => {
+      await service.createReview(USER_ID, {
+        cardId: CARD_ID,
+        rating: 3,
+        durationMs: 4500,
+        reviewedAt: '2026-09-04T10:00:00.000Z',
+      });
+
+      expect(duLieuGhi().reviewedAt).toEqual(new Date('2026-09-04T10:00:00.000Z'));
+    });
+
+    it('kẹp thời điểm lùi quá 7 ngày về đúng mốc 7 ngày', async () => {
+      await service.createReview(USER_ID, {
+        cardId: CARD_ID,
+        rating: 3,
+        durationMs: 4500,
+        reviewedAt: '2026-08-28T10:00:00.000Z',
+      });
+
+      expect(duLieuGhi().reviewedAt).toEqual(new Date('2026-08-31T10:00:00.000Z'));
     });
   });
 });
