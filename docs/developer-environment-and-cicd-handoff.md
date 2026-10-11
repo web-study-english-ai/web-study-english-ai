@@ -132,7 +132,7 @@ Toàn bộ kiểm định chất lượng mã nguồn được tự động hóa
 ### 3.2. Cơ chế CD (Continuous Deployment) liên kết:
 * **Staging:** Khi PR được duyệt và merge vào `develop`, Render Webhook nhận tín hiệu và kích hoạt quy trình Build & Deploy tự động lên môi trường Staging.
 * **Production:** Khi hoàn tất sprint và merge vào `main`, bản release chính thức được tự động triển khai lên Production.
-* **Hệ thống AI Monitoring:** File workflow `.github/workflows/ai-service-keep-alive.yml` tự động gửi tín hiệu kiểm tra sức khỏe (`GET /health`) định kỳ 14 phút/lần, đảm bảo container AI không bị rơi vào trạng thái ngủ đông (Sleep Mode).
+* **Hệ thống Backend Keep-Alive & Tiết kiệm Quota:** File workflow `.github/workflows/backend-keep-alive.yml` tự động gửi tín hiệu kiểm tra sức khỏe (`GET /health`) định kỳ 14 phút/lần trong khung giờ học tập (07:00 – 23:00 GMT+7), đảm bảo Backend không bị rơi vào trạng thái ngủ đông (chống Cold Start 60s) đồng thời tiết kiệm hạn ngạch 750 giờ/tháng của Render cho Staging.
 
 ---
 
