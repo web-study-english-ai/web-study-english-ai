@@ -42,6 +42,7 @@ export function useVocabularySearch() {
     meta: data?.meta,
     selected: effectiveSelected,
     setSelected,
+    rawSelected: selected,       // null nếu người dùng chưa bấm chọn từ nào
     isLoading,
     isError,
     error,
