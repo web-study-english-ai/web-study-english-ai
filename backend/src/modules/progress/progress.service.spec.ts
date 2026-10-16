@@ -42,6 +42,12 @@ describe('ProgressService', () => {
     const result = await service.getStats('new-user-123');
 
     expect(result).toBeDefined();
+    expect(result.totalWords).toBe(0);
+    expect(result.weeklyGain).toBe(0);
+    expect(result.statusCounts.mastered).toBe(0);
+    expect(result.statusCounts.learning).toBe(0);
+    expect(result.statusCounts.notLearned).toBe(0);
+    expect(result.totalWordsTimeline).toHaveLength(4);
     expect(result.summary.totalWords.count).toBe(0);
     expect(result.summary.totalWords.changeVsLastWeek).toBe(0);
     expect(result.summary.streak.current).toBe(0);
@@ -107,6 +113,15 @@ describe('ProgressService', () => {
       .mockResolvedValueOnce([{ reviewedAt: now, stabilityAfter: 25.0 }]); // reviews30Days
 
     const result = await service.getStats('active-user-456');
+
+    expect(result.totalWords).toBe(100);
+    expect(result.weeklyGain).toBe(12);
+    expect(result.statusCounts.mastered).toBe(65);
+    expect(result.statusCounts.learning).toBe(25);
+    expect(result.statusCounts.notLearned).toBe(10);
+    expect(result.retentionRate7d).toBe(90);
+    expect(result.streakDays).toBeGreaterThanOrEqual(1);
+    expect(result.totalWordsTimeline).toHaveLength(4);
 
     expect(result.summary.totalWords.count).toBe(100);
     expect(result.summary.totalWords.changeVsLastWeek).toBe(12);

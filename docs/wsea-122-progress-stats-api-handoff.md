@@ -1,11 +1,11 @@
 # TÀI LIỆU BÀN GIAO KỸ THUẬT & API CONTRACT: WSEA-122
 ## API THỐNG KÊ TIẾN ĐỘ HỌC TẬP (PROGRESS STATS API)
 
-* **Mã task Jira:** `WSEA-122`
-* **Người thực hiện:** Phạm Thái Bình (DevOps / Backend Engineer)
-* **Bên tiếp nhận:** Frontend Team (TV - WSEA-116), QA/Tester Team, Project Manager
-* **Trạng thái:** Hoàn thành (100% Unit Tests & Build Passed)
-* **Ngày bàn giao:** 17/10/2026
+* **Mã task Jira:** `WSEA-122` (Backend) & `WSEA-116` (Frontend)
+* **Kỹ sư phụ trách:** Phạm Thái Bình (DevOps / Backend)
+* **Bên tiếp nhận:** Frontend Team (TV), QA/Tester Team, Project Manager
+* **Trạng thái:** Hoàn thành & Đã đồng bộ 100% với Frontend (Tests & Build Passed)
+* **Ngày cập nhật:** 17/10/2026
 
 ---
 
@@ -17,49 +17,58 @@
 * **Base URL (Local):** `http://localhost:3001/api/progress/stats`
 * **Xác thực (Auth):** Bắt buộc (`JwtAuthGuard`). 
   * Header: `Authorization: Bearer <access_token>`
-  * Hoặc Cookie chứa JWT token khi đăng nhập.
+  * *Lưu ý Frontend:* Sử dụng hàm `apiFetch<ProgressStats>('/progress/stats')` từ `@/lib/api/client` để tự động truyền token và tự refresh khi hết hạn.
 
 ---
 
-### 2. ÁNH XẠ TRƯỜNG DỮ LIỆU VỚI GIAO DIỆN (UI MAPPING)
+### 2. CẤU TRÚC DỮ LIỆU ĐỒNG BỘ FRONTEND (WSEA-116 MAPPING)
 
-| Khối giao diện | Trường trong JSON Response | Kiểu dữ liệu | Ý nghĩa |
-| :--- | :--- | :--- | :--- |
-| **Card 1: Tổng từ đã học** | `summary.totalWords.count`<br>`summary.totalWords.changeVsLastWeek` | `number`<br>`number` | Tổng số từ trong bộ thẻ cá nhân.<br>Số từ mới học trong 7 ngày qua. |
-| **Card 2: Tỷ lệ nhớ 7 ngày** | `summary.retentionRate7Days.rate`<br>`summary.retentionRate7Days.status`<br>`summary.retentionRate7Days.statusText` | `number` (0-100)<br>`enum`<br>`string` | Tỷ lệ ôn tập thành công (rating >= 3).<br>`EXCELLENT`, `GOOD`, `FAIR`, `POOR`<br>"Xuất sắc", "Tốt", "Trung bình", "Cần cố gắng" |
-| **Card 3: Chuỗi ngày liên tục** | `summary.streak.current`<br>`summary.streak.longest`<br>`summary.streak.studiedToday`<br>`summary.streak.message` | `number`<br>`number`<br>`boolean`<br>`string` | Chuỗi ngày học liên tục hiện tại.<br>Kỷ lục chuỗi ngày dài nhất.<br>Trạng thái hôm nay đã học chưa.<br>Thông điệp khích lệ chuỗi học. |
-| **Card 4: Độ bền trí nhớ (AI)** | `summary.memoryStability.score`<br>`summary.memoryStability.changeVsLastWeek` | `number` (0-100)<br>`number` | Điểm độ bền trí nhớ trung bình quy đổi từ FSRS AI.<br>Mức tăng trưởng % so với tuần trước. |
-| **Biểu đồ đường: Độ bền trí nhớ 30 ngày** | `stabilityTimeline` | `Array<{ label, date, value }>` | 4 mốc tuần (Tuần 1 -> Tuần 4) phục vụ vẽ đường biểu đồ tăng trưởng trí nhớ dài hạn. |
-| **Biểu đồ tròn: Phân bố trạng thái thẻ** | `cardDistribution.mastered`<br>`cardDistribution.learning`<br>`cardDistribution.unlearned`<br>`cardDistribution.total` | `object: { count, percentage }`<br>`object: { count, percentage }`<br>`object: { count, percentage }`<br>`number` | Nhóm *Đã thuộc* (State REVIEW).<br>Nhóm *Đang học* (State LEARNING/RELEARNING).<br>Nhóm *Chưa học* (State NEW).<br>Tổng số thẻ. |
-| **Biểu đồ cột: Hoạt động hàng ngày** | `dailyActivity` | `Array<{ day, date, newWords, reviews }>` | 7 ngày gần nhất (T2 -> CN). Cột xanh: số từ mới; Cột cam: số lượt ôn. |
-| **Dải khích lệ chân trang** | `motivationalMessage` | `string` | Thông điệp thông minh sinh động theo trạng thái học tập của user. |
+API hỗ trợ đồng thời cả **Trường phẳng (Flat fields)** mà giao diện màn hình `WSEA-116` đang dùng và **Trường mở rộng (Detailed fields)**:
+
+#### 2.1. Các trường phẳng giao diện đang sử dụng (Core UI):
+| Trường JSON | Kiểu dữ liệu | Vị trí hiển thị trên giao diện (`/progress`) |
+| :--- | :--- | :--- |
+| `totalWords` | `number` | Thẻ **Tổng từ đã học** (số lượng từ lớn, ví dụ: `842 từ`). |
+| `weeklyGain` | `number` | Thẻ **Tổng từ đã học** (`+12 từ so với tuần trước`). |
+| `statusCounts` | `object` | Dòng trạng thái nhỏ dưới thẻ tổng từ: `Đã thuộc {mastered} · Đang học {learning} · Chưa học {notLearned}`. |
+| `retentionRate7d` | `number` (0-100) | Thẻ **Tỷ lệ ghi nhớ 7 ngày** (hiển thị `%` và nhãn Xuất sắc/Tốt/Trung bình/Cần cố gắng). |
+| `streakDays` | `number` | Thẻ **Chuỗi ngày liên tục** (số ngày học liên tiếp hiện tại). |
+| `bestStreakDays` | `number` | Thẻ **Chuỗi ngày liên tục** (kỷ lục chuỗi ngày dài nhất của học viên). |
+| `totalWordsTimeline` | `Array<{ label, total }>` | Biểu đồ đường **Tổng số từ theo thời gian** (4 mốc tuần Tuần 1 $\to$ Tuần 4). |
+
+#### 2.2. Các trường chi tiết mở rộng:
+* `summary`: Chi tiết đối tượng thống kê.
+* `cardDistribution`: Tỷ lệ phần trăm và số lượng thẻ theo nhóm.
+* `dailyActivity`: Hoạt động 7 ngày gần nhất (T2 đến CN).
+* `motivationalMessage`: Thông điệp động khích lệ học viên.
 
 ---
 
-### 3. MOCK RESPONSE MẪU
+### 3. MOCK RESPONSE MẪU HOÀN CHỈNH
 
 ```json
 {
+  "totalWords": 842,
+  "weeklyGain": 12,
+  "statusCounts": {
+    "mastered": 547,
+    "learning": 210,
+    "notLearned": 85
+  },
+  "retentionRate7d": 87,
+  "streakDays": 15,
+  "bestStreakDays": 18,
+  "totalWordsTimeline": [
+    { "label": "Tuần 1", "total": 210 },
+    { "label": "Tuần 2", "total": 450 },
+    { "label": "Tuần 3", "total": 710 },
+    { "label": "Tuần 4", "total": 842 }
+  ],
   "summary": {
-    "totalWords": {
-      "count": 842,
-      "changeVsLastWeek": 12
-    },
-    "retentionRate7Days": {
-      "rate": 87,
-      "status": "EXCELLENT",
-      "statusText": "Xuất sắc"
-    },
-    "streak": {
-      "current": 15,
-      "longest": 18,
-      "studiedToday": true,
-      "message": "🔥 Sắp lập kỷ lục mới rồi"
-    },
-    "memoryStability": {
-      "score": 78,
-      "changeVsLastWeek": 12
-    }
+    "totalWords": { "count": 842, "changeVsLastWeek": 12 },
+    "retentionRate7Days": { "rate": 87, "status": "EXCELLENT", "statusText": "Xuất sắc" },
+    "streak": { "current": 15, "longest": 18, "studiedToday": true, "message": "🔥 Sắp lập kỷ lục mới rồi" },
+    "memoryStability": { "score": 78, "changeVsLastWeek": 12 }
   },
   "stabilityTimeline": [
     { "label": "Tuần 1", "date": "2026-09-20", "value": 10 },
@@ -88,11 +97,7 @@
 
 ---
 
-### 4. KẾT QUẢ KIỂM THỬ TỰ ĐỘNG (UNIT TESTS)
-
-* File test: `backend/src/modules/progress/progress.service.spec.ts`
-* Các ca kiểm thử đặc biệt đã pass:
-  1. **Tài khoản mới toanh (Edge Case)**: Xử lý an toàn khi người dùng chưa có từ vựng hay lượt ôn nào (các giá trị trả về 0%, không bị crash server do lỗi chia cho 0 `NaN`).
-  2. **Duy trì Streak thông minh**: Nếu người dùng hôm qua đã học nhưng hôm nay chưa học, chuỗi streak vẫn được bảo toàn (chỉ reset về 0 khi bỏ lỡ quá 1 ngày).
-  3. **Phân loại tỷ lệ nhớ**: Tự động gán nhãn `EXCELLENT` (>=85%), `GOOD` (>=70%), `FAIR` (>=50%), `POOR` (<50%).
-* **Tổng kết test toàn dự án:** `86/86 unit tests passed`.
+### 4. KẾT QUẢ KIỂM THỬ TỰ ĐỘNG & ĐỒNG BỘ
+* **Unit Tests Backend:** `86/86 unit tests passed` (trong đó có 3 tests kiểm thử toàn diện `ProgressService`).
+* **Frontend Tests:** `vitest run` pass 100%, `eslint` 0 error.
+* **Xử lý an toàn:** Khi tài khoản mới toanh chưa có từ vựng hay lượt ôn nào, toàn bộ trả về 0 an toàn không lỗi chia cho 0 `NaN`.
