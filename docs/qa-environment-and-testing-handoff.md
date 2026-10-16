@@ -3,21 +3,21 @@
 * **Dự án:** Web Study English AI (`web-study-english-ai`)
 * **Kỹ sư DevOps:** Phạm Thái Bình
 * **Bên tiếp nhận:** QA Team / Tester
-* **Nhánh tích hợp:** `develop` (Commit: `14789f9`)
-* **Thời gian phát hành:** 10/10/2026
+* **Nhánh tích hợp:** `develop` (Commit mới nhất: `66cd7bd`)
+* **Thời gian phát hành:** 16/10/2026
 
 ---
 
 ## 1. TỔNG QUAN TÍCH HỢP & MA TRẬN MÔI TRƯỜNG KIỂM THỬ
 
-Nhánh `develop` vừa hoàn tất tích hợp thành công các tính năng từ **PR #58** (AI Prediction Endpoint), **PR #59** (Tích hợp AI Scheduler & Fallback), và **PR #60** (Phân trang từ vựng).
+Nhánh `develop` đã tích hợp đầy đủ các tính năng Đợt 6 (WSEA-81, WSEA-85, WSEA-90, WSEA-94, WSEA-95, WSEA-101, WSEA-103, WSEA-108), toàn bộ CI pipeline báo xanh 100%.
 
-| Thành phần | Môi trường STAGING (Chính) | Môi trường LOCAL (Tự lập) |
+| Thành phần | Môi trường STAGING (Chính thức Online) | Môi trường LOCAL (Tự lập) |
 | :--- | :--- | :--- |
-| **Frontend Web App** | Render Web Service (Staging URL) | `http://localhost:3000` |
+| **Frontend Web App** | **`https://web-study-english-ai-git-develop-pham-binh.vercel.app`** | `http://localhost:3000` |
 | **Backend API** | `https://web-study-english-ai.onrender.com` | `http://localhost:3001` |
-| **Swagger API Docs** | `https://web-study-english-ai.onrender.com/api` | `http://localhost:3001/api` |
-| **AI Service** | Hugging Face Spaces / Render AI | `http://localhost:7860` |
+| **Swagger API Docs** | `https://web-study-english-ai.onrender.com/api/docs` | `http://localhost:3001/api/docs` |
+| **AI Service** | Hugging Face Spaces / Render AI *(Đang chờ chốt hạ tầng)* | `http://localhost:7860` |
 | **Cơ sở dữ liệu** | Supabase Singapore (`web-study-english-ai-test`) | Docker (`wsea-postgres:5432`) |
 | **Theo dõi lỗi / Sentry** | Sentry Staging Project | Terminal / Console DevTools |
 
@@ -44,6 +44,12 @@ Nhánh `develop` vừa hoàn tất tích hợp thành công các tính năng t�
   * `20261009102322_add_relearn_step`
   * `20261009103808_add_pending_interval_days`
 * **Tiêu chí:** Dữ liệu học viên cũ và lịch sử học tập được bảo toàn nguyên vẹn.
+
+### 2.4. Tài khoản Kiểm thử Mẫu (Staging Test Account)
+Tester có thể đăng ký tài khoản mới bất kỳ tại `/register`, hoặc đăng nhập ngay bằng tài khoản kiểm thử đã khởi tạo sẵn:
+* **Tài khoản QA:** `tester@wsea.io`
+* **Mật khẩu:** `Password123!`
+* **Quyền:** `USER` (Đã xác thực và kết nối trực tiếp Supabase Staging Database).
 
 ---
 
