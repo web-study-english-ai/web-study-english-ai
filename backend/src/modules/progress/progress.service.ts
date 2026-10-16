@@ -50,10 +50,7 @@ export class ProgressService {
     for (const group of cardGroups) {
       if (group.state === CardState.REVIEW) {
         masteredCount += group._count.id;
-      } else if (
-        group.state === CardState.LEARNING ||
-        group.state === CardState.RELEARNING
-      ) {
+      } else if (group.state === CardState.LEARNING || group.state === CardState.RELEARNING) {
         learningCount += group._count.id;
       } else if (group.state === CardState.NEW) {
         unlearnedCount += group._count.id;
@@ -65,17 +62,11 @@ export class ProgressService {
     const cardDistribution: CardDistribution = {
       mastered: {
         count: masteredCount,
-        percentage:
-          totalWordsCount > 0
-            ? Math.round((masteredCount / totalWordsCount) * 100)
-            : 0,
+        percentage: totalWordsCount > 0 ? Math.round((masteredCount / totalWordsCount) * 100) : 0,
       },
       learning: {
         count: learningCount,
-        percentage:
-          totalWordsCount > 0
-            ? Math.round((learningCount / totalWordsCount) * 100)
-            : 0,
+        percentage: totalWordsCount > 0 ? Math.round((learningCount / totalWordsCount) * 100) : 0,
       },
       unlearned: {
         count: unlearnedCount,

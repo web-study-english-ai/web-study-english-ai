@@ -104,9 +104,7 @@ describe('ProgressService', () => {
       .mockResolvedValueOnce(recentReviews) // 7 days reviews
       .mockResolvedValueOnce([{ reviewedAt: now }]) // allReviewDates
       .mockResolvedValueOnce([{ stabilityAfter: 20.0 }]) // reviewsPriorWeek
-      .mockResolvedValueOnce([
-        { reviewedAt: now, stabilityAfter: 25.0 },
-      ]); // reviews30Days
+      .mockResolvedValueOnce([{ reviewedAt: now, stabilityAfter: 25.0 }]); // reviews30Days
 
     const result = await service.getStats('active-user-456');
 
@@ -144,10 +142,7 @@ describe('ProgressService', () => {
 
     prismaMock.review.findMany
       .mockResolvedValueOnce([{ rating: 1, reviewedAt: yesterday }]) // recentReviews (POOR status: 0%)
-      .mockResolvedValueOnce([
-        { reviewedAt: yesterday },
-        { reviewedAt: dayBeforeYesterday },
-      ]) // allReviewDates -> 2 days streak
+      .mockResolvedValueOnce([{ reviewedAt: yesterday }, { reviewedAt: dayBeforeYesterday }]) // allReviewDates -> 2 days streak
       .mockResolvedValueOnce([]) // reviewsPriorWeek
       .mockResolvedValueOnce([]); // reviews30Days
 
@@ -160,4 +155,3 @@ describe('ProgressService', () => {
     expect(result.summary.retentionRate7Days.statusText).toBe('Cần cố gắng');
   });
 });
-
