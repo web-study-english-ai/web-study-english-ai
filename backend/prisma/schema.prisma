@@ -134,6 +134,7 @@ model Word {
   @@index([cefr])
   @@index([topicId])
   @@index([rank])
+  @@index([topicId, cefr, rank])
   @@map("words")
 }
 
@@ -160,6 +161,9 @@ model UserCard {
   @@unique([userId, wordId])
   @@index([userId, state])
   @@index([userId, dueAt])
+  @@index([userId, state, dueAt, stability])
+  @@index([userId, createdAt])
+  @@index([userId, lastReviewedAt])
   @@map("user_cards")
 }
 
