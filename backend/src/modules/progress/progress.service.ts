@@ -7,6 +7,7 @@ import {
   StabilityTimelinePoint,
   CardDistribution,
   DailyActivityPoint,
+  TotalWordsPoint,
 } from './dto/progress-stats.dto';
 
 const MOT_NGAY_MS = 24 * 60 * 60 * 1000;
@@ -262,6 +263,7 @@ export class ProgressService {
     });
 
     const stabilityTimeline: StabilityTimelinePoint[] = [];
+    const totalWordsTimeline: TotalWordsPoint[] = [];
     const weekIntervals = [
       { label: 'Tuần 1', daysAgo: 21 },
       { label: 'Tuần 2', daysAgo: 14 },
@@ -288,6 +290,12 @@ export class ProgressService {
         label: week.label,
         date: this.getVnDateString(targetTime),
         value: weekScore,
+      });
+
+      const wordsUpToWeek = allCardCreatedDates.filter((c) => c.createdAt <= targetTime).length;
+      totalWordsTimeline.push({
+        label: week.label,
+        total: wordsUpToWeek,
       });
     }
 
@@ -370,6 +378,20 @@ export class ProgressService {
     };
 
     return {
+      // Flat fields matching frontend WSEA-116
+      totalWords: totalWordsCount,
+      weeklyGain: wordsAddedLast7Days,
+      statusCounts: {
+        mastered: masteredCount,
+        learning: learningCount,
+        notLearned: unlearnedCount,
+      },
+      retentionRate7d: retentionRate,
+      streakDays: currentStreak,
+      bestStreakDays: longestStreak,
+      totalWordsTimeline,
+
+      // Detailed fields
       summary,
       stabilityTimeline,
       cardDistribution,

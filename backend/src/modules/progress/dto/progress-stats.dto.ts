@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+export const cardStatusCountsSchema = z.object({
+  mastered: z.number().int().min(0),
+  learning: z.number().int().min(0),
+  notLearned: z.number().int().min(0),
+});
+
+export const totalWordsPointSchema = z.object({
+  label: z.string(),
+  total: z.number().int().min(0),
+});
+
 export const progressSummarySchema = z.object({
   totalWords: z.object({
     count: z.number().int().min(0),
@@ -48,6 +59,16 @@ export const dailyActivityPointSchema = z.object({
 });
 
 export const progressStatsResponseSchema = z.object({
+  // Frontend WSEA-116 Flat Fields
+  totalWords: z.number().int().min(0),
+  weeklyGain: z.number().int(),
+  statusCounts: cardStatusCountsSchema,
+  retentionRate7d: z.number().min(0).max(100),
+  streakDays: z.number().int().min(0),
+  bestStreakDays: z.number().int().min(0),
+  totalWordsTimeline: z.array(totalWordsPointSchema),
+
+  // Detailed fields
   summary: progressSummarySchema,
   stabilityTimeline: z.array(stabilityTimelinePointSchema),
   cardDistribution: cardDistributionSchema,
@@ -55,6 +76,8 @@ export const progressStatsResponseSchema = z.object({
   motivationalMessage: z.string(),
 });
 
+export type CardStatusCounts = z.infer<typeof cardStatusCountsSchema>;
+export type TotalWordsPoint = z.infer<typeof totalWordsPointSchema>;
 export type ProgressSummary = z.infer<typeof progressSummarySchema>;
 export type StabilityTimelinePoint = z.infer<typeof stabilityTimelinePointSchema>;
 export type CardDistribution = z.infer<typeof cardDistributionSchema>;
