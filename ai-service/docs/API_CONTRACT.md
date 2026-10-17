@@ -3,15 +3,15 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81)
+Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81) · 2026-10-17: chỉ sửa phần triển khai (HF Spaces → Render), **không đổi giao diện**
 
 ## Quy ước chung
 
-- Base URL cục bộ: `http://localhost:7860` · Production: `https://<ten-space>.hf.space`
+- Base URL cục bộ: `http://localhost:7860` · Production: `https://<ten-service>.onrender.com` (Render — điền URL thật sau khi xong Jira WSEA-82)
 - Xác thực: header `x-api-key: <INTERNAL_API_KEY>`. Thiếu hoặc sai trả `401`.
 - Content-Type: `application/json`, trừ endpoint ảnh dùng `multipart/form-data`.
 - Backend PHẢI có fallback TypeScript cho mọi endpoint. Dịch vụ AI chết thì luồng học và ôn tập vẫn chạy.
-- Space free ngủ sau ~48h không dùng: lần gọi đầu có thể mất 20–40 giây. Backend đặt timeout riêng cho lần gọi đầu.
+- Dịch vụ chạy trên Render gói trả phí, **không ngủ**. Backend timeout 3 giây mọi lần gọi; `503` thì thử lại một lần sau 2 giây rồi fallback (chốt với Duy Anh 2026-10-09). Lúc Render deploy bản mới có thể lỗi trong chốc lát → fallback như bình thường.
 - **Body JSON không được chứa trường lạ.** Mọi schema đầu vào đặt `extra="forbid"`:
   gõ sai tên trường (`stabilty`) hoặc gửi camelCase (`elapsedDays`) đều trả `422`, không bị bỏ qua im lặng.
   Tên trường dùng `snake_case` đúng như bảng mô tả.
@@ -27,14 +27,14 @@ Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81)
 | 422 | Dữ liệu sai miền giá trị, trường lạ, hoặc `NaN`/`Infinity` | Lỗi lập trình, ghi log chi tiết |
 | 500 | Mô hình trả giá trị không hữu hạn hoặc lỗi bất ngờ | Dùng fallback ngay, ghi log, cảnh báo |
 | 503 | Mô hình chưa nạp xong hoặc nạp thất bại | Retry một lần sau 2 giây, sau đó dùng fallback |
-| timeout | Space đang ngủ hoặc quá tải | Dùng fallback ngay |
+| timeout | Quá tải, đang deploy lại hoặc mất mạng | Dùng fallback ngay |
 
 Nguyên tắc: **mọi 5xx đều là tín hiệu dùng fallback TypeScript** (NF-12).
 Dịch vụ thà báo hỏng rõ ràng còn hơn trả số liệu sai để backend ghi vào lịch ôn của người học.
 
 ## GET /health
 
-Không cần khoá. Dùng cho GitHub Actions giữ Space không ngủ.
+Không cần khoá. Dùng cho Health Check của Render (Health Check Path `/health`) và kiểm tra thủ công.
 
 Nạp mô hình thành công → **200**:
 
@@ -60,7 +60,7 @@ Nạp mô hình thất bại → **503**, body giữ nguyên hình dạng:
 ```
 
 Trả 200 khi dịch vụ không phục vụ được là nói dối với health check — nên trạng thái
-`degraded` đi kèm mã 503 để HF Spaces và GitHub Actions nhìn thấy đúng.
+`degraded` đi kèm mã 503 để Health Check của Render nhìn thấy đúng.
 
 ## POST /predict-retention
 
@@ -143,14 +143,14 @@ cài công thức khởi tạo — làm vậy sẽ lệch với mô hình khi tr
 nếu backend gộp trung bình.
 
 **`due_date` đã bị bỏ khỏi hợp đồng (v0.2).** Dịch vụ AI chỉ trả `interval_days`;
-backend tự cộng vào ngày hiện tại theo múi giờ người học. Lý do: Space chạy UTC còn
+backend tự cộng vào ngày hiện tại theo múi giờ người học. Lý do: máy chủ chạy UTC còn
 người học ở GMT+7, để AI tính ngày thì chắc chắn lệch một ngày với người ôn buổi tối.
 
 Ngưỡng mục tiêu là 0,9 — nghiêng về ôn sớm. Sai theo hướng ôn sớm chỉ tốn thời gian; sai theo hướng ôn muộn là người học quên.
 Vì vậy `interval_days` **làm tròn** (`round`) chứ không làm tròn lên: `S' = 1,1` mà trả 2 ngày
 thì tới hạn `R ≈ 0,84`, đã tụt dưới ngưỡng trước khi người học kịp ôn.
 
-**Fallback backend**: cài SM-2 bằng TypeScript, trả `interval_days` tương đương.
+**Fallback backend**: `simple-scheduler.ts` (TypeScript), trả `interval_days` tương đương. Không phải SM-2 — xem `docs/DECISIONS.md` mục 2026-10-11.
 
 ## POST /vision/detect
 
