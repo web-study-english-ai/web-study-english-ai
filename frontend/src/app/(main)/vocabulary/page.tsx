@@ -16,10 +16,10 @@ import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
 import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 export default function VocabularyPage() {
-  const { filters, setFilters, results, selected, setSelected, isLoading, isError, error, refetch } =
-    useVocabularySearch();
+  const { filters, setFilters, results, selected, setSelected, rawSelected, isLoading, isError, error, page, setPage, meta, refetch } = useVocabularySearch();
    const {
     deck,
     isInDeck,
@@ -61,7 +61,8 @@ export default function VocabularyPage() {
           <VocabularySearchBar filters={filters} topics={topics} onChange={setFilters} />
 
           <div className="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-            <div className="space-y-3">
+            {/* Trên mobile: ẩn danh sách khi đã chọn 1 từ để xem chi tiết. Từ lg trở lên luôn hiện. */}
+            <div className={`space-y-3 ${rawSelected ? "hidden lg:block" : ""}`}>
               {isLoading && <LoadingState text="Đang tìm kiếm..." />}
 
               {isError && (
@@ -97,27 +98,59 @@ export default function VocabularyPage() {
                     }}
                   />
                 ))}
+
+                 {!isLoading && !isError && meta && meta.totalPages > 1 && (
+                <div className="mt-4 flex items-center justify-center gap-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={page <= 1}
+                    onClick={() => setPage((p) => p - 1)}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Trước
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    Trang {meta.page} / {meta.totalPages}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={page >= meta.totalPages}
+                    onClick={() => setPage((p) => p + 1)}
+                  >
+                    Sau
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
             </div>
 
-            <div className="lg:sticky lg:top-20 lg:self-start">
-              <VocabularyDetailPanel wordId={selected?.id ?? null} />
+            {/* Trên mobile: chỉ hiện khi đã chọn 1 từ, thay thế hẳn danh sách. Từ lg trở lên luôn hiện song song. */}
+            <div className={`lg:sticky lg:top-20 lg:self-start ${rawSelected ? "" : "hidden lg:block"}`}>
+              <VocabularyDetailPanel
+                wordId={selected?.id ?? null}
+                onClose={() => setSelected(null)}
+              />
             </div>
           </div>
         </TabsContent>
 
         <TabsContent value="deck" className="mt-4">
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
-            <VocabularyDeckList
-              deck={deck}
-              selected={selectedDeckItem}
-              onSelect={setSelectedDeckItem}
-              onRemove={async (cardId) => {
-                await xoaThe(cardId);
-                if (selectedDeckItem?.id === cardId) setSelectedDeckItem(null);
-              }}
-            />
+            <div className={selectedDeckItem ? "hidden lg:block" : ""}>
+              <VocabularyDeckList
+                deck={deck}
+                selected={selectedDeckItem}
+                onSelect={setSelectedDeckItem}
+                onRemove={async (cardId) => {
+                  await xoaThe(cardId);
+                  if (selectedDeckItem?.id === cardId) setSelectedDeckItem(null);
+                }}
+              />
+            </div>
 
-            <div className="lg:sticky lg:top-20 lg:self-start">
+            <div className={`lg:sticky lg:top-20 lg:self-start ${selectedDeckItem ? "" : "hidden lg:block"}`}>
               <VocabularyDetailPanel
                 wordId={selectedDeckItem?.word.id ?? null}
                 onClose={() => setSelectedDeckItem(null)}

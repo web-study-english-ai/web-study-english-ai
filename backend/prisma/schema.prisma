@@ -53,6 +53,7 @@ enum SchedulerSource {
   FSRS_AI
   FALLBACK_TS
   SM2
+  RELEARN_STEP
 }
 model User {
   id              String       @id @default(uuid())
@@ -133,6 +134,7 @@ model Word {
   @@index([cefr])
   @@index([topicId])
   @@index([rank])
+  @@index([topicId, cefr, rank])
   @@map("words")
 }
 
@@ -143,6 +145,8 @@ model UserCard {
   state          CardState @default(NEW)
   difficulty     Float?
   stability      Float?
+  /// Khoảng AI trả lúc thẻ bị quên, treo lại để dùng khi qua bước học lại
+  pendingIntervalDays Float?    @map("pending_interval_days")
   reps           Int       @default(0)
   lapses         Int       @default(0)
   dueAt          DateTime? @map("due_at")
@@ -157,6 +161,9 @@ model UserCard {
   @@unique([userId, wordId])
   @@index([userId, state])
   @@index([userId, dueAt])
+  @@index([userId, state, dueAt, stability])
+  @@index([userId, createdAt])
+  @@index([userId, lastReviewedAt])
   @@map("user_cards")
 }
 
@@ -203,7 +210,8 @@ model Review {
 
   scheduler    SchedulerSource
   modelVersion String?         @map("model_version")
-
+  /// Mã do client sinh mỗi lần bấm đánh giá, dùng để nhận ra yêu cầu gửi lại
+  clientEventId String?        @unique @map("client_event_id")
   createdAt DateTime @default(now()) @map("created_at")
 
   user User      @relation(fields: [userId], references: [id], onDelete: Cascade)

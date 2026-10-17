@@ -132,7 +132,7 @@ Toàn bộ kiểm định chất lượng mã nguồn được tự động hóa
 ### 3.2. Cơ chế CD (Continuous Deployment) liên kết:
 * **Staging:** Khi PR được duyệt và merge vào `develop`, Render Webhook nhận tín hiệu và kích hoạt quy trình Build & Deploy tự động lên môi trường Staging.
 * **Production:** Khi hoàn tất sprint và merge vào `main`, bản release chính thức được tự động triển khai lên Production.
-* **Hệ thống AI Monitoring:** File workflow `.github/workflows/ai-service-keep-alive.yml` tự động gửi tín hiệu kiểm tra sức khỏe (`GET /health`) định kỳ 14 phút/lần, đảm bảo container AI không bị rơi vào trạng thái ngủ đông (Sleep Mode).
+* **Hệ thống Backend Keep-Alive & Tiết kiệm Quota:** File workflow `.github/workflows/backend-keep-alive.yml` tự động gửi tín hiệu kiểm tra sức khỏe (`GET /health`) định kỳ 14 phút/lần trong khung giờ học tập (07:00 – 23:00 GMT+7), đảm bảo Backend không bị rơi vào trạng thái ngủ đông (chống Cold Start 60s) đồng thời tiết kiệm hạn ngạch 750 giờ/tháng của Render cho Staging.
 
 ---
 
@@ -163,8 +163,8 @@ npm run build
    * File `.env` chứa thông tin nhạy cảm (JWT Secret, Database Credentials, API Keys).
    * Mọi cấu hình mới phải được khai báo mẫu vào file `.env.example` và thông báo cho DevOps.
 2. **Bảo mật giao tiếp nội bộ (Internal Security - WSEA-94):**
-   * Mọi API giao tiếp giữa Backend và AI Service phải gửi kèm header `X-Internal-Api-Key`.
-   * Sử dụng thuật toán so sánh hằng số thời gian (`secrets.compare_digest`) để ngăn chặn tấn công kênh phụ (Timing Attack).
+   * Mọi API giao tiếp giữa Backend và AI Service gửi kèm header `x-api-key` (hỗ trợ song song `X-Internal-Api-Key`) với khóa bí mật `AI_SERVICE_KEY` (chuỗi dài >= 32 ký tự).
+   * Sử dụng thuật toán so sánh hằng số thời gian (`secrets.compare_digest`) để ngăn chặn tấn công kênh phụ (Timing Attack). Sai hoặc thiếu khóa đều trả `401 Unauthorized`.
 3. **Database Connection Pooling:**
    * Môi trường Serverless / Cloud Hosting (Render) kết nối tới Supabase phải đi qua cổng Connection Pooler (`5432` Session Mode hoặc `6543` Transaction Mode) để tránh hiện tượng tràn số lượng kết nối tối đa (Max Connections Exhaustion).
 

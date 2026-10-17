@@ -3,10 +3,11 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { UserMenu } from "@/components/shared/UserMenu";
+import { useAuth } from "@/features/auth/hooks/useAuth";
 
 const navItems = [
   { href: "/vocabulary", label: "Quản lý từ vựng" },
@@ -21,6 +22,7 @@ const navItems = [
 export function Header() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const { logout } = useAuth();
 
   return (
     <header className="sticky top-0 z-40 flex h-16 items-center border-b border-border bg-background/95 px-4 backdrop-blur md:px-8">
@@ -35,7 +37,7 @@ export function Header() {
       </Button>
 
       <span className="ml-2 font-heading text-base font-semibold md:hidden">
-        UTC English
+        Study English
       </span>
 
       <div className="ml-auto flex items-center gap-3">
@@ -58,6 +60,17 @@ export function Header() {
               {item.label}
             </Link>
           ))}
+
+          <button
+            onClick={() => {
+              setOpen(false);
+              void logout();
+            }}
+            className="mt-2 flex items-center gap-3 rounded-lg px-3 py-2.5 text-left text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+          >
+            <LogOut className="h-4.5 w-4.5" />
+            Đăng xuất
+          </button>
         </nav>
       )}
     </header>

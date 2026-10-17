@@ -1,0 +1,64 @@
+name: Backend Keep Alive
+
+on:
+  schedule:
+    # Chạy mỗi 14 phút trong khung giờ vàng 07:00 - 22:59 giờ VN (00:00 - 15:59 UTC)
+    # Giữ ấm Backend Render (chống Cold Start 50-70s) và tiết kiệm quota 750h/tháng của Render
+    # Tiêu thụ ~496h/tháng, để dành ~254h/tháng cho Staging/Test, tránh cạn quota cuối tháng
+    - cron: "*/14 0-15 * * *"
+  workflow_dispatch:
+    inputs:
+      target_url:
+        description: "URL kiểm tra sức khoẻ (mặc định dùng URL Production hoặc Secret BACKEND_HEALTH_URL)"
+        required: false
+        default: ""
+
+jobs:
+  ping-health:
+    name: Ping Backend Service Health
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Xác định URL kiểm tra
+        id: get-url
+        run: |
+          URL="${{ github.event.inputs.target_url }}"
+          if [ -z "$URL" ]; then
+            URL="${{ secrets.BACKEND_HEALTH_URL || secrets.AI_SERVICE_HEALTH_URL }}"
+          fi
+          if [ -z "$URL" ]; then
+            # Mặc định sử dụng URL Backend Production
+            URL="https://web-study-english-ai-prod.onrender.com/health"
+          fi
+
+          echo "has_url=true" >> $GITHUB_OUTPUT
+          echo "target_url=$URL" >> $GITHUB_OUTPUT
+          echo "Target URL: $URL"
+
+      - name: Ping endpoint kiểm tra sức khoẻ (/health)
+        if: steps.get-url.outputs.has_url == 'true'
+        run: |
+          URL="${{ steps.get-url.outputs.target_url }}"
+          echo "Bắt đầu ping endpoint kiểm tra sức khoẻ Backend: $URL..."
+
+          BODY_FILE=$(mktemp)
+          HTTP_CODE=$(curl -sS -o "$BODY_FILE" -w "%{http_code}" \
+            --connect-timeout 15 \
+            --max-time 45 \
+            --retry 2 \
+            --retry-delay 5 \
+            -H "User-Agent: GitHubActions-KeepAlive/1.0" \
+            "$URL" || echo "000")
+
+          echo "Mã trạng thái HTTP: $HTTP_CODE"
+          echo "Nội dung phản hồi từ server:"
+          cat "$BODY_FILE"
+          echo ""
+
+          if [[ "$HTTP_CODE" =~ ^2[0-9]{2}$ ]]; then
+            echo "✅ Dịch vụ Backend đang hoạt động bình thường (Status: $HTTP_CODE)."
+          else
+            echo "::error::Ping thất bại hoặc dịch vụ trả về mã lỗi HTTP: $HTTP_CODE (Yêu cầu mã 2xx)"
+            exit 1
+          fi

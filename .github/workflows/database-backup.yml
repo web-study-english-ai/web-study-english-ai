@@ -1,0 +1,46 @@
+name: Database Backup
+
+on:
+  schedule:
+    # Chạy tự động lúc 02:00 AM giờ Việt Nam (GMT+7) hàng ngày (19:00 UTC)
+    - cron: '0 19 * * *'
+  workflow_dispatch:
+    inputs:
+      target_environment:
+        description: 'Môi trường cần sao lưu (production hoặc staging)'
+        required: true
+        default: 'production'
+        type: choice
+        options:
+          - production
+          - staging
+
+jobs:
+  backup:
+    name: Backup PostgreSQL Database
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install PostgreSQL Client Tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq postgresql-client
+
+      - name: Execute Backup Script
+        id: run_backup
+        env:
+          DATABASE_URL: ${{ github.event.inputs.target_environment == 'staging' && secrets.STAGING_DATABASE_URL || secrets.PROD_DATABASE_URL }}
+        run: |
+          chmod +x ./scripts/backup-db.sh
+          ./scripts/backup-db.sh
+
+      - name: Upload Backup Artifact to Secure Storage
+        uses: actions/upload-artifact@v4
+        with:
+          name: db-backup-${{ github.event.inputs.target_environment || 'production' }}-${{ github.run_id }}
+          path: backups/*.dump
+          retention-days: 14
+          if-no-files-found: error
