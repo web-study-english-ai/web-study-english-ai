@@ -11,12 +11,12 @@
 
 - **Đợt hiện tại:** Đợt 6 (D16–D18) theo lịch; **phần AI của v1.0 trễ sang đợt 7**
 - **Task kế tiếp:** Jira **WSEA-82** — Triển khai dịch vụ AI lên Render (file `TASKS.md` cũ ghi WSEA-65; Jira đã dời sang đợt 7). Các bước ở mục đầu Đợt 7 trong `TASKS.md`
-- **Nhánh:** `ai/WSEA-82-deploy-render` — tạo 2026-10-17 từ `ai/WSEA-67-baseline-eval` vì PR #62 chưa merge. Sau khi #62 vào `develop`: `git merge origin/develop` vào nhánh này
+- **Nhánh:** `ai/WSEA-82-deploy-render` — tạo 2026-10-17 từ `ai/WSEA-67-baseline-eval`; đã merge `origin/develop` ngày 2026-10-17 (`bdf28de`)
 - **Việc dở dang cần làm tiếp:**
-  - PR #62 (WSEA-67 → develop) conflict ở `tests/test_auth.py`: giữ bản của nhánh WSEA-67 (`git checkout --ours`), chạy `pytest -q`, commit, push; báo Bình
+  - Dán minh chứng Jira WSEA-67 (PR #62 đã merge, `16a4593`)
   - Jira WSEA-82 — cổng quyết định là đo Docker ở `--memory=512m --cpus=0.5`
   - Sau WSEA-82: Jira WSEA-83 kiểm thử tích hợp → MK-3 → hợp đồng API v0.3 với Duy Anh (replay, cột `scheduler`, `elapsed_days`)
-- **Đang bị chặn bởi:** PR #62 chưa merge (không chặn việc đo Docker cục bộ)
+- **Đang bị chặn bởi:** không
 - **Cập nhật lần cuối:** 2026-10-17
 
 ## 2. Tiến độ theo mốc
