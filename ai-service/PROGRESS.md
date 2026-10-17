@@ -9,15 +9,15 @@
 
 ## 1. Trạng thái hiện tại
 
-- **Đợt hiện tại:** Đợt 5 (D13–D15) — Triển khai dịch vụ AI
-- **Task đang làm:** WSEA-81 — Xây dựng endpoint dự báo trong dịch vụ AI ✅ xong
-- **Nhánh:** `ai/WSEA-81-xay-dung-endpoint`
+- **Đợt hiện tại:** Đợt 6 (D16–D18) — v1.0, MỐC SỐNG CÒN
+- **Task đang làm:** WSEA-67 — Cài đặt đường cơ sở và đánh giá mô hình ✅ xong (nợ từ đợt 4, trong `TASKS.md` ghi là WSEA-50)
+- **Nhánh:** `ai/WSEA-67-baseline-eval`
 - **Việc dở dang cần làm tiếp:**
-  - Báo Thạc Duy Anh hợp đồng API lên 0.2 (bỏ `due_date`, S/D nullable, `extra="forbid"`, header `x-api-key`, khoá sai 401) **trước khi backend tích hợp**
+  - Push nhánh, mở PR vào `develop`, dán comment minh chứng WSEA-67 lên Jira
   - WSEA-65: đưa lên HF Spaces, kiểm tra `huggingface_hub` tải được trọng số trong container
-  - **Nợ từ đợt 4**: WSEA-50 chưa làm — chưa có SM-2 baseline nên AUC 0.695 chưa so được với gì (vi phạm quy tắc 8)
+  - Hợp đồng API v0.3 với Duy Anh: endpoint replay, ý nghĩa cột `scheduler`, định nghĩa `elapsed_days` (xem Project doc `claude/quyet-dinh-tich-hop-ai-backend.md`)
 - **Đang bị chặn bởi:** không
-- **Cập nhật lần cuối:** 2026-09-28
+- **Cập nhật lần cuối:** 2026-10-11
 
 ## 2. Tiến độ theo mốc
 
@@ -27,7 +27,7 @@
 | — | 2 | EDA xong, chia tập theo user có assert, khung FastAPI chạy | ⬜ | |
 | — | 3 | Cài đặt DSR 17 tham số + unit test pass | ✅ | `app/models/fsrs.py`, test toán học pass |
 | MK-2 | 4 | Bảng `reviews` ghi đủ 16 trường mô hình cần | ⬜ | Phối hợp Phúc, Bình |
-| v0.1 | 4 | Mô hình DSR đã huấn luyện, có số liệu so với SM-2 | ⚠️ | Đã train (val log-loss 0.4510) nhưng **chưa có SM-2 để so** — WSEA-50 |
+| v0.1 | 4 | Mô hình DSR đã huấn luyện, có số liệu so với SM-2 | ✅ | Trễ hạn, xong 2026-10-11 (WSEA-67). Tập test: DSR 0,3506 log-loss · SM-2 0,4015 · hằng số 0,3792 |
 | — | 5 | AI Service trên HF Spaces, `/predict-retention` gọi được từ backend | 🟨 | Endpoint xong, chạy cục bộ với trọng số v1 (WSEA-81); chưa lên Spaces (WSEA-65) |
 | MK-3 / v1.0 | 6 | **Dự báo quên đúng trên production — SỐNG CÒN** | ⬜ | |
 | — | 7 | Chunk + embedding + vector search chạy | ⬜ | |
@@ -62,7 +62,7 @@ Ký hiệu: ⬜ chưa làm · 🟨 đang làm · ✅ xong · ⚠️ trễ/có v�
 | 11 | **Hợp đồng API đổi lên 0.2, backend chưa được báo.** Đổi: path `/predict/forgetting` → `/predict-retention`; header `X-Internal-Api-Key` → `x-api-key`; khoá sai 403 → 401; bỏ `due_date`; `stability`/`difficulty` nhận `null`; thêm `extra="forbid"` (trường lạ hoặc camelCase → 422); thêm mã 500. Backend gọi theo bản cũ sẽ hỏng ngay. | Rất cao | Hiếu → Duy Anh | Trước WSEA-65 | Mở |
 | 10 | **Đánh số WSEA trong `TASKS.md` lệch với Jira thật.** Task "Xây dựng endpoint" ghi WSEA-64 nhưng Jira là WSEA-81; commit trước đó dùng WSEA-66 cho "huấn luyện mô hình" trong khi `TASKS.md` ghi WSEA-66 = "kiểm thử tích hợp". Cần rà toàn bộ file, nếu không minh chứng Jira sẽ gắn nhầm task. | Cao | Hiếu | Đợt 5 | Mở |
 | 1 | **Thứ tự cắt giảm không thống nhất giữa các tài liệu.** Bối cảnh dự án ghi: Could have → đọc hiểu → bỏ rerank → bỏ phân loại ý định → giảm nhãn ảnh 2000→500. File 11 (sheet Mốc và bàn giao) ghi: cắt **toàn bộ** nhận diện ảnh trước tiên, rồi phân loại ý định + rerank. MK-3 cũng ghi "huỷ nhận diện ảnh nếu mô hình dự báo lỗi". Cần chốt một bản và sửa tài liệu còn lại. | Cao | Hiếu | Đợt __ | Mở |
-| 2 | **SM-2 không tự sinh xác suất nhớ.** Muốn so log-loss/AUC với DSR phải định nghĩa cách quy đổi (vd dùng khoảng ôn SM-2 làm S rồi áp cùng công thức R(t,S), hoặc hàm mũ `0.9^(t/I)`). Chọn một cách, ghi rõ trong báo cáo. | Cao | Hiếu | Trước khi đánh giá | Mở |
+| 2 | **SM-2 không tự sinh xác suất nhớ.** Muốn so log-loss/AUC với DSR phải định nghĩa cách quy đổi (vd dùng khoảng ôn SM-2 làm S rồi áp cùng công thức R(t,S), hoặc hàm mũ `0.9^(t/I)`). Chọn một cách, ghi rõ trong báo cáo. | Cao | Hiếu | Trước khi đánh giá | ✅ Đóng 2026-10-11 — chọn cách 1: khoảng SM-2 làm S rồi áp cùng R(t,S) (WSEA-67, `docs/DECISIONS.md`) |
 | 3 | Chưa chốt mô hình **rerank** và **phân loại ý định** (vd cross-encoder nhỏ; e5 embedding + LogisticRegression). Cần ước RAM trên HF Spaces CPU. | TB | Hiếu | Đợt 7 | Mở |
 | 4 | Tổng RAM khi nạp cùng lúc DSR + CLIP + e5 (+ reranker) trên Spaces miễn phí — chưa đo. | TB | Hiếu | Đợt 5 | Mở |
 | 5 | Cold start của HF Spaces làm request đầu chậm/timeout → backend cần timeout + fallback. Thống nhất timeout với Duy Anh. | TB | Hiếu, Duy Anh | Đợt 5 | Mở |
@@ -76,12 +76,13 @@ Ký hiệu: ⬜ chưa làm · 🟨 đang làm · ✅ xong · ⚠️ trễ/có v�
 > Mọi phát hiện khi EDA và cách xử lý. Đây là nguồn viết chương "Dữ liệu" của báo cáo.
 
 - **Nguồn:** `open-spaced-repetition/FSRS-Anki-20k` — gated, cần HF token; giấy phép: ______
-- **Số file thực tế tải được:** ______ · **Số user dùng:** train ___ / val ___ / test ___ · seed = ___
-- **File danh sách user từng tập:** `training/splits/*.txt`
-- Lần ôn đầu có `elapsed_days` = ______ → xử lý: ______
-- Ôn cùng ngày (`elapsed_days = 0`): ______ bản ghi → xử lý: ______
-- `rating` ngoài 1–4: ______ → xử lý: ______
-- Tỷ lệ nhãn quên (`rating == 1`): ______%
+- **Số file:** repo có 40.007 file, trong đó **19.998 file CSV** (không phải 40.007 CSV). Lấy mẫu ngẫu nhiên **300 người dùng** (`random.seed(42)`, notebook Kaggle `fsrs-study-english` ô 4)
+- **Số user dùng:** train **204** / val **36** / test **60** · seed = **42**. Test tách ở Kaggle (ô 9); val tách trong `run_train.py` (15% user của train)
+- **File danh sách user từng tập:** `training/splits/{train,val,test}_users.txt` — tạo và kiểm chứng bằng `python -m evaluation.check_split` (tập val dựng lại khớp `report.json`: 735.540 mẫu, tỷ lệ nhớ 0,825417)
+- Lần ôn đầu có `elapsed_days` = **−1** → xử lý: đặt **0**, chỉ dùng để khởi tạo trạng thái, không phải mẫu dự đoán
+- Ôn cùng ngày (`elapsed_days = 0`): ______ bản ghi → xử lý: **loại bỏ toàn bộ** (Kaggle ô 7: lượt không phải lượt đầu chỉ giữ khi cách 1–3650 ngày)
+- `rating` ngoài 1–4: ______ → xử lý: loại bỏ. Thẻ chỉ có 1 lượt ôn: loại bỏ
+- Tỷ lệ nhãn quên (`rating == 1`, tính từ lượt thứ 2): train **12,9%** / val **17,5%** / test **12,6%**. Val lệch hẳn vì chỉ có 36 người — số liệu val dao động mạnh theo người dùng
 - Biểu đồ EDA lưu tại: `outputs/eda/`
 
 ## 6. Nhật ký thí nghiệm
@@ -96,9 +97,9 @@ Cột Test vẫn trống — **tập test chưa được mở**, đúng quy tắ
 
 | Ngày | Run | Mô hình | Cấu hình chính | Log-loss (val) | RMSE-bins (val) | AUC (val) | Test | Ghi chú |
 |---|---|---|---|---|---|---|---|---|
-| — | — | **SM-2 (baseline)** | — | — | — | — | — | ⚠️ **CHƯA CÀI** — WSEA-50. Không có baseline thì mọi số dưới đây chưa nói lên điều gì (quy tắc 8) |
-| — | — | Dự đoán hằng số | p = 0,8254 | — | — | 0,5 | — | Cũng chưa tính. Đây là mốc rẻ nhất để biết mô hình có hơn "đoán bừa" không |
-| 2026-09-27 | `final_lr004` | **DSR đã train** | lr=0,04 · bs=512 | **0,4510** | **0,0751** | **0,6954** | — | ✅ **Tốt nhất — đã đẩy lên Hub tag `v1`, đang chạy trên endpoint** |
+| 2026-10-11 | `evaluation/run_eval.py` | **SM-2 (baseline)** | đặc tả gốc · Khó→3 · khoảng SM-2 làm S | — | — | — | 0,4015 / 0,0959 / 0,6526 | Thua cả hằng số về log-loss: phân biệt được (AUC 0,65) nhưng sai mức xác suất (WSEA-67) |
+| 2026-10-11 | `evaluation/run_eval.py` | Dự đoán hằng số | p0 = 0,8711 (tỷ lệ nhớ tập train) | 0,4716 | 0,0457 | 0,5 | 0,3792 / 0,0026 / 0,5000 | Mức sàn. Lấy p = 0,8254 (tỷ lệ của chính val) là nhìn trộm đáp án |
+| 2026-09-27 | `final_lr004` | **DSR đã train** | lr=0,04 · bs=512 | **0,4510** | **0,0751** | **0,6954** | **0,3506 / 0,0450 / 0,7127** | ✅ **Tốt nhất — đã đẩy lên Hub tag `v1`, đang chạy trên endpoint** |
 | 2026-09-27 | `exp03_lr001` / `final_lr001` | DSR đã train | lr=0,01 · bs=512 | 0,4519 | 0,0769 | 0,6960 | — | AUC nhỉnh hơn chút nhưng log-loss và hiệu chỉnh kém hơn |
 | 2026-09-27 | `final_lr01` | DSR đã train | lr=0,1 · bs=512 | 0,4558 | 0,0762 | 0,6844 | — | lr quá lớn, hội tụ kém |
 | 2026-09-27 | `final_lr0002_b2048` | DSR đã train | lr=0,002 · bs=2048 | 0,4558 | 0,0795 | 0,6937 | — | lr nhỏ + batch to: hiệu chỉnh tệ nhất nhóm |
@@ -109,7 +110,36 @@ Cột Test vẫn trống — **tập test chưa được mở**, đúng quy tắ
 tức chỉnh learning rate gần như không đổi được kết quả. Điều đó gợi ý giới hạn nằm ở
 **dạng mô hình hoặc đặc trưng**, không ở tối ưu hoá. AUC ~0,695 nghĩa là mô hình phân biệt
 nhớ/quên tốt hơn ngẫu nhiên nhưng còn xa mức chắc chắn.
-Chưa có SM-2 nên **chưa kết luận được** con số này là tốt hay tệ.
+Cập nhật 2026-10-11: đã có SM-2 và kết quả trên tập test, xem mục 6.1.1. Cột Test ghi dạng log-loss / RMSE nhóm / AUC.
+
+#### 6.1.1. Kết quả trên tập test (WSEA-67, 2026-10-11)
+
+Tập test chỉ mở **một lần**: 60 người, 2.130.010 lượt ôn, tỷ lệ nhớ 0,8738. DSR dùng đúng `runs/final_lr004/params.json` (v1, đang chạy trên endpoint). Chạy lại: `python -m evaluation.run_eval` → `outputs/eval/`.
+
+| Mô hình | Log-loss | RMSE nhóm | AUC |
+|---|---|---|---|
+| Dự đoán hằng số (p0 = 0,8711 từ train) | 0,3792 | 0,0026 | 0,5000 |
+| SM-2 quy đổi xác suất | 0,4015 | 0,0959 | 0,6526 |
+| **DSR v1** | **0,3506** | 0,0450 | **0,7127** |
+
+Chênh log-loss, khoảng tin cậy 95% bootstrap **theo người dùng** (1.000 lần):
+- DSR − SM-2: **−0,0509** [−0,0613; −0,0379] → DSR tốt hơn chắc chắn
+- DSR − hằng số: **−0,0286** [−0,0646; −0,0090] → tốt hơn chắc chắn, nhưng mức cải thiện khác nhiều giữa các người dùng
+
+AUC không phụ thuộc cách quy đổi SM-2 (mọi cách quy đổi hợp lý đều là hàm đơn điệu của t/I nên giữ nguyên thứ hạng), nên lợi thế AUC 0,7127 so với 0,6526 không do cách quy đổi tạo ra.
+
+**Phân tích lỗi** (`outputs/eval/retention_report.md`, `outputs/eval/calibration.png`):
+
+1. **Lượt ôn đầu tiên sau khi học (pos = 1, 16% số mẫu): DSR gần như không giúp gì.** Chỉ hơn hằng số 0,004 log-loss (0,4701 so với 0,4745), trong khi ở pos 2–10 hơn khoảng 0,04. Còn đoán lạc quan: 85,4% so với thực tế 82,4%. Lý do: lúc này mô hình chỉ biết một lần đánh giá, S₀ = w[rating−1] chỉ có 4 giá trị, và các bước học trong ngày đầu đã bị loại khi tiền xử lý.
+2. **Lệch theo khoảng cách ôn, về hai phía ngược nhau.** Cách 1 ngày: DSR đoán 90,1%, thực tế 85,0% → lạc quan 5 điểm, phía nguy hiểm (lịch ôn bị lùi xa, người học quên trước khi ôn). Cách hơn 91 ngày: đoán 81,6%, thực tế 87,4% → bi quan 6 điểm, phía an toàn (ôn sớm hơn cần, chỉ tốn thời gian). Lượt cách 1 ngày chủ yếu là thẻ mới hoặc vừa quên, trùng với nhận xét 1: lỗi đáng lo tập trung ở thẻ mới.
+3. **SM-2 thua hằng số vì sai mức xác suất, không phải vì không phân biệt được.** Khi SM-2 đoán khoảng 8% nhớ (2.130 lượt), thực tế 75,5% vẫn nhớ; nhóm đoán 15% thì thực tế 58%. SM-2 cho xác suất rất thấp mỗi khi người học ôn trễ so với khoảng nó đặt, mà người học thật vẫn nhớ phần lớn. Mỗi lượt như vậy bị phạt −ln(0,08) ≈ 2,5, kéo log-loss lên 0,4015 dù AUC vẫn 0,65.
+
+**Hạn chế phải ghi trong báo cáo:**
+- Vùng xác suất thấp rất thưa (các nhóm dự đoán dưới 0,5 chỉ khoảng 4% số lượt). Ở đó DSR bi quan: đoán 25% thì thực tế khoảng 46%. Không cắt khỏi biểu đồ.
+- Chỉ 60 người dùng test, lấy mẫu từ 300 người → khoảng tin cậy rộng; người dùng thật của sản phẩm có thể khác phân bố Anki.
+- Cách quy đổi SM-2 là lựa chọn của nhóm; log-loss và RMSE của SM-2 phụ thuộc lựa chọn này, AUC thì không.
+
+**Hướng phát triển:** dùng lượt ôn trong ngày (FSRS-5 có tham số riêng) để giảm lỗi ở thẻ mới. **Không** chỉnh mô hình theo kết quả test này (quy tắc 2).
 
 ### 6.2. Nhận diện ảnh (50 ảnh tự chụp)
 
@@ -149,6 +179,15 @@ Chưa có SM-2 nên **chưa kết luận được** con số này là tốt hay 
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-10-11 · Đợt 6 · WSEA-67 — Cài đặt đường cơ sở và đánh giá mô hình
+
+- **Đã làm:** `evaluation/check_split.py` (dựng lại tập val, kiểm tra không rò rỉ, lưu `training/splits/`); `evaluation/sm2.py` theo đặc tả gốc + 6 test; `evaluation/run_eval.py` chạy hằng số, SM-2, DSR v1 trên cùng bảng mẫu, có kiểm tra "ống đo" trên val trước khi mở test.
+- **Kết quả:** tập test, log-loss DSR 0,3506 · hằng số 0,3792 · SM-2 0,4015; AUC DSR 0,7127 · SM-2 0,6526. DSR − SM-2 = −0,0509 [−0,0613; −0,0379]. Chi tiết mục 6.1.1.
+- **Bẫy đã tránh:** `FSRSModel.forward` trả dự đoán theo thứ tự "vị trí trước, chuỗi sau", khác bảng mẫu; ghép thẳng thì phân tích lỗi theo nhóm sai mà không báo lỗi. `dsr_predict` sắp lại bằng `torch.nonzero` và `assert` nhãn trùng từng dòng.
+- **Phát hiện phương pháp:** dùng tỷ lệ nhớ của chính tập val làm mô hình hằng số (0,463) là nhìn trộm đáp án; đúng là lấy từ train (0,4716).
+- **Minh chứng Jira:** commit `fe20f88`, `38d6cd0`, `a816644`, `5a0812a` trên nhánh `ai/WSEA-67-baseline-eval`; `pytest -q` 118 pass; `outputs/eval/retention_report.md`, `retention_metrics.json`, `calibration.png`.
+- **Việc tiếp theo:** push + PR; WSEA-65 lên HF Spaces; hợp đồng API v0.3.
 
 ### 2026-09-28 · Đợt 5 · WSEA-81 — Xây dựng endpoint dự báo
 

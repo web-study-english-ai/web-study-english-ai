@@ -33,3 +33,5 @@ htmlcov/
 
 # ket qua thi nghiem huan luyen - tai tao duoc bang run_train.py
 runs/
+ai-service/data/
+ai-service/notebooks/.ipynb_checkpoints/

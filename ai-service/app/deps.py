@@ -7,24 +7,22 @@ from fastapi import Header, HTTPException, status
 from app.config import settings
 
 # Doi ten header o day phai sua docs/API_CONTRACT.md truoc.
-API_KEY_HEADER = "X-Internal-Api-Key"
-LEGACY_API_KEY_HEADER = "x-api-key"
+API_KEY_HEADER = "x-api-key"
 
 
 async def verify_internal_api_key(
-    x_internal_api_key: str | None = Header(default=None, alias=API_KEY_HEADER),
-    x_api_key: str | None = Header(default=None, alias=LEGACY_API_KEY_HEADER),
+    key: str | None = Header(default=None, alias=API_KEY_HEADER),
 ) -> None:
     """Kiem tra khoa API noi bo.
 
     Chi backend NestJS duoc phep goi ai-service, khong mo cong khai.
-    Chap nhan ca header 'X-Internal-Api-Key' (chuan) hoac 'x-api-key' (legacy).
+    Chi nhan MOT header 'x-api-key' theo hop dong API. Khong giu ten thu hai
+    (X-Internal-Api-Key): hai ten cho cung mot khoa thi khong ai dam bo ten nao.
 
     Thieu khoa va sai khoa deu tra 401 (hop dong API + NF-11/NF-14). Khong dung 403:
     403 nghia la "da biet anh la ai nhung khong cho", con o day chua xac thuc duoc.
     Hai truong hop cung ma loi cung bot lo thong tin cho nguoi do khoa.
     """
-    key = x_internal_api_key or x_api_key
     if key is None:
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,

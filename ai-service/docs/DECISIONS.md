@@ -48,7 +48,7 @@ Mỗi mục 5 dòng là đủ. Ghi ngay lúc quyết định, đừng để cu�
 - **Các phương án**: (a) âm thầm dùng `DEFAULT_W` chưa huấn luyện · (b) `raise` trong `lifespan` cho container chết · (c) khởi động được nhưng báo degraded
 - **Chọn**: (c) — `models["fsrs"] = None`, `/health` trả **503** với `status="degraded"`, `/predict-retention` trả **503**.
 - **Lý do**: (a) nguy hiểm nhất — `DEFAULT_W` vẫn cho ra con số trông hợp lý, nên lỗi sẽ sống sót qua cả buổi bảo vệ mà không ai phát hiện. (b) làm HF Spaces restart liên tục, `/health` cũng chết nên không chẩn đoán được từ xa. (c) hỏng rõ ràng, đúng mã lỗi, backend dùng fallback TypeScript (NF-12).
-- **Đánh đổi**: chức năng ôn tập chạy bằng SM-2 phía backend trong lúc sự cố, số liệu kém hơn DSR. Chấp nhận được vì luồng học không đứt.
+- **Đánh đổi**: chức năng ôn tập chạy bằng công thức dự phòng `simple-scheduler.ts` phía backend trong lúc sự cố (sửa 2026-10-11: không phải SM-2, xem mục cùng ngày), số liệu kém hơn DSR. Chấp nhận được vì luồng học không đứt.
 - **Sẽ xem lại nếu**: có cách lưu trọng số kèm trong image một cách an toàn, lúc đó fallback cục bộ mới đáng tin.
 
 ### 2026-09-28 — `interval_days` làm tròn (`round`) chứ không làm tròn lên (`ceil`) (WSEA-81)
@@ -75,3 +75,37 @@ Mỗi mục 5 dòng là đủ. Ghi ngay lúc quyết định, đừng để cu�
 - **Lý do**: đã kiểm chứng rằng gõ sai `stabilty` hoặc gửi camelCase `elapsedDays` **không báo lỗi gì** — trường bị bỏ qua, thẻ cũ bị coi là thẻ mới và trả về khoảng ôn sai hoàn toàn. Một lỗi im lặng kiểu này rất khó tìm khi tích hợp với backend.
 - **Đánh đổi**: backend không thể gửi thêm trường phụ để dùng dần; mỗi trường mới phải sửa hợp đồng trước. Đó là hành vi mong muốn.
 - **Sẽ xem lại nếu**: không.
+
+### 2026-10-11 — Cài SM-2 theo đặc tả gốc, không theo đoạn mã trong cẩm nang (WSEA-67)
+
+- **Bối cảnh**: cần đường cơ sở cổ điển để so với DSR. Đoạn mã SM-2 trong cẩm nang mục 2.1 lệch đặc tả gốc ở 2 chỗ.
+- **Các phương án**: theo cẩm nang · theo đặc tả gốc (Wozniak 1990)
+- **Chọn**: đặc tả gốc — khi quên (q < 3) KHÔNG đổi hệ số dễ EF; khoảng cách làm tròn LÊN. Đổi 4 nút: Chưa nhớ→1, Khó→3, Bình thường→4, Dễ→5.
+- **Lý do**: báo cáo ghi "SM-2" thì phải đúng SM-2. Vì EF không đổi khi quên, mọi giá trị < 3 cho "Chưa nhớ" đều ra cùng kết quả; lựa chọn thật sự chỉ là Khó→3. Đặc tả gốc không có ví dụ số nên test tự tính tay.
+- **Đánh đổi**: không so được trực tiếp với các bài viết dùng biến thể SM-2 của Anki.
+- **Sẽ xem lại nếu**: hội đồng yêu cầu so với biến thể SM-2 khác.
+
+### 2026-10-11 — SM-2 không phải fallback của backend; fallback là `simple-scheduler.ts` (WSEA-67)
+
+- **Bối cảnh**: hợp đồng API v0.2 ghi fallback backend phải là SM-2.
+- **Chọn**: backend giữ `simple-scheduler.ts`; SM-2 chỉ cài bằng Python trong `evaluation/` làm đường cơ sở.
+- **Lý do**: fallback chỉ cần giữ app chạy khi dịch vụ AI chết. Đường cơ sở thì phải chạy cùng dữ liệu, cùng pipeline đánh giá với DSR, tức là trong Python. SRS UC010 luồng 1a chỉ yêu cầu "công thức dự phòng viết bằng TypeScript". Đã thống nhất với Thạc Duy Anh.
+- **Đánh đổi**: không có số liệu offline cho chính công thức fallback.
+- **Sẽ xem lại nếu**: cần đo chất lượng lịch ôn trong thời gian sự cố.
+
+### 2026-10-11 — Quy đổi SM-2 sang xác suất: khoảng SM-2 làm độ bền S (WSEA-67)
+
+- **Bối cảnh**: SM-2 chỉ cho khoảng ôn, không cho xác suất, nên không tính được log-loss/AUC (vấn đề mở #2).
+- **Các phương án**: coi khoảng I là độ bền S rồi áp cùng R(t, S) của DSR · hàm mũ `0.9^(t/I)`
+- **Chọn**: I làm S, cùng công thức `R = (1 + 19/81 · t / S)^(−0.5)` (cẩm nang mục 5.4).
+- **Lý do**: dùng chung một đường cong quên với DSR thì khác biệt chỉ còn ở cách cập nhật trạng thái. Mọi cách quy đổi hợp lý đều là hàm đơn điệu của t/I, nên AUC không đổi.
+- **Đánh đổi**: log-loss và RMSE của SM-2 phụ thuộc lựa chọn này — phải ghi rõ trong báo cáo.
+- **Sẽ xem lại nếu**: hội đồng cho rằng cách quy đổi làm SM-2 bị thiệt.
+
+### 2026-10-11 — Quy trình đánh giá trên tập test (WSEA-67)
+
+- **Bối cảnh**: tập test chỉ được dùng một lần (quy tắc 2), kết quả phải tin được với chỉ 60 người dùng.
+- **Chọn**: (1) mô hình hằng số lấy p0 từ tập train; (2) DSR chạy bằng đúng `params.json` v1 của endpoint; (3) kiểm tra "ống đo" trên tập val, phải khớp `report.json` tới 1e-6 trước khi mở test; (4) khoảng tin cậy 95% bootstrap theo người dùng, 1.000 lần, seed 42; (5) dùng chung `training/metrics.py` với lúc huấn luyện.
+- **Lý do**: lấy p0 từ chính tập đánh giá là nhìn trộm đáp án. Các lượt ôn của cùng một người không độc lập nên lấy mẫu lại theo lượt sẽ cho khoảng tin cậy hẹp giả.
+- **Đánh đổi**: không tinh chỉnh DSR theo kết quả test, kể cả khi thấy chỗ yếu (thẻ mới, mục 6.1.1 `PROGRESS.md`).
+- **Sẽ xem lại nếu**: có thêm dữ liệu người dùng để tách một tập test mới.

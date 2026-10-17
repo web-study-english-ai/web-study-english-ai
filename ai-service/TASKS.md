@@ -259,13 +259,15 @@
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-50 · Cài đặt đường cơ sở và đánh giá mô hình
-7h · Ưu tiên: Highest · `ai/WSEA-50-...`
+### [x] WSEA-50 · Cài đặt đường cơ sở và đánh giá mô hình
+7h · Ưu tiên: Highest · `ai/WSEA-67-baseline-eval`
 
-- [ ] 1. Cài đặt thuật toán SM-2 làm đường cơ sở
-- [ ] 2. Tính log-loss và RMSE của cả hai trên cùng tập kiểm tra
-- [ ] 3. Vẽ biểu đồ độ hiệu chỉnh so sánh dự đoán và thực tế
-- [ ] 4. Tổng hợp kết quả vào báo cáo đánh giá mô hình
+> Mã Jira thật của task này là **WSEA-67** (Đợt 6), không phải WSEA-50. Làm trễ từ đợt 4.
+
+- [x] 1. Cài đặt thuật toán SM-2 làm đường cơ sở — `evaluation/sm2.py` theo đặc tả gốc, 6 test trong `tests/test_sm2.py`
+- [x] 2. Tính log-loss và RMSE của cả hai trên cùng tập kiểm tra — thêm AUC, mô hình hằng số và khoảng tin cậy bootstrap theo người dùng (`evaluation/run_eval.py`)
+- [x] 3. Vẽ biểu đồ độ hiệu chỉnh so sánh dự đoán và thực tế — `outputs/eval/calibration.png`
+- [x] 4. Tổng hợp kết quả vào báo cáo đánh giá mô hình — `outputs/eval/retention_report.md`, `PROGRESS.md` mục 6.1.1
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -285,7 +287,9 @@
 
 </details>
 
-**Minh chứng Jira:** 
+**Minh chứng Jira:** WSEA-67 — nhánh `ai/WSEA-67-baseline-eval` (4 commit). Tập test: log-loss DSR 0,3506 ·
+hằng số 0,3792 · SM-2 0,4015; DSR − SM-2 = −0,0509 [−0,0613; −0,0379]. `pytest -q` 118 pass.
+Kết quả trong `outputs/eval/`.
 
 ### [ ] WSEA-51 · Viết chương 1 và 2 báo cáo
 4h · Ưu tiên: Medium · `ai/WSEA-51-...`
