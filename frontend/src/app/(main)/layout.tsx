@@ -1,5 +1,6 @@
 import { Sidebar } from "@/components/shared/Sidebar";
 import { Header } from "@/components/shared/Header";
+import { FloatingChatBubble } from "@/components/shared/FloatingChatBubble";
 
 export default function MainLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -9,6 +10,7 @@ export default function MainLayout({ children }: { children: React.ReactNode }) 
         <Header />
         <main className="flex-1 overflow-y-auto">{children}</main>
       </div>
+      <FloatingChatBubble />
     </div>
   );
 }

@@ -12,7 +12,7 @@ const SEGMENTS = [
   { key: "notLearned", label: "Chưa học", stroke: "stroke-slate-200", dot: "bg-slate-200" },
 ] as const;
 
-export function StatusDonut({ counts }: { counts: CardStatusCounts }) {
+export function StatusCard({ counts }: { counts: CardStatusCounts }) {
   const total = counts.mastered + counts.learning + counts.notLearned;
 
   const lengths = SEGMENTS.map((s) =>

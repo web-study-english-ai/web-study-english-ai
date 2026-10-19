@@ -23,7 +23,6 @@ const navItems = [
   { href: "/progress", label: "Tiến trình học tập", icon: TrendingUp },
   { href: "/reading", label: "Bài tập đọc hiểu", icon: BookOpenCheck },
   { href: "/image-learning", label: "Nhận diện từ vựng", icon: ScanLine },
-  { href: "/ai-chat", label: "Hỏi đáp với trợ lí AI", icon: MessageCircle },
 ];
 
 export function Sidebar() {

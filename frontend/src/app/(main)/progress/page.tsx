@@ -5,7 +5,7 @@ import { useProgressStats } from "@/features/progress/hooks/useProgress";
 import { ProgressStatCards } from "@/features/progress/components/ProgressStatCards";
 import { ChartCard, LegendItem } from "@/features/progress/components/ChartCard";
 import { MemoryStrengthChart } from "@/features/progress/components/MemoryStrengthChart";
-import { StatusDonut } from "@/features/progress/components/StatusCards";
+import { StatusCard} from "@/features/progress/components/StatusCards";
 import { DailyActivityChart } from "@/features/progress/components/DailyActivityChart";
 import { ProgressInsightBanner } from "@/features/progress/components/ProgressInsightBanner";
 import {
@@ -44,7 +44,7 @@ export default function ProgressPage() {
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <ChartCard title="Phân bố trạng thái thẻ">
-              <StatusDonut counts={data.statusCounts} />
+              <StatusCard counts={data.statusCounts} />
             </ChartCard>
 
             <ChartCard

@@ -16,7 +16,6 @@ const navItems = [
   { href: "/progress", label: "Tiến trình học tập" },
   { href: "/lessons", label: "Bài tập đọc hiểu" },
   { href: "/image-learning", label: "Nhận diện từ vựng" },
-  { href: "/ai-chat", label: "Hỏi đáp với trợ lí AI" },
 ];
 
 export function Header() {
