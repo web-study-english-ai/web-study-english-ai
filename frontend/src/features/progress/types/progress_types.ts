@@ -4,9 +4,15 @@ export interface CardStatusCounts {
   notLearned: number; // chưa học
 }
 
-export interface TotalWordsPoint {
+export interface MemoryStrengthPoint {
   label: string; // "Tuần 1", "Tuần 2"...
-  total: number; // tổng số từ tích lũy tới cuối mốc đó
+  value: number; // 0–100
+}
+
+export interface DailyActivity {
+  day: string; // "T2" ... "CN"
+  newWords: number;
+  reviews: number;
 }
 
 export interface ProgressStats {
@@ -16,5 +22,11 @@ export interface ProgressStats {
   retentionRate7d: number; // 0–100
   streakDays: number;
   bestStreakDays: number;
-  totalWordsTimeline: TotalWordsPoint[];
+  memoryStrength: number; // 0–100
+  memoryStrengthDelta: number; // điểm % so với tuần trước, có thể âm
+  memoryStrengthTimeline: MemoryStrengthPoint[];
+  dailyActivity: DailyActivity[];
+    retentionStatusText?: string;
+  streakMessage?: string;
+  motivationalMessage?: string;
 }

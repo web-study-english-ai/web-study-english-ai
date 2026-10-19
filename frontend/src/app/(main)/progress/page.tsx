@@ -3,7 +3,10 @@
 import { PageContainer } from "@/components/shared/PageContainer";
 import { useProgressStats } from "@/features/progress/hooks/useProgress";
 import { ProgressStatCards } from "@/features/progress/components/ProgressStatCards";
-import { TotalWordsChart } from "@/features/progress/components/ProgressChart";
+import { ChartCard, LegendItem } from "@/features/progress/components/ChartCard";
+import { MemoryStrengthChart } from "@/features/progress/components/MemoryStrengthChart";
+import { StatusDonut } from "@/features/progress/components/StatusCards";
+import { DailyActivityChart } from "@/features/progress/components/DailyActivityChart";
 import { ProgressInsightBanner } from "@/features/progress/components/ProgressInsightBanner";
 import {
   ProgressEmpty,
@@ -20,7 +23,7 @@ export default function ProgressPage() {
         Thống kê tiến độ học tập
       </h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Theo dõi sự phát triển số từ đã học và mức độ chăm chỉ của bạn.
+        Theo dõi sự phát triển độ bền trí nhớ và mức độ chăm chỉ của bạn.
       </p>
 
       {isLoading && <ProgressSkeleton />}
@@ -31,20 +34,36 @@ export default function ProgressPage() {
         <div className="mt-6 space-y-4">
           <ProgressStatCards stats={data} />
 
-          <div className="rounded-2xl border border-border bg-white p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="font-heading text-base font-semibold text-foreground">
-                Tổng số từ theo thời gian
-              </h2>
-              <span className="flex items-center gap-2 text-xs text-muted-foreground">
-                <span className="inline-block h-0.5 w-4 rounded bg-primary" />
-                Số từ
-              </span>
-            </div>
-            <TotalWordsChart data={data.totalWordsTimeline} />
+          <ChartCard
+            title="Tổng độ bền trí nhớ theo thời gian"
+            subtitle="Chỉ số đánh giá khả năng lưu trữ từ vựng dài hạn (30 ngày gần nhất)"
+            legend={<LegendItem line colorClass="bg-primary" label="Độ bền trung bình" />}
+          >
+            <MemoryStrengthChart data={data.memoryStrengthTimeline} />
+          </ChartCard>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <ChartCard title="Phân bố trạng thái thẻ">
+              <StatusDonut counts={data.statusCounts} />
+            </ChartCard>
+
+            <ChartCard
+              title="Hoạt động hàng ngày"
+              legend={
+                <>
+                  <LegendItem colorClass="bg-teal-500" label="Từ mới" />
+                  <LegendItem colorClass="bg-primary" label="Ôn tập" />
+                </>
+              }
+            >
+              <DailyActivityChart data={data.dailyActivity} />
+            </ChartCard>
           </div>
 
-          <ProgressInsightBanner retentionRate={data.retentionRate7d} />
+          <ProgressInsightBanner
+            retentionRate={data.retentionRate7d}
+            message={data.motivationalMessage}
+          />
         </div>
       )}
     </PageContainer>
