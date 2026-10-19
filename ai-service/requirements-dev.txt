@@ -1,7 +1,9 @@
+-r requirements.txt
 pandas
-numpy
 scikit-learn
 matplotlib
 pyarrow
 pytest
+httpx
+pytest-cov
 ipykernel

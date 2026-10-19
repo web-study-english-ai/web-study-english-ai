@@ -1,5 +1,14 @@
 evaluation/
 notebooks/
 data/
-output/
+outputs/
 tests/
+runs/
+.venv/
+.env
+.env.*
+.coverage
+dump.txt
+__pycache__/
+.pytest_cache/
+.ruff_cache/
