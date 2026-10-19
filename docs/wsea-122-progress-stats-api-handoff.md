@@ -4,8 +4,8 @@
 * **Mã task Jira:** `WSEA-122` (Backend) & `WSEA-116` (Frontend)
 * **Kỹ sư phụ trách:** Phạm Thái Bình (DevOps / Backend)
 * **Bên tiếp nhận:** Frontend Team (TV), QA/Tester Team, Project Manager
-* **Trạng thái:** Hoàn thành & Đã đồng bộ 100% với Frontend (Tests & Build Passed)
-* **Ngày cập nhật:** 17/10/2026
+* **Trạng thái:** Hoàn thành & Đã đồng bộ 100% với Frontend (Tests & Next.js Build Passed)
+* **Ngày cập nhật:** 19/10/2026 (Tích hợp cùng PR #73 / WSEA-118)
 
 ---
 
