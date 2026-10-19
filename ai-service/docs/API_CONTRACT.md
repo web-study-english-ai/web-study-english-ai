@@ -3,15 +3,15 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81) · 2026-10-17: chỉ sửa phần triển khai (HF Spaces → Render), **không đổi giao diện**
+Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện**
 
 ## Quy ước chung
 
-- Base URL cục bộ: `http://localhost:7860` · Production: `https://<ten-service>.onrender.com` (Render — điền URL thật sau khi xong Jira WSEA-82)
+- Base URL cục bộ: `http://localhost:7860` · Production: `https://hieusss-wsea-ai-service.hf.space` (HF Spaces, dự kiến — xác nhận URL thật sau khi xong Jira WSEA-82)
 - Xác thực: header `x-api-key: <INTERNAL_API_KEY>`. Thiếu hoặc sai trả `401`.
 - Content-Type: `application/json`, trừ endpoint ảnh dùng `multipart/form-data`.
 - Backend PHẢI có fallback TypeScript cho mọi endpoint. Dịch vụ AI chết thì luồng học và ôn tập vẫn chạy.
-- Dịch vụ chạy trên Render gói trả phí, **không ngủ**. Backend timeout 3 giây mọi lần gọi; `503` thì thử lại một lần sau 2 giây rồi fallback (chốt với Duy Anh 2026-10-09). Lúc Render deploy bản mới có thể lỗi trong chốc lát → fallback như bình thường.
+- Dịch vụ chạy trên HF Spaces (Docker, CPU basic). Space **ngủ sau 48 giờ** không có request, và **khởi động lại** khi được đẩy bản mới, khi sửa Settings hoặc khi HF bảo trì; trong lúc đó request lỗi hoặc treo → fallback như bình thường. Một lần gọi `GET /health` mỗi ngày giữ Space không ngủ. Backend timeout 3 giây mọi lần gọi; `503` thì thử lại một lần sau 2 giây rồi fallback (chốt với Duy Anh 2026-10-09).
 - **Body JSON không được chứa trường lạ.** Mọi schema đầu vào đặt `extra="forbid"`:
   gõ sai tên trường (`stabilty`) hoặc gửi camelCase (`elapsedDays`) đều trả `422`, không bị bỏ qua im lặng.
   Tên trường dùng `snake_case` đúng như bảng mô tả.
@@ -34,7 +34,7 @@ Dịch vụ thà báo hỏng rõ ràng còn hơn trả số liệu sai để bac
 
 ## GET /health
 
-Không cần khoá. Dùng cho Health Check của Render (Health Check Path `/health`) và kiểm tra thủ công.
+Không cần khoá. Dùng cho job ping giữ thức, smoke test và kiểm tra thủ công. HF Spaces không có health check cấu hình được: Space báo "Running" ngay khi cổng 7860 mở, kể cả khi mô hình nạp thất bại → phải kiểm endpoint này trả 200.
 
 Nạp mô hình thành công → **200**:
 
@@ -60,7 +60,7 @@ Nạp mô hình thất bại → **503**, body giữ nguyên hình dạng:
 ```
 
 Trả 200 khi dịch vụ không phục vụ được là nói dối với health check — nên trạng thái
-`degraded` đi kèm mã 503 để Health Check của Render nhìn thấy đúng.
+`degraded` đi kèm mã 503 để job ping và smoke test nhìn thấy đúng.
 
 ## POST /predict-retention
 

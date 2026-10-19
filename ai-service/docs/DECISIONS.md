@@ -112,9 +112,20 @@ Mỗi mục 5 dòng là đủ. Ghi ngay lúc quyết định, đừng để cu�
 
 ### 2026-10-15 — Triển khai dịch vụ AI lên Render gói `0.5c-512mb` thay vì Hugging Face Spaces (Jira WSEA-82)
 
+- **Trạng thái**: ĐÃ THAY bởi mục 2026-10-19 (quay lại HF Spaces). Giữ lại để ghi lý do cho báo cáo.
+
 - **Bối cảnh**: kế hoạch ban đầu dùng HF Spaces CPU basic miễn phí. Từ khoảng tháng 7/2026 HF yêu cầu gói trả phí (PRO 9 USD/tháng) mới tạo được Space Gradio hoặc Docker; trang tạo Space của tài khoản `Hieusss` gắn nhãn "Paid" cho Docker (kiểm chứng 2026-10-11).
 - **Các phương án đã cân nhắc**: (a) HF PRO 9 USD/tháng, 2 vCPU/16 GB, vẫn ngủ khi không dùng · (b) Space Gradio trên ZeroGPU miễn phí — chỉ Gradio SDK, phải thêm hàm `@spaces.GPU` giả, Python 3.10/3.12 · (c) Render free — 0,1 CPU/512 MB, ngủ sau 15 phút, 750 giờ/workspace dùng chung với backend · (d) Render `0.5c-512mb` 7 USD/tháng.
 - **Chọn**: (d).
 - **Lý do**: không ngủ nên hết cold start (backend chỉ chờ 3 giây); hợp đồng API v0.2 không đổi, backend chỉ đổi `AI_SERVICE_URL`; Dockerfile giữ nguyên; build thẳng từ repo GitHub (Root Directory `ai-service`) thay vì đẩy sang repo git riêng của Space; backend của nhóm đã chạy trên Render; rẻ hơn (a). Loại (b) vì chắp vá và HF ghi rõ có thể lỗi bất ngờ. Loại (c) vì cold start khoảng 1 phút, và đặt chung workspace với backend sẽ vượt quota, làm dừng cả backend.
 - **Đánh đổi đã chấp nhận**: chỉ 512 MB RAM (HF có 16 GB) — torch phải đo trước, CLIP + e5 + reranker gần như chắc không vừa; chi phí khoảng 7 USD/tháng trong ngân sách 500.000đ.
 - **Sẽ xem lại nếu**: đo Docker ở 512 MB thấy torch không vừa (dự phòng: suy luận bằng numpy, huấn luyện vẫn PyTorch — cần Hiếu duyệt), hoặc ở đợt 7 đo e5/CLIP thấy cần nhiều RAM hơn (nâng `1c-2g` 25 USD/tháng cho mấy đợt cuối; Render tính tiền theo giây).
+
+### 2026-10-19 — Quay lại Hugging Face Spaces (Docker, CPU basic, gói PRO 9 USD/tháng) cho dịch vụ AI (Jira WSEA-82)
+
+- **Bối cảnh**: 15/10 chọn Render `0.5c-512mb`. Đo ngày 17/10: DSR dùng ~198 MiB, còn ~314 MiB. Ước tính CLIP ViT-B-32 + e5-small ở fp32 cần thêm khoảng 800 MB → không vừa 512 MB; muốn vừa phải chuyển sang ONNX int8 (vẫn sát mép) hoặc thuê thêm service. Đợt 7 đang quá tải.
+- **Các phương án đã cân nhắc**: (a) Render 1 service, tối ưu ONNX cho vừa 512 MB · (b) Render 2 service (DSR riêng, CLIP + e5 riêng) · (c) Render nâng `1c-2g` 25 USD/tháng · (d) HF Spaces PRO 9 USD/tháng, CPU basic 2 vCPU / 16 GB.
+- **Chọn**: (d). Một Space chứa cả 3 chức năng AI.
+- **Lý do**: 16 GB chứa thoải mái DSR + CLIP + e5 + reranker ở fp32, không tốn công ONNX, không phải tách service; Dockerfile, README (khối YAML) và docstring vốn viết cho HF nên gần như không sửa code; tài liệu đã nộp (01, 13, 15) vốn ghi HF Spaces nên không phải đính chính; trọng số đã ở HF Hub cùng tài khoản.
+- **Đánh đổi đã chấp nhận**: Space ngủ sau 48 giờ không có request → ping `/health` mỗi ngày (job của Bình); Space khởi động lại khi đẩy bản mới, sửa Settings hoặc HF bảo trì → mỗi lần mất vài phút, dự báo quên có fallback `simple-scheduler.ts`, ảnh và trợ lý thì không; PRO trả trọn tháng (9 USD) chứ không theo giây; triển khai bằng cách đẩy `ai-service/` sang repo git riêng của Space, không tự build từ GitHub; không chọn được vùng đặt máy chủ (độ trễ từ backend Singapore cao hơn, vẫn trong 3 giây).
+- **Sẽ xem lại nếu**: Space khởi động lại thường xuyên hơn mức chịu được trong đợt 8–10, hoặc thời gian khởi động khi nạp đủ CLIP + e5 vượt vài phút.

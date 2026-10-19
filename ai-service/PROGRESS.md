@@ -10,14 +10,14 @@
 ## 1. Trạng thái hiện tại
 
 - **Đợt hiện tại:** Đợt 6 (D16–D18) theo lịch; **phần AI của v1.0 trễ sang đợt 7**
-- **Task kế tiếp:** Jira **WSEA-82** — Triển khai dịch vụ AI lên Render (file `TASKS.md` cũ ghi WSEA-65; Jira đã dời sang đợt 7). Các bước ở mục đầu Đợt 7 trong `TASKS.md`
+- **Task kế tiếp:** Jira **WSEA-82** — Triển khai dịch vụ AI lên **Hugging Face Spaces** (quay lại HF ngày 2026-10-19; file `TASKS.md` cũ ghi WSEA-65; Jira đã dời sang đợt 7). Các bước ở mục đầu Đợt 7 trong `TASKS.md`
 - **Nhánh:** `ai/WSEA-82-deploy-render` — tạo 2026-10-17 từ `ai/WSEA-67-baseline-eval`; đã merge `origin/develop` ngày 2026-10-17 (`bdf28de`)
 - **Việc dở dang cần làm tiếp:**
   - Dán minh chứng Jira WSEA-67 (PR #62 đã merge, `16a4593`)
-  - Jira WSEA-82 — cổng quyết định là đo Docker ở `--memory=512m --cpus=0.5`
+  - Jira WSEA-82 — bước 2 qua cổng 17/10 (Docker 512 MB, RAM đỉnh ~198 MiB); bước 1 xong 19/10 (ghim `numpy==2.4.6` vì 2.5.x cần Python >= 3.12; đo lại `--cpus=2`, RAM đỉnh ~188 MiB). Tiếp: Hiếu mua PRO, tạo Space, khai Secrets, đẩy code
   - Sau WSEA-82: Jira WSEA-83 kiểm thử tích hợp → MK-3 → hợp đồng API v0.3 với Duy Anh (replay, cột `scheduler`, `elapsed_days`)
 - **Đang bị chặn bởi:** không
-- **Cập nhật lần cuối:** 2026-10-17
+- **Cập nhật lần cuối:** 2026-10-19
 
 ## 2. Tiến độ theo mốc
 
@@ -28,7 +28,7 @@
 | — | 3 | Cài đặt DSR 17 tham số + unit test pass | ✅ | `app/models/fsrs.py`, test toán học pass |
 | MK-2 | 4 | Bảng `reviews` ghi đủ 16 trường mô hình cần | ⬜ | Phối hợp Phúc, Bình |
 | v0.1 | 4 | Mô hình DSR đã huấn luyện, có số liệu so với SM-2 | ✅ | Trễ hạn, xong 2026-10-11 (WSEA-67). Tập test: DSR 0,3506 log-loss · SM-2 0,4015 · hằng số 0,3792 |
-| — | 5→7 | AI Service trên **Render**, `/predict-retention` gọi được từ backend | ⚠️ | Endpoint xong (WSEA-81). Bỏ HF Spaces (Docker Space cần gói PRO), chọn Render `0.5c-512mb` 2026-10-15. Jira WSEA-82 dời sang đợt 7 |
+| — | 5→7 | AI Service trên **HF Spaces**, `/predict-retention` gọi được từ backend | ⚠️ | Endpoint xong (WSEA-81). 15/10 chuyển sang Render, 19/10 quay lại HF Spaces gói PRO (16 GB đủ cho cả CLIP + e5). Jira WSEA-82 dời sang đợt 7 |
 | MK-3 / v1.0 | 6→7 | **Dự báo quên đúng trên production — SỐNG CÒN** | ⚠️ | Trễ theo WSEA-82. Trong lúc chờ, luồng ôn tập chạy bằng fallback `simple-scheduler.ts` |
 | — | 7 | Chunk + embedding + vector search chạy | ⬜ | |
 | — | 8 | Phân loại ý định + rerank đạt mục tiêu | ⬜ | |
@@ -59,14 +59,16 @@ Ký hiệu: ⬜ chưa làm · 🟨 đang làm · ✅ xong · ⚠️ trễ/có v�
 
 | # | Vấn đề | Mức | Người xử lý | Hạn | Trạng thái |
 |---|---|---|---|---|---|
+| 14 | **`.venv` Python 3.13 khác image Python 3.11** — test chạy trên 3.13. Lộ ra 19/10 khi ghim `numpy==2.5.3` làm Docker build lỗi (2.5.x cần Python >= 3.12); đã lùi về 2.4.6 ở cả hai bên. | Thấp | Hiếu | Sau bảo vệ | Mở — chưa sửa, xem lại sau bảo vệ |
+| 13 | **Space HF ngủ sau 48 giờ và khởi động lại** khi đẩy bản mới, sửa Settings hoặc HF bảo trì. Dự báo quên có fallback; nhận diện ảnh và trợ lý thì không. | TB | Hiếu, Bình | Đợt 7 | Mở — ping `/health` 1 lần/ngày (job của Bình); đánh thức ≥ 30 phút trước demo; không đẩy lên Space trong ngày bảo vệ |
 | 12 | **Phần AI của v1.0 trễ sang đợt 7.** Jira WSEA-82 dời sang đợt 7 → WSEA-83 (kiểm thử tích hợp) và MK-3 cũng trễ. Đợt 7 vốn đã kín việc RAG. | Rất cao | Hiếu | Đợt 7 | Mở — làm WSEA-82 → WSEA-83 → MK-3 trước mọi việc RAG |
 | 11 | **Hợp đồng API đổi lên 0.2, backend chưa được báo.** Đổi: path `/predict/forgetting` → `/predict-retention`; header `X-Internal-Api-Key` → `x-api-key`; khoá sai 403 → 401; bỏ `due_date`; `stability`/`difficulty` nhận `null`; thêm `extra="forbid"` (trường lạ hoặc camelCase → 422); thêm mã 500. Backend gọi theo bản cũ sẽ hỏng ngay. | Rất cao | Hiếu → Duy Anh | Trước WSEA-65 | ✅ Đóng 2026-10-09 — đã báo và thống nhất với Duy Anh |
 | 10 | **Đánh số WSEA trong `TASKS.md` lệch với Jira thật.** Task "Xây dựng endpoint" ghi WSEA-64 nhưng Jira là WSEA-81; commit trước đó dùng WSEA-66 cho "huấn luyện mô hình" trong khi `TASKS.md` ghi WSEA-66 = "kiểm thử tích hợp". Cần rà toàn bộ file, nếu không minh chứng Jira sẽ gắn nhầm task. | Cao | Hiếu | Đợt 5 | Mở |
 | 1 | **Thứ tự cắt giảm không thống nhất giữa các tài liệu.** Bối cảnh dự án ghi: Could have → đọc hiểu → bỏ rerank → bỏ phân loại ý định → giảm nhãn ảnh 2000→500. File 11 (sheet Mốc và bàn giao) ghi: cắt **toàn bộ** nhận diện ảnh trước tiên, rồi phân loại ý định + rerank. MK-3 cũng ghi "huỷ nhận diện ảnh nếu mô hình dự báo lỗi". Cần chốt một bản và sửa tài liệu còn lại. | Cao | Hiếu | Đợt __ | Mở |
 | 2 | **SM-2 không tự sinh xác suất nhớ.** Muốn so log-loss/AUC với DSR phải định nghĩa cách quy đổi (vd dùng khoảng ôn SM-2 làm S rồi áp cùng công thức R(t,S), hoặc hàm mũ `0.9^(t/I)`). Chọn một cách, ghi rõ trong báo cáo. | Cao | Hiếu | Trước khi đánh giá | ✅ Đóng 2026-10-11 — chọn cách 1: khoảng SM-2 làm S rồi áp cùng R(t,S) (WSEA-67, `docs/DECISIONS.md`) |
-| 3 | Chưa chốt mô hình **rerank** và **phân loại ý định** (vd cross-encoder nhỏ; e5 embedding + LogisticRegression). Cần ước RAM (Render chỉ 512 MB). | TB | Hiếu | Đợt 7 | Mở |
-| 4 | Tổng RAM khi nạp cùng lúc DSR + CLIP + e5 (+ reranker) — chưa đo. Render `0.5c-512mb` chỉ có 512 MB: gần như chắc không đủ cho CLIP + e5. | Cao | Hiếu | Đợt 7 (task "Chốt nơi đặt mô hình nặng") | Mở |
-| 5 | Cold start làm request đầu chậm/timeout → backend cần timeout + fallback. | TB | Hiếu, Duy Anh | Đợt 5 | ✅ Đóng 2026-10-09 — timeout 3 s, 503 thử lại 1 lần sau 2 s rồi fallback. Render trả phí không ngủ nên hết cold start |
+| 3 | Chưa chốt mô hình **rerank** và **phân loại ý định** (vd cross-encoder nhỏ; e5 embedding + LogisticRegression). Cần đo RAM và thời gian khởi động (HF CPU basic 16 GB). | TB | Hiếu | Đợt 7 | Mở |
+| 4 | Tổng RAM và thời gian khởi động khi nạp cùng lúc DSR + CLIP + e5 (+ reranker) — chưa đo. 19/10 quay lại HF 16 GB nên RAM không còn là rào cản; còn lo thời gian nạp lại sau mỗi lần Space khởi động lại. | TB | Hiếu | Đợt 7 (task "Chốt nơi đặt mô hình nặng") | Mở |
+| 5 | Cold start làm request đầu chậm/timeout → backend cần timeout + fallback. | TB | Hiếu, Duy Anh | Đợt 5 | ✅ Đóng 2026-10-09 — timeout 3 s, 503 thử lại 1 lần sau 2 s rồi fallback. Sau khi quay lại HF: Space ngủ/khởi động lại → xem vấn đề #13 |
 | 6 | 40.007 file CSV — huấn luyện toàn bộ có thể quá nặng. Có thể lấy mẫu một tập user; phải ghi rõ số user từng tập. | TB | Hiếu | Đợt 2 | Mở |
 | 7 | Khoá nội bộ dùng header `x-api-key` (theo CLAUDE.md). Xác nhận đúng tên header và tên biến môi trường với Duy Anh, ghi vào `docs/API_CONTRACT.md`. | Thấp | Hiếu, Duy Anh | Đợt 5 | ✅ Đóng 2026-10-09 — header `x-api-key`; biến ai-service `INTERNAL_API_KEY`, biến backend `AI_SERVICE_KEY`, cùng giá trị |
 | 8 | Kế hoạch AI (đợt 7) ghi "so sánh vài mô hình sinh vector" nhưng bối cảnh đã chốt e5-small. Nếu vẫn so sánh thì chỉ so 2 mô hình, hộp thời gian 2h, rồi chốt. | Thấp | Hiếu | Đợt 7 | Mở |
@@ -180,6 +182,14 @@ AUC không phụ thuộc cách quy đổi SM-2 (mọi cách quy đổi hợp lý
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-10-19 · Đợt 7 · Quay lại Hugging Face Spaces (Jira WSEA-82)
+
+- **Bối cảnh:** nhóm chốt quay lại HF Spaces gói PRO (9 USD/tháng, 16 GB RAM) thay cho Render 512 MB — lý do ở `docs/DECISIONS.md` mục 2026-10-19.
+- **Đã làm:** cập nhật `CLAUDE.md`, `.claude/settings.json` (cấm `hf upload`, `hf auth login`), `.claude/agents/ra-soat-ai.md`, `TASKS.md` (WSEA-82 7 bước mới, task mô hình nặng, task tắt dịch vụ), `PROGRESS.md`, `docs/DECISIONS.md`, `docs/API_CONTRACT.md` (chỉ phần triển khai), docstring `scripts/smoke_test.py`.
+- **Không cần sửa:** Dockerfile, README (khối YAML `sdk: docker`, `app_port: 7860`), docstring trong `app/` — vốn viết cho HF.
+- **WSEA-82 bước 1:** ghim `numpy==2.5.3` (theo `.venv`) làm Docker build lỗi vì 2.5.x cần Python >= 3.12 mà image dùng 3.11 → lùi về `numpy==2.4.6` ở `requirements.txt` và `.venv`; 118 test pass. Đo lại `--cpus=2`: image 1,54 GB, khởi động 3,1 s, RAM nghỉ 183 MiB, đỉnh 187,5 MiB, lô 500 p50 28,1 ms / p95 30,8 ms; smoke test 6/6. Vấn đề #14.
+- **Việc tiếp theo:** Hiếu mua PRO, tạo Space, khai Secrets, đẩy code; smoke test trên URL `.hf.space`.
 
 ### 2026-10-17 · Đợt 6 · Chuyển nền tảng triển khai sang Render (chuẩn bị Jira WSEA-82)
 

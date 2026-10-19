@@ -18,7 +18,7 @@
 > |---|---|---|
 > | WSEA-50 | **WSEA-67** | Cài đặt đường cơ sở và đánh giá mô hình |
 > | WSEA-64 | **WSEA-81** | Xây dựng endpoint dự báo |
-> | WSEA-65 | **WSEA-82** | Triển khai dịch vụ AI lên Render (dời sang đợt 7) |
+> | WSEA-65 | **WSEA-82** | Triển khai dịch vụ AI lên Hugging Face Spaces (dời sang đợt 7) |
 > | WSEA-66 | **WSEA-83** | Phối hợp kiểm thử tích hợp dịch vụ AI |
 > | WSEA-67 | **WSEA-84** | Đệm xử lý sự cố kỹ thuật |
 >
@@ -345,14 +345,14 @@ Kết quả trong `outputs/eval/`.
 độ phủ `app/` 98%. Hợp đồng API lên 0.2 (bỏ `due_date`, S/D nullable) — **cần báo
 Thạc Duy Anh trước khi backend tích hợp**.
 
-### [→] WSEA-65 (Jira **WSEA-82**) · Triển khai dịch vụ AI lên Render — **ĐÃ DỜI SANG ĐỢT 7**
+### [→] WSEA-65 (Jira **WSEA-82**) · Triển khai dịch vụ AI lên Hugging Face Spaces — **ĐÃ DỜI SANG ĐỢT 7**
 
-Xem mục đầu Đợt 7. Nền tảng đổi từ Hugging Face Spaces sang Render ngày 2026-10-15 (`docs/DECISIONS.md`).
+Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay lại Hugging Face Spaces gói PRO (`docs/DECISIONS.md`).
 
 ### [ ] WSEA-66 (Jira **WSEA-83**) · Phối hợp kiểm thử tích hợp dịch vụ AI
 4h · Ưu tiên: Highest · `ai/WSEA-83-...`
 
-> Phụ thuộc Jira WSEA-82 → thực tế làm ở đợt 7, ngay sau khi dịch vụ lên Render. Ca "Space ngủ" đổi thành "tạm dừng (Suspend) service trên Render rồi kiểm tra backend fallback".
+> Phụ thuộc Jira WSEA-82 → thực tế làm ở đợt 7, ngay sau khi dịch vụ lên HF Spaces. Ca "Space ngủ": bấm Pause Space trong Settings rồi kiểm tra backend fallback, xong bấm Restart.
 
 - [ ] 1. Cùng backend kiểm tra kết nối và định dạng dữ liệu
 - [ ] 2. Xử lý các sai lệch về kiểu dữ liệu và múi giờ
@@ -461,27 +461,30 @@ Xem mục đầu Đợt 7. Nền tảng đổi từ Hugging Face Spaces sang Ren
 
 ## Đợt 7 · D19–D21 — Trợ lý phần 1
 
-### [ ] Jira WSEA-82 · Triển khai dịch vụ AI lên Render  ← ƯU TIÊN SỐ 1 CỦA ĐỢT 7
-6h · Ưu tiên: Highest · nhánh `ai/WSEA-82-deploy-render` · dời từ đợt 5 (file cũ ghi WSEA-65)
+### [~] Jira WSEA-82 · Triển khai dịch vụ AI lên Hugging Face Spaces  ← ƯU TIÊN SỐ 1 CỦA ĐỢT 7
+6h · Ưu tiên: Highest · nhánh `ai/WSEA-82-deploy-render` (giữ tên cũ, đã push) · dời từ đợt 5 (file cũ ghi WSEA-65)
 
-> Nền tảng đổi từ Hugging Face Spaces sang Render gói `0.5c-512mb` (2026-10-15, `docs/DECISIONS.md`).
+> Nền tảng: 15/10 đổi sang Render, **19/10 quay lại HF Spaces gói PRO** (`docs/DECISIONS.md`). Space dự kiến `Hieusss/wsea-ai-service`, công khai, Docker, CPU basic.
 > Làm xong task này mới làm WSEA-83 (kiểm thử tích hợp) và MK-3, trước mọi việc RAG.
 
-- [ ] 1. Hoàn thiện Dockerfile và requirements: tách gói test sang `requirements-dev.txt`, ghim `torch` bản CPU — **hỏi Hiếu trước khi sửa requirements**
-- [ ] 2. Chạy Docker trên máy với `--memory=512m --cpus=0.5`: `/health` 200, có khoá 200, thiếu khoá 401; đo RAM nghỉ và sau lô 500 thẻ, thời gian khởi động, độ trễ lô 1 và 500, kích thước image — **cổng quyết định**
-- [ ] 3. Tạo Web Service trên Render: Docker, Root Directory `ai-service`, gói `0.5c-512mb`, cùng region với backend, Health Check Path `/health`
-- [ ] 4. Cấu hình biến môi trường: `INTERNAL_API_KEY` (cùng giá trị `AI_SERVICE_KEY` của backend), `HF_TOKEN`, `FSRS_WEIGHTS_*`, `ENVIRONMENT=production`, `PORT=7860`
-- [ ] 5. Kiểm tra trên URL onrender, đối chiếu kết quả với chạy cục bộ (S=12,5 t=3 rating 3 → R ≈ 0,97299), đo độ trễ thực tế
-- [ ] 6. Gửi URL cho Duy Anh để backend đặt `AI_SERVICE_URL`; sửa README, chú thích Dockerfile và docstring trong `app/` còn nhắc HF Spaces
+- [x] 1. Hoàn thiện Dockerfile và requirements: tách gói test sang `requirements-dev.txt`, ghim `torch==2.14.0+cpu`, `numpy==2.4.6` (2.5.x cần Python >= 3.12, image dùng 3.11); sửa `.dockerignore`; thêm `scripts/smoke_test.py` — xong 19/10
+- [x] 2. Chạy Docker trên máy (`--memory=512m --cpus=0.5`): `/health` 200, có khoá 200, thiếu khoá 401; RAM nghỉ ~182 MiB, đỉnh ~198 MiB, image 1,54 GB — qua cổng 17/10 (mốc RAM nền cho task mô hình nặng)
+- [ ] 3. Hiếu mua gói PRO cho tài khoản `Hieusss`, tạo Space Docker `wsea-ai-service` (Blank, CPU basic, Public)
+- [ ] 4. Khai báo Secrets `INTERNAL_API_KEY` (cùng giá trị `AI_SERVICE_KEY` của backend), `HF_TOKEN` (fine-grained, chỉ đọc repo trọng số); Variables `FSRS_WEIGHTS_SOURCE/REPO/FILE/REVISION`, `ENVIRONMENT=production`
+- [ ] 5. Hiếu đẩy nội dung `ai-service/` (bản đã commit, không có `.env`, `.venv`, `weights/`) lên repo git của Space; theo dõi Logs tới dòng "Da nap trong so FSRS v1"
+- [ ] 6. Chạy `scripts/smoke_test.py` với URL `https://hieusss-wsea-ai-service.hf.space`: 401/422, R ≈ 0,97299 (S=12,5 t=3 rating 3), độ trễ lô 1 và 500 đo từ máy ở Việt Nam
+- [ ] 7. Gửi URL cho Duy Anh để staging đặt `AI_SERVICE_URL`; báo Bình đổi job giữ thức sang ping `/health` của Space 1 lần/ngày; ghi URL vào `docs/API_CONTRACT.md`, số đo vào `PROGRESS.md`; `ra-soat-ai`, commit, PR vào `develop`
 
 **Minh chứng Jira:** 
 
 ### [ ] Jira WSEA-?? · Chốt nơi đặt mô hình nặng (task mới 2026-10-17 — điền mã Jira)
 3h · Ưu tiên: High · làm sau WSEA-82
 
-- [ ] 1. Đo RAM e5-small (và cross-encoder dự kiến) trong Docker `--memory=2g`
-- [ ] 2. Ước RAM CLIP ViT-B-32 khi chỉ nạp bộ mã hoá ảnh và vector nhãn tính sẵn
-- [ ] 3. Quyết định: nâng gói Render `1c-2g` cho mấy đợt cuối (tính tiền theo giây) hay phương án khác; ghi `docs/DECISIONS.md`
+> 19/10: quay lại HF Spaces 16 GB nên RAM không còn là rào cản. Task này chỉ còn đo để chốt mọi mô hình nằm chung một Space.
+
+- [ ] 1. Đo RAM và **thời gian khởi động** khi nạp DSR + e5-small (+ cross-encoder dự kiến) trong Docker `--cpus=2`
+- [ ] 2. Đo thêm CLIP ViT-B-32 (bộ mã hoá ảnh + vector nhãn tính sẵn); cộng thời gian tải mô hình từ HF Hub lúc khởi động
+- [ ] 3. Chốt: cả 3 chức năng chung một Space; chỉ tách nếu thời gian khởi động quá vài phút. Ghi `docs/DECISIONS.md`
 
 **Minh chứng Jira:** 
 
@@ -789,8 +792,9 @@ Xem mục đầu Đợt 7. Nền tảng đổi từ Hugging Face Spaces sang Ren
 ### [ ] Jira WSEA-?? · Tắt dịch vụ AI sau bảo vệ (task mới 2026-10-17 — điền mã Jira)
 1h · Ưu tiên: High
 
-- [ ] 1. Suspend hoặc xoá Web Service AI trên Render để ngừng trừ tiền
-- [ ] 2. Kiểm tra trang Billing của Render không còn phát sinh
+- [ ] 1. Pause hoặc xoá Space `Hieusss/wsea-ai-service`
+- [ ] 2. Huỷ gói PRO **trước 1/12** (gia hạn ngày 1 hằng tháng; Settings → Billing của HF); kiểm tra không còn phát sinh
+- [ ] 3. Thu hồi token HF đã cấp cho Space (Settings → Access Tokens)
 
 **Minh chứng Jira:** 
 
