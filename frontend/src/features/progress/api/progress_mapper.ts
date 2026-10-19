@@ -1,6 +1,6 @@
 import { ProgressStats } from "../types/progress_types";
 
-interface RawProgressResponse {
+export interface RawProgressResponse {
   totalWords?: number;
   weeklyGain?: number;
   statusCounts?: { mastered?: number; learning?: number; notLearned?: number };
