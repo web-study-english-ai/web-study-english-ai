@@ -69,6 +69,32 @@ def _check_finite(
         raise ValueError(f"Mo hinh tra gia tri khong huu han o: {', '.join(bad)}")
 
 
+def _build_results(
+    cards,
+    retrievability: torch.Tensor,
+    new_stability: torch.Tensor,
+    new_difficulty: torch.Tensor,
+    interval_days: torch.Tensor,
+) -> list[CardOut]:
+    """Chuyen tensor ve list Python (mot lan moi cot) roi tao CardOut cho tung the."""
+    r_list = retrievability.tolist()
+    s_list = new_stability.tolist()
+    d_list = new_difficulty.tolist()
+    i_list = interval_days.tolist()
+    return [
+        CardOut(
+            card_id=card.card_id,
+            # NaN cua the moi doi thanh None mot cach tuong minh: JSON khong co NaN,
+            # va ta khong muon phu thuoc vao cach Pydantic xu ly gia tri nay.
+            retrievability=None if math.isnan(r) else r,
+            new_stability=s,
+            new_difficulty=d,
+            interval_days=int(i),
+        )
+        for card, r, s, d, i in zip(cards, r_list, s_list, d_list, i_list)
+    ]
+
+
 @router.post("/predict-retention", response_model=PredictRetentionResponse)
 async def predict_retention(
     payload: PredictRetentionRequest, request: Request
@@ -89,6 +115,7 @@ async def predict_retention(
 
     try:
         stability, difficulty, elapsed, rating, is_new = _to_tensors(cards)
+        t1 = time.perf_counter()
 
         # model.eval() da goi luc nap; no_grad de khong dung bo nho cho autograd.
         model.eval()
@@ -103,10 +130,12 @@ async def predict_retention(
                     max_interval=settings.fsrs_max_interval,
                 )
             )
+        t2 = time.perf_counter()
 
         _check_finite(
             retrievability, new_stability, new_difficulty, interval_days, is_new
         )
+        t3 = time.perf_counter()
     except Exception as exc:  # noqa: BLE001 - khong de traceback van ra ngoai
         logger.error(
             "Loi khi du bao cho %d the (%s): %s",
@@ -120,31 +149,32 @@ async def predict_retention(
             detail="Mo hinh du bao gap loi. Dung fallback phia backend.",
         ) from exc
 
-    r_list = retrievability.tolist()
-    s_list = new_stability.tolist()
-    d_list = new_difficulty.tolist()
-    i_list = interval_days.tolist()
+    results = _build_results(
+        cards, retrievability, new_stability, new_difficulty, interval_days
+    )
+    t4 = time.perf_counter()
 
-    results = [
-        CardOut(
-            card_id=card.card_id,
-            # NaN cua the moi doi thanh None mot cach tuong minh: JSON khong co NaN,
-            # va ta khong muon phu thuoc vao cach Pydantic xu ly gia tri nay.
-            retrievability=None if math.isnan(r) else r,
-            new_stability=s,
-            new_difficulty=d,
-            interval_days=int(i),
-        )
-        for card, r, s, d, i in zip(cards, r_list, s_list, d_list, i_list)
-    ]
+    # Chi gan khi thanh cong: middleware ServerTiming doc dict nay luc gui header.
+    timings = {
+        "tensor": (t1 - started) * 1000,
+        "model": (t2 - t1) * 1000,
+        "check": (t3 - t2) * 1000,
+        "build": (t4 - t3) * 1000,
+    }
+    request.state.timings = timings
 
     elapsed_ms = (time.perf_counter() - started) * 1000
-    # So lieu nay la dau vao san cho WSEA-80 (do va toi uu hieu nang).
+    # So lieu dau vao cho WSEA-97 (do hieu nang). Van mot dong log moi request.
     logger.info(
-        "predict-retention: %d the trong %.1f ms (%.3f ms/the), model=%s",
+        "predict-retention: %d the trong %.1f ms (%.3f ms/the) "
+        "tensor=%.3f model=%.3f check=%.3f build=%.3f ms, model=%s",
         len(cards),
         elapsed_ms,
         elapsed_ms / len(cards),
+        timings["tensor"],
+        timings["model"],
+        timings["check"],
+        timings["build"],
         meta.get("version"),
     )
 
