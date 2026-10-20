@@ -1,0 +1,4674 @@
+{
+  "generated_at": "2026-10-20T17:52:22+00:00",
+  "config": {
+    "url": "http://127.0.0.1:7860",
+    "key_env": "AI_KEY",
+    "runs": 30,
+    "warmup": 3,
+    "sizes": [
+      1,
+      500
+    ],
+    "singles": 50,
+    "seed": 42,
+    "timeout": 30.0,
+    "batch_vs_single_reps": 5,
+    "new_card_ratio": 0.2,
+    "python": "3.13.12"
+  },
+  "series": [
+    {
+      "mode": "new",
+      "batch_size": 1,
+      "samples": [
+        {
+          "client_ms": 1.6009000246413052,
+          "server": {
+            "tensor": 0.034,
+            "model": 0.315,
+            "check": 0.06,
+            "build": 0.013,
+            "app": 0.757
+          },
+          "outside_app_ms": 0.8439000246413052,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.7507000011391938,
+          "server": {
+            "tensor": 0.035,
+            "model": 0.389,
+            "check": 0.063,
+            "build": 0.017,
+            "app": 0.833
+          },
+          "outside_app_ms": 0.9177000011391938,
+          "reconnected": false
+        },
+        {
+          "client_ms": 13.732100022025406,
+          "server": {
+            "tensor": 0.07,
+            "model": 0.432,
+            "check": 0.077,
+            "build": 0.02,
+            "app": 1.147
+          },
+          "outside_app_ms": 12.585100022025406,
+          "reconnected": false
+        },
+        {
+          "client_ms": 2.7364999987185,
+          "server": {
+            "tensor": 0.075,
+            "model": 0.367,
+            "check": 0.082,
+            "build": 0.028,
+            "app": 1.051
+          },
+          "outside_app_ms": 1.6854999987185002,
+          "reconnected": false
+        },
+        {
+          "client_ms": 2.153799985535443,
+          "server": {
+            "tensor": 0.05,
+            "model": 0.494,
+            "check": 0.071,
+            "build": 0.017,
+            "app": 1.05
+          },
+          "outside_app_ms": 1.1037999855354428,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.581599994096905,
+          "server": {
+            "tensor": 0.039,
+            "model": 0.318,
+            "check": 0.061,
+            "build": 0.013,
+            "app": 0.749
+          },
+          "outside_app_ms": 0.832599994096905,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3567000278271735,
+          "server": {
+            "tensor": 0.034,
+            "model": 0.276,
+            "check": 0.057,
+            "build": 0.011,
+            "app": 0.697
+          },
+          "outside_app_ms": 0.6597000278271735,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.24149996554479,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.261,
+            "check": 0.055,
+            "build": 0.011,
+            "app": 0.639
+          },
+          "outside_app_ms": 0.60249996554479,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3498999760486186,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.279,
+            "check": 0.053,
+            "build": 0.012,
+            "app": 0.645
+          },
+          "outside_app_ms": 0.7048999760486185,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.4130999916233122,
+          "server": {
+            "tensor": 0.031,
+            "model": 0.307,
+            "check": 0.057,
+            "build": 0.012,
+            "app": 0.725
+          },
+          "outside_app_ms": 0.6880999916233123,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2771000037901103,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.288,
+            "check": 0.054,
+            "build": 0.012,
+            "app": 0.673
+          },
+          "outside_app_ms": 0.6041000037901103,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3282999861985445,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.299,
+            "check": 0.056,
+            "build": 0.012,
+            "app": 0.678
+          },
+          "outside_app_ms": 0.6502999861985445,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2980999890714884,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.282,
+            "check": 0.054,
+            "build": 0.011,
+            "app": 0.667
+          },
+          "outside_app_ms": 0.6310999890714883,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.4403999666683376,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.279,
+            "check": 0.056,
+            "build": 0.012,
+            "app": 0.69
+          },
+          "outside_app_ms": 0.7503999666683376,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3222999987192452,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.292,
+            "check": 0.056,
+            "build": 0.011,
+            "app": 0.683
+          },
+          "outside_app_ms": 0.6392999987192451,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3089999556541443,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.287,
+            "check": 0.056,
+            "build": 0.012,
+            "app": 0.693
+          },
+          "outside_app_ms": 0.6159999556541443,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2629000120796263,
+          "server": {
+            "tensor": 0.026,
+            "model": 0.248,
+            "check": 0.053,
+            "build": 0.011,
+            "app": 0.609
+          },
+          "outside_app_ms": 0.6539000120796263,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3238000101409853,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.279,
+            "check": 0.055,
+            "build": 0.012,
+            "app": 0.673
+          },
+          "outside_app_ms": 0.6508000101409852,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3371999957598746,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.263,
+            "check": 0.055,
+            "build": 0.012,
+            "app": 0.652
+          },
+          "outside_app_ms": 0.6851999957598746,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3151000021025538,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.281,
+            "check": 0.055,
+            "build": 0.011,
+            "app": 0.676
+          },
+          "outside_app_ms": 0.6391000021025538,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2909999932162464,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.263,
+            "check": 0.061,
+            "build": 0.012,
+            "app": 0.664
+          },
+          "outside_app_ms": 0.6269999932162463,
+          "reconnected": false
+        },
+        {
+          "client_ms": 20.224900043103844,
+          "server": {
+            "tensor": 0.046,
+            "model": 0.342,
+            "check": 0.064,
+            "build": 0.015,
+            "app": 0.816
+          },
+          "outside_app_ms": 19.408900043103845,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3753999955952168,
+          "server": {
+            "tensor": 0.031,
+            "model": 0.268,
+            "check": 0.053,
+            "build": 0.012,
+            "app": 0.67
+          },
+          "outside_app_ms": 0.7053999955952167,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2575999717228115,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.258,
+            "check": 0.056,
+            "build": 0.01,
+            "app": 0.626
+          },
+          "outside_app_ms": 0.6315999717228115,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2329999590292573,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.282,
+            "check": 0.054,
+            "build": 0.012,
+            "app": 0.632
+          },
+          "outside_app_ms": 0.6009999590292573,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.7105999868363142,
+          "server": {
+            "tensor": 0.038,
+            "model": 0.376,
+            "check": 0.055,
+            "build": 0.014,
+            "app": 0.804
+          },
+          "outside_app_ms": 0.9065999868363142,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2935999548062682,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.256,
+            "check": 0.054,
+            "build": 0.011,
+            "app": 0.64
+          },
+          "outside_app_ms": 0.6535999548062682,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2478000135160983,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.253,
+            "check": 0.054,
+            "build": 0.011,
+            "app": 0.628
+          },
+          "outside_app_ms": 0.6198000135160983,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2594000436365604,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.279,
+            "check": 0.053,
+            "build": 0.011,
+            "app": 0.67
+          },
+          "outside_app_ms": 0.5894000436365604,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.2803000281564891,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.31,
+            "check": 0.053,
+            "build": 0.012,
+            "app": 0.656
+          },
+          "outside_app_ms": 0.6243000281564891,
+          "reconnected": false
+        }
+      ],
+      "summary": {
+        "n": 30,
+        "n_with_server_timing": 30,
+        "n_reconnected": 0,
+        "client_p50": 1.3238000101409853,
+        "client_p95": 2.7364999987185,
+        "outside_app_p50": 0.6535999548062682,
+        "tensor_p50": 0.029,
+        "model_p50": 0.282,
+        "check_p50": 0.055,
+        "build_p50": 0.012,
+        "app_p50": 0.673
+      }
+    },
+    {
+      "mode": "new",
+      "batch_size": 500,
+      "samples": [
+        {
+          "client_ms": 15.536300023086369,
+          "server": {
+            "tensor": 0.537,
+            "model": 0.436,
+            "check": 0.09,
+            "build": 0.765,
+            "app": 4.7
+          },
+          "outside_app_ms": 10.83630002308637,
+          "reconnected": false
+        },
+        {
+          "client_ms": 29.527900042012334,
+          "server": {
+            "tensor": 0.649,
+            "model": 0.392,
+            "check": 0.087,
+            "build": 0.655,
+            "app": 4.331
+          },
+          "outside_app_ms": 25.196900042012334,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.616899987217039,
+          "server": {
+            "tensor": 0.474,
+            "model": 0.378,
+            "check": 0.088,
+            "build": 0.833,
+            "app": 4.678
+          },
+          "outside_app_ms": 0.9388999872170389,
+          "reconnected": false
+        },
+        {
+          "client_ms": 7.123099989257753,
+          "server": {
+            "tensor": 0.57,
+            "model": 0.408,
+            "check": 0.083,
+            "build": 0.826,
+            "app": 5.75
+          },
+          "outside_app_ms": 1.373099989257753,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.387499986682087,
+          "server": {
+            "tensor": 0.56,
+            "model": 0.431,
+            "check": 0.09,
+            "build": 0.706,
+            "app": 4.434
+          },
+          "outside_app_ms": 0.953499986682087,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.4765999666415155,
+          "server": {
+            "tensor": 0.54,
+            "model": 0.39,
+            "check": 0.08,
+            "build": 0.71,
+            "app": 4.343
+          },
+          "outside_app_ms": 1.1335999666415155,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.936000030487776,
+          "server": {
+            "tensor": 0.573,
+            "model": 0.423,
+            "check": 0.094,
+            "build": 0.936,
+            "app": 4.992
+          },
+          "outside_app_ms": 0.9440000304877758,
+          "reconnected": false
+        },
+        {
+          "client_ms": 14.525699953082949,
+          "server": {
+            "tensor": 0.522,
+            "model": 0.382,
+            "check": 0.079,
+            "build": 0.665,
+            "app": 4.165
+          },
+          "outside_app_ms": 10.36069995308295,
+          "reconnected": false
+        },
+        {
+          "client_ms": 15.829800046049058,
+          "server": {
+            "tensor": 0.533,
+            "model": 0.363,
+            "check": 0.079,
+            "build": 0.641,
+            "app": 4.492
+          },
+          "outside_app_ms": 11.337800046049058,
+          "reconnected": false
+        },
+        {
+          "client_ms": 15.144100005272776,
+          "server": {
+            "tensor": 0.669,
+            "model": 0.44,
+            "check": 0.091,
+            "build": 0.663,
+            "app": 4.365
+          },
+          "outside_app_ms": 10.779100005272776,
+          "reconnected": false
+        },
+        {
+          "client_ms": 14.624000003095716,
+          "server": {
+            "tensor": 0.502,
+            "model": 0.369,
+            "check": 0.077,
+            "build": 0.662,
+            "app": 4.286
+          },
+          "outside_app_ms": 10.338000003095717,
+          "reconnected": false
+        },
+        {
+          "client_ms": 15.477199980523437,
+          "server": {
+            "tensor": 0.508,
+            "model": 0.397,
+            "check": 0.079,
+            "build": 0.656,
+            "app": 4.124
+          },
+          "outside_app_ms": 11.353199980523438,
+          "reconnected": false
+        },
+        {
+          "client_ms": 7.2660999721847475,
+          "server": {
+            "tensor": 0.617,
+            "model": 0.477,
+            "check": 0.106,
+            "build": 1.589,
+            "app": 6.052
+          },
+          "outside_app_ms": 1.2140999721847479,
+          "reconnected": false
+        },
+        {
+          "client_ms": 7.386000012047589,
+          "server": {
+            "tensor": 0.807,
+            "model": 0.488,
+            "check": 0.107,
+            "build": 1.051,
+            "app": 5.984
+          },
+          "outside_app_ms": 1.4020000120475888,
+          "reconnected": false
+        },
+        {
+          "client_ms": 14.656599960289896,
+          "server": {
+            "tensor": 0.573,
+            "model": 0.394,
+            "check": 0.082,
+            "build": 0.677,
+            "app": 4.442
+          },
+          "outside_app_ms": 10.214599960289895,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.613200017251074,
+          "server": {
+            "tensor": 0.508,
+            "model": 0.393,
+            "check": 0.083,
+            "build": 0.83,
+            "app": 4.499
+          },
+          "outside_app_ms": 1.1142000172510746,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.633599997963756,
+          "server": {
+            "tensor": 0.567,
+            "model": 0.481,
+            "check": 0.087,
+            "build": 0.692,
+            "app": 4.67
+          },
+          "outside_app_ms": 0.9635999979637564,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.60050003696233,
+          "server": {
+            "tensor": 0.615,
+            "model": 0.391,
+            "check": 0.087,
+            "build": 0.721,
+            "app": 4.573
+          },
+          "outside_app_ms": 1.02750003696233,
+          "reconnected": false
+        },
+        {
+          "client_ms": 28.100700001232326,
+          "server": {
+            "tensor": 0.575,
+            "model": 0.419,
+            "check": 0.091,
+            "build": 0.779,
+            "app": 5.025
+          },
+          "outside_app_ms": 23.075700001232327,
+          "reconnected": false
+        },
+        {
+          "client_ms": 30.783599999267608,
+          "server": {
+            "tensor": 0.548,
+            "model": 0.417,
+            "check": 0.089,
+            "build": 0.72,
+            "app": 4.662
+          },
+          "outside_app_ms": 26.12159999926761,
+          "reconnected": false
+        },
+        {
+          "client_ms": 29.68959999270737,
+          "server": {
+            "tensor": 0.542,
+            "model": 0.421,
+            "check": 0.087,
+            "build": 0.712,
+            "app": 4.54
+          },
+          "outside_app_ms": 25.149599992707373,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.039800016675144,
+          "server": {
+            "tensor": 0.526,
+            "model": 0.369,
+            "check": 0.076,
+            "build": 0.69,
+            "app": 4.177
+          },
+          "outside_app_ms": 0.8628000166751448,
+          "reconnected": false
+        },
+        {
+          "client_ms": 24.273800023365766,
+          "server": {
+            "tensor": 0.512,
+            "model": 0.377,
+            "check": 0.08,
+            "build": 0.658,
+            "app": 4.293
+          },
+          "outside_app_ms": 19.980800023365767,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.8396000056527555,
+          "server": {
+            "tensor": 0.473,
+            "model": 0.315,
+            "check": 0.074,
+            "build": 0.758,
+            "app": 4.036
+          },
+          "outside_app_ms": 0.8036000056527559,
+          "reconnected": false
+        },
+        {
+          "client_ms": 26.50750003522262,
+          "server": {
+            "tensor": 0.533,
+            "model": 0.414,
+            "check": 0.086,
+            "build": 0.731,
+            "app": 4.756
+          },
+          "outside_app_ms": 21.75150003522262,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.621599964797497,
+          "server": {
+            "tensor": 0.513,
+            "model": 0.381,
+            "check": 0.085,
+            "build": 0.682,
+            "app": 4.363
+          },
+          "outside_app_ms": 1.2585999647974964,
+          "reconnected": false
+        },
+        {
+          "client_ms": 23.269800003618002,
+          "server": {
+            "tensor": 0.555,
+            "model": 0.394,
+            "check": 0.08,
+            "build": 0.671,
+            "app": 4.238
+          },
+          "outside_app_ms": 19.031800003618002,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.038099945522845,
+          "server": {
+            "tensor": 0.486,
+            "model": 0.639,
+            "check": 0.075,
+            "build": 0.628,
+            "app": 4.158
+          },
+          "outside_app_ms": 0.8800999455228444,
+          "reconnected": false
+        },
+        {
+          "client_ms": 37.046499957796186,
+          "server": {
+            "tensor": 0.515,
+            "model": 0.372,
+            "check": 0.078,
+            "build": 0.692,
+            "app": 4.772
+          },
+          "outside_app_ms": 32.27449995779619,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.499300023075193,
+          "server": {
+            "tensor": 0.535,
+            "model": 0.385,
+            "check": 0.081,
+            "build": 0.658,
+            "app": 4.228
+          },
+          "outside_app_ms": 1.2713000230751934,
+          "reconnected": false
+        }
+      ],
+      "summary": {
+        "n": 30,
+        "n_with_server_timing": 30,
+        "n_reconnected": 0,
+        "client_p50": 7.386000012047589,
+        "client_p95": 29.68959999270737,
+        "outside_app_p50": 1.4020000120475888,
+        "tensor_p50": 0.537,
+        "model_p50": 0.394,
+        "check_p50": 0.083,
+        "build_p50": 0.692,
+        "app_p50": 4.442
+      }
+    },
+    {
+      "mode": "keepalive",
+      "batch_size": 1,
+      "samples": [
+        {
+          "client_ms": 1.5193999861367047,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.724,
+            "check": 0.067,
+            "build": 0.014,
+            "app": 1.139
+          },
+          "outside_app_ms": 0.38039998613670467,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9948000079020858,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.254,
+            "check": 0.052,
+            "build": 0.011,
+            "app": 0.598
+          },
+          "outside_app_ms": 0.3968000079020858,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9922000463120639,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.25,
+            "check": 0.051,
+            "build": 0.011,
+            "app": 0.595
+          },
+          "outside_app_ms": 0.39720004631206396,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9119999594986439,
+          "server": {
+            "tensor": 0.025,
+            "model": 0.235,
+            "check": 0.05,
+            "build": 0.01,
+            "app": 0.55
+          },
+          "outside_app_ms": 0.36199995949864383,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9981000330299139,
+          "server": {
+            "tensor": 0.025,
+            "model": 0.235,
+            "check": 0.052,
+            "build": 0.01,
+            "app": 0.553
+          },
+          "outside_app_ms": 0.44510003302991386,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.0053999722003937,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.278,
+            "check": 0.059,
+            "build": 0.012,
+            "app": 0.639
+          },
+          "outside_app_ms": 0.36639997220039366,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.4392000157386065,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.28,
+            "check": 0.058,
+            "build": 0.012,
+            "app": 0.648
+          },
+          "outside_app_ms": 0.7912000157386064,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3785000192001462,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.295,
+            "check": 0.169,
+            "build": 0.016,
+            "app": 0.958
+          },
+          "outside_app_ms": 0.42050001920014624,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.1323000071570277,
+          "server": {
+            "tensor": 0.033,
+            "model": 0.316,
+            "check": 0.06,
+            "build": 0.013,
+            "app": 0.709
+          },
+          "outside_app_ms": 0.42330000715702776,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.1220999876968563,
+          "server": {
+            "tensor": 0.031,
+            "model": 0.285,
+            "check": 0.058,
+            "build": 0.013,
+            "app": 0.678
+          },
+          "outside_app_ms": 0.4440999876968562,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.058999972883612,
+          "server": {
+            "tensor": 0.031,
+            "model": 0.29,
+            "check": 0.058,
+            "build": 0.012,
+            "app": 0.663
+          },
+          "outside_app_ms": 0.3959999728836119,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.1141999857500196,
+          "server": {
+            "tensor": 0.031,
+            "model": 0.278,
+            "check": 0.058,
+            "build": 0.012,
+            "app": 0.651
+          },
+          "outside_app_ms": 0.4631999857500195,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.5008000191301107,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.633,
+            "check": 0.061,
+            "build": 0.014,
+            "app": 1.119
+          },
+          "outside_app_ms": 0.38180001913011075,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.0519000352360308,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.27,
+            "check": 0.057,
+            "build": 0.011,
+            "app": 0.64
+          },
+          "outside_app_ms": 0.4119000352360308,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.1616999981924891,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.293,
+            "check": 0.058,
+            "build": 0.012,
+            "app": 0.661
+          },
+          "outside_app_ms": 0.5006999981924891,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.0290999780409038,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.268,
+            "check": 0.056,
+            "build": 0.012,
+            "app": 0.625
+          },
+          "outside_app_ms": 0.4040999780409038,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9898000280372798,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.255,
+            "check": 0.055,
+            "build": 0.011,
+            "app": 0.601
+          },
+          "outside_app_ms": 0.38880002803727987,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.1993999942205846,
+          "server": {
+            "tensor": 0.03,
+            "model": 0.368,
+            "check": 0.055,
+            "build": 0.014,
+            "app": 0.788
+          },
+          "outside_app_ms": 0.4113999942205846,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.3778999564237893,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.638,
+            "check": 0.056,
+            "build": 0.014,
+            "app": 0.987
+          },
+          "outside_app_ms": 0.3908999564237893,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.0008999961428344,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.258,
+            "check": 0.054,
+            "build": 0.011,
+            "app": 0.603
+          },
+          "outside_app_ms": 0.39789999614283444,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.0405999491922557,
+          "server": {
+            "tensor": 0.102,
+            "model": 0.255,
+            "check": 0.053,
+            "build": 0.011,
+            "app": 0.671
+          },
+          "outside_app_ms": 0.3695999491922557,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9754999773576856,
+          "server": {
+            "tensor": 0.031,
+            "model": 0.259,
+            "check": 0.054,
+            "build": 0.011,
+            "app": 0.613
+          },
+          "outside_app_ms": 0.3624999773576856,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.0480000055395067,
+          "server": {
+            "tensor": 0.028,
+            "model": 0.312,
+            "check": 0.055,
+            "build": 0.012,
+            "app": 0.666
+          },
+          "outside_app_ms": 0.38200000553950664,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9042000165209174,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.258,
+            "check": 0.055,
+            "build": 0.011,
+            "app": 0.599
+          },
+          "outside_app_ms": 0.30520001652091744,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9034000104293227,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.276,
+            "check": 0.052,
+            "build": 0.011,
+            "app": 0.606
+          },
+          "outside_app_ms": 0.29740001042932274,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.0037000174634159,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.246,
+            "check": 0.052,
+            "build": 0.01,
+            "app": 0.575
+          },
+          "outside_app_ms": 0.4287000174634159,
+          "reconnected": false
+        },
+        {
+          "client_ms": 1.1474000057205558,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.322,
+            "check": 0.059,
+            "build": 0.012,
+            "app": 0.693
+          },
+          "outside_app_ms": 0.45440000572055583,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9179000044241548,
+          "server": {
+            "tensor": 0.029,
+            "model": 0.245,
+            "check": 0.051,
+            "build": 0.011,
+            "app": 0.579
+          },
+          "outside_app_ms": 0.3389000044241548,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.9348000166937709,
+          "server": {
+            "tensor": 0.027,
+            "model": 0.252,
+            "check": 0.053,
+            "build": 0.011,
+            "app": 0.589
+          },
+          "outside_app_ms": 0.3458000166937709,
+          "reconnected": false
+        },
+        {
+          "client_ms": 0.8811000152491033,
+          "server": {
+            "tensor": 0.026,
+            "model": 0.247,
+            "check": 0.052,
+            "build": 0.011,
+            "app": 0.579
+          },
+          "outside_app_ms": 0.30210001524910335,
+          "reconnected": false
+        }
+      ],
+      "summary": {
+        "n": 30,
+        "n_with_server_timing": 30,
+        "n_reconnected": 0,
+        "client_p50": 1.0290999780409038,
+        "client_p95": 1.4392000157386065,
+        "outside_app_p50": 0.3959999728836119,
+        "tensor_p50": 0.028,
+        "model_p50": 0.27,
+        "check_p50": 0.055,
+        "build_p50": 0.011,
+        "app_p50": 0.639
+      }
+    },
+    {
+      "mode": "keepalive",
+      "batch_size": 500,
+      "samples": [
+        {
+          "client_ms": 4.700799996498972,
+          "server": {
+            "tensor": 0.527,
+            "model": 0.351,
+            "check": 0.074,
+            "build": 0.707,
+            "app": 4.161
+          },
+          "outside_app_ms": 0.5397999964989726,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.438500036485493,
+          "server": {
+            "tensor": 0.49,
+            "model": 0.329,
+            "check": 0.072,
+            "build": 0.637,
+            "app": 3.891
+          },
+          "outside_app_ms": 0.5475000364854932,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.65670000994578,
+          "server": {
+            "tensor": 0.486,
+            "model": 0.324,
+            "check": 0.072,
+            "build": 0.797,
+            "app": 4.18
+          },
+          "outside_app_ms": 0.4767000099457803,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.6178000047802925,
+          "server": {
+            "tensor": 0.482,
+            "model": 0.332,
+            "check": 0.067,
+            "build": 0.689,
+            "app": 4.046
+          },
+          "outside_app_ms": 0.5718000047802922,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.556100000627339,
+          "server": {
+            "tensor": 0.493,
+            "model": 0.301,
+            "check": 0.069,
+            "build": 0.647,
+            "app": 3.874
+          },
+          "outside_app_ms": 0.6821000006273388,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.146100011188537,
+          "server": {
+            "tensor": 0.582,
+            "model": 0.378,
+            "check": 0.085,
+            "build": 0.768,
+            "app": 4.595
+          },
+          "outside_app_ms": 0.5511000111885371,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.208299960941076,
+          "server": {
+            "tensor": 0.528,
+            "model": 0.488,
+            "check": 0.072,
+            "build": 0.675,
+            "app": 4.522
+          },
+          "outside_app_ms": 0.686299960941076,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.047700018621981,
+          "server": {
+            "tensor": 0.579,
+            "model": 0.521,
+            "check": 0.081,
+            "build": 0.693,
+            "app": 4.33
+          },
+          "outside_app_ms": 0.7177000186219811,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.791999992448837,
+          "server": {
+            "tensor": 0.492,
+            "model": 0.379,
+            "check": 0.074,
+            "build": 0.672,
+            "app": 4.231
+          },
+          "outside_app_ms": 0.5609999924488367,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.666499968152493,
+          "server": {
+            "tensor": 0.531,
+            "model": 0.325,
+            "check": 0.071,
+            "build": 0.72,
+            "app": 4.144
+          },
+          "outside_app_ms": 0.5224999681524931,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.8476000083610415,
+          "server": {
+            "tensor": 0.609,
+            "model": 0.369,
+            "check": 0.077,
+            "build": 0.706,
+            "app": 4.339
+          },
+          "outside_app_ms": 0.5086000083610411,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.727200022898614,
+          "server": {
+            "tensor": 0.596,
+            "model": 0.35,
+            "check": 0.077,
+            "build": 0.676,
+            "app": 4.215
+          },
+          "outside_app_ms": 0.5122000228986145,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.8402000102214515,
+          "server": {
+            "tensor": 0.523,
+            "model": 0.363,
+            "check": 0.071,
+            "build": 0.688,
+            "app": 4.353
+          },
+          "outside_app_ms": 0.48720001022145176,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.06120000500232,
+          "server": {
+            "tensor": 0.597,
+            "model": 0.34,
+            "check": 0.075,
+            "build": 0.706,
+            "app": 4.326
+          },
+          "outside_app_ms": 0.7352000050023202,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.837899992708117,
+          "server": {
+            "tensor": 0.51,
+            "model": 0.387,
+            "check": 0.074,
+            "build": 0.784,
+            "app": 4.349
+          },
+          "outside_app_ms": 0.48889999270811657,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.81659994693473,
+          "server": {
+            "tensor": 0.532,
+            "model": 0.352,
+            "check": 0.078,
+            "build": 0.698,
+            "app": 4.325
+          },
+          "outside_app_ms": 0.49159994693472964,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.15310000628233,
+          "server": {
+            "tensor": 0.525,
+            "model": 0.31,
+            "check": 0.071,
+            "build": 0.931,
+            "app": 4.531
+          },
+          "outside_app_ms": 0.6221000062823299,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.059499992057681,
+          "server": {
+            "tensor": 0.546,
+            "model": 0.356,
+            "check": 0.136,
+            "build": 0.7,
+            "app": 4.451
+          },
+          "outside_app_ms": 0.6084999920576815,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.474000015761703,
+          "server": {
+            "tensor": 0.538,
+            "model": 0.333,
+            "check": 0.07,
+            "build": 0.662,
+            "app": 3.953
+          },
+          "outside_app_ms": 0.5210000157617034,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.937399993650615,
+          "server": {
+            "tensor": 0.496,
+            "model": 0.329,
+            "check": 0.07,
+            "build": 0.754,
+            "app": 4.405
+          },
+          "outside_app_ms": 0.532399993650615,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.1843999535776675,
+          "server": {
+            "tensor": 0.565,
+            "model": 0.346,
+            "check": 0.077,
+            "build": 0.717,
+            "app": 4.613
+          },
+          "outside_app_ms": 0.571399953577667,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.99010004568845,
+          "server": {
+            "tensor": 0.536,
+            "model": 0.376,
+            "check": 0.076,
+            "build": 0.909,
+            "app": 4.409
+          },
+          "outside_app_ms": 0.5811000456884505,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.77669999236241,
+          "server": {
+            "tensor": 0.532,
+            "model": 0.336,
+            "check": 0.077,
+            "build": 0.696,
+            "app": 4.226
+          },
+          "outside_app_ms": 0.5506999923624099,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.7827999806031585,
+          "server": {
+            "tensor": 0.506,
+            "model": 0.327,
+            "check": 0.071,
+            "build": 0.697,
+            "app": 4.179
+          },
+          "outside_app_ms": 0.6037999806031582,
+          "reconnected": false
+        },
+        {
+          "client_ms": 6.029500043950975,
+          "server": {
+            "tensor": 0.614,
+            "model": 0.387,
+            "check": 0.108,
+            "build": 0.835,
+            "app": 5.089
+          },
+          "outside_app_ms": 0.9405000439509745,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.730100034270436,
+          "server": {
+            "tensor": 0.602,
+            "model": 0.467,
+            "check": 0.086,
+            "build": 0.778,
+            "app": 5.075
+          },
+          "outside_app_ms": 0.6551000342704354,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.009399959817529,
+          "server": {
+            "tensor": 0.542,
+            "model": 0.35,
+            "check": 0.077,
+            "build": 0.689,
+            "app": 4.441
+          },
+          "outside_app_ms": 0.5683999598175289,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.952599992975593,
+          "server": {
+            "tensor": 0.518,
+            "model": 0.38,
+            "check": 0.083,
+            "build": 0.911,
+            "app": 4.461
+          },
+          "outside_app_ms": 0.4915999929755923,
+          "reconnected": false
+        },
+        {
+          "client_ms": 5.128199991304427,
+          "server": {
+            "tensor": 0.514,
+            "model": 0.359,
+            "check": 0.081,
+            "build": 0.73,
+            "app": 4.42
+          },
+          "outside_app_ms": 0.7081999913044275,
+          "reconnected": false
+        },
+        {
+          "client_ms": 4.482800024561584,
+          "server": {
+            "tensor": 0.521,
+            "model": 0.351,
+            "check": 0.074,
+            "build": 0.666,
+            "app": 4.025
+          },
+          "outside_app_ms": 0.45780002456158364,
+          "reconnected": false
+        }
+      ],
+      "summary": {
+        "n": 30,
+        "n_with_server_timing": 30,
+        "n_reconnected": 0,
+        "client_p50": 4.8402000102214515,
+        "client_p95": 5.208299960941076,
+        "outside_app_p50": 0.5511000111885371,
+        "tensor_p50": 0.528,
+        "model_p50": 0.351,
+        "check_p50": 0.074,
+        "build_p50": 0.7,
+        "app_p50": 4.33
+      }
+    }
+  ],
+  "batch_vs_single": {
+    "summary": {
+      "batch_total_ms": {
+        "median": 1.5370000037364662,
+        "min": 1.4248999650590122,
+        "max": 1.6539000207558274
+      },
+      "batch_ms_per_card": {
+        "median": 0.030740000074729323,
+        "min": 0.028497999301180243,
+        "max": 0.03307800041511655
+      },
+      "singles_total_ms": {
+        "median": 57.140300050377846,
+        "min": 52.59999999543652,
+        "max": 88.34920002846047
+      },
+      "singles_ms_per_card": {
+        "median": 1.142806001007557,
+        "min": 1.0519999999087304,
+        "max": 1.7669840005692095
+      },
+      "n_reconnected": 0
+    },
+    "reps": [
+      {
+        "rep": 0,
+        "n_cards": 50,
+        "batch_total_ms": 1.4248999650590122,
+        "batch_ms_per_card": 0.028497999301180243,
+        "batch_sample": {
+          "client_ms": 1.35420000879094,
+          "server": {
+            "tensor": 0.078,
+            "model": 0.25,
+            "check": 0.056,
+            "build": 0.076,
+            "app": 0.938
+          },
+          "outside_app_ms": 0.4162000087909401,
+          "reconnected": false
+        },
+        "singles_total_ms": 88.34920002846047,
+        "singles_ms_per_card": 1.7669840005692095,
+        "singles_samples": [
+          {
+            "client_ms": 0.9610999841243029,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.278,
+              "check": 0.056,
+              "build": 0.011,
+              "app": 0.612
+            },
+            "outside_app_ms": 0.3490999841243029,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0978999780490994,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.364,
+              "check": 0.064,
+              "build": 0.012,
+              "app": 0.731
+            },
+            "outside_app_ms": 0.36689997804909946,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.469500013627112,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.246,
+              "check": 0.255,
+              "build": 0.014,
+              "app": 0.996
+            },
+            "outside_app_ms": 0.4735000136271119,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.799400012008846,
+            "server": {
+              "tensor": 0.033,
+              "model": 0.873,
+              "check": 0.123,
+              "build": 0.017,
+              "app": 1.394
+            },
+            "outside_app_ms": 1.405400012008846,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.4607000048272312,
+            "server": {
+              "tensor": 0.059,
+              "model": 0.401,
+              "check": 0.078,
+              "build": 0.016,
+              "app": 0.964
+            },
+            "outside_app_ms": 0.4967000048272312,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.250099972821772,
+            "server": {
+              "tensor": 0.037,
+              "model": 0.315,
+              "check": 0.061,
+              "build": 0.013,
+              "app": 0.773
+            },
+            "outside_app_ms": 0.4770999728217721,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.2628000006079674,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.261,
+              "check": 0.292,
+              "build": 0.014,
+              "app": 1.744
+            },
+            "outside_app_ms": 0.5188000006079674,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0731000220403075,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.289,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.677
+            },
+            "outside_app_ms": 0.3961000220403075,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1009000008925796,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.328,
+              "check": 0.057,
+              "build": 0.012,
+              "app": 0.699
+            },
+            "outside_app_ms": 0.4019000008925796,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9583999635651708,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.262,
+              "check": 0.056,
+              "build": 0.011,
+              "app": 0.603
+            },
+            "outside_app_ms": 0.3553999635651708,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9955000132322311,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.325,
+              "check": 0.055,
+              "build": 0.012,
+              "app": 0.668
+            },
+            "outside_app_ms": 0.3275000132322311,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2048999778926373,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.25,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.642
+            },
+            "outside_app_ms": 0.5628999778926372,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.3238000101409853,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.296,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.816
+            },
+            "outside_app_ms": 0.5078000101409853,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0452999849803746,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.284,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.686
+            },
+            "outside_app_ms": 0.3592999849803745,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0563000105321407,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.304,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.648
+            },
+            "outside_app_ms": 0.4083000105321407,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9646000107750297,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.264,
+              "check": 0.055,
+              "build": 0.01,
+              "app": 0.599
+            },
+            "outside_app_ms": 0.3656000107750297,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9169999975711107,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.252,
+              "check": 0.055,
+              "build": 0.011,
+              "app": 0.586
+            },
+            "outside_app_ms": 0.33099999757111076,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9766999864950776,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.253,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.591
+            },
+            "outside_app_ms": 0.38569998649507764,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.4433999895118177,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.503,
+              "check": 0.124,
+              "build": 0.014,
+              "app": 0.923
+            },
+            "outside_app_ms": 0.5203999895118177,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0029000113718212,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.259,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.643
+            },
+            "outside_app_ms": 0.35990001137182115,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9070999803952873,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.254,
+              "check": 0.055,
+              "build": 0.011,
+              "app": 0.598
+            },
+            "outside_app_ms": 0.3090999803952873,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9484000038355589,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.245,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.578
+            },
+            "outside_app_ms": 0.37040000383555893,
+            "reconnected": false
+          },
+          {
+            "client_ms": 4.715299990493804,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.241,
+              "check": 0.052,
+              "build": 0.01,
+              "app": 3.947
+            },
+            "outside_app_ms": 0.7682999904938042,
+            "reconnected": false
+          },
+          {
+            "client_ms": 3.175599966198206,
+            "server": {
+              "tensor": 0.094,
+              "model": 1.051,
+              "check": 0.132,
+              "build": 0.036,
+              "app": 1.923
+            },
+            "outside_app_ms": 1.252599966198206,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.432999957818538,
+            "server": {
+              "tensor": 0.082,
+              "model": 0.56,
+              "check": 0.115,
+              "build": 0.024,
+              "app": 1.401
+            },
+            "outside_app_ms": 1.031999957818538,
+            "reconnected": false
+          },
+          {
+            "client_ms": 3.1651000026613474,
+            "server": {
+              "tensor": 0.099,
+              "model": 1.215,
+              "check": 0.113,
+              "build": 0.029,
+              "app": 2.149
+            },
+            "outside_app_ms": 1.0161000026613474,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.126000006683171,
+            "server": {
+              "tensor": 0.068,
+              "model": 0.507,
+              "check": 0.108,
+              "build": 0.023,
+              "app": 1.302
+            },
+            "outside_app_ms": 0.8240000066831707,
+            "reconnected": false
+          },
+          {
+            "client_ms": 3.271499997936189,
+            "server": {
+              "tensor": 0.09,
+              "model": 1.226,
+              "check": 0.257,
+              "build": 0.04,
+              "app": 2.273
+            },
+            "outside_app_ms": 0.998499997936189,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.8707999736070633,
+            "server": {
+              "tensor": 0.101,
+              "model": 1.045,
+              "check": 0.113,
+              "build": 0.028,
+              "app": 1.953
+            },
+            "outside_app_ms": 0.9177999736070632,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.0472000469453633,
+            "server": {
+              "tensor": 0.052,
+              "model": 0.425,
+              "check": 0.096,
+              "build": 0.02,
+              "app": 1.135
+            },
+            "outside_app_ms": 0.9122000469453633,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.5316000101156533,
+            "server": {
+              "tensor": 0.084,
+              "model": 0.746,
+              "check": 0.186,
+              "build": 0.033,
+              "app": 1.683
+            },
+            "outside_app_ms": 0.8486000101156532,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.9780000331811607,
+            "server": {
+              "tensor": 0.09,
+              "model": 1.029,
+              "check": 0.253,
+              "build": 0.035,
+              "app": 2.073
+            },
+            "outside_app_ms": 0.9050000331811607,
+            "reconnected": false
+          },
+          {
+            "client_ms": 3.451000025961548,
+            "server": {
+              "tensor": 0.095,
+              "model": 1.06,
+              "check": 0.24,
+              "build": 0.036,
+              "app": 2.32
+            },
+            "outside_app_ms": 1.1310000259615482,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.94550001854077,
+            "server": {
+              "tensor": 0.108,
+              "model": 1.067,
+              "check": 0.113,
+              "build": 0.03,
+              "app": 2.013
+            },
+            "outside_app_ms": 0.9325000185407699,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.9442999619059265,
+            "server": {
+              "tensor": 0.05,
+              "model": 0.471,
+              "check": 0.09,
+              "build": 0.02,
+              "app": 1.185
+            },
+            "outside_app_ms": 0.7592999619059264,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.6068000113591552,
+            "server": {
+              "tensor": 0.049,
+              "model": 0.408,
+              "check": 0.088,
+              "build": 0.018,
+              "app": 0.98
+            },
+            "outside_app_ms": 0.6268000113591552,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.5688999556005,
+            "server": {
+              "tensor": 0.043,
+              "model": 0.396,
+              "check": 0.082,
+              "build": 0.017,
+              "app": 1.008
+            },
+            "outside_app_ms": 0.5608999556005001,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.532200025394559,
+            "server": {
+              "tensor": 0.043,
+              "model": 0.373,
+              "check": 0.081,
+              "build": 0.016,
+              "app": 0.898
+            },
+            "outside_app_ms": 0.6342000253945589,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.8485999898985028,
+            "server": {
+              "tensor": 0.061,
+              "model": 0.482,
+              "check": 0.084,
+              "build": 0.019,
+              "app": 1.101
+            },
+            "outside_app_ms": 0.7475999898985028,
+            "reconnected": false
+          },
+          {
+            "client_ms": 2.097299962770194,
+            "server": {
+              "tensor": 0.066,
+              "model": 0.553,
+              "check": 0.121,
+              "build": 0.025,
+              "app": 1.344
+            },
+            "outside_app_ms": 0.7532999627701937,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.7188999918289483,
+            "server": {
+              "tensor": 0.051,
+              "model": 0.398,
+              "check": 0.152,
+              "build": 0.021,
+              "app": 1.022
+            },
+            "outside_app_ms": 0.6968999918289482,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.4291999978013337,
+            "server": {
+              "tensor": 0.043,
+              "model": 0.368,
+              "check": 0.078,
+              "build": 0.016,
+              "app": 0.894
+            },
+            "outside_app_ms": 0.5351999978013336,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.6192999901250005,
+            "server": {
+              "tensor": 0.043,
+              "model": 0.439,
+              "check": 0.078,
+              "build": 0.018,
+              "app": 0.977
+            },
+            "outside_app_ms": 0.6422999901250005,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.5784000279381871,
+            "server": {
+              "tensor": 0.053,
+              "model": 0.426,
+              "check": 0.08,
+              "build": 0.017,
+              "app": 1.037
+            },
+            "outside_app_ms": 0.5414000279381872,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.332900021225214,
+            "server": {
+              "tensor": 0.042,
+              "model": 0.37,
+              "check": 0.074,
+              "build": 0.016,
+              "app": 0.913
+            },
+            "outside_app_ms": 0.41990002122521397,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2018000124953687,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.305,
+              "check": 0.068,
+              "build": 0.013,
+              "app": 0.795
+            },
+            "outside_app_ms": 0.4068000124953687,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2611999991349876,
+            "server": {
+              "tensor": 0.035,
+              "model": 0.319,
+              "check": 0.069,
+              "build": 0.014,
+              "app": 0.801
+            },
+            "outside_app_ms": 0.46019999913498755,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1626000050455332,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.312,
+              "check": 0.066,
+              "build": 0.013,
+              "app": 0.745
+            },
+            "outside_app_ms": 0.4176000050455332,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1955000227317214,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.293,
+              "check": 0.067,
+              "build": 0.012,
+              "app": 0.743
+            },
+            "outside_app_ms": 0.4525000227317214,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1368999839760363,
+            "server": {
+              "tensor": 0.033,
+              "model": 0.295,
+              "check": 0.064,
+              "build": 0.013,
+              "app": 0.735
+            },
+            "outside_app_ms": 0.4018999839760363,
+            "reconnected": false
+          }
+        ]
+      },
+      {
+        "rep": 1,
+        "n_cards": 50,
+        "batch_total_ms": 1.6500000492669642,
+        "batch_ms_per_card": 0.033000000985339284,
+        "batch_sample": {
+          "client_ms": 1.565899990964681,
+          "server": {
+            "tensor": 0.089,
+            "model": 0.303,
+            "check": 0.071,
+            "build": 0.095,
+            "app": 1.17
+          },
+          "outside_app_ms": 0.395899990964681,
+          "reconnected": false
+        },
+        "singles_total_ms": 57.140300050377846,
+        "singles_ms_per_card": 1.142806001007557,
+        "singles_samples": [
+          {
+            "client_ms": 1.144499983638525,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.364,
+              "check": 0.063,
+              "build": 0.013,
+              "app": 0.771
+            },
+            "outside_app_ms": 0.373499983638525,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1519999825395644,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.312,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.804
+            },
+            "outside_app_ms": 0.3479999825395643,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0507000260986388,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.282,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.673
+            },
+            "outside_app_ms": 0.37770002609863873,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0939000057987869,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.271,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.696
+            },
+            "outside_app_ms": 0.3979000057987869,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.03270000545308,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.263,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.676
+            },
+            "outside_app_ms": 0.3567000054530799,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0818999726325274,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.278,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.7
+            },
+            "outside_app_ms": 0.3818999726325274,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.044799981173128,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.292,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.693
+            },
+            "outside_app_ms": 0.35179998117312794,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0068999836221337,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.277,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.684
+            },
+            "outside_app_ms": 0.3228999836221337,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9537999867461622,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.275,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.637
+            },
+            "outside_app_ms": 0.31679998674616217,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1631999514065683,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.274,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.76
+            },
+            "outside_app_ms": 0.4031999514065683,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0936999460682273,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.291,
+              "check": 0.062,
+              "build": 0.012,
+              "app": 0.719
+            },
+            "outside_app_ms": 0.3746999460682273,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0148000437766314,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.311,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.689
+            },
+            "outside_app_ms": 0.3258000437766314,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0602999827824533,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.314,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.722
+            },
+            "outside_app_ms": 0.3382999827824533,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0323000024072826,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.289,
+              "check": 0.056,
+              "build": 0.011,
+              "app": 0.681
+            },
+            "outside_app_ms": 0.35130000240728254,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.146299997344613,
+            "server": {
+              "tensor": 0.096,
+              "model": 0.302,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.777
+            },
+            "outside_app_ms": 0.36929999734461305,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1386999976821244,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.338,
+              "check": 0.06,
+              "build": 0.014,
+              "app": 0.768
+            },
+            "outside_app_ms": 0.37069999768212436,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1005999986082315,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.277,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.7
+            },
+            "outside_app_ms": 0.4005999986082316,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.053099986165762,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.28,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.702
+            },
+            "outside_app_ms": 0.351099986165762,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0609999881125987,
+            "server": {
+              "tensor": 0.076,
+              "model": 0.268,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.715
+            },
+            "outside_app_ms": 0.3459999881125987,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.003399956971407,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.268,
+              "check": 0.057,
+              "build": 0.012,
+              "app": 0.639
+            },
+            "outside_app_ms": 0.3643999569714069,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.082400034647435,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.262,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.695
+            },
+            "outside_app_ms": 0.387400034647435,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0149999870918691,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.273,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.66
+            },
+            "outside_app_ms": 0.3549999870918691,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0510999709367752,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.294,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.676
+            },
+            "outside_app_ms": 0.37509997093677516,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0822000331245363,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.326,
+              "check": 0.061,
+              "build": 0.013,
+              "app": 0.733
+            },
+            "outside_app_ms": 0.3492000331245363,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9894999675452709,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.274,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.641
+            },
+            "outside_app_ms": 0.3484999675452709,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9994999854825437,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.281,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.647
+            },
+            "outside_app_ms": 0.3524999854825437,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9563000057823956,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.27,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.62
+            },
+            "outside_app_ms": 0.3363000057823956,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0117999627254903,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.309,
+              "check": 0.07,
+              "build": 0.013,
+              "app": 0.677
+            },
+            "outside_app_ms": 0.3347999627254903,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0671999771147966,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.286,
+              "check": 0.059,
+              "build": 0.014,
+              "app": 0.663
+            },
+            "outside_app_ms": 0.4041999771147966,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0791000095196068,
+            "server": {
+              "tensor": 0.033,
+              "model": 0.28,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.697
+            },
+            "outside_app_ms": 0.3821000095196069,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.134999969508499,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.259,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.75
+            },
+            "outside_app_ms": 0.3849999695084989,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0039000189863145,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.279,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.674
+            },
+            "outside_app_ms": 0.3299000189863145,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9891999652609229,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.28,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.672
+            },
+            "outside_app_ms": 0.31719996526092287,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0705000022426248,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.322,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.731
+            },
+            "outside_app_ms": 0.3395000022426248,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0523000382818282,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.296,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.703
+            },
+            "outside_app_ms": 0.3493000382818282,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0157999931834638,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.264,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.653
+            },
+            "outside_app_ms": 0.3627999931834638,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0179000091739,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.259,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.636
+            },
+            "outside_app_ms": 0.3819000091738999,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0191999608650804,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.288,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.662
+            },
+            "outside_app_ms": 0.3571999608650803,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1596999829635024,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.308,
+              "check": 0.062,
+              "build": 0.012,
+              "app": 0.697
+            },
+            "outside_app_ms": 0.46269998296350245,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0887000244110823,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.277,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.723
+            },
+            "outside_app_ms": 0.3657000244110823,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0665999725461006,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.308,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.729
+            },
+            "outside_app_ms": 0.33759997254610064,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0600999812595546,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.263,
+              "check": 0.066,
+              "build": 0.012,
+              "app": 0.658
+            },
+            "outside_app_ms": 0.4020999812595546,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9929000516422093,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.278,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.657
+            },
+            "outside_app_ms": 0.33590005164220926,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.9717999966815114,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.351,
+              "check": 0.067,
+              "build": 0.024,
+              "app": 1.3
+            },
+            "outside_app_ms": 0.6717999966815114,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.7687000217847526,
+            "server": {
+              "tensor": 0.037,
+              "model": 0.55,
+              "check": 0.103,
+              "build": 0.035,
+              "app": 1.166
+            },
+            "outside_app_ms": 0.6027000217847527,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1838999926112592,
+            "server": {
+              "tensor": 0.037,
+              "model": 0.331,
+              "check": 0.065,
+              "build": 0.013,
+              "app": 0.756
+            },
+            "outside_app_ms": 0.4278999926112592,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.8108999938704073,
+            "server": {
+              "tensor": 0.098,
+              "model": 0.422,
+              "check": 0.07,
+              "build": 0.016,
+              "app": 1.213
+            },
+            "outside_app_ms": 0.5978999938704073,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.916399982292205,
+            "server": {
+              "tensor": 0.112,
+              "model": 0.542,
+              "check": 0.067,
+              "build": 0.014,
+              "app": 1.412
+            },
+            "outside_app_ms": 0.5043999822922052,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.166099973488599,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.296,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.791
+            },
+            "outside_app_ms": 0.375099973488599,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0074000456370413,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.25,
+              "check": 0.056,
+              "build": 0.011,
+              "app": 0.637
+            },
+            "outside_app_ms": 0.3704000456370413,
+            "reconnected": false
+          }
+        ]
+      },
+      {
+        "rep": 2,
+        "n_cards": 50,
+        "batch_total_ms": 1.5370000037364662,
+        "batch_ms_per_card": 0.030740000074729323,
+        "batch_sample": {
+          "client_ms": 1.4604000025428832,
+          "server": {
+            "tensor": 0.077,
+            "model": 0.259,
+            "check": 0.06,
+            "build": 0.083,
+            "app": 1.0
+          },
+          "outside_app_ms": 0.46040000254288316,
+          "reconnected": false
+        },
+        "singles_total_ms": 53.48770000273362,
+        "singles_ms_per_card": 1.0697540000546724,
+        "singles_samples": [
+          {
+            "client_ms": 1.06519996188581,
+            "server": {
+              "tensor": 0.033,
+              "model": 0.249,
+              "check": 0.055,
+              "build": 0.01,
+              "app": 0.653
+            },
+            "outside_app_ms": 0.4121999618858099,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9704000549390912,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.254,
+              "check": 0.055,
+              "build": 0.011,
+              "app": 0.609
+            },
+            "outside_app_ms": 0.3614000549390912,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9808000177145004,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.249,
+              "check": 0.055,
+              "build": 0.01,
+              "app": 0.642
+            },
+            "outside_app_ms": 0.3388000177145004,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1014000046998262,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.289,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.682
+            },
+            "outside_app_ms": 0.4194000046998262,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0348999639973044,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.247,
+              "check": 0.056,
+              "build": 0.011,
+              "app": 0.656
+            },
+            "outside_app_ms": 0.3788999639973044,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2113000266253948,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.339,
+              "check": 0.064,
+              "build": 0.012,
+              "app": 0.81
+            },
+            "outside_app_ms": 0.40130002662539477,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.054000051226467,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.271,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.651
+            },
+            "outside_app_ms": 0.40300005122646687,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.000800053589046,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.271,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.647
+            },
+            "outside_app_ms": 0.353800053589046,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0879000183194876,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.332,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.71
+            },
+            "outside_app_ms": 0.3779000183194876,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0418000165373087,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.286,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.702
+            },
+            "outside_app_ms": 0.33980001653730874,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0746000334620476,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.311,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.709
+            },
+            "outside_app_ms": 0.3656000334620476,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9766000439412892,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.259,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.648
+            },
+            "outside_app_ms": 0.32860004394128917,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0249000042676926,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.264,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.651
+            },
+            "outside_app_ms": 0.37390000426769254,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0724999592639506,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.292,
+              "check": 0.058,
+              "build": 0.013,
+              "app": 0.683
+            },
+            "outside_app_ms": 0.38949995926395053,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0255000088363886,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.269,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.677
+            },
+            "outside_app_ms": 0.34850000883638854,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9780999971553683,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.258,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.642
+            },
+            "outside_app_ms": 0.3360999971553683,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9517999715171754,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.256,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.638
+            },
+            "outside_app_ms": 0.3137999715171754,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0813000262714922,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.302,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.725
+            },
+            "outside_app_ms": 0.35630002627149227,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0442999773658812,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.289,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.718
+            },
+            "outside_app_ms": 0.32629997736588123,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9828999754972756,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.269,
+              "check": 0.057,
+              "build": 0.012,
+              "app": 0.628
+            },
+            "outside_app_ms": 0.3548999754972756,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1799000203609467,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.3,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.722
+            },
+            "outside_app_ms": 0.4579000203609467,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0457999887876213,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.273,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.685
+            },
+            "outside_app_ms": 0.3607999887876212,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9777999948710203,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.263,
+              "check": 0.057,
+              "build": 0.012,
+              "app": 0.624
+            },
+            "outside_app_ms": 0.3537999948710203,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0127000277861953,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.259,
+              "check": 0.056,
+              "build": 0.012,
+              "app": 0.674
+            },
+            "outside_app_ms": 0.33870002778619523,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9696000488474965,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.265,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.651
+            },
+            "outside_app_ms": 0.3186000488474965,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9967999649234116,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.259,
+              "check": 0.057,
+              "build": 0.012,
+              "app": 0.653
+            },
+            "outside_app_ms": 0.3437999649234116,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.096600026357919,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.298,
+              "check": 0.079,
+              "build": 0.012,
+              "app": 0.717
+            },
+            "outside_app_ms": 0.379600026357919,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0198999661952257,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.263,
+              "check": 0.082,
+              "build": 0.013,
+              "app": 0.654
+            },
+            "outside_app_ms": 0.3658999661952257,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9969999664463103,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.271,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.642
+            },
+            "outside_app_ms": 0.35499996644631027,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0067999828606844,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.322,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.685
+            },
+            "outside_app_ms": 0.32179998286068434,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9129000245593488,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.262,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.619
+            },
+            "outside_app_ms": 0.2939000245593488,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9401999996043742,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.257,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.606
+            },
+            "outside_app_ms": 0.3341999996043742,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0301999864168465,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.27,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.633
+            },
+            "outside_app_ms": 0.3971999864168465,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0772999958135188,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.335,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.713
+            },
+            "outside_app_ms": 0.3642999958135188,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9752999758347869,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.274,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.647
+            },
+            "outside_app_ms": 0.3282999758347869,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9312000474892557,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.262,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.61
+            },
+            "outside_app_ms": 0.3212000474892557,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0708000045269728,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.257,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.692
+            },
+            "outside_app_ms": 0.3788000045269728,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1172000085934997,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.321,
+              "check": 0.062,
+              "build": 0.012,
+              "app": 0.747
+            },
+            "outside_app_ms": 0.37020000859349966,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9999999892897904,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.279,
+              "check": 0.058,
+              "build": 0.013,
+              "app": 0.656
+            },
+            "outside_app_ms": 0.34399998928979036,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1064999853260815,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.274,
+              "check": 0.109,
+              "build": 0.013,
+              "app": 0.696
+            },
+            "outside_app_ms": 0.41049998532608156,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0873000137507915,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.322,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.717
+            },
+            "outside_app_ms": 0.3703000137507916,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0372999822720885,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.295,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.692
+            },
+            "outside_app_ms": 0.3452999822720886,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0831999825313687,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.291,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.674
+            },
+            "outside_app_ms": 0.4091999825313687,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0674999793991446,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.275,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.648
+            },
+            "outside_app_ms": 0.41949997939914463,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0925999958999455,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.307,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.72
+            },
+            "outside_app_ms": 0.3725999958999455,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2866000179201365,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.295,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.678
+            },
+            "outside_app_ms": 0.6086000179201364,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1243000044487417,
+            "server": {
+              "tensor": 0.035,
+              "model": 0.291,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.682
+            },
+            "outside_app_ms": 0.4423000044487416,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1805000249296427,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.341,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.781
+            },
+            "outside_app_ms": 0.39950002492964265,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2569999671541154,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.349,
+              "check": 0.062,
+              "build": 0.013,
+              "app": 0.745
+            },
+            "outside_app_ms": 0.5119999671541154,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.137999992351979,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.272,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.66
+            },
+            "outside_app_ms": 0.477999992351979,
+            "reconnected": false
+          }
+        ]
+      },
+      {
+        "rep": 3,
+        "n_cards": 50,
+        "batch_total_ms": 1.6539000207558274,
+        "batch_ms_per_card": 0.03307800041511655,
+        "batch_sample": {
+          "client_ms": 1.572399982251227,
+          "server": {
+            "tensor": 0.088,
+            "model": 0.321,
+            "check": 0.068,
+            "build": 0.092,
+            "app": 1.142
+          },
+          "outside_app_ms": 0.430399982251227,
+          "reconnected": false
+        },
+        "singles_total_ms": 60.3830999461934,
+        "singles_ms_per_card": 1.207661998923868,
+        "singles_samples": [
+          {
+            "client_ms": 1.4590999926440418,
+            "server": {
+              "tensor": 0.036,
+              "model": 0.446,
+              "check": 0.067,
+              "build": 0.028,
+              "app": 0.919
+            },
+            "outside_app_ms": 0.5400999926440417,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1286999797448516,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.303,
+              "check": 0.061,
+              "build": 0.014,
+              "app": 0.729
+            },
+            "outside_app_ms": 0.3996999797448516,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1168000055477023,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.307,
+              "check": 0.068,
+              "build": 0.013,
+              "app": 0.705
+            },
+            "outside_app_ms": 0.41180000554770235,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.3442999916151166,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.346,
+              "check": 0.077,
+              "build": 0.015,
+              "app": 0.863
+            },
+            "outside_app_ms": 0.4812999916151166,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.4374000020325184,
+            "server": {
+              "tensor": 0.043,
+              "model": 0.383,
+              "check": 0.113,
+              "build": 0.018,
+              "app": 0.941
+            },
+            "outside_app_ms": 0.49640000203251844,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.5578000457026064,
+            "server": {
+              "tensor": 0.042,
+              "model": 0.412,
+              "check": 0.09,
+              "build": 0.02,
+              "app": 1.06
+            },
+            "outside_app_ms": 0.4978000457026064,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.450899988412857,
+            "server": {
+              "tensor": 0.047,
+              "model": 0.368,
+              "check": 0.078,
+              "build": 0.016,
+              "app": 0.903
+            },
+            "outside_app_ms": 0.547899988412857,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.4045999851077795,
+            "server": {
+              "tensor": 0.039,
+              "model": 0.364,
+              "check": 0.075,
+              "build": 0.015,
+              "app": 0.943
+            },
+            "outside_app_ms": 0.46159998510777955,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.3241000124253333,
+            "server": {
+              "tensor": 0.04,
+              "model": 0.367,
+              "check": 0.074,
+              "build": 0.015,
+              "app": 0.861
+            },
+            "outside_app_ms": 0.4631000124253333,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2858999543823302,
+            "server": {
+              "tensor": 0.036,
+              "model": 0.33,
+              "check": 0.073,
+              "build": 0.014,
+              "app": 0.854
+            },
+            "outside_app_ms": 0.4318999543823302,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.5232000150717795,
+            "server": {
+              "tensor": 0.04,
+              "model": 0.364,
+              "check": 0.074,
+              "build": 0.015,
+              "app": 0.941
+            },
+            "outside_app_ms": 0.5822000150717795,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.311600033659488,
+            "server": {
+              "tensor": 0.038,
+              "model": 0.354,
+              "check": 0.071,
+              "build": 0.014,
+              "app": 0.813
+            },
+            "outside_app_ms": 0.498600033659488,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2727999710477889,
+            "server": {
+              "tensor": 0.037,
+              "model": 0.329,
+              "check": 0.071,
+              "build": 0.014,
+              "app": 0.806
+            },
+            "outside_app_ms": 0.4667999710477888,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2418999685905874,
+            "server": {
+              "tensor": 0.037,
+              "model": 0.365,
+              "check": 0.1,
+              "build": 0.016,
+              "app": 0.862
+            },
+            "outside_app_ms": 0.3798999685905874,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1750999838113785,
+            "server": {
+              "tensor": 0.035,
+              "model": 0.338,
+              "check": 0.07,
+              "build": 0.014,
+              "app": 0.774
+            },
+            "outside_app_ms": 0.40109998381137846,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.3381000026129186,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.481,
+              "check": 0.072,
+              "build": 0.017,
+              "app": 0.931
+            },
+            "outside_app_ms": 0.40710000261291857,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2319000088609755,
+            "server": {
+              "tensor": 0.036,
+              "model": 0.329,
+              "check": 0.071,
+              "build": 0.017,
+              "app": 0.764
+            },
+            "outside_app_ms": 0.4679000088609755,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2585000367835164,
+            "server": {
+              "tensor": 0.036,
+              "model": 0.349,
+              "check": 0.069,
+              "build": 0.014,
+              "app": 0.818
+            },
+            "outside_app_ms": 0.44050003678351646,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2272000312805176,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.316,
+              "check": 0.068,
+              "build": 0.013,
+              "app": 0.792
+            },
+            "outside_app_ms": 0.43520003128051754,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1737000313587487,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.32,
+              "check": 0.066,
+              "build": 0.014,
+              "app": 0.742
+            },
+            "outside_app_ms": 0.4317000313587487,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1310999980196357,
+            "server": {
+              "tensor": 0.033,
+              "model": 0.299,
+              "check": 0.067,
+              "build": 0.013,
+              "app": 0.739
+            },
+            "outside_app_ms": 0.3920999980196357,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.3802999746985734,
+            "server": {
+              "tensor": 0.084,
+              "model": 0.323,
+              "check": 0.07,
+              "build": 0.014,
+              "app": 0.864
+            },
+            "outside_app_ms": 0.5162999746985734,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2042000307701528,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.374,
+              "check": 0.069,
+              "build": 0.014,
+              "app": 0.786
+            },
+            "outside_app_ms": 0.4182000307701528,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1192000238224864,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.356,
+              "check": 0.065,
+              "build": 0.013,
+              "app": 0.747
+            },
+            "outside_app_ms": 0.3722000238224864,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1487999581731856,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.338,
+              "check": 0.066,
+              "build": 0.013,
+              "app": 0.75
+            },
+            "outside_app_ms": 0.3987999581731856,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2045999756082892,
+            "server": {
+              "tensor": 0.033,
+              "model": 0.333,
+              "check": 0.065,
+              "build": 0.013,
+              "app": 0.811
+            },
+            "outside_app_ms": 0.3935999756082892,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.205099979415536,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.331,
+              "check": 0.068,
+              "build": 0.013,
+              "app": 0.799
+            },
+            "outside_app_ms": 0.4060999794155359,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1251000105403364,
+            "server": {
+              "tensor": 0.036,
+              "model": 0.329,
+              "check": 0.074,
+              "build": 0.014,
+              "app": 0.758
+            },
+            "outside_app_ms": 0.36710001054033636,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0392999975010753,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.292,
+              "check": 0.064,
+              "build": 0.012,
+              "app": 0.691
+            },
+            "outside_app_ms": 0.3482999975010753,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1251000105403364,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.315,
+              "check": 0.064,
+              "build": 0.013,
+              "app": 0.728
+            },
+            "outside_app_ms": 0.3971000105403364,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1057999799959362,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.29,
+              "check": 0.063,
+              "build": 0.012,
+              "app": 0.682
+            },
+            "outside_app_ms": 0.4237999799959361,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1403000098653138,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.304,
+              "check": 0.065,
+              "build": 0.014,
+              "app": 0.711
+            },
+            "outside_app_ms": 0.4293000098653138,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1618999997153878,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.304,
+              "check": 0.065,
+              "build": 0.013,
+              "app": 0.72
+            },
+            "outside_app_ms": 0.44189999971538785,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2534999987110496,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.399,
+              "check": 0.077,
+              "build": 0.017,
+              "app": 0.85
+            },
+            "outside_app_ms": 0.4034999987110496,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1270000250078738,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.316,
+              "check": 0.063,
+              "build": 0.013,
+              "app": 0.757
+            },
+            "outside_app_ms": 0.37000002500787377,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1197999701835215,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.276,
+              "check": 0.062,
+              "build": 0.012,
+              "app": 0.669
+            },
+            "outside_app_ms": 0.45079997018352147,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.173200027551502,
+            "server": {
+              "tensor": 0.034,
+              "model": 0.313,
+              "check": 0.063,
+              "build": 0.013,
+              "app": 0.728
+            },
+            "outside_app_ms": 0.445200027551502,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1680999887175858,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.306,
+              "check": 0.088,
+              "build": 0.014,
+              "app": 0.779
+            },
+            "outside_app_ms": 0.3890999887175858,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1488000163808465,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.32,
+              "check": 0.062,
+              "build": 0.012,
+              "app": 0.768
+            },
+            "outside_app_ms": 0.3808000163808465,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0586000280454755,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.276,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.659
+            },
+            "outside_app_ms": 0.39960002804547545,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.021199976094067,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.296,
+              "check": 0.065,
+              "build": 0.012,
+              "app": 0.677
+            },
+            "outside_app_ms": 0.34419997609406705,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0115000186488032,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.267,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.628
+            },
+            "outside_app_ms": 0.38350001864880323,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0109000140801072,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.28,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.663
+            },
+            "outside_app_ms": 0.3479000140801072,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0044999653473496,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.284,
+              "check": 0.08,
+              "build": 0.013,
+              "app": 0.674
+            },
+            "outside_app_ms": 0.3304999653473496,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9584999643266201,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.278,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.648
+            },
+            "outside_app_ms": 0.3104999643266201,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0613000486046076,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.343,
+              "check": 0.059,
+              "build": 0.014,
+              "app": 0.709
+            },
+            "outside_app_ms": 0.3523000486046076,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.039199996739626,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.297,
+              "check": 0.064,
+              "build": 0.013,
+              "app": 0.699
+            },
+            "outside_app_ms": 0.340199996739626,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9820000268518925,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.281,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.663
+            },
+            "outside_app_ms": 0.31900002685189244,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9933000546880066,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.279,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.674
+            },
+            "outside_app_ms": 0.3193000546880066,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9250000002793968,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.263,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.623
+            },
+            "outside_app_ms": 0.3020000002793968,
+            "reconnected": false
+          }
+        ]
+      },
+      {
+        "rep": 4,
+        "n_cards": 50,
+        "batch_total_ms": 1.500600017607212,
+        "batch_ms_per_card": 0.03001200035214424,
+        "batch_sample": {
+          "client_ms": 1.4259999734349549,
+          "server": {
+            "tensor": 0.083,
+            "model": 0.278,
+            "check": 0.064,
+            "build": 0.089,
+            "app": 1.068
+          },
+          "outside_app_ms": 0.3579999734349548,
+          "reconnected": false
+        },
+        "singles_total_ms": 52.59999999543652,
+        "singles_ms_per_card": 1.0519999999087304,
+        "singles_samples": [
+          {
+            "client_ms": 1.0729999630711973,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.298,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.715
+            },
+            "outside_app_ms": 0.3579999630711973,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0768999927677214,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.281,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.713
+            },
+            "outside_app_ms": 0.36389999276772145,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.02530000731349,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.26,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.66
+            },
+            "outside_app_ms": 0.3653000073134899,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.053699990734458,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.269,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.7
+            },
+            "outside_app_ms": 0.353699990734458,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0142999817617238,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.27,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.669
+            },
+            "outside_app_ms": 0.3452999817617237,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0081999935209751,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.271,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.651
+            },
+            "outside_app_ms": 0.3571999935209751,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.000799995381385,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.271,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.675
+            },
+            "outside_app_ms": 0.32579999538138504,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.109900011215359,
+            "server": {
+              "tensor": 0.056,
+              "model": 0.322,
+              "check": 0.06,
+              "build": 0.013,
+              "app": 0.756
+            },
+            "outside_app_ms": 0.35390001121535897,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9668999700807035,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.27,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.634
+            },
+            "outside_app_ms": 0.3328999700807035,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9759000386111438,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.258,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.613
+            },
+            "outside_app_ms": 0.36290003861114384,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0329000069759786,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.287,
+              "check": 0.066,
+              "build": 0.013,
+              "app": 0.69
+            },
+            "outside_app_ms": 0.34290000697597867,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9528999798931181,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.268,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.647
+            },
+            "outside_app_ms": 0.3058999798931181,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9175000013783574,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.24,
+              "check": 0.054,
+              "build": 0.01,
+              "app": 0.583
+            },
+            "outside_app_ms": 0.33450000137835745,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9463000460527837,
+            "server": {
+              "tensor": 0.025,
+              "model": 0.242,
+              "check": 0.053,
+              "build": 0.011,
+              "app": 0.654
+            },
+            "outside_app_ms": 0.2923000460527837,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1328000109642744,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.298,
+              "check": 0.055,
+              "build": 0.013,
+              "app": 0.677
+            },
+            "outside_app_ms": 0.45580001096427436,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9973999694921076,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.284,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.652
+            },
+            "outside_app_ms": 0.3453999694921076,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.965000013820827,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.262,
+              "check": 0.056,
+              "build": 0.011,
+              "app": 0.637
+            },
+            "outside_app_ms": 0.328000013820827,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9051000233739614,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.247,
+              "check": 0.055,
+              "build": 0.01,
+              "app": 0.587
+            },
+            "outside_app_ms": 0.3181000233739615,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9865000029094517,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.26,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.669
+            },
+            "outside_app_ms": 0.3175000029094517,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0096000041812658,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.279,
+              "check": 0.064,
+              "build": 0.013,
+              "app": 0.651
+            },
+            "outside_app_ms": 0.3586000041812658,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.5311999595724046,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.332,
+              "check": 0.064,
+              "build": 0.013,
+              "app": 0.887
+            },
+            "outside_app_ms": 0.6441999595724046,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.313099986873567,
+            "server": {
+              "tensor": 0.039,
+              "model": 0.362,
+              "check": 0.071,
+              "build": 0.014,
+              "app": 0.889
+            },
+            "outside_app_ms": 0.4240999868735671,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0754999821074307,
+            "server": {
+              "tensor": 0.032,
+              "model": 0.287,
+              "check": 0.061,
+              "build": 0.013,
+              "app": 0.683
+            },
+            "outside_app_ms": 0.39249998210743064,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9733000188134611,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.283,
+              "check": 0.061,
+              "build": 0.013,
+              "app": 0.653
+            },
+            "outside_app_ms": 0.32030001881346104,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0857000015676022,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.276,
+              "check": 0.062,
+              "build": 0.012,
+              "app": 0.664
+            },
+            "outside_app_ms": 0.4217000015676021,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0503000230528414,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.292,
+              "check": 0.063,
+              "build": 0.012,
+              "app": 0.683
+            },
+            "outside_app_ms": 0.3673000230528414,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.2064999900758266,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.28,
+              "check": 0.063,
+              "build": 0.012,
+              "app": 0.769
+            },
+            "outside_app_ms": 0.43749999007582663,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1050000321120024,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.289,
+              "check": 0.063,
+              "build": 0.012,
+              "app": 0.727
+            },
+            "outside_app_ms": 0.3780000321120024,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0742000304162502,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.284,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.7
+            },
+            "outside_app_ms": 0.3742000304162503,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0806999634951353,
+            "server": {
+              "tensor": 0.031,
+              "model": 0.321,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.743
+            },
+            "outside_app_ms": 0.3376999634951353,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0589000303298235,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.287,
+              "check": 0.06,
+              "build": 0.012,
+              "app": 0.669
+            },
+            "outside_app_ms": 0.38990003032982345,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0469000553712249,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.281,
+              "check": 0.061,
+              "build": 0.012,
+              "app": 0.692
+            },
+            "outside_app_ms": 0.35490005537122493,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0167000000365078,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.259,
+              "check": 0.058,
+              "build": 0.011,
+              "app": 0.647
+            },
+            "outside_app_ms": 0.3697000000365078,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1413000174798071,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.284,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.738
+            },
+            "outside_app_ms": 0.40330001747980715,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.050200022291392,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.272,
+              "check": 0.059,
+              "build": 0.011,
+              "app": 0.694
+            },
+            "outside_app_ms": 0.35620002229139214,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.984799989964813,
+            "server": {
+              "tensor": 0.029,
+              "model": 0.271,
+              "check": 0.058,
+              "build": 0.012,
+              "app": 0.658
+            },
+            "outside_app_ms": 0.32679998996481296,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9498000144958496,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.267,
+              "check": 0.059,
+              "build": 0.012,
+              "app": 0.638
+            },
+            "outside_app_ms": 0.3118000144958496,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9614999871701002,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.251,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.652
+            },
+            "outside_app_ms": 0.3094999871701002,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9790000040084124,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.258,
+              "check": 0.056,
+              "build": 0.011,
+              "app": 0.641
+            },
+            "outside_app_ms": 0.33800000400841235,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1623000027611852,
+            "server": {
+              "tensor": 0.028,
+              "model": 0.32,
+              "check": 0.056,
+              "build": 0.013,
+              "app": 0.783
+            },
+            "outside_app_ms": 0.37930000276118514,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9710000013001263,
+            "server": {
+              "tensor": 0.03,
+              "model": 0.267,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.628
+            },
+            "outside_app_ms": 0.3430000013001263,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9007000480778515,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.253,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.59
+            },
+            "outside_app_ms": 0.31070004807785156,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9405000018887222,
+            "server": {
+              "tensor": 0.025,
+              "model": 0.245,
+              "check": 0.055,
+              "build": 0.011,
+              "app": 0.623
+            },
+            "outside_app_ms": 0.3175000018887222,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.1425999691709876,
+            "server": {
+              "tensor": 0.025,
+              "model": 0.246,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.669
+            },
+            "outside_app_ms": 0.47359996917098757,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.908799993339926,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.242,
+              "check": 0.054,
+              "build": 0.011,
+              "app": 0.577
+            },
+            "outside_app_ms": 0.33179999333992605,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9244999964721501,
+            "server": {
+              "tensor": 0.027,
+              "model": 0.253,
+              "check": 0.055,
+              "build": 0.01,
+              "app": 0.626
+            },
+            "outside_app_ms": 0.2984999964721501,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.052499981597066,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.244,
+              "check": 0.055,
+              "build": 0.01,
+              "app": 0.673
+            },
+            "outside_app_ms": 0.3794999815970659,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9172999998554587,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.242,
+              "check": 0.054,
+              "build": 0.01,
+              "app": 0.611
+            },
+            "outside_app_ms": 0.30629999985545875,
+            "reconnected": false
+          },
+          {
+            "client_ms": 0.9524999768473208,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.251,
+              "check": 0.055,
+              "build": 0.011,
+              "app": 0.628
+            },
+            "outside_app_ms": 0.3244999768473208,
+            "reconnected": false
+          },
+          {
+            "client_ms": 1.0257000103592873,
+            "server": {
+              "tensor": 0.026,
+              "model": 0.253,
+              "check": 0.057,
+              "build": 0.011,
+              "app": 0.655
+            },
+            "outside_app_ms": 0.37070001035928724,
+            "reconnected": false
+          }
+        ]
+      }
+    ]
+  }
+}
