@@ -469,10 +469,10 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 - [x] 1. Hoàn thiện Dockerfile và requirements: tách gói test sang `requirements-dev.txt`, ghim `torch==2.14.0+cpu`, `numpy==2.4.6` (2.5.x cần Python >= 3.12, image dùng 3.11); sửa `.dockerignore`; thêm `scripts/smoke_test.py` — xong 19/10
 - [x] 2. Chạy Docker trên máy (`--memory=512m --cpus=0.5`): `/health` 200, có khoá 200, thiếu khoá 401; RAM nghỉ ~182 MiB, đỉnh ~198 MiB, image 1,54 GB — qua cổng 17/10 (mốc RAM nền cho task mô hình nặng)
-- [ ] 3. Hiếu mua gói PRO cho tài khoản `Hieusss`, tạo Space Docker `wsea-ai-service` (Blank, CPU basic, Public)
-- [ ] 4. Khai báo Secrets `INTERNAL_API_KEY` (cùng giá trị `AI_SERVICE_KEY` của backend), `HF_TOKEN` (fine-grained, chỉ đọc repo trọng số); Variables `FSRS_WEIGHTS_SOURCE/REPO/FILE/REVISION`, `ENVIRONMENT=production`
-- [ ] 5. Hiếu đẩy nội dung `ai-service/` (bản đã commit, không có `.env`, `.venv`, `weights/`) lên repo git của Space; theo dõi Logs tới dòng "Da nap trong so FSRS v1"
-- [ ] 6. Chạy `scripts/smoke_test.py` với URL `https://hieusss-wsea-ai-service.hf.space`: 401/422, R ≈ 0,97299 (S=12,5 t=3 rating 3), độ trễ lô 1 và 500 đo từ máy ở Việt Nam
+- [x] 3. Hiếu mua gói PRO cho tài khoản `Hieusss`, tạo Space Docker `wsea-ai-service` (Blank, CPU basic, Public)
+- [x] 4. Khai báo Secrets `INTERNAL_API_KEY` (cùng giá trị `AI_SERVICE_KEY` của backend), `HF_TOKEN` (fine-grained, chỉ đọc repo trọng số); Variables `FSRS_WEIGHTS_SOURCE/REPO/FILE/REVISION`, `ENVIRONMENT=production` — 20/10: chốt dùng khoá của AI; Bình đã đặt `AI_SERVICE_KEY` trên Render staging
+- [x] 5. Hiếu đẩy nội dung `ai-service/` (bản đã commit, không có `.env`, `.venv`, `weights/`) lên repo git của Space; theo dõi Logs tới dòng "Da nap trong so FSRS v1"
+- [x] 6. Chạy `scripts/smoke_test.py` với URL `https://hieusss-wsea-ai-service.hf.space`: 401/422, R ≈ 0,97299 (S=12,5 t=3 rating 3), độ trễ lô 1 và 500 đo từ máy ở Việt Nam — 20/10: 7/7 đạt, lô 1 p50 740 ms, lô 500 p50 1.713 ms (`PROGRESS.md` mục 6.1.2)
 - [ ] 7. Gửi URL cho Duy Anh để staging đặt `AI_SERVICE_URL`; báo Bình đổi job giữ thức sang ping `/health` của Space 1 lần/ngày; ghi URL vào `docs/API_CONTRACT.md`, số đo vào `PROGRESS.md`; `ra-soat-ai`, commit, PR vào `develop`
 
 **Minh chứng Jira:** 

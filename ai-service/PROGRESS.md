@@ -14,10 +14,10 @@
 - **Nhánh:** `ai/WSEA-82-deploy-render` — tạo 2026-10-17 từ `ai/WSEA-67-baseline-eval`; đã merge `origin/develop` ngày 2026-10-17 (`bdf28de`)
 - **Việc dở dang cần làm tiếp:**
   - Dán minh chứng Jira WSEA-67 (PR #62 đã merge, `16a4593`)
-  - Jira WSEA-82 — bước 2 qua cổng 17/10 (Docker 512 MB, RAM đỉnh ~198 MiB); bước 1 xong 19/10 (ghim `numpy==2.4.6` vì 2.5.x cần Python >= 3.12; đo lại `--cpus=2`, RAM đỉnh ~188 MiB). Tiếp: Hiếu mua PRO, tạo Space, khai Secrets, đẩy code
+  - Jira WSEA-82 — bước 1–6 xong: Space `Hieusss/wsea-ai-service` chạy từ 19/10, smoke test production 7/7 ngày 20/10. Còn bước 7: backend staging gọi được AI (vấn đề #15), báo Bình đổi job ping sang `/health` của Space, `ra-soat-ai`, PR vào `develop`
   - Sau WSEA-82: Jira WSEA-83 kiểm thử tích hợp → MK-3 → hợp đồng API v0.3 với Duy Anh (replay, cột `scheduler`, `elapsed_days`)
-- **Đang bị chặn bởi:** không
-- **Cập nhật lần cuối:** 2026-10-19
+- **Đang bị chặn bởi:** backend staging chưa gọi AI (vấn đề #15) — chờ Bình
+- **Cập nhật lần cuối:** 2026-10-20
 
 ## 2. Tiến độ theo mốc
 
@@ -28,7 +28,7 @@
 | — | 3 | Cài đặt DSR 17 tham số + unit test pass | ✅ | `app/models/fsrs.py`, test toán học pass |
 | MK-2 | 4 | Bảng `reviews` ghi đủ 16 trường mô hình cần | ⬜ | Phối hợp Phúc, Bình |
 | v0.1 | 4 | Mô hình DSR đã huấn luyện, có số liệu so với SM-2 | ✅ | Trễ hạn, xong 2026-10-11 (WSEA-67). Tập test: DSR 0,3506 log-loss · SM-2 0,4015 · hằng số 0,3792 |
-| — | 5→7 | AI Service trên **HF Spaces**, `/predict-retention` gọi được từ backend | ⚠️ | Endpoint xong (WSEA-81). 15/10 chuyển sang Render, 19/10 quay lại HF Spaces gói PRO (16 GB đủ cho cả CLIP + e5). Jira WSEA-82 dời sang đợt 7 |
+| — | 5→7 | AI Service trên **HF Spaces**, `/predict-retention` gọi được từ backend | ⚠️ | Endpoint xong (WSEA-81). 15/10 chuyển sang Render, 19/10 quay lại HF Spaces gói PRO (16 GB đủ cho cả CLIP + e5). **20/10: Space đã chạy, smoke test 7/7; CHƯA tích hợp backend** (vấn đề #15) |
 | MK-3 / v1.0 | 6→7 | **Dự báo quên đúng trên production — SỐNG CÒN** | ⚠️ | Trễ theo WSEA-82. Trong lúc chờ, luồng ôn tập chạy bằng fallback `simple-scheduler.ts` |
 | — | 7 | Chunk + embedding + vector search chạy | ⬜ | |
 | — | 8 | Phân loại ý định + rerank đạt mục tiêu | ⬜ | |
@@ -59,6 +59,7 @@ Ký hiệu: ⬜ chưa làm · 🟨 đang làm · ✅ xong · ⚠️ trễ/có v�
 
 | # | Vấn đề | Mức | Người xử lý | Hạn | Trạng thái |
 |---|---|---|---|---|---|
+| 15 | **Backend staging chưa gọi dịch vụ AI.** 20/10 20:32 ôn thử trên staging: `review.scheduler = FALLBACK_TS`, Space không nhận request nào → backend staging chưa gọi AI (nghi thiếu `AI_SERVICE_URL`). Ghi nhận: fallback NF-12 hoạt động đúng. Kiểm thêm: Secret `INTERNAL_API_KEY` trên Space thay ngày 20/10 → Bình phải đặt `AI_SERVICE_KEY` = đúng giá trị `INTERNAL_API_KEY` trong `.env` (đã gửi Bình 20/10), nếu không sẽ 401 rồi vẫn fallback. | Cao | Bình, Hiếu | Đợt 7 | Mở — chờ Bình |
 | 14 | **`.venv` Python 3.13 khác image Python 3.11** — test chạy trên 3.13. Lộ ra 19/10 khi ghim `numpy==2.5.3` làm Docker build lỗi (2.5.x cần Python >= 3.12); đã lùi về 2.4.6 ở cả hai bên. | Thấp | Hiếu | Sau bảo vệ | Mở — chưa sửa, xem lại sau bảo vệ |
 | 13 | **Space HF ngủ sau 48 giờ và khởi động lại** khi đẩy bản mới, sửa Settings hoặc HF bảo trì. Dự báo quên có fallback; nhận diện ảnh và trợ lý thì không. | TB | Hiếu, Bình | Đợt 7 | Mở — ping `/health` 1 lần/ngày (job của Bình); đánh thức ≥ 30 phút trước demo; không đẩy lên Space trong ngày bảo vệ |
 | 12 | **Phần AI của v1.0 trễ sang đợt 7.** Jira WSEA-82 dời sang đợt 7 → WSEA-83 (kiểm thử tích hợp) và MK-3 cũng trễ. Đợt 7 vốn đã kín việc RAG. | Rất cao | Hiếu | Đợt 7 | Mở — làm WSEA-82 → WSEA-83 → MK-3 trước mọi việc RAG |
@@ -144,6 +145,23 @@ AUC không phụ thuộc cách quy đổi SM-2 (mọi cách quy đổi hợp lý
 
 **Hướng phát triển:** dùng lượt ôn trong ngày (FSRS-5 có tham số riêng) để giảm lỗi ở thẻ mới. **Không** chỉnh mô hình theo kết quả test này (quy tắc 2).
 
+#### 6.1.2. Số đo triển khai `/predict-retention` (Jira WSEA-82)
+
+Chạy lại: `python scripts/smoke_test.py --url <URL> --wait --key-env AI_KEY` (20 lần mỗi cỡ lô, đo phía client, mỗi request mở kết nối HTTPS mới).
+
+| Hạng mục | Docker 17/10 (`--memory=512m --cpus=0.5`) | Docker 19/10 (`--cpus=2`) | HF Space 20/10 (CPU basic, đo từ máy ở Việt Nam) |
+|---|---|---|---|
+| Image | 1,54 GB | 1,54 GB | cùng `Dockerfile` |
+| Khởi động → `/health` 200 | 5,1 s | 3,1 s | Space đã chạy sẵn (chờ 0,8 s) |
+| RAM nghỉ / đỉnh | 182,6 / 198,1 MiB | 183 / 187,5 MiB | — (không đo được từ ngoài) |
+| Lô 1 thẻ p50 / p95 | 14,6 / 25,4 ms | 15,2 / 25,8 ms | 739,8 / 761,0 ms |
+| Lô 500 thẻ p50 / p95 | 15,6 / 36,6 ms | 28,1 / 30,8 ms | 1.712,6 / 1.825,7 ms |
+| Smoke test | 6/6 | 6/6 | 7/7 (R = 0,97299, S' = 25,72) |
+
+**Vì sao production chậm hơn ~50 lần:** gần như toàn bộ là mạng. Một vòng đi về Việt Nam → máy chủ HF ≈ 245 ms (`/health` giữ kết nối); mở kết nối HTTPS mới (TCP + TLS) tốn thêm ≈ 500 ms → `/health` không giữ kết nối ≈ 744 ms, bằng lô 1 thẻ. Lô 500 thêm ≈ 1 s do gửi/nhận vài chục KB JSON qua đường RTT cao (TCP tăng tốc dần qua nhiều vòng) và phân tích JSON trên CPU basic. Phần tính toán của mô hình chỉ ≈ 1,5 ms/500 thẻ (log 17/10).
+
+**Hệ quả:** backend gửi 1 thẻ mỗi lượt ôn → ≈ 0,75 s từ Việt Nam, trong hạn timeout 3 s. Backend đặt ở Singapore sẽ có RTT khác, phải đo lại ở WSEA-83. Lô 500 thẻ p95 1,83 s còn ít dư so với 3 s nếu sau này gửi lô lớn (vd replay).
+
 ### 6.2. Nhận diện ảnh (50 ảnh tự chụp)
 
 | Ngày | Mô hình CLIP | Số nhãn | Prompt template | Top-1 | Top-5 | Latency TB (ms) | Ghi chú |
@@ -182,6 +200,14 @@ AUC không phụ thuộc cách quy đổi SM-2 (mọi cách quy đổi hợp lý
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-10-20 · Đợt 7 · Smoke test trên Space production (Jira WSEA-82 bước 6)
+
+- **Bối cảnh:** tối 19/10 Hiếu đã mua PRO, tạo Space `Hieusss/wsea-ai-service`, khai Secrets/Variables, đẩy code (bước 3–5); Space RUNNING, `/health` 200 (model v1).
+- **Sự cố:** lần chạy đầu 4 ca có khoá đều 401 "Khoa API noi bo khong hop le" — Secret `INTERNAL_API_KEY` trên Space khác giá trị trong `.env` (khoá `.env` đã đổi sau 17/10). Hiếu thay Secret bằng giá trị `.env` và làm mới `HF_TOKEN`.
+- **Kết quả:** smoke test 7/7 trên `https://hieusss-wsea-ai-service.hf.space`; lô 1 p50 740 ms, lô 500 p50 1.713 ms — chủ yếu do mạng (mục 6.1.2). URL ghi vào `docs/API_CONTRACT.md`.
+- **Vấn đề mới #15:** ôn thử trên staging ra `FALLBACK_TS`, Space không nhận request → backend staging chưa gọi AI; fallback NF-12 chạy đúng.
+- **Việc tiếp theo:** chờ Bình sửa staging (`AI_SERVICE_URL`, `AI_SERVICE_KEY` trùng Secret mới) rồi ôn thử lại tới khi ra `FSRS_AI`; bước 7 còn lại; WSEA-83.
 
 ### 2026-10-19 · Đợt 7 · Quay lại Hugging Face Spaces (Jira WSEA-82)
 

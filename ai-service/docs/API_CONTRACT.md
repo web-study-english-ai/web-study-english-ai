@@ -7,7 +7,7 @@ Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81) · 2026-10-
 
 ## Quy ước chung
 
-- Base URL cục bộ: `http://localhost:7860` · Production: `https://hieusss-wsea-ai-service.hf.space` (HF Spaces, dự kiến — xác nhận URL thật sau khi xong Jira WSEA-82)
+- Base URL cục bộ: `http://localhost:7860` · Production: `https://hieusss-wsea-ai-service.hf.space` (HF Spaces `Hieusss/wsea-ai-service`, đã xác nhận 2026-10-20 — smoke test 7/7, Jira WSEA-82)
 - Xác thực: header `x-api-key: <INTERNAL_API_KEY>`. Thiếu hoặc sai trả `401`.
 - Content-Type: `application/json`, trừ endpoint ảnh dùng `multipart/form-data`.
 - Backend PHẢI có fallback TypeScript cho mọi endpoint. Dịch vụ AI chết thì luồng học và ôn tập vẫn chạy.
