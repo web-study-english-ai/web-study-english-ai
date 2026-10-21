@@ -39,7 +39,7 @@ export function ReviewCard({ card, revealed, onReveal }: Props) {
         </div>
       ) : (
         <Button onClick={onReveal} className="mt-6 rounded-full bg-primary px-6">
-          Hiện đáp án (Flip Card)
+          Hiện đáp án
         </Button>
       )}
     </div>

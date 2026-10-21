@@ -30,7 +30,7 @@ export function Sidebar() {
   const { logout } = useAuth();
 
   return (
-    <aside className="hidden h-full w-64 shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar md:flex">
+    <aside className="hidden h-full w-50 shrink-0 flex-col overflow-y-auto border-r border-sidebar-border bg-sidebar md:flex">
       <Link href="/dashboard" className="flex h-16 items-center gap-2 px-6">
         <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-orange-500">
           <GraduationCap className="h-5 w-5 text-white" />
