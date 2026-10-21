@@ -55,26 +55,28 @@ enum SchedulerSource {
   SM2
   RELEARN_STEP
 }
-model User {
-  id              String       @id @default(uuid())
-  email           String       @unique
-  passwordHash    String?      @map("password_hash")
-  provider        AuthProvider @default(LOCAL)
-  providerId      String?      @map("provider_id")
-  fullName        String       @map("full_name")
-  avatarUrl       String?      @map("avatar_url")
-  level            CefrLevel @default(A1)
-  newWordsPerDay   Int       @default(20) @map("new_words_per_day")
-  maxReviewsPerDay Int       @default(50) @map("max_reviews_per_day")
-  role            UserRole     @default(USER)
-  isActive        Boolean      @default(true) @map("is_active")
-  acceptedTermsAt DateTime?    @map("accepted_terms_at")
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
 
-  refreshTokens RefreshToken[]
-  cards UserCard[]
-  reviews Review[]
+model User {
+  id               String       @id @default(uuid())
+  email            String       @unique
+  passwordHash     String?      @map("password_hash")
+  provider         AuthProvider @default(LOCAL)
+  providerId       String?      @map("provider_id")
+  fullName         String       @map("full_name")
+  avatarUrl        String?      @map("avatar_url")
+  level            CefrLevel    @default(A1)
+  newWordsPerDay   Int          @default(20) @map("new_words_per_day")
+  maxReviewsPerDay Int          @default(50) @map("max_reviews_per_day")
+  role             UserRole     @default(USER)
+  isActive         Boolean      @default(true) @map("is_active")
+  acceptedTermsAt  DateTime?    @map("accepted_terms_at")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  refreshTokens    RefreshToken[]
+  cards            UserCard[]
+  reviews          Review[]
+  assistantQueries AssistantQuery[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -127,8 +129,8 @@ model Word {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
-  topic Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
-  cards UserCard[]
+  topic   Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  cards   UserCard[]
   reviews Review[]
 
   @@index([cefr])
@@ -139,23 +141,23 @@ model Word {
 }
 
 model UserCard {
-  id             String    @id @default(uuid())
-  userId         String    @map("user_id")
-  wordId         String    @map("word_id")
-  state          CardState @default(NEW)
-  difficulty     Float?
-  stability      Float?
+  id                  String    @id @default(uuid())
+  userId              String    @map("user_id")
+  wordId              String    @map("word_id")
+  state               CardState @default(NEW)
+  difficulty          Float?
+  stability           Float?
   /// Khoảng AI trả lúc thẻ bị quên, treo lại để dùng khi qua bước học lại
   pendingIntervalDays Float?    @map("pending_interval_days")
-  reps           Int       @default(0)
-  lapses         Int       @default(0)
-  dueAt          DateTime? @map("due_at")
-  lastReviewedAt DateTime? @map("last_reviewed_at")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  reps                Int       @default(0)
+  lapses              Int       @default(0)
+  dueAt               DateTime? @map("due_at")
+  lastReviewedAt      DateTime? @map("last_reviewed_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word    Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
   reviews Review[]
 
   @@unique([userId, wordId])
@@ -197,22 +199,22 @@ model Review {
   /// CHECK (0..600000) — app clamp ở 60000
   durationMs    Int    @map("duration_ms")
 
-  stateBefore      CardState @map("state_before")
-  difficultyBefore Float?    @map("difficulty_before")
-  stabilityBefore  Float?    @map("stability_before")
+  stateBefore             CardState @map("state_before")
+  difficultyBefore        Float?    @map("difficulty_before")
+  stabilityBefore         Float?    @map("stability_before")
   /// CHECK (IS NULL OR 0..1) — ràng buộc viết tay trong migration add_reviews
-  predictedRetrievability Float? @map("predicted_retrievability")
+  predictedRetrievability Float?    @map("predicted_retrievability")
 
   stateAfter       CardState @map("state_after")
   difficultyAfter  Float?    @map("difficulty_after")
   stabilityAfter   Float?    @map("stability_after")
   nextIntervalDays Float?    @map("next_interval_days")
 
-  scheduler    SchedulerSource
-  modelVersion String?         @map("model_version")
+  scheduler     SchedulerSource
+  modelVersion  String?         @map("model_version")
   /// Mã do client sinh mỗi lần bấm đánh giá, dùng để nhận ra yêu cầu gửi lại
-  clientEventId String?        @unique @map("client_event_id")
-  createdAt DateTime @default(now()) @map("created_at")
+  clientEventId String?         @unique @map("client_event_id")
+  createdAt     DateTime        @default(now()) @map("created_at")
 
   user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   card UserCard? @relation(fields: [cardId], references: [id], onDelete: SetNull)
@@ -223,18 +225,42 @@ model Review {
   @@index([scheduler])
   @@map("reviews")
 }
+
 /// Đoạn tri thức ngữ pháp dùng cho trợ lý, tìm kiếm theo vector ngữ nghĩa
 model KbChunk {
-  id        String     @id @default(uuid())
+  id        String                      @id @default(uuid())
   content   String
   source    String
   topic     String?
   cefr      CefrLevel?
   /// Prisma chưa hỗ trợ kiểu vector, phải khai Unsupported và truy vấn bằng $queryRaw
   embedding Unsupported("vector(768)")?
-  createdAt DateTime   @default(now()) @map("created_at")
+  createdAt DateTime                    @default(now()) @map("created_at")
 
   @@index([topic])
   @@index([cefr])
   @@map("kb_chunks")
 }
+
+/// Nhật ký câu hỏi gửi trợ lý, phục vụ phân tích chất lượng trả lời về sau
+model AssistantQuery {
+  id            String   @id @default(uuid())
+  userId        String   @map("user_id")
+  question      String
+  /// Null khi dịch vụ AI không trả lời được — vẫn ghi để biết người học hỏi gì
+  answer        String?
+  /// Từ đang học khi mở trợ lý từ trong phiên ôn tập
+  wordId        String?  @map("word_id")
+  /// Ảnh chụp id các đoạn tri thức đã dùng, không ràng buộc khoá ngoại
+  sourceIds     String[] @map("source_ids")
+  degraded      Boolean  @default(false)
+  durationMs    Int?     @map("duration_ms")
+  clientEventId String?  @unique @map("client_event_id")
+  createdAt     DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, createdAt])
+  @@map("assistant_queries")
+}
+
