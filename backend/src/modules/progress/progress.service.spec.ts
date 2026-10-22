@@ -62,7 +62,7 @@ describe('ProgressService', () => {
     expect(result.motivationalMessage).toContain('Chào mừng bạn');
   });
 
-  it('nên tính đúng tỷ lệ nhớ, phân bố thẻ, độ bền trí nhớ và streak khi có dữ liệu', async () => {
+  it('nên tính đúng tỷ lệ nhớ, phân bố thẻ, độ bền trí nhớ và streak khi có dữ liệu (range = week)', async () => {
     const now = new Date();
 
     // Mock phân bố thẻ
@@ -89,30 +89,20 @@ describe('ProgressService', () => {
       { rating: 1, reviewedAt: now },
     ];
 
-    // Mock userCard.findMany được gọi nhiều lần:
-    // 1. allCardCreatedDates (streak)
-    // 2. cardsWithStability (stability score)
-    // 3. recentUserCards (dailyActivity)
     prismaMock.userCard.findMany
       .mockResolvedValueOnce([{ createdAt: now }]) // allCardCreatedDates
       .mockResolvedValueOnce([
         { stability: 24.0 }, // 80%
         { stability: 30.0 }, // 100%
-      ]) // cardsWithStability -> avg = 90%
-      .mockResolvedValueOnce([{ createdAt: now }]); // recentUserCards
+      ]); // cardsWithStability -> avg = 90%
 
-    // Mock review.findMany:
-    // 1. recentReviews (7 days)
-    // 2. allReviewDates (streak)
-    // 3. reviewsPriorWeek (stability change)
-    // 4. reviews30Days (timeline)
     prismaMock.review.findMany
       .mockResolvedValueOnce(recentReviews) // 7 days reviews
       .mockResolvedValueOnce([{ reviewedAt: now }]) // allReviewDates
       .mockResolvedValueOnce([{ stabilityAfter: 20.0 }]) // reviewsPriorWeek
-      .mockResolvedValueOnce([{ reviewedAt: now, stabilityAfter: 25.0 }]); // reviews30Days
+      .mockResolvedValueOnce([{ reviewedAt: now, stabilityAfter: 25.0 }]); // historyReviews
 
-    const result = await service.getStats('active-user-456');
+    const result = await service.getStats('active-user-456', 'week');
 
     expect(result.totalWords).toBe(100);
     expect(result.weeklyGain).toBe(12);
@@ -144,6 +134,33 @@ describe('ProgressService', () => {
     expect(result.stabilityTimeline).toHaveLength(4);
   });
 
+  it('nên hỗ trợ range = day với 14 ngày dữ liệu', async () => {
+    prismaMock.userCard.groupBy.mockResolvedValue([]);
+    prismaMock.userCard.count.mockResolvedValue(0);
+    prismaMock.userCard.findMany.mockResolvedValue([]);
+    prismaMock.review.findMany.mockResolvedValue([]);
+
+    const result = await service.getStats('user-day', 'day');
+
+    expect(result.stabilityTimeline).toHaveLength(14);
+    expect(result.dailyActivity).toHaveLength(14);
+    expect(result.totalWordsTimeline).toHaveLength(14);
+  });
+
+  it('nên hỗ trợ range = month với 6 tháng dữ liệu', async () => {
+    prismaMock.userCard.groupBy.mockResolvedValue([]);
+    prismaMock.userCard.count.mockResolvedValue(0);
+    prismaMock.userCard.findMany.mockResolvedValue([]);
+    prismaMock.review.findMany.mockResolvedValue([]);
+
+    const result = await service.getStats('user-month', 'month');
+
+    expect(result.stabilityTimeline).toHaveLength(6);
+    expect(result.dailyActivity).toHaveLength(6);
+    expect(result.totalWordsTimeline).toHaveLength(6);
+    expect(result.stabilityTimeline[5].label).toMatch(/Thg \d+/);
+  });
+
   it('nên duy trì chuỗi streak nếu hôm qua đã học dù hôm nay chưa học', async () => {
     const yesterday = new Date(Date.now() - 24 * 60 * 60 * 1000);
     const dayBeforeYesterday = new Date(Date.now() - 2 * 24 * 60 * 60 * 1000);
@@ -152,14 +169,13 @@ describe('ProgressService', () => {
     prismaMock.userCard.count.mockResolvedValue(0);
     prismaMock.userCard.findMany
       .mockResolvedValueOnce([]) // allCardCreatedDates
-      .mockResolvedValueOnce([]) // cardsWithStability
-      .mockResolvedValueOnce([]); // recentUserCards
+      .mockResolvedValueOnce([]); // cardsWithStability
 
     prismaMock.review.findMany
       .mockResolvedValueOnce([{ rating: 1, reviewedAt: yesterday }]) // recentReviews (POOR status: 0%)
       .mockResolvedValueOnce([{ reviewedAt: yesterday }, { reviewedAt: dayBeforeYesterday }]) // allReviewDates -> 2 days streak
       .mockResolvedValueOnce([]) // reviewsPriorWeek
-      .mockResolvedValueOnce([]); // reviews30Days
+      .mockResolvedValueOnce([]); // historyReviews
 
     const result = await service.getStats('yesterday-user');
 
@@ -168,5 +184,75 @@ describe('ProgressService', () => {
     expect(result.summary.retentionRate7Days.rate).toBe(0);
     expect(result.summary.retentionRate7Days.status).toBe('POOR');
     expect(result.summary.retentionRate7Days.statusText).toBe('Cần cố gắng');
+  });
+
+  describe('getDayDetail', () => {
+    it('nên trả về chi tiết ngày gồm thẻ mới và lượt ôn tập khi có hoạt động', async () => {
+      const targetDate = '2026-10-22';
+      const mockCreatedCards = [
+        {
+          id: 'card-1',
+          word: { term: 'serendipity' },
+          createdAt: new Date('2026-10-22T08:30:00Z'),
+        },
+      ];
+      const mockReviews = [
+        {
+          id: 'rev-1',
+          word: { term: 'ubiquitous' },
+          rating: 4,
+          reviewedAt: new Date('2026-10-22T09:15:00Z'),
+        },
+        {
+          id: 'rev-2',
+          word: { term: 'ephemeral' },
+          rating: 1,
+          reviewedAt: new Date('2026-10-22T10:00:00Z'),
+        },
+      ];
+
+      prismaMock.userCard.findMany.mockResolvedValue(mockCreatedCards);
+      prismaMock.review.findMany.mockResolvedValue(mockReviews);
+
+      const result = await service.getDayDetail('user-123', targetDate);
+
+      expect(result.date).toBe(targetDate);
+      expect(result.newWords).toBe(1);
+      expect(result.reviews).toBe(2);
+      expect(result.words).toHaveLength(3);
+
+      // Thẻ mới
+      expect(result.words[0]).toEqual({
+        id: 'card-1',
+        word: 'serendipity',
+        kind: 'new',
+      });
+
+      // Lượt ôn tập với rating ánh xạ
+      expect(result.words[1]).toEqual({
+        id: 'rev-1',
+        word: 'ubiquitous',
+        kind: 'review',
+        rating: 'easy',
+      });
+      expect(result.words[2]).toEqual({
+        id: 'rev-2',
+        word: 'ephemeral',
+        kind: 'review',
+        rating: 'forgot',
+      });
+    });
+
+    it('nên xử lý an toàn khi không có hoạt động nào trong ngày', async () => {
+      prismaMock.userCard.findMany.mockResolvedValue([]);
+      prismaMock.review.findMany.mockResolvedValue([]);
+
+      const result = await service.getDayDetail('user-empty', '2026-10-20');
+
+      expect(result.date).toBe('2026-10-20');
+      expect(result.newWords).toBe(0);
+      expect(result.reviews).toBe(0);
+      expect(result.words).toHaveLength(0);
+    });
   });
 });

@@ -8,6 +8,9 @@ import {
   CardDistribution,
   DailyActivityPoint,
   TotalWordsPoint,
+  ProgressRange,
+  DayDetailResponse,
+  DayWordEntry,
 } from './dto/progress-stats.dto';
 
 const MOT_NGAY_MS = 24 * 60 * 60 * 1000;
@@ -32,10 +35,17 @@ export class ProgressService {
     return new Date(startVnUtc.getTime() - VN_TIMEZONE_OFFSET_MS);
   }
 
-  async getStats(userId: string): Promise<ProgressStatsResponse> {
+  private getVnDayUtcBounds(dateStr: string): { startUtc: Date; endUtc: Date } {
+    const [y, m, d] = dateStr.split('-').map(Number);
+    const startUtc = new Date(Date.UTC(y, m - 1, d) - VN_TIMEZONE_OFFSET_MS);
+    const endUtc = new Date(startUtc.getTime() + MOT_NGAY_MS - 1);
+    return { startUtc, endUtc };
+  }
+
+  async getStats(userId: string, range: ProgressRange = 'week'): Promise<ProgressStatsResponse> {
     const now = new Date();
     const sevenDaysAgo = new Date(now.getTime() - 7 * MOT_NGAY_MS);
-    const thirtyDaysAgo = new Date(now.getTime() - 30 * MOT_NGAY_MS);
+    const historyRangeAgo = new Date(now.getTime() - 180 * MOT_NGAY_MS);
 
     // 1. Lấy dữ liệu thẻ và phân bố trạng thái
     const cardGroups = await this.prisma.userCard.groupBy({
@@ -126,7 +136,6 @@ export class ProgressService {
         retentionStatusText = 'Cần cố gắng';
       }
     } else if (totalWordsCount > 0) {
-      // Có thẻ nhưng chưa ôn tập trong tuần này
       retentionRate = 100;
       retentionStatus = 'EXCELLENT';
       retentionStatusText = 'Xuất sắc';
@@ -158,7 +167,6 @@ export class ProgressService {
     let currentStreak = 0;
     const checkDate = new Date(now.getTime());
 
-    // Nếu hôm nay chưa học thì kiểm tra xem hôm qua có học không để giữ streak
     if (!studiedToday) {
       checkDate.setTime(checkDate.getTime() - MOT_NGAY_MS);
     }
@@ -168,7 +176,6 @@ export class ProgressService {
       checkDate.setTime(checkDate.getTime() - MOT_NGAY_MS);
     }
 
-    // Tính chuỗi ngày dài nhất trong lịch sử (longest streak)
     let longestStreak = currentStreak;
     if (activeDatesSet.size > 0) {
       const sortedDates = Array.from(activeDatesSet).sort();
@@ -199,9 +206,7 @@ export class ProgressService {
       streakMessage = '✨ Đã hoàn thành mục tiêu học hôm nay';
     }
 
-    // 5. Độ bền trí nhớ (Memory Stability - FSRS AI)
-    // Quy đổi độ bền S (số ngày duy trì 90% trí nhớ) sang thang điểm 0 - 100%
-    // 30 ngày ổn định coi như đạt 100% trí nhớ dài hạn
+    // 5. Độ bền trí nhớ hiện tại (Memory Stability - FSRS AI)
     const cardsWithStability = await this.prisma.userCard.findMany({
       where: {
         userId,
@@ -222,7 +227,7 @@ export class ProgressService {
       memoryStabilityScore = Math.round(totalScore / cardsWithStability.length);
     }
 
-    // Tính biến động so với tuần trước
+    // Biến động độ bền so với tuần trước
     const reviewsPriorWeek = await this.prisma.review.findMany({
       where: {
         userId,
@@ -248,11 +253,11 @@ export class ProgressService {
       stabilityChangeVsLastWeek = Math.min(15, memoryStabilityScore);
     }
 
-    // 6. Biểu đồ đường độ bền trí nhớ 30 ngày (Stability Timeline theo 4 tuần)
-    const reviews30Days = await this.prisma.review.findMany({
+    // 6. Truy vấn lịch sử reviews có stabilityAfter để vẽ biểu đồ timeline
+    const historyReviews = await this.prisma.review.findMany({
       where: {
         userId,
-        reviewedAt: { gte: thirtyDaysAgo },
+        reviewedAt: { gte: historyRangeAgo },
         stabilityAfter: { not: null },
       },
       select: {
@@ -262,79 +267,150 @@ export class ProgressService {
       orderBy: { reviewedAt: 'asc' },
     });
 
-    const stabilityTimeline: StabilityTimelinePoint[] = [];
-    const totalWordsTimeline: TotalWordsPoint[] = [];
-    const weekIntervals = [
-      { label: 'Tuần 1', daysAgo: 21 },
-      { label: 'Tuần 2', daysAgo: 14 },
-      { label: 'Tuần 3', daysAgo: 7 },
-      { label: 'Tuần 4', daysAgo: 0 },
-    ];
-
-    for (const week of weekIntervals) {
-      const targetTime = new Date(now.getTime() - week.daysAgo * MOT_NGAY_MS);
-      const reviewsUpToWeek = reviews30Days.filter((r) => r.reviewedAt <= targetTime);
-
-      let weekScore = 0;
-      if (reviewsUpToWeek.length > 0) {
-        const total = reviewsUpToWeek.reduce(
+    const getScoreUpTo = (targetTime: Date, fallback: number): number => {
+      const filtered = historyReviews.filter((r) => r.reviewedAt <= targetTime);
+      if (filtered.length > 0) {
+        const total = filtered.reduce(
           (sum, r) => sum + Math.min(100, Math.round(((r.stabilityAfter ?? 0) / 30) * 100)),
           0,
         );
-        weekScore = Math.round(total / reviewsUpToWeek.length);
-      } else if (memoryStabilityScore > 0 && week.label === 'Tuần 4') {
-        weekScore = memoryStabilityScore;
+        return Math.round(total / filtered.length);
+      }
+      return fallback;
+    };
+
+    // 7. Xây dựng stabilityTimeline, totalWordsTimeline và dailyActivity theo `range`
+    const stabilityTimeline: StabilityTimelinePoint[] = [];
+    const totalWordsTimeline: TotalWordsPoint[] = [];
+    const dailyActivity: DailyActivityPoint[] = [];
+
+    if (range === 'day') {
+      // Chế độ 'day': 14 ngày gần nhất
+      const daysCount = 14;
+      for (let i = daysCount - 1; i >= 0; i--) {
+        const dayTime = new Date(now.getTime() - i * MOT_NGAY_MS);
+        const dateStr = this.getVnDateString(dayTime);
+        const dayLabel = `${dateStr.slice(8, 10)}/${dateStr.slice(5, 7)}`;
+        const endOfDayUtc = new Date(dayTime.getTime() + MOT_NGAY_MS - 1);
+
+        const score = getScoreUpTo(endOfDayUtc, i === 0 ? memoryStabilityScore : 0);
+        stabilityTimeline.push({
+          label: dayLabel,
+          date: dateStr,
+          value: score,
+        });
+
+        const wordsUpToDay = allCardCreatedDates.filter((c) => c.createdAt <= endOfDayUtc).length;
+        totalWordsTimeline.push({
+          label: dayLabel,
+          total: wordsUpToDay,
+        });
+
+        const newWordsCount = allCardCreatedDates.filter(
+          (c) => this.getVnDateString(c.createdAt) === dateStr,
+        ).length;
+        const reviewsCount = allReviewDates.filter(
+          (r) => this.getVnDateString(r.reviewedAt) === dateStr,
+        ).length;
+
+        dailyActivity.push({
+          day: dayLabel,
+          date: dateStr,
+          newWords: newWordsCount,
+          reviews: reviewsCount,
+        });
+      }
+    } else if (range === 'month') {
+      // Chế độ 'month': 6 tháng gần nhất
+      const vnNow = new Date(now.getTime() + VN_TIMEZONE_OFFSET_MS);
+      const currYear = vnNow.getUTCFullYear();
+      const currMonth = vnNow.getUTCMonth(); // 0-11
+
+      for (let i = 5; i >= 0; i--) {
+        const d = new Date(Date.UTC(currYear, currMonth - i, 1));
+        const y = d.getUTCFullYear();
+        const m = d.getUTCMonth();
+        const monthNum = m + 1;
+        const padM = String(monthNum).padStart(2, '0');
+        const monthKey = `${y}-${padM}`;
+        const label = `Thg ${monthNum}`;
+
+        const startUtc = new Date(Date.UTC(y, m, 1) - VN_TIMEZONE_OFFSET_MS);
+        const endUtc = new Date(Date.UTC(y, m + 1, 1) - VN_TIMEZONE_OFFSET_MS - 1);
+
+        const score = getScoreUpTo(endUtc, i === 0 ? memoryStabilityScore : 0);
+        stabilityTimeline.push({
+          label,
+          date: monthKey,
+          value: score,
+        });
+
+        const wordsUpToMonth = allCardCreatedDates.filter((c) => c.createdAt <= endUtc).length;
+        totalWordsTimeline.push({
+          label,
+          total: wordsUpToMonth,
+        });
+
+        const newWordsCount = allCardCreatedDates.filter(
+          (c) => c.createdAt >= startUtc && c.createdAt <= endUtc,
+        ).length;
+        const reviewsCount = allReviewDates.filter(
+          (r) => r.reviewedAt >= startUtc && r.reviewedAt <= endUtc,
+        ).length;
+
+        dailyActivity.push({
+          day: label,
+          date: monthKey,
+          newWords: newWordsCount,
+          reviews: reviewsCount,
+        });
+      }
+    } else {
+      // Chế độ 'week' (Mặc định): 4 tuần gần nhất cho timeline & 7 ngày gần nhất cho dailyActivity
+      const weekIntervals = [
+        { label: 'Tuần 1', daysAgo: 21 },
+        { label: 'Tuần 2', daysAgo: 14 },
+        { label: 'Tuần 3', daysAgo: 7 },
+        { label: 'Tuần 4', daysAgo: 0 },
+      ];
+
+      for (const week of weekIntervals) {
+        const targetTime = new Date(now.getTime() - week.daysAgo * MOT_NGAY_MS);
+        const score = getScoreUpTo(targetTime, week.label === 'Tuần 4' ? memoryStabilityScore : 0);
+
+        stabilityTimeline.push({
+          label: week.label,
+          date: this.getVnDateString(targetTime),
+          value: score,
+        });
+
+        const wordsUpToWeek = allCardCreatedDates.filter((c) => c.createdAt <= targetTime).length;
+        totalWordsTimeline.push({
+          label: week.label,
+          total: wordsUpToWeek,
+        });
       }
 
-      stabilityTimeline.push({
-        label: week.label,
-        date: this.getVnDateString(targetTime),
-        value: weekScore,
-      });
+      for (let i = 6; i >= 0; i--) {
+        const dayDate = new Date(now.getTime() - i * MOT_NGAY_MS);
+        const dateStr = this.getVnDateString(dayDate);
+        const vnTime = new Date(dayDate.getTime() + VN_TIMEZONE_OFFSET_MS);
+        const dayLabel = VN_DAY_NAMES[vnTime.getUTCDay()];
 
-      const wordsUpToWeek = allCardCreatedDates.filter((c) => c.createdAt <= targetTime).length;
-      totalWordsTimeline.push({
-        label: week.label,
-        total: wordsUpToWeek,
-      });
-    }
+        const newWordsCount = allCardCreatedDates.filter(
+          (c) => this.getVnDateString(c.createdAt) === dateStr,
+        ).length;
+        const actualReviewsCount = allReviewDates.filter(
+          (r) => this.getVnDateString(r.reviewedAt) === dateStr,
+        ).length;
 
-    // 7. Hoạt động hàng ngày 7 ngày gần nhất (T2 -> CN)
-    const dailyActivity: DailyActivityPoint[] = [];
-    const sevenDaysList: Date[] = [];
-
-    for (let i = 6; i >= 0; i--) {
-      sevenDaysList.push(new Date(now.getTime() - i * MOT_NGAY_MS));
-    }
-
-    const recentUserCards = await this.prisma.userCard.findMany({
-      where: {
-        userId,
-        createdAt: { gte: new Date(now.getTime() - 7 * MOT_NGAY_MS) },
-      },
-      select: { createdAt: true },
-    });
-
-    for (const dayDate of sevenDaysList) {
-      const dateStr = this.getVnDateString(dayDate);
-      const vnTime = new Date(dayDate.getTime() + VN_TIMEZONE_OFFSET_MS);
-      const dayLabel = VN_DAY_NAMES[vnTime.getUTCDay()];
-
-      const newWordsCount = recentUserCards.filter(
-        (c) => this.getVnDateString(c.createdAt) === dateStr,
-      ).length;
-
-      // Đếm số lượt review thực tế theo dateStr
-      const actualReviewsCount = allReviewDates.filter(
-        (r) => this.getVnDateString(r.reviewedAt) === dateStr,
-      ).length;
-
-      dailyActivity.push({
-        day: dayLabel,
-        date: dateStr,
-        newWords: newWordsCount,
-        reviews: actualReviewsCount,
-      });
+        dailyActivity.push({
+          day: dayLabel,
+          date: dateStr,
+          newWords: newWordsCount,
+          reviews: actualReviewsCount,
+        });
+      }
     }
 
     // 8. Thông điệp khích lệ (Motivational message)
@@ -378,7 +454,6 @@ export class ProgressService {
     };
 
     return {
-      // Flat fields matching frontend WSEA-116
       totalWords: totalWordsCount,
       weeklyGain: wordsAddedLast7Days,
       statusCounts: {
@@ -391,12 +466,69 @@ export class ProgressService {
       bestStreakDays: longestStreak,
       totalWordsTimeline,
 
-      // Detailed fields
       summary,
       stabilityTimeline,
       cardDistribution,
       dailyActivity,
       motivationalMessage,
+    };
+  }
+
+  async getDayDetail(userId: string, dateStr?: string): Promise<DayDetailResponse> {
+    const targetDate =
+      dateStr && /^\d{4}-\d{2}-\d{2}$/.test(dateStr) ? dateStr : this.getVnDateString(new Date());
+
+    const { startUtc, endUtc } = this.getVnDayUtcBounds(targetDate);
+
+    const [createdCards, dayReviews] = await Promise.all([
+      this.prisma.userCard.findMany({
+        where: {
+          userId,
+          createdAt: { gte: startUtc, lte: endUtc },
+        },
+        include: {
+          word: { select: { term: true } },
+        },
+        orderBy: { createdAt: 'desc' },
+      }),
+      this.prisma.review.findMany({
+        where: {
+          userId,
+          reviewedAt: { gte: startUtc, lte: endUtc },
+        },
+        include: {
+          word: { select: { term: true } },
+        },
+        orderBy: { reviewedAt: 'desc' },
+      }),
+    ]);
+
+    const mapRating = (r: number): 'forgot' | 'hard' | 'medium' | 'easy' => {
+      if (r === 1) return 'forgot';
+      if (r === 2) return 'hard';
+      if (r === 3) return 'medium';
+      return 'easy';
+    };
+
+    const words: DayWordEntry[] = [
+      ...createdCards.map((c) => ({
+        id: c.id,
+        word: c.word.term,
+        kind: 'new' as const,
+      })),
+      ...dayReviews.map((r) => ({
+        id: r.id,
+        word: r.word.term,
+        kind: 'review' as const,
+        rating: mapRating(r.rating),
+      })),
+    ];
+
+    return {
+      date: targetDate,
+      newWords: createdCards.length,
+      reviews: dayReviews.length,
+      words,
     };
   }
 }

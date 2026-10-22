@@ -1,4 +1,38 @@
+import { createZodDto } from 'nestjs-zod';
 import { z } from 'zod';
+
+export const progressRangeSchema = z.enum(['day', 'week', 'month']);
+export type ProgressRange = z.infer<typeof progressRangeSchema>;
+
+export const getProgressStatsQuerySchema = z.object({
+  range: progressRangeSchema.default('week').optional(),
+});
+export class GetProgressStatsQueryDto extends createZodDto(getProgressStatsQuerySchema) {}
+
+export const getDayDetailQuerySchema = z.object({
+  date: z
+    .string()
+    .regex(/^\d{4}-\d{2}-\d{2}$/, { message: 'Định dạng ngày phải là YYYY-MM-DD' })
+    .optional(),
+});
+export class GetDayDetailQueryDto extends createZodDto(getDayDetailQuerySchema) {}
+
+export const dayWordEntrySchema = z.object({
+  id: z.string(),
+  word: z.string(),
+  kind: z.enum(['new', 'review']),
+  rating: z.enum(['forgot', 'hard', 'medium', 'easy']).optional(),
+});
+export type DayWordEntry = z.infer<typeof dayWordEntrySchema>;
+
+export const dayDetailResponseSchema = z.object({
+  date: z.string(),
+  newWords: z.number().int().min(0),
+  reviews: z.number().int().min(0),
+  words: z.array(dayWordEntrySchema),
+});
+export class DayDetailResponseDto extends createZodDto(dayDetailResponseSchema) {}
+export type DayDetailResponse = z.infer<typeof dayDetailResponseSchema>;
 
 export const cardStatusCountsSchema = z.object({
   mastered: z.number().int().min(0),
@@ -75,6 +109,8 @@ export const progressStatsResponseSchema = z.object({
   dailyActivity: z.array(dailyActivityPointSchema),
   motivationalMessage: z.string(),
 });
+
+export class ProgressStatsResponseDto extends createZodDto(progressStatsResponseSchema) {}
 
 export type CardStatusCounts = z.infer<typeof cardStatusCountsSchema>;
 export type TotalWordsPoint = z.infer<typeof totalWordsPointSchema>;
