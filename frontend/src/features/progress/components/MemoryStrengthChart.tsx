@@ -16,6 +16,8 @@ export function MemoryStrengthChart({ data }: { data: MemoryStrengthPoint[] }) {
 
   const innerW = W - PAD.left - PAD.right;
   const innerH = H - PAD.top - PAD.bottom;
+  // Tối đa khoảng 6 nhãn trên trục X, neo theo điểm mới nhất
+  const labelStep = Math.max(1, Math.ceil(data.length / 6));
 
   const x = (i: number) =>
     PAD.left + (data.length === 1 ? innerW / 2 : (i / (data.length - 1)) * innerW);
@@ -61,22 +63,25 @@ export function MemoryStrengthChart({ data }: { data: MemoryStrengthPoint[] }) {
         strokeLinecap="round"
       />
 
-      {data.length === 1 && <circle cx={x(0)} cy={y(data[0].value)} r={4} className="fill-primary" />}
+      {data.length === 1 && (
+        <circle cx={x(0)} cy={y(data[0].value)} r={4} className="fill-primary" />
+      )}
 
       {data.map((d, i) => (
         <g key={`${d.label}-${i}`}>
-          {/* vùng rê chuột vô hình để hiện giá trị */}
           <circle cx={x(i)} cy={y(d.value)} r={10} fill="transparent">
             <title>{`${d.label}: ${d.value}%`}</title>
           </circle>
-          <text
-            x={x(i)}
-            y={H - 8}
-            textAnchor="middle"
-            className="fill-muted-foreground text-[11px]"
-          >
-            {d.label}
-          </text>
+          {(data.length - 1 - i) % labelStep === 0 && (
+            <text
+              x={x(i)}
+              y={H - 8}
+              textAnchor="middle"
+              className="fill-muted-foreground text-[11px]"
+            >
+              {d.label}
+            </text>
+          )}
         </g>
       ))}
     </svg>

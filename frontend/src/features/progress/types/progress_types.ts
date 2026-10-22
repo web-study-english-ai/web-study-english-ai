@@ -30,3 +30,21 @@ export interface ProgressStats {
   streakMessage?: string;
   motivationalMessage?: string;
 }
+
+export type ProgressRange = "day" | "week" | "month";
+
+export type DayWordKind = "new" | "review";
+
+export interface DayWordEntry {
+  id: string;
+  word: string;
+  kind: DayWordKind; // học mới hay ôn tập
+  rating?: "forgot" | "hard" | "medium" | "easy";
+}
+
+export interface DayDetail {
+  date: string; // YYYY-MM-DD
+  newWords: number;
+  reviews: number;
+  words: DayWordEntry[];
+}

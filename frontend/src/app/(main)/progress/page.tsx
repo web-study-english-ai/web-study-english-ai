@@ -1,13 +1,18 @@
 "use client";
 
+import { useState } from "react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { useProgressStats } from "@/features/progress/hooks/useProgress";
+import { ProgressRange } from "@/features/progress/types/progress_types";
+import { RANGE_META } from "@/features/progress/utils/progress_range";
 import { ProgressStatCards } from "@/features/progress/components/ProgressStatCards";
+import { RangeSelector } from "@/features/progress/components/RangeSelector";
 import { ChartCard, LegendItem } from "@/features/progress/components/ChartCard";
 import { MemoryStrengthChart } from "@/features/progress/components/MemoryStrengthChart";
-import { StatusCard} from "@/features/progress/components/StatusCards";
+import { StatusCards } from "@/features/progress/components/StatusCards";
 import { DailyActivityChart } from "@/features/progress/components/DailyActivityChart";
 import { ProgressInsightBanner } from "@/features/progress/components/ProgressInsightBanner";
+import { DayDetailCard } from "@/features/progress/components/DayDetailCard";
 import {
   ProgressEmpty,
   ProgressError,
@@ -15,7 +20,9 @@ import {
 } from "@/features/progress/components/ProgressStates";
 
 export default function ProgressPage() {
-  const { data, isLoading, isError, refetch } = useProgressStats();
+  const [range, setRange] = useState<ProgressRange>("week");
+  const { data, isLoading, isError, isPlaceholderData, refetch } = useProgressStats(range);
+  const meta = RANGE_META[range];
 
   return (
     <PageContainer>
@@ -34,32 +41,39 @@ export default function ProgressPage() {
         <div className="mt-6 space-y-4">
           <ProgressStatCards stats={data} />
 
+          <div className="flex items-center justify-between gap-3">
+            <p className="text-sm text-muted-foreground">Xem biểu đồ theo</p>
+            <RangeSelector value={range} onChange={setRange} />
+          </div>
+
           <ChartCard
             title="Tổng độ bền trí nhớ theo thời gian"
-            subtitle="Chỉ số đánh giá khả năng lưu trữ từ vựng dài hạn (30 ngày gần nhất)"
+            subtitle={meta.lineSubtitle}
             legend={<LegendItem line colorClass="bg-primary" label="Độ bền trung bình" />}
+            isLoading={isPlaceholderData}
           >
             <MemoryStrengthChart data={data.memoryStrengthTimeline} />
           </ChartCard>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <ChartCard title="Phân bố trạng thái thẻ">
-              <StatusCard counts={data.statusCounts} />
+              <StatusCards counts={data.statusCounts} />
             </ChartCard>
 
             <ChartCard
-              title="Hoạt động hàng ngày"
+              title={meta.activityTitle}
               legend={
                 <>
                   <LegendItem colorClass="bg-teal-500" label="Từ mới" />
                   <LegendItem colorClass="bg-primary" label="Ôn tập" />
                 </>
               }
+              isLoading={isPlaceholderData}
             >
               <DailyActivityChart data={data.dailyActivity} />
             </ChartCard>
           </div>
-
+          <DayDetailCard />
           <ProgressInsightBanner
             retentionRate={data.retentionRate7d}
             message={data.motivationalMessage}
