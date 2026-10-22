@@ -1,13 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@/prisma/prisma.service';
-import { AssistantService } from './assistant.service';
-import { AssistantClient } from './assistant.client';
+import { AssistantService, SuKienLuongTroLy } from './assistant.service';
+import { AssistantClient, TuyChonHoiTheoLuong } from './assistant.client';
 
 const prismaMock = {
   assistantQuery: { findUnique: vi.fn(), create: vi.fn() },
   kbChunk: { findMany: vi.fn() },
+  word: { findUnique: vi.fn() },
 };
-const aiMock = { hoi: vi.fn() };
+const aiMock = { hoi: vi.fn(), hoiTheoLuong: vi.fn() };
 
 const USER_ID = 'user-1';
 const WORD_ID = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
@@ -25,7 +26,9 @@ describe('AssistantService', () => {
     prismaMock.assistantQuery.findUnique.mockResolvedValue(null);
     prismaMock.assistantQuery.create.mockResolvedValue({});
     prismaMock.kbChunk.findMany.mockResolvedValue([nguon]);
+    prismaMock.word.findUnique.mockResolvedValue(null);
     aiMock.hoi.mockResolvedValue(null);
+    aiMock.hoiTheoLuong.mockResolvedValue(null);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
@@ -68,9 +71,18 @@ describe('AssistantService', () => {
       });
     });
 
-    it('truyền wordId xuống AI và lưu vào log', async () => {
+    it('ghép ngữ cảnh từ đang học khi có wordId nhưng vẫn lưu câu hỏi gốc vào log', async () => {
+      prismaMock.word.findUnique.mockResolvedValue({
+        term: 'abandon',
+        pos: 'VERB',
+        meaningVi: 'từ bỏ',
+      });
       await service.ask(USER_ID, { question: 'Từ này dùng sao?', wordId: WORD_ID });
-      expect(aiMock.hoi).toHaveBeenCalledWith('Từ này dùng sao?', WORD_ID);
+      expect(aiMock.hoi).toHaveBeenCalledWith(
+        '[Từ đang học: abandon (VERB) - từ bỏ] Từ này dùng sao?',
+        expect.objectContaining({ wordId: WORD_ID }),
+      );
+      expect(duLieuGhi().question).toBe('Từ này dùng sao?');
       expect(duLieuGhi().wordId).toBe(WORD_ID);
     });
   });
@@ -135,6 +147,74 @@ describe('AssistantService', () => {
       await service.ask(USER_ID, { question: 'Câu mới' });
       expect(prismaMock.assistantQuery.findUnique).not.toHaveBeenCalled();
       expect(duLieuGhi().clientEventId).toBeNull();
+    });
+  });
+
+  describe('hỏi đáp theo luồng (askStream)', () => {
+    it('phát từng sự kiện delta rồi kết thúc bằng done kèm nguồn tham chiếu', async () => {
+      aiMock.hoiTheoLuong.mockImplementation((_q: string, opts: TuyChonHoiTheoLuong) => {
+        opts.onDelta('Thì hiện tại hoàn thành ');
+        opts.onDelta('dùng để diễn tả...');
+        return Promise.resolve({
+          answer: 'Thì hiện tại hoàn thành dùng để diễn tả...',
+          source_ids: [CHUNK_ID],
+        });
+      });
+
+      const suKienList: SuKienLuongTroLy[] = [];
+      await service.askStream(USER_ID, { question: 'Present perfect?' }, (sk) =>
+        suKienList.push(sk),
+      );
+
+      expect(suKienList).toEqual([
+        { event: 'delta', data: { text: 'Thì hiện tại hoàn thành ' } },
+        { event: 'delta', data: { text: 'dùng để diễn tả...' } },
+        {
+          event: 'done',
+          data: {
+            answer: 'Thì hiện tại hoàn thành dùng để diễn tả...',
+            sources: [nguon],
+            degraded: false,
+          },
+        },
+      ]);
+      expect(prismaMock.assistantQuery.create).toHaveBeenCalledOnce();
+    });
+
+    it('khi AI lỗi trong luồng thì phát câu dự phòng và done với degraded = true', async () => {
+      aiMock.hoiTheoLuong.mockResolvedValue(null);
+
+      const suKienList: SuKienLuongTroLy[] = [];
+      await service.askStream(USER_ID, { question: 'Present perfect?' }, (sk) =>
+        suKienList.push(sk),
+      );
+
+      expect(suKienList).toHaveLength(2);
+      expect(suKienList[0].event).toBe('delta');
+      expect(suKienList[1]).toMatchObject({
+        event: 'done',
+        data: { sources: [], degraded: true },
+      });
+    });
+
+    it('ngắt kết nối giữa chừng (AbortSignal) thì dừng ngay và không ghi log lỗi', async () => {
+      const controller = new AbortController();
+      aiMock.hoiTheoLuong.mockImplementation(() => {
+        controller.abort();
+        return Promise.resolve(null);
+      });
+
+      const suKienList: SuKienLuongTroLy[] = [];
+      const kq = await service.askStream(
+        USER_ID,
+        { question: 'Present perfect?' },
+        (sk) => suKienList.push(sk),
+        controller.signal,
+      );
+
+      expect(kq.aborted).toBe(true);
+      expect(prismaMock.assistantQuery.create).not.toHaveBeenCalled();
+      expect(suKienList).toHaveLength(0);
     });
   });
 });
