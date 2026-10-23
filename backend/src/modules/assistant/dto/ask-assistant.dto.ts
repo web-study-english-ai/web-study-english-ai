@@ -8,6 +8,7 @@ export const askAssistantSchema = z.object({
     .min(1, { error: 'Câu hỏi không được để trống' })
     .max(1000, { error: 'Câu hỏi tối đa 1000 ký tự' }),
   wordId: z.uuid({ error: 'Mã từ không hợp lệ' }).optional(),
+  conversationId: z.uuid({ error: 'Mã hội thoại không hợp lệ' }).optional(),
   clientEventId: z.uuid({ error: 'Mã sự kiện không hợp lệ' }).optional(),
 });
 

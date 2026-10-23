@@ -1,3 +1,4 @@
+import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@/prisma/prisma.service';
 import { AssistantService, SuKienLuongTroLy } from './assistant.service';
@@ -7,6 +8,14 @@ const prismaMock = {
   assistantQuery: { findUnique: vi.fn(), create: vi.fn() },
   kbChunk: { findMany: vi.fn() },
   word: { findUnique: vi.fn() },
+  conversation: {
+    findUnique: vi.fn(),
+    findMany: vi.fn(),
+    create: vi.fn(),
+    update: vi.fn(),
+    delete: vi.fn(),
+    deleteMany: vi.fn(),
+  },
 };
 const aiMock = { hoi: vi.fn(), hoiTheoLuong: vi.fn() };
 
@@ -27,6 +36,9 @@ describe('AssistantService', () => {
     prismaMock.assistantQuery.create.mockResolvedValue({});
     prismaMock.kbChunk.findMany.mockResolvedValue([nguon]);
     prismaMock.word.findUnique.mockResolvedValue(null);
+    prismaMock.conversation.create.mockResolvedValue({ id: 'conv-1' });
+    prismaMock.conversation.update.mockResolvedValue({ id: 'conv-1' });
+    prismaMock.conversation.deleteMany.mockResolvedValue({ count: 0 });
     aiMock.hoi.mockResolvedValue(null);
     aiMock.hoiTheoLuong.mockResolvedValue(null);
 
@@ -48,7 +60,12 @@ describe('AssistantService', () => {
 
     it('trả câu trả lời của AI kèm nguồn, degraded = false', async () => {
       const kq = await service.ask(USER_ID, { question: 'Present perfect?' });
-      expect(kq).toEqual({ answer: 'Dùng khi...', sources: [nguon], degraded: false });
+      expect(kq).toEqual({
+        answer: 'Dùng khi...',
+        sources: [nguon],
+        degraded: false,
+        conversationId: 'conv-1',
+      });
     });
 
     it('ghi log đủ câu trả lời, id nguồn và thời gian xử lý', async () => {
@@ -116,7 +133,12 @@ describe('AssistantService', () => {
 
       const kq = await service.ask(USER_ID, { question: 'Hỏi lại', clientEventId: EVENT_ID });
 
-      expect(kq).toEqual({ answer: 'Câu cũ', sources: [nguon], degraded: false });
+      expect(kq).toEqual({
+        answer: 'Câu cũ',
+        sources: [nguon],
+        degraded: false,
+        conversationId: null,
+      });
       expect(aiMock.hoi).not.toHaveBeenCalled();
       expect(prismaMock.assistantQuery.create).not.toHaveBeenCalled();
     });
@@ -175,6 +197,7 @@ describe('AssistantService', () => {
             answer: 'Thì hiện tại hoàn thành dùng để diễn tả...',
             sources: [nguon],
             degraded: false,
+            conversationId: 'conv-1',
           },
         },
       ]);
@@ -215,6 +238,58 @@ describe('AssistantService', () => {
       expect(kq.aborted).toBe(true);
       expect(prismaMock.assistantQuery.create).not.toHaveBeenCalled();
       expect(suKienList).toHaveLength(0);
+    });
+  });
+
+  describe('lịch sử hội thoại (WSEA-129)', () => {
+    const CONV_ID = 'aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaaaaa';
+    it('tự tạo hội thoại mới khi hỏi lần đầu không kèm conversationId', async () => {
+      prismaMock.conversation.create.mockResolvedValue({ id: CONV_ID });
+      const kq = await service.ask(USER_ID, { question: 'Câu hỏi đầu tiên' });
+      expect(prismaMock.conversation.create).toHaveBeenCalledWith({
+        data: { userId: USER_ID, title: 'Câu hỏi đầu tiên' },
+        select: { id: true },
+      });
+      expect(kq.conversationId).toBe(CONV_ID);
+      expect(duLieuGhi().conversationId).toBe(CONV_ID);
+    });
+    it('nối vào hội thoại có sẵn khi đúng chủ sở hữu và chưa quá hạn 30 ngày', async () => {
+      prismaMock.conversation.findUnique.mockResolvedValue({
+        id: CONV_ID,
+        userId: USER_ID,
+        updatedAt: new Date(),
+      });
+      const kq = await service.ask(USER_ID, {
+        question: 'Câu hỏi tiếp theo',
+        conversationId: CONV_ID,
+      });
+      expect(prismaMock.conversation.update).toHaveBeenCalled();
+      expect(kq.conversationId).toBe(CONV_ID);
+    });
+    it('chặn truy cập hội thoại của người dùng khác (ném 404)', async () => {
+      prismaMock.conversation.findUnique.mockResolvedValue({
+        id: CONV_ID,
+        userId: 'user-khac',
+        updatedAt: new Date(),
+      });
+      await expect(service.getConversation(USER_ID, CONV_ID)).rejects.toThrow(NotFoundException);
+      await expect(service.deleteConversation(USER_ID, CONV_ID)).rejects.toThrow(NotFoundException);
+    });
+    it('chặn xem hội thoại đã quá hạn lưu trữ 30 ngày (ném 404)', async () => {
+      const qua31Ngay = new Date(Date.now() - 31 * 24 * 60 * 60 * 1000);
+      prismaMock.conversation.findUnique.mockResolvedValue({
+        id: CONV_ID,
+        userId: USER_ID,
+        updatedAt: qua31Ngay,
+        messages: [],
+      });
+      await expect(service.getConversation(USER_ID, CONV_ID)).rejects.toThrow(NotFoundException);
+    });
+    it('dọn dẹp hội thoại quá hạn 30 ngày bằng deleteMany', async () => {
+      prismaMock.conversation.deleteMany.mockResolvedValue({ count: 3 });
+      const daXoa = await service.donDepHoiThoaiQuaHan();
+      expect(daXoa).toBe(3);
+      expect(prismaMock.conversation.deleteMany).toHaveBeenCalledOnce();
     });
   });
 });
