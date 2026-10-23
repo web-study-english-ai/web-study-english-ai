@@ -9,15 +9,17 @@
 
 ## 1. Trạng thái hiện tại
 
-- **Đợt hiện tại:** Đợt 6 (D16–D18) theo lịch; **phần AI của v1.0 trễ sang đợt 7**
-- **Task kế tiếp:** Jira **WSEA-82** — Triển khai dịch vụ AI lên **Hugging Face Spaces** (quay lại HF ngày 2026-10-19; file `TASKS.md` cũ ghi WSEA-65; Jira đã dời sang đợt 7). Các bước ở mục đầu Đợt 7 trong `TASKS.md`
-- **Nhánh:** `ai/WSEA-82-deploy-render` — tạo 2026-10-17 từ `ai/WSEA-67-baseline-eval`; đã merge `origin/develop` ngày 2026-10-17 (`bdf28de`)
+- **Đợt hiện tại:** Đợt 7 theo lịch; phần AI của v1.0 trễ từ đợt 6
+- **Task vừa xong:** Jira **WSEA-97** — Tối ưu hiệu năng dịch vụ AI (file `TASKS.md` cũ ghi WSEA-80). Phần AI xong: đo từng bước + header `Server-Timing` (`dbb3fcd`), `scripts/bench_latency.py` (`88efbdb`), bản mới đã lên Space 22/10, số liệu mục 6.1.3, quyết định ở `docs/DECISIONS.md` mục 2026-10-22. **Chờ PR merge vào `develop`**
+- **Task kế tiếp:** Jira **WSEA-83** — Phối hợp kiểm thử tích hợp dịch vụ AI với backend; trong đó đo độ trễ từ backend trên Render (có và không keep-alive) và thời gian proxy HF giữ kết nối rảnh
+- **Nhánh:** `ai/WSEA-97-toi-uu-hieu-nang` (từ `develop` sau PR #75)
 - **Việc dở dang cần làm tiếp:**
-  - Dán minh chứng Jira WSEA-67 (PR #62 đã merge, `16a4593`)
-  - Jira WSEA-82 — bước 1–6 xong: Space `Hieusss/wsea-ai-service` chạy từ 19/10, smoke test production 7/7 ngày 20/10. Còn bước 7: backend staging gọi được AI (vấn đề #15), báo Bình đổi job ping sang `/health` của Space, `ra-soat-ai`, PR vào `develop`
-  - Sau WSEA-82: Jira WSEA-83 kiểm thử tích hợp → MK-3 → hợp đồng API v0.3 với Duy Anh (replay, cột `scheduler`, `elapsed_days`)
+  - Mở PR WSEA-97 vào `develop`, dán minh chứng Jira WSEA-97
+  - Báo Thạc Duy Anh: header `Server-Timing` mới (mục 8), khuyến nghị keep-alive (`keepAliveTimeout` > 15 s) và lô replay tối đa ~100 thẻ
+  - Jira WSEA-82 bước 7: backend staging gọi được AI (vấn đề #15), báo Bình đổi job ping sang `/health` của Space
+  - Sau WSEA-83: MK-3 → hợp đồng API v0.3 với Duy Anh (replay, cột `scheduler`, `elapsed_days`)
 - **Đang bị chặn bởi:** backend staging chưa gọi AI (vấn đề #15) — chờ Bình
-- **Cập nhật lần cuối:** 2026-10-20
+- **Cập nhật lần cuối:** 2026-10-23
 
 ## 2. Tiến độ theo mốc
 
@@ -162,6 +164,50 @@ Chạy lại: `python scripts/smoke_test.py --url <URL> --wait --key-env AI_KEY`
 
 **Hệ quả:** backend gửi 1 thẻ mỗi lượt ôn → ≈ 0,75 s từ Việt Nam, trong hạn timeout 3 s. Backend đặt ở Singapore sẽ có RTT khác, phải đo lại ở WSEA-83. Lô 500 thẻ p95 1,83 s còn ít dư so với 3 s nếu sau này gửi lô lớn (vd replay).
 
+#### 6.1.3. Đo hiệu năng theo từng bước (Jira WSEA-97)
+
+Chạy lại (cần dịch vụ có header `Server-Timing`, từ commit `dbb3fcd`):
+
+```powershell
+$env:AI_KEY = "<khoa>"   # khong in, khong ghi vao JSON
+python scripts/bench_latency.py --key-env AI_KEY --out docs/perf/<ngay>-local.json
+python scripts/bench_latency.py --url https://hieusss-wsea-ai-service.hf.space --key-env AI_KEY --out docs/perf/<ngay>-space.json
+```
+
+Mặc định 3 warmup + 30 lần mỗi ô, cỡ lô 1 và 500, seed 42; thẻ thử sinh ngẫu nhiên (~20% thẻ mới). `new` = mỗi request mở kết nối mới (gồm TCP + TLS), `keepalive` = một kết nối cho cả chuỗi. **Đo cục bộ trên Windows phải dùng `127.0.0.1`**, không dùng `localhost` (mục 7). Số liệu thô: `docs/perf/2026-10-21-local.json`, `docs/perf/2026-10-22-space.json`.
+
+Đơn vị ms. Ngoài app = client − app (từng request, rồi lấy p50).
+
+| Môi trường | Chế độ | Cỡ lô | Client p50 / p95 | App p50 | Model p50 | Ngoài app p50 |
+|---|---|---|---|---|---|---|
+| Laptop, uvicorn 127.0.0.1 (21/10) | new | 1 | 1,32 / 2,74 | 0,67 | 0,282 | 0,65 |
+| | new | 500 | 7,39 / 29,69 | 4,44 | 0,394 | 1,40 |
+| | keepalive | 1 | 1,03 / 1,44 | 0,64 | 0,270 | 0,40 |
+| | keepalive | 500 | 4,84 / 5,21 | 4,33 | 0,351 | 0,55 |
+| Space, đo từ Việt Nam (22/10) | new | 1 | 1.153,0 / 2.621,9 | 1,54 | 0,659 | 1.151,3 |
+| | new | 500 | 2.120,8 / 2.688,5 | 268,1 | 0,719 | 1.832,1 |
+| | keepalive | 1 | 296,7 / 423,9 | 1,55 | 0,630 | 292,5 |
+| | keepalive | 500 | 1.113,4 / 2.166,8 | 46,0 | 0,658 | 1.048,7 |
+
+**Lưu ý khi đọc cột "app":** app tính từ lúc uvicorn chuyển request vào ứng dụng, **GỒM thời gian nhận body qua mạng** (ứng dụng phải đọc hết body mới parse được). Vì vậy lô 500 trên kết nối mới ra app 268 ms, trong khi phần tính trong handler (tổng 4 khoảng tensor + model + check + build) chỉ khoảng 2,8 ms trên Space (trung vị 60 mẫu lô 500: new 2,9 ms, keepalive 2,6 ms); phần dư chủ yếu là chờ 46,5 KB body đi qua đường truyền đang tăng tốc dần (TCP slow start trên kết nối mới). Trên kết nối giữ sẵn, app 24–46 ms **vẫn gồm** một phần thời gian nhận body và kiểm tra đầu vào bằng Pydantic, không phải thời gian tính toán. Cột "model" mới là thời gian mô hình thật.
+
+Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
+
+| Môi trường | Cách gửi | Tổng (ms) | ms/thẻ | Lẻ / lô |
+|---|---|---|---|---|
+| Laptop (21/10) | 1 request × 50 thẻ | 1,54 [1,42; 1,65] | 0,031 [0,028; 0,033] | ×37,2 |
+| | 50 request × 1 thẻ | 57,14 [52,60; 88,35] | 1,143 [1,052; 1,767] | |
+| Space từ Việt Nam (22/10) | 1 request × 50 thẻ | 585,3 [360,2; 2.777,4] | 11,71 [7,20; 55,55] | ×39,9 |
+| | 50 request × 1 thẻ | 23.359,8 [19.272,5; 28.815,6] | 467,2 [385,5; 576,3] | |
+
+**Chẩn đoán mạng 22/10** (đo tay cùng buổi, không có trong JSON):
+
+- Smoke test Space 22/10 14:35: **6/7**, mọi ca chức năng đạt; chỉ ca độ trễ lô 500 không đạt (p50 3.348 ms, p95 7.802 ms > 3 s). Lô 1 p50 883 / p95 2.261 ms.
+- TCP connect p50 318 ms (20/10 ~245 ms) → đường mạng hôm đó chậm hơn. `/health` giữ kết nối p50 345 ms, max 1.423 ms.
+- Lô 500 giữ kết nối: client p50 2.705 ms, app p50 24 ms, model ~0,8 ms → **99% thời gian nằm ngoài ứng dụng**. Body gửi 46,5 KB, nhận 69,3 KB.
+
+**Kết luận:** phần tính toán phía máy chủ chỉ chiếm khoảng 0,5–5% thời gian backend chờ (keepalive: 1,55/297 ms ở lô 1, 46/1.113 ms ở lô 500). Giữ kết nối giảm lô 1 từ p50 1.153 → 297 ms (−74%), p95 2.622 → 424 ms — đây là cải thiện lớn nhất có được, và nằm ở phía backend. Quyết định tối ưu: `docs/DECISIONS.md` mục 2026-10-22.
+
 ### 6.2. Nhận diện ảnh (50 ảnh tự chụp)
 
 | Ngày | Mô hình CLIP | Số nhãn | Prompt template | Top-1 | Top-5 | Latency TB (ms) | Ghi chú |
@@ -178,6 +224,7 @@ Chạy lại: `python scripts/smoke_test.py --url <URL> --wait --key-env AI_KEY`
 
 | Ngày | Triệu chứng | Nguyên nhân | Cách sửa | Task |
 |---|---|---|---|---|
+| 2026-10-21 | `bench_latency.py` chế độ `new` trên máy local mất ~2 s mỗi request | `localhost` trên Windows phân giải ra `::1` (IPv6) trước, uvicorn chỉ nghe `127.0.0.1` → mỗi kết nối mới chờ IPv6 thất bại rồi mới sang IPv4 (đo: 2.035 ms so với 0,2 ms) | Đo cục bộ dùng `127.0.0.1`. URL mặc định của `bench_latency.py` là `127.0.0.1`, script in cảnh báo khi gặp `localhost`. `smoke_test.py` vẫn mặc định `localhost` | WSEA-97 |
 | 2026-09-28 | Mọi request có header khoá trả **500** thay vì 403/401 | Commit `a95872c` đổi `deps.py` sang gọi `.get_secret_value()` nhưng `config.py` vẫn khai `internal_api_key: str` → `AttributeError`. Không có test endpoint nào nên không ai phát hiện | Đổi sang `SecretStr` (`Field(min_length=32)`); thêm test ca "sai khoá → 401" để khoá lại | WSEA-81 |
 | 2026-09-28 | Gửi `NaN` trong JSON trả **500** thay vì 422 | FastAPI 0.115.6 nhét giá trị người dùng vào trường `input` của body lỗi; `NaN` không serialize được nên chính body lỗi làm văng 500 | Thêm `exception_handler` cho `RequestValidationError` trong `main.py`, chỉ trả `loc`/`msg`/`type`. Kèm `allow_inf_nan=False` ở schema | WSEA-81 |
 | 2026-09-28 | Gõ sai tên trường (`stabilty`) hoặc camelCase (`elapsedDays`) trả **200 với kết quả sai** | Pydantic mặc định bỏ qua trường lạ → thẻ cũ bị coi là thẻ mới, trả khoảng ôn hoàn toàn khác mà không báo gì | `extra="forbid"` cho mọi schema đầu vào; thêm test cho cả hai trường hợp | WSEA-81 |
@@ -196,10 +243,19 @@ Chạy lại: `python scripts/smoke_test.py --url <URL> --wait --key-env AI_KEY`
 | 2026-09-28 | tất cả | `extra="forbid"`: trường lạ / camelCase → 422. `NaN`/`Infinity` → 422 | ✅ 2026-10-09 | WSEA-81 |
 | 2026-09-28 | tất cả | Thêm mã **500** (mô hình trả giá trị không hữu hạn) — backend fallback với mọi 5xx | ✅ 2026-10-09 | WSEA-81 |
 | 2026-09-28 | `GET /health` | Thêm `models`, `model_version`; trả **503** khi `status="degraded"` | ✅ 2026-10-09 | WSEA-81 |
+| 2026-10-22 | `POST /predict-retention` | Thêm header **`Server-Timing`** ở response 200 (`tensor`, `model`, `check`, `build`, `app`, ms) — chỉ để chẩn đoán, tương thích ngược, body và mã lỗi không đổi, vẫn v0.2 | ⏳ chưa | WSEA-97 (`dbb3fcd`) |
 
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-10-22 · Đợt 7 · WSEA-97 — Đo hiệu năng dịch vụ AI và quyết định tối ưu
+
+- **Đã làm:** đo 4 bước `tensor`/`model`/`check`/`build` trong `/predict-retention` + header `Server-Timing` qua middleware ASGI thuần (`dbb3fcd`, 125 test pass); script `scripts/bench_latency.py` đo chế độ new/keepalive và lô vs lẻ (`88efbdb`); Hiếu đẩy bản mới lên Space, đo từ Việt Nam ngày 22/10.
+- **Kết quả chính:** lô 500 trên Space giữ kết nối: client p50 2.705 ms, app 24 ms, model ~0,8 ms → 99% ngoài ứng dụng. Giữ kết nối giảm lô 1 từ p50 1.153 → 297 ms (−74%). Lô vs lẻ ×37,2 (laptop) / ×39,9 (Space). Smoke test 22/10 6/7: chức năng đạt, lô 500 p95 7.802 ms > 3 s. Chi tiết mục 6.1.3.
+- **Quyết định:** không làm bộ nhớ đệm, không tối ưu Pydantic; khuyến nghị backend keep-alive; lô replay tối đa ~100 thẻ (`docs/DECISIONS.md` mục 2026-10-22). Ghi header `Server-Timing` vào `docs/API_CONTRACT.md` (tương thích ngược, vẫn v0.2).
+- **Lỗi gặp:** `localhost` trên Windows thử IPv6 trước → +2 s mỗi kết nối mới khi đo cục bộ (mục 7).
+- **Việc tiếp theo:** báo Thạc Duy Anh khuyến nghị keep-alive (`keepAliveTimeout` > 15 s) và giới hạn lô replay; đo lại từ backend trên Render ở Jira WSEA-83; dán minh chứng Jira WSEA-97.
 
 ### 2026-10-20 · Đợt 7 · Smoke test trên Space production (Jira WSEA-82 bước 6)
 
