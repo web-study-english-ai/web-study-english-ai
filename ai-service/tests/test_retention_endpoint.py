@@ -278,3 +278,72 @@ def test_health_degraded_returns_503(client, monkeypatch):
     assert res.status_code == 503
     assert res.json()["status"] == "degraded"
     assert res.json()["models"] == []
+
+
+# --- Server-Timing (WSEA-97) -------------------------------------------------
+
+STEP_NAMES = ["tensor", "model", "check", "build"]
+
+
+def parse_server_timing(header: str) -> dict[str, float]:
+    """'a;dur=1.2, b;dur=3' -> {'a': 1.2, 'b': 3.0}. Sai dinh dang thi test do."""
+    out = {}
+    for part in header.split(","):
+        name, dur = part.strip().split(";dur=")
+        out[name] = float(dur)
+    return out
+
+
+def test_server_timing_header_on_200(client):
+    cards = [dict(CARD_OLD, card_id=f"c{i}") for i in range(50)] + [CARD_NEW]
+    res = post(client, cards)
+
+    assert res.status_code == 200
+    timings = parse_server_timing(res.headers["server-timing"])
+    assert list(timings) == STEP_NAMES + ["app"]
+    assert all(v >= 0 for v in timings.values())
+    # model > 0 de chac header co so that, khong phai dict rong hay 0 dien san
+    assert timings["model"] > 0
+    assert timings["app"] >= sum(timings[n] for n in STEP_NAMES)
+
+
+def test_server_timing_body_unchanged(client):
+    """Middleware chi them header, body van dung hop dong."""
+    body = post(client, [CARD_OLD]).json()
+    assert set(body) == {"results", "model_version"}
+
+
+def test_missing_key_still_401_without_server_timing(client):
+    res = post(client, [CARD_OLD], headers={})
+    assert res.status_code == 401
+    assert "server-timing" not in res.headers
+
+
+def test_invalid_input_still_422_without_server_timing(client):
+    res = post(client, [dict(CARD_OLD, rating=9)])
+    assert res.status_code == 422
+    assert "server-timing" not in res.headers
+
+
+def test_model_error_still_500_without_server_timing(client, monkeypatch):
+    model = client.app.state.models["fsrs"]
+
+    def broken(*args, **kwargs):
+        nan = torch.tensor([float("nan")])
+        return nan, nan, nan, nan
+
+    monkeypatch.setattr(model, "predict_step", broken)
+    res = post(client, [CARD_OLD])
+    assert res.status_code == 500
+    assert "server-timing" not in res.headers
+
+
+def test_model_not_loaded_still_503_without_server_timing(client, monkeypatch):
+    monkeypatch.setitem(client.app.state.models, "fsrs", None)
+    res = post(client, [CARD_OLD])
+    assert res.status_code == 503
+    assert "server-timing" not in res.headers
+
+
+def test_health_has_no_server_timing(client):
+    assert "server-timing" not in client.get("/health").headers

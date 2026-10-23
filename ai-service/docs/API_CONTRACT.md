@@ -3,7 +3,7 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện**
+Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
 
 ## Quy ước chung
 
@@ -149,6 +149,25 @@ người học ở GMT+7, để AI tính ngày thì chắc chắn lệch một n
 Ngưỡng mục tiêu là 0,9 — nghiêng về ôn sớm. Sai theo hướng ôn sớm chỉ tốn thời gian; sai theo hướng ôn muộn là người học quên.
 Vì vậy `interval_days` **làm tròn** (`round`) chứ không làm tròn lên: `S' = 1,1` mà trả 2 ngày
 thì tới hạn `R ≈ 0,84`, đã tụt dưới ngưỡng trước khi người học kịp ôn.
+
+**Header `Server-Timing`** (từ 2026-10-22, WSEA-97) — chỉ có ở response `200`,
+theo chuẩn W3C Server Timing:
+
+```
+Server-Timing: tensor;dur=0.028, model;dur=0.262, check;dur=0.056, build;dur=0.011, app;dur=0.584
+```
+
+| Tên | Đo phần nào |
+|---|---|
+| tensor | gom lô thẻ thành tensor |
+| model | mô hình tính R, S', D', khoảng ôn |
+| check | kiểm tra đầu ra không có NaN/Inf |
+| build | đổi tensor về danh sách kết quả |
+| app | tổng thời gian trong ứng dụng, gồm cả nhận body, kiểm tra đầu vào và tạo JSON trả về |
+
+Đơn vị ms, số thực ≥ 0, thứ tự cố định như bảng. Header **chỉ để chẩn đoán** (tách thời
+gian máy chủ khỏi thời gian mạng): backend **không bắt buộc đọc**, không được dựa vào nó để
+quyết định nghiệp vụ. Body JSON không đổi. Response `401`/`422`/`500`/`503` không có header này.
 
 **Fallback backend**: `simple-scheduler.ts` (TypeScript), trả `interval_days` tương đương. Không phải SM-2 — xem `docs/DECISIONS.md` mục 2026-10-11.
 

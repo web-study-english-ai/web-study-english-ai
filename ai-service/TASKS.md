@@ -12,7 +12,7 @@
 >
 > Ký hiệu: `[ ]` chưa làm · `[~]` đang làm · `[x]` xong · `[!]` có vấn đề · `[-]` đã cắt
 
-> **⚠️ ĐỐI CHIẾU MÃ ĐÃ BIẾT (cập nhật 2026-10-17).** Mã trong file này lệch Jira. Luôn dùng mã Jira thật; không chắc thì hỏi Hiếu.
+> **⚠️ ĐỐI CHIẾU MÃ ĐÃ BIẾT (cập nhật 2026-10-22).** Mã trong file này lệch Jira. Luôn dùng mã Jira thật; không chắc thì hỏi Hiếu.
 >
 > | Mã trong file này | Mã Jira thật | Task |
 > |---|---|---|
@@ -21,8 +21,9 @@
 > | WSEA-65 | **WSEA-82** | Triển khai dịch vụ AI lên Hugging Face Spaces (dời sang đợt 7) |
 > | WSEA-66 | **WSEA-83** | Phối hợp kiểm thử tích hợp dịch vụ AI |
 > | WSEA-67 | **WSEA-84** | Đệm xử lý sự cố kỹ thuật |
+> | WSEA-80 | **WSEA-97** | Tối ưu hiệu năng dịch vụ AI |
 >
-> Các mã khác (WSEA-80 trở đi) chưa đối chiếu. **WSEA-81, 82, 83 trong file này là task khác** với Jira WSEA-81, 82, 83.
+> Các mã khác (WSEA-81 trở đi) chưa đối chiếu. **WSEA-81, 82, 83 trong file này là task khác** với Jira WSEA-81, 82, 83.
 
 
 ---
@@ -384,13 +385,15 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 ## Đợt 6 · D16–D18 — Ôn tập theo lịch · v1.0 (MỐC SỐNG CÒN)
 
-### [ ] WSEA-80 · Tối ưu hiệu năng dịch vụ AI
-5h · Ưu tiên: High · `ai/WSEA-80-...`
+### [x] WSEA-97 · Tối ưu hiệu năng dịch vụ AI
+5h · Ưu tiên: High · `ai/WSEA-97-toi-uu-hieu-nang`
 
-- [ ] 1. Đo thời gian xử lý từng bước trong endpoint dự báo
-- [ ] 2. Tối ưu bằng cách xử lý theo lô thay vì từng thẻ
-- [ ] 3. Thêm bộ nhớ đệm cho các kết quả tính lặp
-- [ ] 4. Đo lại và ghi nhận mức cải thiện
+> Mã Jira thật của task này là **WSEA-97** (file này trước ghi WSEA-80). Làm ở đợt 7.
+
+- [x] 1. Đo thời gian xử lý từng bước trong endpoint dự báo — 4 khoảng + header `Server-Timing` (`dbb3fcd`), `scripts/bench_latency.py` (`88efbdb`)
+- [x] 2. Tối ưu bằng cách xử lý theo lô thay vì từng thẻ — đã có từ WSEA-81 (`_to_tensors` + `predict_step` vector hoá); đo xác nhận lô vs lẻ ×37 (laptop) / ×40 (Space)
+- [x] 3. Thêm bộ nhớ đệm cho các kết quả tính lặp — đã đánh giá, không làm cache (tỷ lệ trúng ~0, tiết kiệm ≤ 0,2%); thay bằng khuyến nghị backend tái sử dụng kết nối: lô 1 từ Việt Nam −74%
+- [x] 4. Đo lại và ghi nhận mức cải thiện — `docs/perf/2026-10-21-local.json`, `docs/perf/2026-10-22-space.json`, `PROGRESS.md` mục 6.1.3, `docs/DECISIONS.md` mục 2026-10-22
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
