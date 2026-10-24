@@ -21,6 +21,7 @@
     "prisma:studio": "prisma studio",
     "postinstall": "prisma generate",
     "seed": "ts-node prisma/seed.ts",
+    "seed:reading": "ts-node prisma/seed-reading.ts",
     "seed:mock": "ts-node prisma/seed-mock.ts",
     "clean:mock": "ts-node prisma/clean-mock.ts",
     "reset:mock": "ts-node prisma/clean-mock.ts && ts-node prisma/seed-mock.ts"
