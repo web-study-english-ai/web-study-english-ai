@@ -56,6 +56,11 @@ enum SchedulerSource {
   RELEARN_STEP
 }
 
+enum ReadingAttemptStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
 model User {
   id               String       @id @default(uuid())
   email            String       @unique
@@ -78,6 +83,7 @@ model User {
   reviews          Review[]
   assistantQueries AssistantQuery[]
   conversations    Conversation[]
+  readingAttempts  ReadingAttempt[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -285,3 +291,67 @@ model AssistantQuery {
   @@map("assistant_queries")
 }
 
+/// Bài tập đọc hiểu theo bậc CEFR (A1–B2) và chủ đề
+model ReadingPassage {
+  id               String    @id @default(uuid())
+  slug             String    @unique
+  title            String
+  summary          String
+  content          String
+  topic            String
+  cefr             CefrLevel
+  estimatedMinutes Int       @default(5) @map("estimated_minutes")
+  sortOrder        Int       @default(0) @map("sort_order")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  questions ReadingQuestion[]
+  attempts  ReadingAttempt[]
+
+  @@index([cefr])
+  @@index([topic])
+  @@index([cefr, topic, sortOrder])
+  @@map("reading_passages")
+}
+
+/// Câu hỏi trắc nghiệm (4 lựa chọn A/B/C/D hoặc 2 lựa chọn True/False) thuộc một bài đọc
+model ReadingQuestion {
+  id                 String   @id @default(uuid())
+  passageId          String   @map("passage_id")
+  orderIndex         Int      @map("order_index")
+  questionText       String   @map("question_text")
+  options            String[]
+  correctOptionIndex Int      @map("correct_option_index")
+  explanation        String?
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  passage ReadingPassage @relation(fields: [passageId], references: [id], onDelete: Cascade)
+
+  @@unique([passageId, orderIndex])
+  @@index([passageId])
+  @@map("reading_questions")
+}
+
+/// Lượt làm bài đọc hiểu của người học (lưu cả trạng thái đang làm dở và đã hoàn thành)
+model ReadingAttempt {
+  id              String               @id @default(uuid())
+  userId          String               @map("user_id")
+  passageId       String               @map("passage_id")
+  status          ReadingAttemptStatus @default(IN_PROGRESS)
+  answers         Json                 @default("[]")
+  answeredCount   Int                  @default(0) @map("answered_count")
+  correctCount    Int?                 @map("correct_count")
+  totalQuestions  Int                  @map("total_questions")
+  durationSeconds Int                  @default(0) @map("duration_seconds")
+  submittedAt     DateTime?            @map("submitted_at")
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passage ReadingPassage @relation(fields: [passageId], references: [id], onDelete: Cascade)
+
+  @@index([userId, passageId, status])
+  @@index([userId, updatedAt])
+  @@map("reading_attempts")
+}
