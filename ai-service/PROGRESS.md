@@ -15,7 +15,6 @@
 - **Nhánh:** `ai/WSEA-97-toi-uu-hieu-nang` (từ `develop` sau PR #75)
 - **Việc dở dang cần làm tiếp:**
   - Mở PR WSEA-97 vào `develop`, dán minh chứng Jira WSEA-97
-  - Báo Thạc Duy Anh: header `Server-Timing` mới (mục 8), khuyến nghị keep-alive (`keepAliveTimeout` > 15 s) và lô replay tối đa ~100 thẻ
   - Jira WSEA-82 bước 7: backend staging gọi được AI (vấn đề #15), báo Bình đổi job ping sang `/health` của Space
   - Sau WSEA-83: MK-3 → hợp đồng API v0.3 với Duy Anh (replay, cột `scheduler`, `elapsed_days`)
 - **Đang bị chặn bởi:** backend staging chưa gọi AI (vấn đề #15) — chờ Bình
@@ -243,7 +242,7 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 | 2026-09-28 | tất cả | `extra="forbid"`: trường lạ / camelCase → 422. `NaN`/`Infinity` → 422 | ✅ 2026-10-09 | WSEA-81 |
 | 2026-09-28 | tất cả | Thêm mã **500** (mô hình trả giá trị không hữu hạn) — backend fallback với mọi 5xx | ✅ 2026-10-09 | WSEA-81 |
 | 2026-09-28 | `GET /health` | Thêm `models`, `model_version`; trả **503** khi `status="degraded"` | ✅ 2026-10-09 | WSEA-81 |
-| 2026-10-22 | `POST /predict-retention` | Thêm header **`Server-Timing`** ở response 200 (`tensor`, `model`, `check`, `build`, `app`, ms) — chỉ để chẩn đoán, tương thích ngược, body và mã lỗi không đổi, vẫn v0.2 | ⏳ chưa | WSEA-97 (`dbb3fcd`) |
+| 2026-10-22 | `POST /predict-retention` | Thêm header **`Server-Timing`** ở response 200 (`tensor`, `model`, `check`, `build`, `app`, ms) — chỉ để chẩn đoán, tương thích ngược, body và mã lỗi không đổi, vẫn v0.2 | ✅ 2026-10-23 | WSEA-97 (`dbb3fcd`) |
 
 ## 9. Nhật ký phiên làm việc
 
