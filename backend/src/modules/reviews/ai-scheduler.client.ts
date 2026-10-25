@@ -1,5 +1,6 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AiMonitorService } from '@modules/ai-monitor/ai-monitor.service';
 import { PhanHoiDuBao, TheGuiAI } from './ai-scheduler.types';
 
 /** Sau một lần gọi hỏng, tạm ngưng gọi AI trong khoảng này để không bắt người học chờ vô ích */
@@ -9,7 +10,10 @@ const NGUNG_SAU_LOI_MS = 30_000;
 export class AiSchedulerClient implements OnModuleInit {
   private readonly logger = new Logger(AiSchedulerClient.name);
   private hongLuc: number | null = null;
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    @Optional() private readonly aiMonitor?: AiMonitorService,
+  ) {}
 
   onModuleInit() {
     if (!this.daCauHinh) {
@@ -27,8 +31,12 @@ export class AiSchedulerClient implements OnModuleInit {
   }
 
   /** Trả kết quả dự báo, hoặc null khi không dùng được — null nghĩa là phải rơi về dự phòng. */
-  /** Trả kết quả dự báo, hoặc null khi không dùng được — null nghĩa là phải rơi về dự phòng. */
   async duBao(cards: TheGuiAI[]): Promise<PhanHoiDuBao | null> {
+    if (this.aiMonitor?.isCircuitBreakerOpen()) {
+      this.logger.warn('Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang công thức dự phòng');
+      return null;
+    }
+
     if (!this.daCauHinh) return null;
 
     // Vừa hỏng xong thì đừng bắt người học chờ thêm 3 giây nữa cho cùng một sự cố
@@ -76,6 +84,7 @@ export class AiSchedulerClient implements OnModuleInit {
     const url = this.config.getOrThrow<string>('AI_SERVICE_URL');
     const key = this.config.getOrThrow<string>('AI_SERVICE_KEY');
     const timeoutMs = Number(this.config.get('AI_TIMEOUT_MS') ?? 3000);
+    const start = Date.now();
 
     try {
       const response = await fetch(`${url}/predict-retention`, {
@@ -85,9 +94,29 @@ export class AiSchedulerClient implements OnModuleInit {
         signal: AbortSignal.timeout(timeoutMs),
       });
 
+      const latencyMs = Date.now() - start;
+
       if (response.ok) {
-        return { ketQua: (await response.json()) as PhanHoiDuBao, nenThuLai: false };
+        const ketQua = (await response.json()) as PhanHoiDuBao;
+        this.aiMonitor?.recordCall({
+          serviceType: 'FSRS_RETENTION',
+          promptTokens: Math.max(cards.length * 20, 10),
+          completionTokens: Math.max(cards.length * 10, 5),
+          latencyMs,
+          success: true,
+          statusCode: response.status,
+        });
+        return { ketQua, nenThuLai: false };
       }
+
+      this.aiMonitor?.recordCall({
+        serviceType: 'FSRS_RETENTION',
+        promptTokens: Math.max(cards.length * 20, 10),
+        completionTokens: 0,
+        latencyMs,
+        success: false,
+        statusCode: response.status,
+      });
 
       // Bảng mã lỗi của API_CONTRACT.md v0.2
       if (response.status === 401) {
@@ -100,6 +129,15 @@ export class AiSchedulerClient implements OnModuleInit {
 
       return { ketQua: null, nenThuLai: response.status === 503 };
     } catch (error) {
+      const latencyMs = Date.now() - start;
+      this.aiMonitor?.recordCall({
+        serviceType: 'FSRS_RETENTION',
+        promptTokens: Math.max(cards.length * 20, 10),
+        completionTokens: 0,
+        latencyMs,
+        success: false,
+        statusCode: 500,
+      });
       this.logger.warn(`Không gọi được dịch vụ AI: ${String(error)}`);
       return { ketQua: null, nenThuLai: false };
     }

@@ -16,6 +16,7 @@ import { ReviewsModule } from '@modules/reviews/reviews.module';
 import { ProgressModule } from '@modules/progress/progress.module';
 import { AssistantModule } from '@modules/assistant/assistant.module';
 import { ReadingModule } from '@modules/reading/reading.module';
+import { AiMonitorModule } from '@modules/ai-monitor/ai-monitor.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ReadingModule } from '@modules/reading/reading.module';
       isGlobal: true,
       envFilePath: '.env',
     }),
+    AiMonitorModule,
     PrismaModule,
     AuthModule,
     UsersModule,
