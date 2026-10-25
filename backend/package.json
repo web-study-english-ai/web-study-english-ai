@@ -24,6 +24,7 @@
     "seed": "ts-node prisma/seed.ts",
     "seed:reading": "ts-node prisma/seed-reading.ts",
     "seed:mock": "ts-node prisma/seed-mock.ts",
+    "seed:demo": "ts-node --transpile-only prisma/seed-demo-account.ts",
     "clean:mock": "ts-node prisma/clean-mock.ts",
     "reset:mock": "ts-node prisma/clean-mock.ts && ts-node prisma/seed-mock.ts"
   },

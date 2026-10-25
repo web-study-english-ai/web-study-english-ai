@@ -27,8 +27,14 @@ echo "Thời gian: $(date)"
 echo "Tệp đích:  ${BACKUP_PATH}"
 echo "=========================================================="
 
+# Ưu tiên binary pg_dump của PostgreSQL 17 nếu có trong hệ thống
+PG_DUMP_BIN="pg_dump"
+if [ -x "/usr/lib/postgresql/17/bin/pg_dump" ]; then
+  PG_DUMP_BIN="/usr/lib/postgresql/17/bin/pg_dump"
+fi
+
 # Thực hiện pg_dump với định dạng Custom (-F c), bỏ qua quyền owner và role Supabase
-pg_dump "${DATABASE_URL}" \
+"$PG_DUMP_BIN" "${DATABASE_URL}" \
   --format=c \
   --clean \
   --if-exists \
