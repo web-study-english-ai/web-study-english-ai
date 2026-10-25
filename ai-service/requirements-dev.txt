@@ -1,0 +1,9 @@
+-r requirements.txt
+pandas
+scikit-learn
+matplotlib
+pyarrow
+pytest
+httpx
+pytest-cov
+ipykernel

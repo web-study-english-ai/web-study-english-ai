@@ -44,8 +44,8 @@ export async function registerMock(payload: RegisterPayload): Promise<AuthRespon
     throw new AuthError("EMAIL_ALREADY_EXISTS", "Email này đã được sử dụng.");
   }
 
-  if (payload.password.length < 6) {
-    throw new AuthError("WEAK_PASSWORD", "Mật khẩu phải có ít nhất 6 ký tự.");
+  if (payload.password.length < 8) {
+    throw new AuthError("WEAK_PASSWORD", "Mật khẩu phải có ít nhất 8 ký tự.");
   }
 
   return {

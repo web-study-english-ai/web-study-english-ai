@@ -1,0 +1,291 @@
+﻿===== app\models\fsrs.py
+"""Mo hinh du bao kha nang quen theo kien truc ba dai luong D-S-R.
+Phien ban FSRS 4.5, 17 tham so w0..w16. Nhom tu cai dat bang PyTorch.
+"""
+import torch
+import torch.nn as nn
+
+DECAY = -0.5
+FACTOR = 19.0 / 81.0
+
+DEFAULT_W = [0.4, 0.9, 2.3, 10.9, 4.93, 0.94, 0.86, 0.01,
+             1.49, 0.14, 0.94, 2.18, 0.05, 0.34, 1.26, 0.29, 2.61]
+
+S_MIN, S_MAX = 0.01, 36500.0
+D_MIN, D_MAX = 1.0, 10.0
+
+
+class FSRSModel(nn.Module):
+    def __init__(self, w=None):
+        super().__init__()
+        w = w or DEFAULT_W
+        self.w = nn.Parameter(torch.tensor(w, dtype=torch.float32))
+
+    def retrievability(self, t, s):
+        """Xac suat con nho sau t ngay voi do ben s."""
+        return torch.pow(1 + FACTOR * t / s, DECAY)
+    def init_stability(self, rating):
+        """S0(G) = w[G-1]. rating la tensor long 1..4."""
+        return self.w[rating - 1].clamp(S_MIN, S_MAX)
+
+    def init_difficulty(self, rating):
+        """D0(G) = w4 - w5*(G-3). Cong thuc tuyen tinh cua FSRS 4.5, D0(Good) = w4."""
+        d = self.w[4] - self.w[5] * (rating.float() - 3)
+        return d.clamp(D_MIN, D_MAX)
+
+    def next_difficulty(self, d, rating):
+        d_new = d - self.w[6] * (rating.float() - 3)
+        # FSRS 4.5 keo ve D0(Good) = w4, khong phai D0(Easy) nhu FSRS 5
+        d_new = self.w[7] * self.w[4] + (1 - self.w[7]) * d_new
+        return d_new.clamp(D_MIN, D_MAX)
+
+    def stability_on_success(self, s, d, r, rating):
+        hard = torch.where(rating == 2, self.w[15], torch.ones_like(s))
+        easy = torch.where(rating == 4, self.w[16], torch.ones_like(s))
+        inc = (torch.exp(self.w[8]) * (11 - d)
+               * torch.pow(s, -self.w[9])
+               * (torch.exp(self.w[10] * (1 - r)) - 1)
+               * hard * easy)
+        return (s * (1 + inc)).clamp(S_MIN, S_MAX)
+
+    def stability_on_lapse(self, s, d, r):
+        s_new = (self.w[11]
+                 * torch.pow(d, -self.w[12])
+                 * (torch.pow(s + 1, self.w[13]) - 1)
+                 * torch.exp(self.w[14] * (1 - r)))
+        # do ben sau khi quen khong duoc lon hon truoc khi quen
+        return torch.minimum(s_new, s).clamp(S_MIN, S_MAX)
+    def forward(self, ratings, elapsed, mask):
+        """
+        ratings: (B, L) long 1..4
+        elapsed: (B, L) float, so ngay troi qua
+        mask:    (B, L) bool, True tai vi tri co du lieu that
+        Tra ve: preds, labels tu luot thu 2 tro di
+        """
+        B, L = ratings.shape
+        s = self.init_stability(ratings[:, 0])
+        d = self.init_difficulty(ratings[:, 0])
+        preds, labels = [], []
+
+        for i in range(1, L):
+            r = self.retrievability(elapsed[:, i], s)
+            valid = mask[:, i]
+            preds.append(r[valid])
+            labels.append((ratings[:, i][valid] > 1).float())
+
+            rating_i = ratings[:, i]
+            s_succ = self.stability_on_success(s, d, r, rating_i)
+            s_lapse = self.stability_on_lapse(s, d, r)
+            s = torch.where(rating_i > 1, s_succ, s_lapse)
+            d = self.next_difficulty(d, rating_i)
+
+        return torch.cat(preds), torch.cat(labels)
+    def next_interval(self, s, target_retention=0.9):
+        """Bai toan nguoc: cho nguong xac suat, tim so ngay."""
+        return s / FACTOR * (target_retention ** (1 / DECAY) - 1)
+===== app\models\schemas.py
+"""Pydantic schema dung chung cho request/response cua ai-service."""
+
+from pydantic import BaseModel, Field
+
+
+class HealthResponse(BaseModel):
+    status: str
+    service: str
+    version: str
+    environment: str
+
+
+class ForgettingRequest(BaseModel):
+    """Lich su on tap cua mot the tu vung."""
+
+    user_card_id: str = Field(..., description="Id the tu vung cua nguoi hoc")
+    elapsed_days: float = Field(..., ge=0, description="So ngay ke tu lan on gan nhat")
+    reps: int = Field(..., ge=0, description="So lan da on tap")
+    lapses: int = Field(..., ge=0, description="So lan quen")
+    stability: float | None = Field(default=None, ge=0, description="Do ben tri nho (FSRS)")
+    difficulty: float | None = Field(default=None, description="Do kho cua the (FSRS)")
+
+
+class ForgettingResponse(BaseModel):
+    user_card_id: str
+    retrievability: float = Field(..., ge=0, le=1, description="Xac suat nho lai")
+    next_review_days: float = Field(..., ge=0, description="So ngay den lan on ke tiep")
+
+
+class RecognizedLabel(BaseModel):
+    label: str
+    confidence: float = Field(..., ge=0, le=1)
+
+
+class VisionResponse(BaseModel):
+    labels: list[RecognizedLabel]
+
+
+class AskRequest(BaseModel):
+    question: str = Field(..., min_length=1, description="Cau hoi cua nguoi hoc")
+    top_k: int = Field(default=5, ge=1, le=20, description="So doan ngu lieu truy hoi")
+
+
+class AskSource(BaseModel):
+    source_id: str
+    score: float
+
+
+class AskResponse(BaseModel):
+    answer: str
+    sources: list[AskSource] = Field(default_factory=list)
+===== app\routers\forgetting.py
+"""Router /predict/forgetting - du doan xac suat quen tu (stub)."""
+
+from fastapi import APIRouter, Depends, HTTPException, status
+
+from app.deps import verify_internal_api_key
+from app.models.schemas import ForgettingRequest, ForgettingResponse
+
+router = APIRouter(
+    prefix="/predict",
+    tags=["forgetting"],
+    dependencies=[Depends(verify_internal_api_key)],
+)
+
+
+@router.post("/forgetting", response_model=ForgettingResponse)
+async def predict_forgetting(payload: ForgettingRequest) -> ForgettingResponse:
+    """Du doan xac suat nho lai cua the tu vung.
+
+    TODO(WSEA): nap model da train tu du lieu FSRS-Anki-20k va tra ket qua that.
+    """
+    raise HTTPException(
+        status_code=status.HTTP_501_NOT_IMPLEMENTED,
+        detail="Chuc nang du doan quen tu chua duoc trien khai",
+    )
+===== app\routers\health.py
+"""Router /health - dot nay chi can endpoint nay chay duoc."""
+
+from fastapi import APIRouter
+
+from app.config import settings
+from app.models.schemas import HealthResponse
+
+router = APIRouter(tags=["health"])
+
+
+@router.get("/health", response_model=HealthResponse)
+async def health() -> HealthResponse:
+    """Kiem tra dich vu con song, dung cho HF Spaces va CI."""
+    return HealthResponse(
+        status="ok",
+        service=settings.app_name,
+        version=settings.app_version,
+        environment=settings.environment,
+    )
+===== tests\test_fsrs.py
+import torch
+import torch.nn as nn
+
+from app.models.fsrs import FSRSModel
+from app.models.dataset import collate
+
+
+def test_retrievability_at_stability():
+    """t = S thi R = 0.9, dung dinh nghia do ben."""
+    m = FSRSModel()
+    r = m.retrievability(torch.tensor([10.0]), torch.tensor([10.0]))
+    assert abs(r.item() - 0.9) < 1e-6
+
+
+def test_retrievability_monotonic():
+    """On muon hon thi nho kem hon."""
+    m = FSRSModel()
+    s = torch.tensor([10.0])
+    r5 = m.retrievability(torch.tensor([5.0]), s)
+    r30 = m.retrievability(torch.tensor([30.0]), s)
+    assert r5.item() > r30.item()
+
+
+def test_stability_increases_on_success():
+    m = FSRSModel()
+    s, d, r = torch.tensor([10.0]), torch.tensor([5.0]), torch.tensor([0.9])
+    s2 = m.stability_on_success(s, d, r, torch.tensor([3]))
+    assert s2.item() > s.item()
+
+
+def test_stability_drops_on_lapse():
+    m = FSRSModel()
+    s, d = torch.tensor([50.0]), torch.tensor([5.0])
+    s2 = m.stability_on_lapse(s, d, torch.tensor([0.7]))
+    assert 0 < s2.item() < s.item()
+
+
+def test_difficulty_in_range():
+    m = FSRSModel()
+    d = torch.tensor([5.0])
+    for g in [1, 2, 3, 4]:
+        out = m.next_difficulty(d, torch.tensor([g]))
+        assert 1.0 <= out.item() <= 10.0
+
+
+def test_init_difficulty_matches_fsrs45():
+    """So voi gia tri tinh tay. Test 'nam trong khoang' khong bat duoc loi cong thuc vi clamp."""
+    m = FSRSModel()
+    d = m.init_difficulty(torch.tensor([1, 2, 3, 4]))
+    expected = torch.tensor([4.93 + 2 * 0.94, 4.93 + 0.94, 4.93, 4.93 - 0.94])
+    assert torch.allclose(d, expected, atol=1e-4)
+
+
+def test_next_difficulty_reverts_to_w4():
+    """Good khong doi D ngoai buoc keo ve w4: D' = w7*w4 + (1-w7)*D."""
+    m = FSRSModel()
+    d = m.next_difficulty(torch.tensor([8.0]), torch.tensor([3]))
+    expected = 0.01 * 4.93 + 0.99 * 8.0
+    assert abs(d.item() - expected) < 1e-4
+
+
+def test_next_interval_at_default_threshold():
+    """Voi nguong 0.9, khoang cach xap xi bang do ben."""
+    m = FSRSModel()
+    iv = m.next_interval(torch.tensor([10.0]), 0.9)
+    assert abs(iv.item() - 10.0) < 0.1
+
+
+def test_gradient_flows():
+    """Quan trong nhat: gradient di duoc tu loss ve toi w."""
+    m = FSRSModel()
+    ratings = torch.tensor([[3, 3, 2]])
+    elapsed = torch.tensor([[0.0, 3.0, 8.0]])
+    mask = torch.ones(1, 3, dtype=torch.bool)
+    p, y = m(ratings, elapsed, mask)
+    loss = nn.functional.binary_cross_entropy(p.clamp(1e-6, 1 - 1e-6), y)
+    loss.backward()
+    assert m.w.grad is not None
+    assert not torch.isnan(m.w.grad).any()
+
+
+def test_collate_pads_and_masks():
+    batch = [
+        (torch.tensor([3, 3]), torch.tensor([0.0, 5.0])),
+        (torch.tensor([1, 3, 4]), torch.tensor([0.0, 1.0, 4.0])),
+    ]
+    ratings, elapsed, mask = collate(batch)
+    assert ratings.shape == (2, 3)
+    assert mask[0].tolist() == [True, True, False]
+    assert ratings[0, 2].item() == 1        # vi tri dem phai bang 1
+===== requirements.txt
+--extra-index-url https://download.pytorch.org/whl/cpu
+
+# --- API ---
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+pydantic-settings==2.7.0
+python-multipart==0.0.20
+
+# --- Model ML (torch ban CPU) ---
+torch
+numpy
+pandas
+
+# --- Test ---
+pytest
+huggingface_hub==2.0.0

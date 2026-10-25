@@ -66,7 +66,9 @@ async function main() {
   const startTime = Date.now();
   console.log('🚀 Bắt đầu nạp học liệu từ vựng vào Database...');
 
-  const csvPath = path.join(__dirname, 'data', 'vocab_2000.csv');
+  const csv7000Path = path.join(__dirname, 'data', 'vocab_7000.csv');
+  const csv2000Path = path.join(__dirname, 'data', 'vocab_2000.csv');
+  const csvPath = fs.existsSync(csv7000Path) ? csv7000Path : csv2000Path;
   if (!fs.existsSync(csvPath)) {
     throw new Error(`Không tìm thấy file CSV tại: ${csvPath}`);
   }
@@ -171,7 +173,7 @@ async function main() {
 
   // 3. Nạp dữ liệu vào Database theo lô (batching 100 từ/lần) bằng upsert
   console.log('\n📖 3. Đang nạp danh sách từ vựng kèm topic_id...');
-  const BATCH_SIZE = 100;
+  const BATCH_SIZE = 250;
   let processedCount = 0;
 
   for (let i = 0; i < validWords.length; i += BATCH_SIZE) {

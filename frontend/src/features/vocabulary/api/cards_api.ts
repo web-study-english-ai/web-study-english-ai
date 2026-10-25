@@ -27,3 +27,12 @@ export function listNewCardsApi(
   const qs = limit ? `?limit=${limit}` : "";
   return apiFetch<{ items: DeckCard[]; dailyLimit: number; count: number }>(`/cards/new${qs}`);
 }
+
+export async function listDueCardsApi(): Promise<DeckCard[]> {
+  const { items } = await listCardsApi(1, 100);
+  const now = Date.now();
+
+  return items.filter(
+    (c) => c.state !== "NEW" && c.dueAt !== null && new Date(c.dueAt).getTime() <= now,
+  );
+}

@@ -31,15 +31,7 @@ export function tinhLich(
     nextIntervalDays = KHOANG_LUOT_DAU[rating];
   }
 
-  let stateAfter: CardState;
-  if (laQuen) {
-    stateAfter =
-      stateBefore === CardState.REVIEW || stateBefore === CardState.RELEARNING
-        ? CardState.RELEARNING
-        : CardState.LEARNING;
-  } else {
-    stateAfter = CardState.REVIEW;
-  }
+  const stateAfter = tinhTrangThaiSau(stateBefore, rating);
 
   return {
     stateAfter,
@@ -47,4 +39,15 @@ export function tinhLich(
     dueAt: new Date(moc.getTime() + nextIntervalDays * MOT_NGAY_MS),
     laQuen,
   };
+}
+/**
+ * Trạng thái sau khi ôn. Dùng chung cho cả đường AI lẫn đường dự phòng:
+ * dịch vụ AI chỉ trả khoảng ôn, không biết gì về CardState của hệ thống.
+ */
+export function tinhTrangThaiSau(stateBefore: CardState, rating: number): CardState {
+  if (rating !== 1) return CardState.REVIEW;
+
+  return stateBefore === CardState.REVIEW || stateBefore === CardState.RELEARNING
+    ? CardState.RELEARNING
+    : CardState.LEARNING;
 }

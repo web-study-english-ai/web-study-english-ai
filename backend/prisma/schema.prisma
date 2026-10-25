@@ -53,27 +53,37 @@ enum SchedulerSource {
   FSRS_AI
   FALLBACK_TS
   SM2
+  RELEARN_STEP
 }
-model User {
-  id              String       @id @default(uuid())
-  email           String       @unique
-  passwordHash    String?      @map("password_hash")
-  provider        AuthProvider @default(LOCAL)
-  providerId      String?      @map("provider_id")
-  fullName        String       @map("full_name")
-  avatarUrl       String?      @map("avatar_url")
-  level            CefrLevel @default(A1)
-  newWordsPerDay   Int       @default(20) @map("new_words_per_day")
-  maxReviewsPerDay Int       @default(50) @map("max_reviews_per_day")
-  role            UserRole     @default(USER)
-  isActive        Boolean      @default(true) @map("is_active")
-  acceptedTermsAt DateTime?    @map("accepted_terms_at")
-  createdAt       DateTime     @default(now()) @map("created_at")
-  updatedAt       DateTime     @updatedAt @map("updated_at")
 
-  refreshTokens RefreshToken[]
-  cards UserCard[]
-  reviews Review[]
+enum ReadingAttemptStatus {
+  IN_PROGRESS
+  COMPLETED
+}
+
+model User {
+  id               String       @id @default(uuid())
+  email            String       @unique
+  passwordHash     String?      @map("password_hash")
+  provider         AuthProvider @default(LOCAL)
+  providerId       String?      @map("provider_id")
+  fullName         String       @map("full_name")
+  avatarUrl        String?      @map("avatar_url")
+  level            CefrLevel    @default(A1)
+  newWordsPerDay   Int          @default(20) @map("new_words_per_day")
+  maxReviewsPerDay Int          @default(50) @map("max_reviews_per_day")
+  role             UserRole     @default(USER)
+  isActive         Boolean      @default(true) @map("is_active")
+  acceptedTermsAt  DateTime?    @map("accepted_terms_at")
+  createdAt        DateTime     @default(now()) @map("created_at")
+  updatedAt        DateTime     @updatedAt @map("updated_at")
+
+  refreshTokens    RefreshToken[]
+  cards            UserCard[]
+  reviews          Review[]
+  assistantQueries AssistantQuery[]
+  conversations    Conversation[]
+  readingAttempts  ReadingAttempt[]
 
   @@unique([provider, providerId])
   @@map("users")
@@ -126,37 +136,43 @@ model Word {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
-  topic Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
-  cards UserCard[]
+  topic   Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  cards   UserCard[]
   reviews Review[]
 
   @@index([cefr])
   @@index([topicId])
   @@index([rank])
+  @@index([topicId, cefr, rank])
   @@map("words")
 }
 
 model UserCard {
-  id             String    @id @default(uuid())
-  userId         String    @map("user_id")
-  wordId         String    @map("word_id")
-  state          CardState @default(NEW)
-  difficulty     Float?
-  stability      Float?
-  reps           Int       @default(0)
-  lapses         Int       @default(0)
-  dueAt          DateTime? @map("due_at")
-  lastReviewedAt DateTime? @map("last_reviewed_at")
-  createdAt      DateTime  @default(now()) @map("created_at")
-  updatedAt      DateTime  @updatedAt @map("updated_at")
+  id                  String    @id @default(uuid())
+  userId              String    @map("user_id")
+  wordId              String    @map("word_id")
+  state               CardState @default(NEW)
+  difficulty          Float?
+  stability           Float?
+  /// Khoảng AI trả lúc thẻ bị quên, treo lại để dùng khi qua bước học lại
+  pendingIntervalDays Float?    @map("pending_interval_days")
+  reps                Int       @default(0)
+  lapses              Int       @default(0)
+  dueAt               DateTime? @map("due_at")
+  lastReviewedAt      DateTime? @map("last_reviewed_at")
+  createdAt           DateTime  @default(now()) @map("created_at")
+  updatedAt           DateTime  @updatedAt @map("updated_at")
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+  user    User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  word    Word     @relation(fields: [wordId], references: [id], onDelete: Cascade)
   reviews Review[]
 
   @@unique([userId, wordId])
   @@index([userId, state])
   @@index([userId, dueAt])
+  @@index([userId, state, dueAt, stability])
+  @@index([userId, createdAt])
+  @@index([userId, lastReviewedAt])
   @@map("user_cards")
 }
 
@@ -190,21 +206,22 @@ model Review {
   /// CHECK (0..600000) — app clamp ở 60000
   durationMs    Int    @map("duration_ms")
 
-  stateBefore      CardState @map("state_before")
-  difficultyBefore Float?    @map("difficulty_before")
-  stabilityBefore  Float?    @map("stability_before")
+  stateBefore             CardState @map("state_before")
+  difficultyBefore        Float?    @map("difficulty_before")
+  stabilityBefore         Float?    @map("stability_before")
   /// CHECK (IS NULL OR 0..1) — ràng buộc viết tay trong migration add_reviews
-  predictedRetrievability Float? @map("predicted_retrievability")
+  predictedRetrievability Float?    @map("predicted_retrievability")
 
   stateAfter       CardState @map("state_after")
   difficultyAfter  Float?    @map("difficulty_after")
   stabilityAfter   Float?    @map("stability_after")
   nextIntervalDays Float?    @map("next_interval_days")
 
-  scheduler    SchedulerSource
-  modelVersion String?         @map("model_version")
-
-  createdAt DateTime @default(now()) @map("created_at")
+  scheduler     SchedulerSource
+  modelVersion  String?         @map("model_version")
+  /// Mã do client sinh mỗi lần bấm đánh giá, dùng để nhận ra yêu cầu gửi lại
+  clientEventId String?         @unique @map("client_event_id")
+  createdAt     DateTime        @default(now()) @map("created_at")
 
   user User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   card UserCard? @relation(fields: [cardId], references: [id], onDelete: SetNull)
@@ -214,4 +231,127 @@ model Review {
   @@index([userId, reviewedAt])
   @@index([scheduler])
   @@map("reviews")
+}
+
+/// Đoạn tri thức ngữ pháp dùng cho trợ lý, tìm kiếm theo vector ngữ nghĩa
+model KbChunk {
+  id        String                      @id @default(uuid())
+  content   String
+  source    String
+  topic     String?
+  cefr      CefrLevel?
+  /// Prisma chưa hỗ trợ kiểu vector, phải khai Unsupported và truy vấn bằng $queryRaw
+  embedding Unsupported("vector(768)")?
+  createdAt DateTime                    @default(now()) @map("created_at")
+
+  @@index([topic])
+  @@index([cefr])
+  @@map("kb_chunks")
+}
+
+/// Nhật ký câu hỏi gửi trợ lý, phục vụ phân tích chất lượng trả lời về sau
+/// Cuộc hội thoại với trợ lý AI, tự động hết hạn sau 30 ngày không hoạt động
+model Conversation {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  title     String
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  user     User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  messages AssistantQuery[]
+
+  @@index([userId, updatedAt])
+  @@index([updatedAt])
+  @@map("conversations")
+}
+
+/// Nhật ký câu hỏi gửi trợ lý, phục vụ phân tích chất lượng trả lời về sau
+model AssistantQuery {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  conversationId String?  @map("conversation_id")
+  question       String
+  /// Null khi dịch vụ AI không trả lời được — vẫn ghi để biết người học hỏi gì
+  answer         String?
+  /// Từ đang học khi mở trợ lý từ trong phiên ôn tập
+  wordId         String?  @map("word_id")
+  /// Ảnh chụp id các đoạn tri thức đã dùng, không ràng buộc khoá ngoại
+  sourceIds      String[] @map("source_ids")
+  degraded       Boolean  @default(false)
+  durationMs     Int?     @map("duration_ms")
+  clientEventId  String?  @unique @map("client_event_id")
+  createdAt      DateTime @default(now()) @map("created_at")
+
+  user         User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  conversation Conversation? @relation(fields: [conversationId], references: [id], onDelete: SetNull)
+
+  @@index([userId, createdAt])
+  @@index([conversationId, createdAt])
+  @@map("assistant_queries")
+}
+
+/// Bài tập đọc hiểu theo bậc CEFR (A1–B2) và chủ đề
+model ReadingPassage {
+  id               String    @id @default(uuid())
+  slug             String    @unique
+  title            String
+  summary          String
+  content          String
+  topic            String
+  cefr             CefrLevel
+  estimatedMinutes Int       @default(5) @map("estimated_minutes")
+  sortOrder        Int       @default(0) @map("sort_order")
+  createdAt        DateTime  @default(now()) @map("created_at")
+  updatedAt        DateTime  @updatedAt @map("updated_at")
+
+  questions ReadingQuestion[]
+  attempts  ReadingAttempt[]
+
+  @@index([cefr])
+  @@index([topic])
+  @@index([cefr, topic, sortOrder])
+  @@map("reading_passages")
+}
+
+/// Câu hỏi trắc nghiệm (4 lựa chọn A/B/C/D hoặc 2 lựa chọn True/False) thuộc một bài đọc
+model ReadingQuestion {
+  id                 String   @id @default(uuid())
+  passageId          String   @map("passage_id")
+  orderIndex         Int      @map("order_index")
+  questionText       String   @map("question_text")
+  options            String[]
+  correctOptionIndex Int      @map("correct_option_index")
+  explanation        String?
+  createdAt          DateTime @default(now()) @map("created_at")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+
+  passage ReadingPassage @relation(fields: [passageId], references: [id], onDelete: Cascade)
+
+  @@unique([passageId, orderIndex])
+  @@index([passageId])
+  @@map("reading_questions")
+}
+
+/// Lượt làm bài đọc hiểu của người học (lưu cả trạng thái đang làm dở và đã hoàn thành)
+model ReadingAttempt {
+  id              String               @id @default(uuid())
+  userId          String               @map("user_id")
+  passageId       String               @map("passage_id")
+  status          ReadingAttemptStatus @default(IN_PROGRESS)
+  answers         Json                 @default("[]")
+  answeredCount   Int                  @default(0) @map("answered_count")
+  correctCount    Int?                 @map("correct_count")
+  totalQuestions  Int                  @map("total_questions")
+  durationSeconds Int                  @default(0) @map("duration_seconds")
+  submittedAt     DateTime?            @map("submitted_at")
+  createdAt       DateTime             @default(now()) @map("created_at")
+  updatedAt       DateTime             @updatedAt @map("updated_at")
+
+  user    User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  passage ReadingPassage @relation(fields: [passageId], references: [id], onDelete: Cascade)
+
+  @@index([userId, passageId, status])
+  @@index([userId, updatedAt])
+  @@map("reading_attempts")
 }

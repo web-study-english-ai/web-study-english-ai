@@ -48,6 +48,7 @@ export default function LearnWordsPage() {
 
   return (
     <PageContainer>
+      <h1 className="font-heading text-2xl font-semibold text-foreground">Học từ mới</h1>
       <div className="mx-auto max-w-xl">
         {isLoading && (
           <p className="py-16 text-center text-sm text-muted-foreground">Đang tải từ mới...</p>
