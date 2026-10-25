@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AiMonitorService } from '@modules/ai-monitor/ai-monitor.service';
+import { InfraResilienceService } from '@modules/infra-resilience/infra-resilience.service';
 import { PhanHoiDuBao, TheGuiAI } from './ai-scheduler.types';
 
 /** Sau một lần gọi hỏng, tạm ngưng gọi AI trong khoảng này để không bắt người học chờ vô ích */
@@ -13,6 +14,7 @@ export class AiSchedulerClient implements OnModuleInit {
   constructor(
     private readonly config: ConfigService,
     @Optional() private readonly aiMonitor?: AiMonitorService,
+    @Optional() private readonly resilience?: InfraResilienceService,
   ) {}
 
   onModuleInit() {
@@ -41,7 +43,27 @@ export class AiSchedulerClient implements OnModuleInit {
 
     if (!this.daCauHinh) return null;
 
-    // Vừa hỏng xong thì đừng bắt người học chờ thêm 3 giây nữa cho cùng một sự cố
+    // Sử dụng bộ đệm xử lý sự cố hạ tầng thông minh (WSEA-139)
+    if (this.resilience) {
+      return this.resilience.executeWithResilience(
+        async () => {
+          const res = await this.goiMotLan(cards);
+          if (!res.ketQua) {
+            throw new Error(
+              res.nenThuLai ? 'AI service 503 (Cold Start)' : 'AI request rejected or failed',
+            );
+          }
+          return this.danhDauSong(res.ketQua);
+        },
+        () => {
+          this.danhDauHong();
+          return null;
+        },
+        { serviceName: 'FSRS_RETENTION' },
+      );
+    }
+
+    // Cơ chế fallback cơ bản nếu không có resilience service
     if (this.hongLuc !== null && Date.now() - this.hongLuc < NGUNG_SAU_LOI_MS) {
       return null;
     }
@@ -50,7 +72,6 @@ export class AiSchedulerClient implements OnModuleInit {
     if (lanDau.ketQua) return this.danhDauSong(lanDau.ketQua);
 
     // Chỉ 503 mới đáng chờ: dịch vụ sống nhưng mô hình chưa nạp xong.
-    // Hết thời gian chờ nghĩa là không ai trả lời, chờ thêm chỉ phí thời gian người học.
     if (lanDau.nenThuLai) {
       const delay = Number(this.config.get('AI_RETRY_DELAY_MS') ?? 2000);
       await new Promise((resolve) => setTimeout(resolve, delay));

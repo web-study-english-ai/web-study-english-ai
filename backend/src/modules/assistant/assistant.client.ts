@@ -1,6 +1,7 @@
 import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AiMonitorService } from '@modules/ai-monitor/ai-monitor.service';
+import { InfraResilienceService } from '@modules/infra-resilience/infra-resilience.service';
 
 const TIMEOUT_MAC_DINH_MS = 15_000;
 /** Luồng dài (streaming) cần ngưỡng chờ rộng hơn vì LLM sinh chữ tuần tự */
@@ -37,6 +38,7 @@ export class AssistantClient implements OnModuleInit {
   constructor(
     private readonly config: ConfigService,
     @Optional() private readonly aiMonitor?: AiMonitorService,
+    @Optional() private readonly resilience?: InfraResilienceService,
   ) {}
 
   private get daCauHinh(): boolean {
@@ -92,6 +94,29 @@ export class AssistantClient implements OnModuleInit {
 
     if (opts.signal?.aborted) return null;
     if (!this.daCauHinh) return null;
+
+    if (this.resilience) {
+      return this.resilience.executeWithResilience(
+        async () => {
+          const res = await this.thucHienHoiDon(question, opts);
+          if (!res) throw new Error('AI assistant response empty or failed');
+          return res;
+        },
+        () => {
+          this.danhDauHong();
+          return null;
+        },
+        {
+          serviceName: 'LLM_ASSISTANT_RAG',
+          retryOptions: { signal: opts.signal },
+        },
+      );
+    }
+
+    return this.thucHienHoiDon(question, opts);
+  }
+
+  private async thucHienHoiDon(question: string, opts: TuyChonHoi): Promise<PhanHoiTroLy | null> {
     if (this.hongLuc !== null && Date.now() - this.hongLuc < NGUNG_SAU_LOI_MS) return null;
 
     const url = `${this.config.get<string>('AI_SERVICE_URL')}/assistant/ask`;
