@@ -1,4 +1,4 @@
-import { Bot } from "lucide-react";
+import { Bot, RotateCcw } from "lucide-react";
 import { ChatMessage } from "../types/ai-chat_types";
 import { FormattedText, InlineFormatted } from "./FormattedText";
 import { SourceList } from "./SourceList";
@@ -11,12 +11,37 @@ export function AssistantAvatar() {
   );
 }
 
-export function MessageBubble({ message }: { message: ChatMessage }) {
+interface Props {
+  message: ChatMessage;
+  onRetry?: () => void;
+}
+
+export function MessageBubble({ message, onRetry }: Props) {
   if (message.role === "user") {
     return (
       <div className="flex justify-end">
         <div className="max-w-[80%] whitespace-pre-wrap break-words rounded-2xl bg-muted px-4 py-3 text-sm text-foreground">
           {message.content}
+        </div>
+      </div>
+    );
+  }
+
+  if (message.isError) {
+    return (
+      <div className="flex items-start gap-3">
+        <AssistantAvatar />
+        <div className="max-w-[85%] break-words rounded-2xl rounded-tl-sm border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          <p>{message.content}</p>
+          {onRetry && (
+            <button
+              onClick={onRetry}
+              className="mt-2 inline-flex items-center gap-1 rounded-full border border-destructive/40 px-3 py-1 text-xs font-medium text-destructive transition-colors hover:bg-destructive/10"
+            >
+              <RotateCcw className="h-3 w-3" />
+              Thử lại
+            </button>
+          )}
         </div>
       </div>
     );

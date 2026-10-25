@@ -18,4 +18,6 @@ export interface ChatMessage {
   content: string; // hỗ trợ **in đậm** và dòng bắt đầu bằng "• "
   examples?: ChatExample[];
   sources?: ChatSource[];
+    isError?: boolean;
+  retryText?: string;
 }

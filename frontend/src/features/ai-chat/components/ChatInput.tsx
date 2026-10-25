@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/button";
 
+const MIN_HEIGHT = 44; // khớp với h-11 của nút "Gửi đi"
 const MAX_HEIGHT = 160;
 
 interface Props {
@@ -18,6 +19,14 @@ export function ChatInput({ disabled, onSend }: Props) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    // Ô trống: cố định đúng MIN_HEIGHT, không đo scrollHeight — vì placeholder dài
+    // bị xuống dòng trong ô hẹp cũng làm scrollHeight phình to dù chưa gõ gì
+    if (value === "") {
+      el.style.height = `${MIN_HEIGHT}px`;
+      return;
+    }
+
     el.style.height = "auto";
     el.style.height = `${Math.min(el.scrollHeight, MAX_HEIGHT)}px`;
   }, [value]);
@@ -46,7 +55,7 @@ export function ChatInput({ disabled, onSend }: Props) {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder="Nhập câu hỏi của bạn về ngữ pháp, phát âm hoặc viết câu tại đây..."
+          placeholder="Nhập câu hỏi của bạn tại đây..."
           className="max-h-40 min-h-[44px] flex-1 resize-none rounded-xl bg-muted/70 px-4 py-3 text-sm outline-none placeholder:text-muted-foreground focus:ring-2 focus:ring-primary/30"
         />
         <Button
