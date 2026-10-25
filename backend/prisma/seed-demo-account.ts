@@ -7,7 +7,7 @@ export async function seedDemoAccount() {
   console.log('🚀 Khởi tạo tài khoản trình diễn (Demo Account) cho v1.0 Production...');
 
   const email = 'demo@gmail.com';
-  const password = '123';
+  const password = 'password123';
   const fullName = 'Học viên Trình diễn v1.0';
   const passwordHash = await bcrypt.hash(password, 10);
 
