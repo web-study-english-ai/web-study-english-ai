@@ -14,6 +14,11 @@ export async function sendChatMessageMock(question: string): Promise<ChatMessage
   await delay(FAKE_DELAY);
   const q = question.toLowerCase();
 
+  // Dùng để test giao diện lỗi + nút "Thử lại": gõ câu hỏi có chữ "lỗi" / "loi" / "error"
+  if (q.includes("lỗi") || q.includes("loi") || q.includes("error")) {
+    throw new Error("Lỗi giả lập để kiểm thử giao diện báo lỗi");
+  }
+
   if (q.includes("affect") || q.includes("effect")) {
     return {
       id: makeId(),

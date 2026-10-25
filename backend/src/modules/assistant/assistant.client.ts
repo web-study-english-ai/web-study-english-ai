@@ -1,5 +1,6 @@
-import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import { Injectable, Logger, OnModuleInit, Optional } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import { AiMonitorService } from '@modules/ai-monitor/ai-monitor.service';
 
 const TIMEOUT_MAC_DINH_MS = 15_000;
 /** Luồng dài (streaming) cần ngưỡng chờ rộng hơn vì LLM sinh chữ tuần tự */
@@ -33,7 +34,10 @@ export class AssistantClient implements OnModuleInit {
   private readonly logger = new Logger(AssistantClient.name);
   private hongLuc: number | null = null;
 
-  constructor(private readonly config: ConfigService) {}
+  constructor(
+    private readonly config: ConfigService,
+    @Optional() private readonly aiMonitor?: AiMonitorService,
+  ) {}
 
   private get daCauHinh(): boolean {
     return Boolean(this.config.get('AI_SERVICE_URL') && this.config.get('AI_SERVICE_KEY'));
@@ -76,6 +80,13 @@ export class AssistantClient implements OnModuleInit {
   }
 
   async hoi(question: string, wordIdOrOpts?: string | TuyChonHoi): Promise<PhanHoiTroLy | null> {
+    if (this.aiMonitor?.isCircuitBreakerOpen()) {
+      this.logger.warn(
+        'Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang phản hồi dự phòng',
+      );
+      return null;
+    }
+
     const opts: TuyChonHoi =
       typeof wordIdOrOpts === 'string' ? { wordId: wordIdOrOpts } : (wordIdOrOpts ?? {});
 
@@ -85,6 +96,7 @@ export class AssistantClient implements OnModuleInit {
 
     const url = `${this.config.get<string>('AI_SERVICE_URL')}/assistant/ask`;
     const timeoutMs = opts.timeoutMs ?? this.timeoutNganMs;
+    const start = Date.now();
 
     try {
       const res = await fetch(url, {
@@ -97,16 +109,43 @@ export class AssistantClient implements OnModuleInit {
         signal: this.taoTinHieu(opts.signal, timeoutMs),
       });
 
+      const latencyMs = Date.now() - start;
+
       if (!res.ok) {
+        this.aiMonitor?.recordCall({
+          serviceType: 'LLM_ASSISTANT_RAG',
+          promptTokens: Math.max(Math.round(question.length / 3), 15),
+          completionTokens: 0,
+          latencyMs,
+          success: false,
+          statusCode: res.status,
+        });
         this.logger.warn(`Dich vu tro ly tra ve ${res.status}`);
         return this.danhDauHong();
       }
 
       const data = (await res.json()) as RawAiResponse;
       if (typeof data.answer !== 'string' || data.answer.trim() === '') {
+        this.aiMonitor?.recordCall({
+          serviceType: 'LLM_ASSISTANT_RAG',
+          promptTokens: Math.max(Math.round(question.length / 3), 15),
+          completionTokens: 0,
+          latencyMs,
+          success: false,
+          statusCode: 200,
+        });
         this.logger.warn('Dich vu tro ly tra ve answer rong');
         return this.danhDauHong();
       }
+
+      this.aiMonitor?.recordCall({
+        serviceType: 'LLM_ASSISTANT_RAG',
+        promptTokens: Math.max(Math.round(question.length / 3), 15),
+        completionTokens: Math.max(Math.round(data.answer.length / 3), 20),
+        latencyMs,
+        success: true,
+        statusCode: 200,
+      });
 
       this.khoiPhucNeuCan();
       return {
@@ -114,10 +153,19 @@ export class AssistantClient implements OnModuleInit {
         source_ids: this.docDanhSachNguon(data),
       };
     } catch (e) {
+      const latencyMs = Date.now() - start;
       if (opts.signal?.aborted) {
         this.logger.log('Nguoi hoc da ngat ket noi giua chung, huy yeu cau goi AI');
         return null;
       }
+      this.aiMonitor?.recordCall({
+        serviceType: 'LLM_ASSISTANT_RAG',
+        promptTokens: Math.max(Math.round(question.length / 3), 15),
+        completionTokens: 0,
+        latencyMs,
+        success: false,
+        statusCode: 500,
+      });
       this.logger.warn(
         `Khong goi duoc dich vu tro ly: ${e instanceof Error ? e.message : 'loi la'}`,
       );
@@ -131,12 +179,20 @@ export class AssistantClient implements OnModuleInit {
    * - Nếu AI trả về JSON một cục thì tự tách thành các cụm từ và phát qua onDelta để frontend vẫn hiện chữ dần.
    */
   async hoiTheoLuong(question: string, opts: TuyChonHoiTheoLuong): Promise<PhanHoiTroLy | null> {
+    if (this.aiMonitor?.isCircuitBreakerOpen()) {
+      this.logger.warn(
+        'Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang phản hồi dự phòng',
+      );
+      return null;
+    }
+
     if (opts.signal?.aborted) return null;
     if (!this.daCauHinh) return null;
     if (this.hongLuc !== null && Date.now() - this.hongLuc < NGUNG_SAU_LOI_MS) return null;
 
     const url = `${this.config.get<string>('AI_SERVICE_URL')}/assistant/ask`;
     const timeoutMs = opts.timeoutMs ?? this.timeoutLuongDaiMs;
+    const start = Date.now();
 
     try {
       const res = await fetch(url, {
@@ -150,21 +206,57 @@ export class AssistantClient implements OnModuleInit {
         signal: this.taoTinHieu(opts.signal, timeoutMs),
       });
 
+      const latencyMs = Date.now() - start;
+
       if (!res.ok) {
+        this.aiMonitor?.recordCall({
+          serviceType: 'LLM_ASSISTANT_RAG',
+          promptTokens: Math.max(Math.round(question.length / 3), 15),
+          completionTokens: 0,
+          latencyMs,
+          success: false,
+          statusCode: res.status,
+        });
         this.logger.warn(`Dich vu tro ly (stream) tra ve ${res.status}`);
         return this.danhDauHong();
       }
 
       const contentType = res.headers.get('content-type') ?? '';
       if (contentType.includes('text/event-stream') && res.body) {
-        return await this.docLuongSse(res.body, opts);
+        const streamRes = await this.docLuongSse(res.body, opts);
+        this.aiMonitor?.recordCall({
+          serviceType: 'LLM_ASSISTANT_RAG',
+          promptTokens: Math.max(Math.round(question.length / 3), 15),
+          completionTokens: streamRes ? Math.max(Math.round(streamRes.answer.length / 3), 20) : 0,
+          latencyMs: Date.now() - start,
+          success: Boolean(streamRes),
+          statusCode: streamRes ? 200 : 500,
+        });
+        return streamRes;
       }
 
       const data = (await res.json()) as RawAiResponse;
       if (typeof data.answer !== 'string' || data.answer.trim() === '') {
+        this.aiMonitor?.recordCall({
+          serviceType: 'LLM_ASSISTANT_RAG',
+          promptTokens: Math.max(Math.round(question.length / 3), 15),
+          completionTokens: 0,
+          latencyMs,
+          success: false,
+          statusCode: 200,
+        });
         this.logger.warn('Dich vu tro ly tra ve answer rong');
         return this.danhDauHong();
       }
+
+      this.aiMonitor?.recordCall({
+        serviceType: 'LLM_ASSISTANT_RAG',
+        promptTokens: Math.max(Math.round(question.length / 3), 15),
+        completionTokens: Math.max(Math.round(data.answer.length / 3), 20),
+        latencyMs,
+        success: true,
+        statusCode: 200,
+      });
 
       this.khoiPhucNeuCan();
       this.phatTungCum(data.answer, opts);
@@ -173,10 +265,19 @@ export class AssistantClient implements OnModuleInit {
         source_ids: this.docDanhSachNguon(data),
       };
     } catch (e) {
+      const latencyMs = Date.now() - start;
       if (opts.signal?.aborted) {
         this.logger.log('Nguoi hoc da ngat ket noi giua chung khi dang doc luong AI');
         return null;
       }
+      this.aiMonitor?.recordCall({
+        serviceType: 'LLM_ASSISTANT_RAG',
+        promptTokens: Math.max(Math.round(question.length / 3), 15),
+        completionTokens: 0,
+        latencyMs,
+        success: false,
+        statusCode: 500,
+      });
       this.logger.warn(`Loi luong dich vu tro ly: ${e instanceof Error ? e.message : 'loi la'}`);
       return this.danhDauHong();
     }

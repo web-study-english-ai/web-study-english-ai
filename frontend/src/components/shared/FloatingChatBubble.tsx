@@ -3,18 +3,14 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, X } from "lucide-react";
 import { ChatWindow } from "@/features/ai-chat/components/ChatWindow";
-import { SuggestedTopics } from "@/features/ai-chat/components/SuggestedTopics";
 import { useChatMock } from "@/features/ai-chat/hooks/useChatMock";
-
-const SUGGESTED_TOPICS = [
-  "Phân biệt Alternative và Alternate",
-  "Giải thích thì Present Perfect",
-  "Luyện viết câu với từ 'Implement'",
-];
 
 const BUTTON_SIZE = 56; // h-14 w-14
 const SCREEN_MARGIN = 8;
 const PANEL_GAP = 16;
+// Vị trí mặc định: góc dưới phải. Mỗi lần mở khung chat sẽ nhảy về đúng vị trí này,
+// dù trước đó đã kéo bong bóng đi đâu.
+const DEFAULT_POSITION: Position = { right: 24, bottom: 24 };
 
 interface Position {
   right: number;
@@ -33,9 +29,9 @@ function clampPosition(pos: Position): Position {
 
 export function FloatingChatBubble() {
   const [open, setOpen] = useState(false);
-  const [position, setPosition] = useState<Position>({ right: 24, bottom: 24 });
+  const [position, setPosition] = useState<Position>(DEFAULT_POSITION);
   // Gọi hook ở đây (không phải trong panel) để cuộc trò chuyện không mất khi đóng/mở lại
-  const { messages, isSending, sendMessage } = useChatMock();
+  const { messages, isSending, isStreaming, sendMessage, retryMessage } = useChatMock();
 
   const dragStartRef = useRef<{ x: number; y: number; right: number; bottom: number } | null>(null);
   const wasDraggedRef = useRef(false);
@@ -49,6 +45,7 @@ export function FloatingChatBubble() {
   }, []);
 
   function handlePointerDown(e: React.PointerEvent<HTMLButtonElement>) {
+    if (open) return; // đang mở khung chat: khóa vị trí, không cho kéo
     e.currentTarget.setPointerCapture(e.pointerId);
     dragStartRef.current = { x: e.clientX, y: e.clientY, right: position.right, bottom: position.bottom };
     wasDraggedRef.current = false;
@@ -56,7 +53,7 @@ export function FloatingChatBubble() {
 
   function handlePointerMove(e: React.PointerEvent<HTMLButtonElement>) {
     const start = dragStartRef.current;
-    if (!start) return;
+    if (!start || open) return; // đang mở khung chat: khóa vị trí, không cho kéo
 
     const deltaX = e.clientX - start.x;
     const deltaY = e.clientY - start.y;
@@ -79,6 +76,10 @@ export function FloatingChatBubble() {
     if (wasDraggedRef.current) {
       wasDraggedRef.current = false;
       return;
+    }
+    if (!open) {
+      // Mở lên thì luôn về đúng góc dưới phải, dù trước đó đã kéo đi đâu
+      setPosition(DEFAULT_POSITION);
     }
     setOpen((v) => !v);
   }
@@ -111,21 +112,15 @@ export function FloatingChatBubble() {
             </button>
           </div>
 
-          <div className="flex min-h-0 flex-1 flex-col bg-white">
-            {messages.length === 1 && (
-              <div className="border-b border-border p-3">
-                <SuggestedTopics
-                  topics={SUGGESTED_TOPICS}
-                  disabled={isSending}
-                  onPick={sendMessage}
-                />
-              </div>
-            )}
-
-            {/* Bỏ bo góc/viền sẵn có của ChatWindow vì panel đã có khung riêng */}
-            <div className="min-h-0 flex-1 [&>div]:rounded-none [&>div]:border-0">
-              <ChatWindow messages={messages} isSending={isSending} onSend={sendMessage} />
-            </div>
+          {/* Bỏ bo góc/viền sẵn có của ChatWindow vì panel đã có khung riêng */}
+          <div className="min-h-0 flex-1 bg-white [&>div]:rounded-none [&>div]:border-0">
+            <ChatWindow
+              messages={messages}
+              isSending={isSending}
+              isStreaming={isStreaming}
+              onSend={sendMessage}
+              onRetryMessage={retryMessage}
+            />
           </div>
         </div>
       )}
@@ -137,7 +132,9 @@ export function FloatingChatBubble() {
         onPointerUp={handlePointerUp}
         onClick={handleClick}
         aria-label={open ? "Đóng trợ lý AI" : "Mở trợ lý AI"}
-        className="fixed z-50 flex h-14 w-14 touch-none select-none items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform active:cursor-grabbing active:scale-95"
+        className={`fixed z-50 flex h-14 w-14 touch-none select-none items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg transition-transform ${
+          open ? "" : "active:cursor-grabbing active:scale-95"
+        }`}
       >
         {open ? <X className="h-6 w-6" /> : <Bot className="h-6 w-6" />}
       </button>
