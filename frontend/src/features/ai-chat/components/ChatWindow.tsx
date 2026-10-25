@@ -4,11 +4,20 @@ import { useEffect, useRef } from "react";
 import { ChatMessage } from "../types/ai-chat_types";
 import { AssistantAvatar, MessageBubble } from "./MessageBubble";
 import { ChatInput } from "./ChatInput";
+import { SuggestedTopics } from "./SuggestedTopics";
+
+const SUGGESTED_TOPICS = [
+  "Phân biệt Alternative và Alternate",
+  "Giải thích thì Present Perfect",
+  "Luyện viết câu với từ 'Implement'",
+];
 
 interface Props {
   messages: ChatMessage[];
   isSending: boolean;
+  isStreaming: boolean;
   onSend: (text: string) => void;
+  onRetryMessage: (messageId: string) => void;
 }
 
 function TypingIndicator() {
@@ -28,7 +37,7 @@ function TypingIndicator() {
   );
 }
 
-export function ChatWindow({ messages, isSending, onSend }: Props) {
+export function ChatWindow({ messages, isSending, isStreaming, onSend, onRetryMessage }: Props) {
   const listRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -42,12 +51,22 @@ export function ChatWindow({ messages, isSending, onSend }: Props) {
         ref={listRef}
         role="log"
         aria-live="polite"
-        className="flex-1 space-y-5 overflow-y-auto p-5"
+        className="min-h-0 flex-1 space-y-5 overflow-y-auto p-5"
       >
+        {/* Gợi ý chủ đề nằm chung vùng cuộn với tin nhắn, không chiếm riêng một khối cố định
+            phía trên — tránh đẩy khung chat co nhỏ lại thành một khe hẹp */}
+        {messages.length === 1 && (
+          <SuggestedTopics topics={SUGGESTED_TOPICS} disabled={isSending} onPick={onSend} />
+        )}
+
         {messages.map((m) => (
-          <MessageBubble key={m.id} message={m} />
+          <MessageBubble
+            key={m.id}
+            message={m}
+            onRetry={m.isError ? () => onRetryMessage(m.id) : undefined}
+          />
         ))}
-        {isSending && <TypingIndicator />}
+        {isSending && !isStreaming && <TypingIndicator />}
       </div>
       <ChatInput disabled={isSending} onSend={onSend} />
     </div>
