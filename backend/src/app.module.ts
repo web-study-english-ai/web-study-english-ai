@@ -15,6 +15,7 @@ import { HealthModule } from '@modules/health/health.module';
 import { ReviewsModule } from '@modules/reviews/reviews.module';
 import { ProgressModule } from '@modules/progress/progress.module';
 import { AssistantModule } from '@modules/assistant/assistant.module';
+import { ReadingModule } from '@modules/reading/reading.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { AssistantModule } from '@modules/assistant/assistant.module';
     ReviewsModule,
     ProgressModule,
     AssistantModule,
+    ReadingModule,
   ],
   controllers: [AppController],
   providers: [
