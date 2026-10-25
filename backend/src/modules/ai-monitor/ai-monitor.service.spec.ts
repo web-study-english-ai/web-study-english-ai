@@ -5,7 +5,6 @@ import { AiMonitorService, BudgetThresholdStatus } from './ai-monitor.service';
 
 describe('AiMonitorService', () => {
   let service: AiMonitorService;
-  let configService: ConfigService;
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
@@ -24,7 +23,6 @@ describe('AiMonitorService', () => {
     }).compile();
 
     service = module.get<AiMonitorService>(AiMonitorService);
-    configService = module.get<ConfigService>(ConfigService);
   });
 
   it('should be defined and initialize with default 0 metrics', async () => {
@@ -70,7 +68,7 @@ describe('AiMonitorService', () => {
     expect(service.isCircuitBreakerOpen()).toBe(false);
   });
 
-  it('should transition to WARNING_70 when consumed >= 70% (350,000 VND)', async () => {
+  it('should transition to WARNING_70 when consumed >= 70% (350,000 VND)', () => {
     // $14.00 USD * 25,000 VND = 350,000 VND (Exactly 70%)
     // At $0.60 / 1M completion: $14.00 / $0.60 = 23,333,334 tokens
     service.recordCall({
@@ -88,7 +86,7 @@ describe('AiMonitorService', () => {
     expect(service.isCircuitBreakerOpen()).toBe(false);
   });
 
-  it('should transition to HIGH_ALERT_85 when consumed >= 85% (425,000 VND)', async () => {
+  it('should transition to HIGH_ALERT_85 when consumed >= 85% (425,000 VND)', () => {
     // $17.00 USD * 25,000 VND = 425,000 VND (85%)
     // At $0.60 / 1M completion: $17.00 / $0.60 = 28,333,334 tokens
     service.recordCall({
@@ -106,7 +104,7 @@ describe('AiMonitorService', () => {
     expect(service.isCircuitBreakerOpen()).toBe(false);
   });
 
-  it('should trigger CIRCUIT_BREAKER_TRIGGERED and open circuit breaker when consumed >= 100% (500,000 VND)', async () => {
+  it('should trigger CIRCUIT_BREAKER_TRIGGERED and open circuit breaker when consumed >= 100% (500,000 VND)', () => {
     // $20.00 USD * 25,000 VND = 500,000 VND (100%)
     // At $0.60 / 1M completion: $20.00 / $0.60 = 33,333,334 tokens
     service.recordCall({

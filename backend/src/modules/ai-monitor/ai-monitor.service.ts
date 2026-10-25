@@ -65,7 +65,7 @@ export class AiMonitorService implements OnModuleInit {
 
   // Bảng giá quy chuẩn (Pricing Matrix)
   private readonly PROMPT_PRICE_PER_M_USD = 0.15; // $0.15 / 1M prompt tokens (Chuẩn GPT-4o-mini / embedding)
-  private readonly COMPLETION_PRICE_PER_M_USD = 0.60; // $0.60 / 1M completion tokens
+  private readonly COMPLETION_PRICE_PER_M_USD = 0.6; // $0.60 / 1M completion tokens
   private readonly EXCHANGE_RATE_VND = 25_000;
   private readonly BUDGET_LIMIT_VND = 500_000; // 500.000 VNĐ (~$20 USD) theo ngân sách đồ án
 
@@ -90,7 +90,9 @@ export class AiMonitorService implements OnModuleInit {
   constructor(private readonly config: ConfigService) {}
 
   onModuleInit() {
-    this.logger.log('🚀 Khởi tạo AiMonitorService: Giám sát chi phí, token và tài nguyên AI Service');
+    this.logger.log(
+      '🚀 Khởi tạo AiMonitorService: Giám sát chi phí, token và tài nguyên AI Service',
+    );
   }
 
   private createEmptyMetric(): ServiceMetric {
@@ -149,7 +151,8 @@ export class AiMonitorService implements OnModuleInit {
    */
   calculateTotalCost() {
     const promptCost = (this.totalPromptTokens / 1_000_000) * this.PROMPT_PRICE_PER_M_USD;
-    const completionCost = (this.totalCompletionTokens / 1_000_000) * this.COMPLETION_PRICE_PER_M_USD;
+    const completionCost =
+      (this.totalCompletionTokens / 1_000_000) * this.COMPLETION_PRICE_PER_M_USD;
     const totalCostUsd = promptCost + completionCost;
     const totalCostVnd = Math.round(totalCostUsd * this.EXCHANGE_RATE_VND);
     const budgetRemainingVnd = Math.max(this.BUDGET_LIMIT_VND - totalCostVnd, 0);
@@ -160,10 +163,12 @@ export class AiMonitorService implements OnModuleInit {
 
     if (consumedPercentage >= 100 || this.manualCircuitBreaker) {
       thresholdStatus = BudgetThresholdStatus.CIRCUIT_BREAKER_TRIGGERED;
-      thresholdMessage = '🚨 ĐÃ VƯỢT HẠN MỨC NGÂN SÁCH (100%): Kích hoạt Circuit Breaker chuyển chế độ dự phòng';
+      thresholdMessage =
+        '🚨 ĐÃ VƯỢT HẠN MỨC NGÂN SÁCH (100%): Kích hoạt Circuit Breaker chuyển chế độ dự phòng';
     } else if (consumedPercentage >= 85) {
       thresholdStatus = BudgetThresholdStatus.HIGH_ALERT_85;
-      thresholdMessage = '🟠 CẢNH BÁO MỨC CAO: Đã tiêu hao từ 85% ngân sách đồ án, áp dụng bộ đệm thắt chặt';
+      thresholdMessage =
+        '🟠 CẢNH BÁO MỨC CAO: Đã tiêu hao từ 85% ngân sách đồ án, áp dụng bộ đệm thắt chặt';
     } else if (consumedPercentage >= 70) {
       thresholdStatus = BudgetThresholdStatus.WARNING_70;
       thresholdMessage = '🟡 CẢNH BÁO TIÊU HAO: Đã đạt ngưỡng 70% ngân sách đồ án (350.000 VNĐ)';
@@ -191,11 +196,21 @@ export class AiMonitorService implements OnModuleInit {
     const cost = this.calculateTotalCost();
 
     if (cost.thresholdStatus === BudgetThresholdStatus.CIRCUIT_BREAKER_TRIGGERED) {
-      this.logger.error(`[WSEA-138 CRITICAL ALERT] ${cost.thresholdMessage} (Tiêu thụ: ${cost.totalCostVnd} VNĐ)`);
-      Sentry.captureMessage(`[WSEA-138 CRITICAL] Vượt hạn mức ngân sách AI: ${cost.totalCostVnd}/${cost.budgetLimitVnd} VND`, 'fatal');
+      this.logger.error(
+        `[WSEA-138 CRITICAL ALERT] ${cost.thresholdMessage} (Tiêu thụ: ${cost.totalCostVnd} VNĐ)`,
+      );
+      Sentry.captureMessage(
+        `[WSEA-138 CRITICAL] Vượt hạn mức ngân sách AI: ${cost.totalCostVnd}/${cost.budgetLimitVnd} VND`,
+        'fatal',
+      );
     } else if (cost.thresholdStatus === BudgetThresholdStatus.HIGH_ALERT_85) {
-      this.logger.warn(`[WSEA-138 HIGH ALERT] ${cost.thresholdMessage} (Tiêu thụ: ${cost.consumedPercentage}%)`);
-      Sentry.captureMessage(`[WSEA-138 WARNING] Ngân sách AI đạt ${cost.consumedPercentage}%: ${cost.totalCostVnd} VND`, 'warning');
+      this.logger.warn(
+        `[WSEA-138 HIGH ALERT] ${cost.thresholdMessage} (Tiêu thụ: ${cost.consumedPercentage}%)`,
+      );
+      Sentry.captureMessage(
+        `[WSEA-138 WARNING] Ngân sách AI đạt ${cost.consumedPercentage}%: ${cost.totalCostVnd} VND`,
+        'warning',
+      );
     } else if (cost.thresholdStatus === BudgetThresholdStatus.WARNING_70) {
       this.logger.warn(`[WSEA-138 WARNING] ${cost.thresholdMessage}`);
     }
@@ -225,7 +240,8 @@ export class AiMonitorService implements OnModuleInit {
     const memory = process.memoryUsage();
     const uptime = Math.floor(process.uptime());
 
-    const aiServiceUrl = this.config.get<string>('AI_SERVICE_URL') || 'https://hieusss-wsea-ai-service.hf.space';
+    const aiServiceUrl =
+      this.config.get<string>('AI_SERVICE_URL') || 'https://hieusss-wsea-ai-service.hf.space';
     let aiServiceStatus: 'UP' | 'DOWN' | 'DEGRADED' = 'DOWN';
     let latencyMs: number | null = null;
     let models: string[] = [];

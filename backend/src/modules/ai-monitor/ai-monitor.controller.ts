@@ -13,14 +13,18 @@ export class AiMonitorController {
   constructor(private readonly aiMonitorService: AiMonitorService) {}
 
   @Get('summary')
-  @ApiOperation({ summary: 'Báo cáo tổng hợp số lượt gọi, chi phí token và đối soát ngân sách (WSEA-138)' })
+  @ApiOperation({
+    summary: 'Báo cáo tổng hợp số lượt gọi, chi phí token và đối soát ngân sách (WSEA-138)',
+  })
   @ApiResponse({ status: 200, description: 'Trả về toàn bộ thống kê chi phí, hạn mức và cảnh báo' })
   getSummary() {
     return this.aiMonitorService.getSummary();
   }
 
   @Get('resources')
-  @ApiOperation({ summary: 'Giám sát tài nguyên máy chủ và tình trạng kết nối tới AI Microservice' })
+  @ApiOperation({
+    summary: 'Giám sát tài nguyên máy chủ và tình trạng kết nối tới AI Microservice',
+  })
   @ApiResponse({ status: 200, description: 'Thông số RAM, CPU và độ trễ Hugging Face Spaces' })
   getResources() {
     return this.aiMonitorService.getSystemResources();
@@ -40,7 +44,9 @@ export class AiMonitorController {
 
   @Post('circuit-breaker')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Bật/tắt cưỡng bức Circuit Breaker để kiểm thử kịch bản ngắt vượt ngân sách' })
+  @ApiOperation({
+    summary: 'Bật/tắt cưỡng bức Circuit Breaker để kiểm thử kịch bản ngắt vượt ngân sách',
+  })
   setCircuitBreaker(@Body() body: CircuitBreakerDto) {
     const state = this.aiMonitorService.setManualCircuitBreaker(Boolean(body.open));
     return {

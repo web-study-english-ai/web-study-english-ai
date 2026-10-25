@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 import { ConfigService } from '@nestjs/config';
 import { AiSchedulerClient } from './ai-scheduler.client';
@@ -10,7 +11,14 @@ describe('AiSchedulerClient with AiMonitor', () => {
   let aiMonitor: AiMonitorService;
 
   const mockCards: TheGuiAI[] = [
-    { card_id: 'c1', reps: 2, lapses: 0, last_interval: 1, last_review: '2026-10-20T00:00:00Z', rating: 3 },
+    {
+      card_id: 'c1',
+      reps: 2,
+      lapses: 0,
+      last_interval: 1,
+      last_review: '2026-10-20T00:00:00Z',
+      rating: 3,
+    },
   ];
 
   beforeEach(() => {
@@ -65,7 +73,7 @@ describe('AiSchedulerClient with AiMonitor', () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: true,
       status: 200,
-      json: async () => mockApiResponse,
+      json: () => Promise.resolve(mockApiResponse),
     });
 
     const result = await client.duBao(mockCards);
@@ -83,7 +91,7 @@ describe('AiSchedulerClient with AiMonitor', () => {
     global.fetch = vi.fn().mockResolvedValue({
       ok: false,
       status: 500,
-      text: async () => 'Internal Server Error',
+      text: () => Promise.resolve('Internal Server Error'),
     });
 
     const result = await client.duBao(mockCards);

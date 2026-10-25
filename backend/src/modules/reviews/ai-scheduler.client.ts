@@ -33,7 +33,9 @@ export class AiSchedulerClient implements OnModuleInit {
   /** Trả kết quả dự báo, hoặc null khi không dùng được — null nghĩa là phải rơi về dự phòng. */
   async duBao(cards: TheGuiAI[]): Promise<PhanHoiDuBao | null> {
     if (this.aiMonitor?.isCircuitBreakerOpen()) {
-      this.logger.warn('Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang công thức dự phòng');
+      this.logger.warn(
+        'Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang công thức dự phòng',
+      );
       return null;
     }
 

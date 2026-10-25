@@ -81,7 +81,9 @@ export class AssistantClient implements OnModuleInit {
 
   async hoi(question: string, wordIdOrOpts?: string | TuyChonHoi): Promise<PhanHoiTroLy | null> {
     if (this.aiMonitor?.isCircuitBreakerOpen()) {
-      this.logger.warn('Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang phản hồi dự phòng');
+      this.logger.warn(
+        'Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang phản hồi dự phòng',
+      );
       return null;
     }
 
@@ -178,7 +180,9 @@ export class AssistantClient implements OnModuleInit {
    */
   async hoiTheoLuong(question: string, opts: TuyChonHoiTheoLuong): Promise<PhanHoiTroLy | null> {
     if (this.aiMonitor?.isCircuitBreakerOpen()) {
-      this.logger.warn('Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang phản hồi dự phòng');
+      this.logger.warn(
+        'Circuit Breaker đang ngắt (vượt hạn mức ngân sách), chuyển sang phản hồi dự phòng',
+      );
       return null;
     }
 
