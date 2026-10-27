@@ -1,10 +1,33 @@
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001/api";
+const REFRESH_TOKEN_KEY = "wsea_rt";
 
 // Access token giữ trong bộ nhớ, KHÔNG dùng localStorage
 let accessToken: string | null = null;
 
 export function setAccessToken(token: string | null) {
   accessToken = token;
+}
+
+export function setRefreshToken(token: string | null) {
+  if (typeof window === "undefined") return;
+  if (token) {
+    localStorage.setItem(REFRESH_TOKEN_KEY, token);
+  } else {
+    localStorage.removeItem(REFRESH_TOKEN_KEY);
+  }
+}
+
+export function getRefreshToken(): string | null {
+  if (typeof window === "undefined") return null;
+  if (window.location.pathname === "/auth/callback") {
+    const urlToken = new URLSearchParams(window.location.search).get("token");
+    if (urlToken) {
+      localStorage.setItem(REFRESH_TOKEN_KEY, urlToken);
+      window.history.replaceState({}, "", window.location.pathname);
+      return urlToken;
+    }
+  }
+  return localStorage.getItem(REFRESH_TOKEN_KEY);
 }
 
 export class ApiError extends Error {
@@ -26,20 +49,34 @@ export interface KetQuaLamMoi {
     role: string;
   };
   accessToken: string;
+  refreshToken?: string;
 }
 
 let dangLamMoi: Promise<KetQuaLamMoi | null> | null = null;
 
 /** Đường DUY NHẤT gọi /auth/refresh. Mọi nơi cần làm mới phiên đều phải đi qua đây. */
-export function lamMoiPhien(): Promise<KetQuaLamMoi | null> {
+export function lamMoiPhien(tokenTuUrl?: string): Promise<KetQuaLamMoi | null> {
+  if (tokenTuUrl) {
+    setRefreshToken(tokenTuUrl);
+  }
+  const refreshToken = getRefreshToken();
+
   dangLamMoi ??= fetch(`${API_URL}/auth/refresh`, {
     method: "POST",
+    headers: { "Content-Type": "application/json" },
     credentials: "include",
+    body: JSON.stringify(refreshToken ? { refreshToken } : {}),
   })
     .then(async (res) => {
-      if (!res.ok) return null;
+      if (!res.ok) {
+        if (res.status === 401) setRefreshToken(null);
+        return null;
+      }
       const data = (await res.json()) as KetQuaLamMoi;
       accessToken = data.accessToken;
+      if (data.refreshToken) {
+        setRefreshToken(data.refreshToken);
+      }
       return data;
     })
     .catch(() => null)
