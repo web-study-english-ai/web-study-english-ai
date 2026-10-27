@@ -45,6 +45,10 @@ export class AuthController {
   }
 
   private readRefreshCookie(req: Request): string | undefined {
+    const bodyToken = (req.body as { refreshToken?: unknown } | undefined)?.refreshToken;
+    if (typeof bodyToken === 'string' && bodyToken.trim().length > 0) {
+      return bodyToken.trim();
+    }
     return req.cookies?.[this.cookieName] as string | undefined;
   }
 
@@ -87,7 +91,9 @@ export class AuthController {
       );
 
       this.setRefreshCookie(res, result.refreshToken.token, result.refreshToken.expiresAt);
-      return res.redirect(`${frontendUrl}/auth/callback`);
+      return res.redirect(
+        `${frontendUrl}/auth/callback?token=${encodeURIComponent(result.refreshToken.token)}`,
+      );
     } catch (e) {
       const message = e instanceof HttpException ? e.message : 'Đăng nhập bằng Google thất bại';
       return res.redirect(`${frontendUrl}/login?oauth_error=${encodeURIComponent(message)}`);
@@ -118,7 +124,11 @@ export class AuthController {
 
     this.setRefreshCookie(res, result.refreshToken.token, result.refreshToken.expiresAt);
 
-    return { user: result.user, accessToken: result.accessToken };
+    return {
+      user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken.token,
+    };
   }
 
   @Post('refresh')
@@ -134,7 +144,11 @@ export class AuthController {
 
     this.setRefreshCookie(res, result.refreshToken.token, result.refreshToken.expiresAt);
 
-    return { user: result.user, accessToken: result.accessToken };
+    return {
+      user: result.user,
+      accessToken: result.accessToken,
+      refreshToken: result.refreshToken.token,
+    };
   }
 
   @Post('logout')
