@@ -439,8 +439,8 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-83 · Chuẩn bị và chia đoạn kho tri thức ngữ pháp
-5h · Ưu tiên: High · `ai/WSEA-83-...`
+### [ ] WSEA-100 · Chuẩn bị và chia đoạn kho tri thức ngữ pháp
+5h · Ưu tiên: High · `ai/WSEA-100-kho-tri-thuc-ngu-phap`
 
 - [ ] 1. Thu thập tài liệu ngữ pháp từ nguồn mở
 - [ ] 2. Chia thành các đoạn có ngữ nghĩa trọn vẹn
@@ -854,7 +854,7 @@ trong sheet Nhập Jira của file 11. Hoặc là tạo task mới trên Jira, h
 
 ## Đối chiếu đợt giữa hai kế hoạch
 
-- *Biên soạn và chia đoạn kho tri thức ngữ pháp*: kế hoạch AI xếp **đợt 2**, Jira xếp **đợt 6** (WSEA-83).
+- *Biên soạn và chia đoạn kho tri thức ngữ pháp*: kế hoạch AI xếp **đợt 2**, Jira xếp **đợt 6** (WSEA-100).
   Đợt 6 là mốc v1.0, nên để ở đợt 6 là hợp lý hơn — nhưng phải xong trước đợt 7 vì đợt 7 cần đoạn để sinh vector.
 - *Cài đặt SM-2* và *Đánh giá chất lượng mô hình* là hai việc riêng trong kế hoạch AI nhưng
   gộp thành một task Jira (WSEA-50). Khi làm nhớ tick đủ cả hai phần.

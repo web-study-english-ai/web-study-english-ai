@@ -17,6 +17,7 @@ weights/
 data/
 *.csv
 !tests/fixtures/*.csv
+!kb/*.csv
 
 # notebook output
 .ipynb_checkpoints/
