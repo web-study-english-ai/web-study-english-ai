@@ -1,0 +1,101 @@
+id,topic,facet,title,cefr,source_url
+gram_001,present_simple,form,Thì hiện tại đơn (Present Simple) — Cấu trúc,A1,https://en.wikipedia.org/wiki/Simple_present
+gram_002,present_simple,usage,Thì hiện tại đơn (Present Simple) — Cách dùng,A1,https://en.wikipedia.org/wiki/Simple_present
+gram_003,present_simple,signals,Thì hiện tại đơn (Present Simple) — Dấu hiệu nhận biết,A1,https://en.wikipedia.org/wiki/Simple_present
+gram_004,present_continuous,form,Thì hiện tại tiếp diễn (Present Continuous) — Cấu trúc,A1,https://en.wikipedia.org/wiki/Present_continuous
+gram_005,present_continuous,usage,Thì hiện tại tiếp diễn (Present Continuous) — Cách dùng,A1,https://en.wikipedia.org/wiki/Present_continuous
+gram_006,present_continuous,contrast,Hiện tại đơn và hiện tại tiếp diễn — Phân biệt,A2,https://en.wikipedia.org/wiki/Uses_of_English_verb_forms
+gram_007,present_continuous,mistakes,Động từ trạng thái với thì tiếp diễn (Stative Verbs) — Lỗi thường gặp,B1,https://en.wikipedia.org/wiki/Stative_verb
+gram_008,past_simple,form,Thì quá khứ đơn (Past Simple) — Cấu trúc,A1,https://en.wikipedia.org/wiki/Simple_past
+gram_009,past_simple,usage,Thì quá khứ đơn (Past Simple) — Cách dùng,A1,https://en.wikipedia.org/wiki/Simple_past
+gram_010,past_continuous,form,Thì quá khứ tiếp diễn (Past Continuous) — Cấu trúc,A2,https://en.wikipedia.org/wiki/Past_continuous
+gram_011,past_continuous,usage,Thì quá khứ tiếp diễn (Past Continuous) với when và while — Cách dùng,A2,https://en.wikipedia.org/wiki/Past_continuous
+gram_012,present_perfect,form,Thì hiện tại hoàn thành (Present Perfect) — Cấu trúc,A2,https://en.wikipedia.org/wiki/Present_perfect
+gram_013,present_perfect,usage,Thì hiện tại hoàn thành (Present Perfect) — Cách dùng,B1,https://en.wikipedia.org/wiki/Present_perfect
+gram_014,present_perfect,signals,Thì hiện tại hoàn thành (Present Perfect) — Dấu hiệu nhận biết,A2,https://en.wikipedia.org/wiki/Present_perfect
+gram_015,present_perfect,contrast,Hiện tại hoàn thành và quá khứ đơn — Phân biệt,B1,https://en.wikipedia.org/wiki/Present_perfect
+gram_016,since_for,contrast,Since và for — Phân biệt,A2,https://en.wiktionary.org/wiki/since
+gram_017,present_perfect_continuous,usage,Thì hiện tại hoàn thành tiếp diễn (Present Perfect Continuous) — Cách dùng,B1,https://en.wikipedia.org/wiki/Present_perfect_continuous
+gram_018,past_perfect,usage,Thì quá khứ hoàn thành (Past Perfect) — Cách dùng,B1,https://en.wikipedia.org/wiki/Pluperfect
+gram_019,future_will,usage,Tương lai đơn với will (Future Simple) — Cách dùng,A2,https://en.wikipedia.org/wiki/Uses_of_English_verb_forms
+gram_020,future_will,contrast,Will và be going to — Phân biệt,A2,https://en.wikipedia.org/wiki/Going-to_future
+gram_021,used_to,usage,Used to — Cách dùng,A2,https://en.wiktionary.org/wiki/used_to
+gram_022,to_be,form,Động từ to be (am/is/are) — Cấu trúc,A1,https://en.wikipedia.org/wiki/English_grammar
+gram_023,countable_uncountable_nouns,usage,Danh từ đếm được và không đếm được — Cách dùng,A1,https://en.wikipedia.org/wiki/Mass_noun
+gram_024,plural_nouns,form,Danh từ số nhiều (Plural Nouns) — Cấu trúc,A1,https://en.wikipedia.org/wiki/English_plurals
+gram_025,articles,usage,Mạo từ a/an/the (Articles) — Cách dùng,A1,https://en.wikipedia.org/wiki/English_articles
+gram_026,articles,mistakes,Mạo từ a/an/the (Articles) — Lỗi thường gặp,B1,https://en.wikipedia.org/wiki/English_articles
+gram_027,much_many,contrast,"Much, many và a lot of — Phân biệt",A2,https://en.wiktionary.org/wiki/many
+gram_028,some_any,contrast,Some và any — Phân biệt,A1,https://en.wiktionary.org/wiki/any
+gram_029,possessive_nouns,form,Sở hữu cách 's và of — Cấu trúc,A2,https://en.wikipedia.org/wiki/English_possessive
+gram_030,quantifiers,usage,"Lượng từ all, both, each, every, either, neither — Cách dùng",B1,https://en.wikipedia.org/wiki/English_determiners
+gram_031,modal_verbs,form,Động từ khuyết thiếu (Modal Verbs) — Cấu trúc,A2,https://en.wikipedia.org/wiki/English_modal_auxiliary_verbs
+gram_032,can_could,usage,Can và could — Cách dùng,A1,https://en.wiktionary.org/wiki/can
+gram_033,must_have_to,contrast,Must và have to — Phân biệt,A2,https://en.wiktionary.org/wiki/must
+gram_034,should_ought_to,usage,Should và ought to để khuyên — Cách dùng,A2,https://en.wiktionary.org/wiki/should
+gram_035,modals_of_deduction,usage,"Must, might, can't để suy đoán — Cách dùng",B1,https://en.wikipedia.org/wiki/Epistemic_modality
+gram_036,modal_perfect,usage,Động từ khuyết thiếu + have + V3 (Modal Perfect) — Cách dùng,B2,https://en.wikipedia.org/wiki/English_modal_auxiliary_verbs
+gram_037,zero_conditional,usage,Câu điều kiện loại 0 (Zero Conditional) — Cách dùng,A2,https://en.wikipedia.org/wiki/English_conditional_sentences
+gram_038,first_conditional,usage,Câu điều kiện loại 1 (First Conditional) — Cách dùng,B1,https://en.wikipedia.org/wiki/English_conditional_sentences
+gram_039,second_conditional,usage,Câu điều kiện loại 2 (Second Conditional) — Cách dùng,B1,https://en.wikipedia.org/wiki/English_conditional_sentences
+gram_040,third_conditional,usage,Câu điều kiện loại 3 (Third Conditional) — Cách dùng,B2,https://en.wikipedia.org/wiki/English_conditional_sentences
+gram_041,wish,usage,Câu ước với wish và if only — Cách dùng,B2,https://en.wikipedia.org/wiki/English_subjunctive
+gram_042,adjective_order,usage,Trật tự tính từ (Adjective Order) — Cách dùng,B1,https://en.wikipedia.org/wiki/English_adjectives
+gram_043,adverbs_of_manner,form,Trạng từ chỉ cách thức (Adverbs of Manner) — Cấu trúc,A2,https://en.wikipedia.org/wiki/English_adverbs
+gram_044,comparatives,form,So sánh hơn (Comparatives) — Cấu trúc,A2,https://en.wikipedia.org/wiki/Comparison_(grammar)
+gram_045,superlatives,form,So sánh nhất (Superlatives) — Cấu trúc,A2,https://en.wikipedia.org/wiki/Comparison_(grammar)
+gram_046,comparatives,mistakes,So sánh hơn và so sánh nhất — Lỗi thường gặp,B1,https://en.wikipedia.org/wiki/Comparison_(grammar)
+gram_047,prepositions_of_time,contrast,"Giới từ chỉ thời gian in, on, at — Phân biệt",A1,https://en.wikipedia.org/wiki/English_prepositions
+gram_048,prepositions_of_place,contrast,"Giới từ chỉ nơi chốn in, on, at — Phân biệt",A1,https://en.wikipedia.org/wiki/English_prepositions
+gram_049,too_enough,contrast,Too và enough — Phân biệt,B1,https://en.wiktionary.org/wiki/enough
+gram_050,verb_prepositions,usage,"Động từ đi với giới từ (depend on, listen to) — Cách dùng",B1,https://en.wikipedia.org/wiki/Prepositional_verb
+gram_051,adjective_prepositions,usage,"Tính từ đi với giới từ (interested in, good at) — Cách dùng",B1,https://en.wikipedia.org/wiki/English_prepositions
+gram_052,passive_voice,form,Câu bị động (Passive Voice) — Cấu trúc,B1,https://en.wikipedia.org/wiki/English_passive_voice
+gram_053,passive_voice,usage,Câu bị động (Passive Voice) — Cách dùng,B1,https://en.wikipedia.org/wiki/English_passive_voice
+gram_054,there_is_are,usage,There is / there are — Cách dùng,A1,https://en.wiktionary.org/wiki/there_is
+gram_055,causative,usage,Thể sai khiến have/get something done — Cách dùng,B2,https://en.wikipedia.org/wiki/Causative
+gram_056,reported_statements,form,Câu tường thuật dạng kể (Reported Statements) — Cấu trúc,B1,https://en.wikipedia.org/wiki/Indirect_speech
+gram_057,reported_questions,form,Câu hỏi tường thuật (Reported Questions) — Cấu trúc,B1,https://en.wikipedia.org/wiki/Indirect_speech
+gram_058,reported_commands,usage,Tường thuật mệnh lệnh và yêu cầu (tell/ask sb to) — Cách dùng,B1,https://en.wikipedia.org/wiki/Indirect_speech
+gram_059,reporting_verbs,usage,"Động từ tường thuật (suggest, admit, deny) — Cách dùng",B2,https://en.wikipedia.org/wiki/Indirect_speech
+gram_060,relative_clauses,form,"Mệnh đề quan hệ với who, which, that, whose — Cấu trúc",B1,https://en.wikipedia.org/wiki/English_relative_clauses
+gram_061,relative_clauses,contrast,Mệnh đề quan hệ xác định và không xác định — Phân biệt,B2,https://en.wikipedia.org/wiki/English_relative_clauses
+gram_062,relative_clauses,usage,"Mệnh đề quan hệ với where, when và lược bỏ đại từ — Cách dùng",B1,https://en.wikipedia.org/wiki/English_relative_clauses
+gram_063,relative_clauses,mistakes,Mệnh đề quan hệ (Relative Clauses) — Lỗi thường gặp,B1,https://en.wikipedia.org/wiki/English_relative_clauses
+gram_064,gerund_infinitive,usage,Động từ theo sau bởi V-ing hoặc to V — Cách dùng,B1,https://en.wikipedia.org/wiki/Gerund
+gram_065,gerund_infinitive,contrast,"Remember, stop, try + V-ing và + to V — Phân biệt",B2,https://en.wikipedia.org/wiki/Gerund
+gram_066,gerund_infinitive,mistakes,V-ing sau giới từ (look forward to doing) — Lỗi thường gặp,B1,https://en.wikipedia.org/wiki/Gerund
+gram_067,infinitive_of_purpose,usage,To V chỉ mục đích (Infinitive of Purpose) — Cách dùng,A2,https://en.wikipedia.org/wiki/Infinitive
+gram_068,yes_no_questions,form,Câu hỏi Yes/No và trợ động từ do — Cấu trúc,A1,https://en.wikipedia.org/wiki/Do-support
+gram_069,wh_questions,form,Câu hỏi với từ để hỏi (Wh- Questions) — Cấu trúc,A1,https://en.wikipedia.org/wiki/Interrogative_word
+gram_070,tag_questions,form,Câu hỏi đuôi (Tag Questions) — Cấu trúc,B1,https://en.wikipedia.org/wiki/Tag_question
+gram_071,word_order,usage,Trật tự từ trong câu và vị trí trạng từ — Cách dùng,A2,https://en.wikipedia.org/wiki/English_clause_syntax
+gram_072,personal_pronouns,form,Đại từ nhân xưng và tính từ sở hữu — Cấu trúc,A1,https://en.wikipedia.org/wiki/English_personal_pronouns
+gram_073,reflexive_pronouns,usage,Đại từ phản thân (Reflexive Pronouns) — Cách dùng,A2,https://en.wikipedia.org/wiki/Reflexive_pronoun
+gram_074,coordinating_conjunctions,usage,"Liên từ and, but, or, so — Cách dùng",A1,https://en.wikipedia.org/wiki/Conjunction_(grammar)
+gram_075,contrast_linkers,contrast,"Although, despite và however — Phân biệt",B1,https://en.wiktionary.org/wiki/although
+gram_076,confusable_make_do,contrast,Make và do — Phân biệt,A2,https://en.wiktionary.org/wiki/make
+gram_077,confusable_say_tell,contrast,Say và tell — Phân biệt,A2,https://en.wiktionary.org/wiki/tell
+gram_078,confusable_speak_talk,contrast,Speak và talk — Phân biệt,B1,https://en.wiktionary.org/wiki/speak
+gram_079,confusable_borrow_lend,contrast,Borrow và lend — Phân biệt,A2,https://en.wiktionary.org/wiki/lend
+gram_080,confusable_bring_take,contrast,Bring và take — Phân biệt,B1,https://en.wiktionary.org/wiki/bring
+gram_081,confusable_look_see_watch,contrast,"Look, see và watch — Phân biệt",A1,https://en.wiktionary.org/wiki/see
+gram_082,confusable_hear_listen,contrast,Hear và listen — Phân biệt,A1,https://en.wiktionary.org/wiki/listen
+gram_083,confusable_rob_steal,contrast,Rob và steal — Phân biệt,B1,https://en.wiktionary.org/wiki/rob
+gram_084,confusable_fun_funny,contrast,Fun và funny — Phân biệt,A2,https://en.wiktionary.org/wiki/funny
+gram_085,confusable_bored_boring,contrast,Bored và boring — Phân biệt,A2,https://en.wiktionary.org/wiki/boring
+gram_086,confusable_lose_miss,contrast,Lose và miss — Phân biệt,B1,https://en.wiktionary.org/wiki/miss
+gram_087,confusable_raise_rise,contrast,Raise và rise — Phân biệt,B2,https://en.wiktionary.org/wiki/rise
+gram_088,confusable_lie_lay,contrast,Lie và lay — Phân biệt,B2,https://en.wiktionary.org/wiki/lay
+gram_089,confusable_affect_effect,contrast,Affect và effect — Phân biệt,B2,https://en.wiktionary.org/wiki/affect
+gram_090,confusable_economic_economical,contrast,Economic và economical — Phân biệt,B2,https://en.wiktionary.org/wiki/economical
+gram_091,confusable_especially_specially,contrast,Especially và specially — Phân biệt,B2,https://en.wiktionary.org/wiki/specially
+gram_092,confusable_already_yet,contrast,Already và yet — Phân biệt,A2,https://en.wiktionary.org/wiki/yet
+gram_093,confusable_ago_before,contrast,Ago và before — Phân biệt,B1,https://en.wiktionary.org/wiki/ago
+gram_094,confusable_during_for,contrast,During và for — Phân biệt,B1,https://en.wiktionary.org/wiki/during
+gram_095,confusable_among_between,contrast,Among và between — Phân biệt,B1,https://en.wiktionary.org/wiki/between
+gram_096,confusable_other_another,contrast,Other và another — Phân biệt,A2,https://en.wiktionary.org/wiki/another
+gram_097,confusable_few_a_few,contrast,Few và a few — Phân biệt,B1,https://en.wiktionary.org/wiki/few
+gram_098,confusable_remember_remind,contrast,Remember và remind — Phân biệt,B1,https://en.wiktionary.org/wiki/remind
+gram_099,confusable_convince_persuade,contrast,Convince và persuade — Phân biệt,B2,https://en.wiktionary.org/wiki/persuade
+gram_100,confusable_job_work,contrast,Job và work — Phân biệt,A2,https://en.wiktionary.org/wiki/job
