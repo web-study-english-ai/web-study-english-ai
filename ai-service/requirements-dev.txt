@@ -7,3 +7,4 @@ pytest
 httpx
 pytest-cov
 ipykernel
+sentence-transformers>=6.2,<7

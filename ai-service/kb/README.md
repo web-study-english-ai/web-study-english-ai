@@ -77,6 +77,56 @@ Ví dụ một dòng (rút gọn `content`):
    và ghi nguồn ở `source`.
 8. **Mỗi cặp `(topic, facet)` là duy nhất** trong toàn bộ file.
 
+## Quy ước định dạng `content`
+
+Viết đúng khuôn dưới đây để `scripts/validate_kb.py` kiểm được tự động:
+
+- **Dòng 1** đúng bằng `title`.
+- **Facet `form`** phải có một dòng bắt đầu bằng `Công thức:`.
+- Có một dòng đúng `Ví dụ:`, sau đó **ít nhất 2 dòng** dạng `- <câu tiếng Anh> (<bản dịch tiếng Việt>)`.
+  Bản dịch nằm trong cặp ngoặc cuối dòng, trong bản dịch không dùng thêm ngoặc.
+- Không dùng các cụm trỏ về đoạn khác: `như đã nói`, `đã nêu ở trên`, `nói ở trên`, `ở phần trên`,
+  `đoạn trước`, `phần trước` (không phân biệt hoa thường). `ở trên` đứng riêng vẫn dùng được,
+  ví dụ câu dịch `Quyển sách ở trên bàn.`
+
+```
+Thì hiện tại hoàn thành (Present Perfect) — Cấu trúc
+Công thức: S + have/has + V3 (khẳng định); S + have/has + not + V3 (phủ định).
+<giải thích bằng tiếng Việt…>
+Ví dụ:
+- I have lived here for ten years. (Tôi đã sống ở đây mười năm.)
+- She has already finished her homework. (Cô ấy đã làm xong bài tập rồi.)
+```
+
+Trong file JSONL, xuống dòng viết là `\n`. Ghi bằng `json.dumps(obj, ensure_ascii=False)` để
+tiếng Việt giữ nguyên dấu.
+
+## Kiểm tra: `scripts/validate_kb.py`
+
+```
+python scripts/validate_kb.py            # đang viết theo lô
+python scripts/validate_kb.py --final    # trước khi nạp
+```
+
+| | Mặc định (đang viết) | `--final` |
+|---|---|---|
+| id trong outline chưa viết | thông tin | **lỗi** |
+| `reviewed_by` null | cảnh báo | **lỗi** |
+| không nạp được tokenizer | in `bỏ qua đo token` | **lỗi** `không đo được token` (trừ khi thêm `--no-tokens`) |
+
+- **Lỗi** (exit code 1): JSON hỏng; thiếu hoặc thừa trường (phải đúng 9 trường); id sai dạng
+  `gram_\d{3}` hoặc không có trong outline; topic/facet/title/cefr/source_url khác outline;
+  facet hoặc cefr ngoài tập cho phép; trùng id; trùng (topic, facet); dòng 1 khác title; số từ
+  ngoài 120–250; facet form thiếu `Công thức:`; ít hơn 2 ví dụ đúng dạng; source sai tiền tố;
+  source_url không phải https; có cụm cấm; hai đoạn trùng hệt nhau (sau khi đổi chữ thường và
+  gộp khoảng trắng); quá 512 token.
+- **Cảnh báo**: chưa duyệt; trên 480 token. Đếm token bằng tokenizer `intfloat/multilingual-e5-small`
+  trên chuỗi `"passage: " + content`, chỉ khi cài `transformers`; nếu không cài thì in `bỏ qua đo token`.
+- **Độ giống**: TF-IDF ký tự (`char_wb`, 3–5) trên content, in 10 cặp giống nhất để người duyệt xem.
+  Không làm script thất bại. Cần `scikit-learn` (có trong `requirements-dev.txt`).
+- **Đầu ra**: `kb/report.json` (đếm theo cefr/facet, số từ, token, lỗi, cảnh báo, cặp giống nhất)
+  và `kb/preview.md` (nhóm theo topic, có ô `- [ ] Đã duyệt` để duyệt từng đoạn).
+
 ## Quy ước `source`
 
 ```

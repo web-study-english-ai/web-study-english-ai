@@ -18,6 +18,8 @@ data/
 *.csv
 !tests/fixtures/*.csv
 !kb/*.csv
+kb/report.json
+kb/preview.md
 
 # notebook output
 .ipynb_checkpoints/
