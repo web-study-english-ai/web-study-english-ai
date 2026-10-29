@@ -144,3 +144,32 @@ Mỗi mục 5 dòng là đủ. Ghi ngay lúc quyết định, đừng để cu�
 - **Lý do chung**: chỉ tối ưu chỗ chiếm thời gian. Phần tính toán phía máy chủ chỉ chiếm khoảng 0,5–5% tổng thời gian nên mọi tối ưu trong ứng dụng gần như vô hình với người học; phần đáng làm nằm ở đường mạng.
 - **Đánh đổi đã chấp nhận**: không có con số "cải thiện" nào trong dịch vụ AI để đưa vào báo cáo — mức −74% phụ thuộc backend làm theo mục c. `Server-Timing` lộ thời gian xử lý nội bộ cho bên gọi đã có khoá (request không khoá không có header).
 - **Sẽ xem lại nếu**: thêm mô hình nặng (CLIP, e5) khiến phần máy chủ chiếm đáng kể; đo từ backend trên Render (WSEA-83) cho thấy mạng nhanh hơn nhiều và phần máy chủ thành nút thắt; hoặc backend không giữ được kết nối.
+
+### 2026-10-29 — Kho tri thức ngữ pháp: JSONL 9 trường, chia theo (chủ đề × khía cạnh) (Jira WSEA-100)
+
+- **Bối cảnh**: trợ lý cần một kho tri thức ngữ pháp để truy hồi ngữ nghĩa (RAG); đầu ra của task là 100 đoạn, nạp vào bảng `kb_chunks` của từng môi trường. Mô hình vector dự kiến là `intfloat/multilingual-e5-small`, chỉ đọc tối đa 512 token mỗi đoạn.
+- **Các phương án đã cân nhắc**: (a) CSV · (b) Markdown, mỗi đoạn một mục · (c) JSONL, mỗi dòng một đoạn · (d) ngoài ngữ pháp, nhờ LLM sinh thêm đoạn giải thích cho 7.000 từ vựng.
+- **Chọn**: (c). `kb/grammar_chunks.jsonl`, 9 trường: `id, topic, facet, title, cefr, source, source_url, content, reviewed_by`. Mỗi đoạn là một cặp (chủ đề × khía cạnh); khía cạnh là `form | usage | signals | contrast | mistakes`. Mỗi đoạn dài 120–250 từ, dòng 1 của `content` là tiêu đề đầy đủ, và tối đa 512 token e5 khi đo trên chuỗi `"passage: " + content`. Kho gồm 75 đoạn ngữ pháp và 25 đoạn phân biệt từ dễ nhầm. `scripts/validate_kb.py --final` kiểm tự động; minh chứng ở `docs/kb/report.json`: 0 lỗi, 189–249 từ, tối đa 391 token.
+- **Quy trình nội dung**: LLM soạn nháp → đối chiếu Wikipedia/Wiktionary (CC BY-SA 4.0, ghi ở `source`, `source_url`) → Claude soát lần hai → Hiếu duyệt từng đoạn (`reviewed_by`). Không chép nguyên văn nguồn nào; British Council và Cambridge chỉ dùng để tra cứu.
+- **Lý do**: `content` nhiều dòng, có dấu phẩy và ngoặc kép, nên CSV phải escape và dễ hỏng khi sửa tay. Markdown dễ đọc nhưng siêu dữ liệu phải tự đặt quy ước và khó kiểm tự động; vì vậy `preview.md` được sinh từ JSONL để người duyệt đọc. JSONL mỗi dòng một bản ghi nên diff git rõ, script kiểm được từng dòng, và nạp thẳng vào `kb_chunks`. Chia theo chủ đề × khía cạnh để mỗi đoạn trả lời một kiểu câu hỏi, vector không bị pha nhiều ý. Đoạn 120–250 từ tương đương khoảng 250–390 token, dưới trần 512 nên không bị cắt. Loại (d) vì 7.000 đoạn sinh tự động không thể duyệt kịp trong 6 tuần. **Từ vựng không đưa vào kho này** mà dùng `backend/prisma/data/vocab_7000.csv`, vốn đã có nghĩa và ví dụ.
+- **Đánh đổi đã chấp nhận**: 100 đoạn chỉ phủ các chủ điểm phổ biến A1–B2. Chất lượng phụ thuộc khâu duyệt vì nháp do LLM viết. Một số điểm sắc thái Anh/Mỹ hoặc chưa thống nhất giữa các nguồn đã được ghi lại khi duyệt (042, 048, 054, 059, 080, 090, 091, 099).
+- **Sẽ xem lại nếu**: khi chạy thử truy hồi (WSEA-94) có nhiều câu hỏi không tìm được đoạn phù hợp, hoặc đổi sang mô hình vector có trần token khác.
+
+### 2026-10-29 — Môi trường dev: thêm `sentence-transformers` vào `requirements-dev.txt`, chưa đưa vào image
+
+- **Bối cảnh**: `validate_kb.py` cần tokenizer e5 để đo token; task sinh vector (WSEA-93) sẽ dùng `sentence-transformers`.
+- **Chọn**: thêm `sentence-transformers>=6.2,<7` vào `requirements-dev.txt`, **không** thêm vào `requirements.txt`.
+- **Lý do**: `requirements.txt` dùng để build image chạy trên Space. Mô hình nào chạy trong Space sẽ chốt ở task sinh vector, nên chưa nên làm image nặng thêm. Đã kiểm `.venv` sau khi cài: `torch==2.14.0+cpu` và `huggingface_hub==2.0.0` giữ nguyên, có thêm `sentence-transformers 6.2.0` và `transformers 5.22.0`.
+- **Đánh đổi đã chấp nhận**: môi trường dev và image tạm thời khác nhau. Thiếu `transformers` thì `validate_kb.py` chỉ in "bỏ qua đo token", riêng chế độ `--final` báo lỗi.
+- **Sẽ xem lại nếu**: task sinh vector chốt chạy e5 trong Space. Khi đó chuyển gói sang `requirements.txt`, đo lại kích thước image, RAM và thời gian khởi động.
+
+### 2026-10-29 — Kiến trúc dữ liệu chatbot: backend truy vấn pgvector, dịch vụ AI không giữ `DATABASE_URL`
+
+- **Trạng thái**: ĐỀ XUẤT — chờ Thạc Duy Anh và Bình xác nhận. Chưa sửa schema, chưa sửa code.
+- **Bối cảnh**: một HF Space phục vụ cả staging lẫn production, trong khi mỗi môi trường có project Supabase riêng (`kb_chunks`, từ vựng). Nếu dịch vụ AI tự truy vấn cơ sở dữ liệu thì phải chọn một trong hai DB, hoặc giữ cả hai chuỗi kết nối rồi định tuyến theo từng request.
+- **Các phương án đã cân nhắc**: (a) dịch vụ AI giữ một `DATABASE_URL` và tự truy vấn pgvector · (b) dịch vụ AI giữ hai `DATABASE_URL`, chọn theo header môi trường · (c) dùng chung DB của backend: dịch vụ AI chỉ sinh vector, backend chạy truy vấn pgvector trên DB của môi trường mình.
+- **Chọn (đề xuất)**: (c).
+- **Lý do**: Space không phân biệt môi trường. Không phải lưu khoá DB production trong Space, nên giảm chỗ có thể lộ bí mật. Mỗi môi trường tự nạp dữ liệu kho bằng script nên dữ liệu không lẫn giữa staging và production.
+- **Kéo theo**: `kb_chunks.embedding` đổi từ `vector(768)` sang `vector(384)` (số chiều của `multilingual-e5-small`); thêm bảng `word_embeddings` cho từ vựng; cần migration Prisma phía backend.
+- **Đánh đổi đã chấp nhận**: mỗi câu hỏi tốn thêm một lượt backend → AI để sinh vector rồi mới truy vấn. Logic truy hồi tách ra hai nơi; nếu dùng reranker thì nó phải nhận danh sách ứng viên từ backend.
+- **Sẽ xem lại nếu**: tách mỗi môi trường một Space riêng, hoặc độ trễ thêm vào làm vượt ngân sách 3 giây của backend.

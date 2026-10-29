@@ -439,13 +439,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-100 · Chuẩn bị và chia đoạn kho tri thức ngữ pháp
+### [x] WSEA-100 · Chuẩn bị và chia đoạn kho tri thức ngữ pháp
 5h · Ưu tiên: High · `ai/WSEA-100-kho-tri-thuc-ngu-phap`
 
-- [ ] 1. Thu thập tài liệu ngữ pháp từ nguồn mở
-- [ ] 2. Chia thành các đoạn có ngữ nghĩa trọn vẹn
-- [ ] 3. Gán siêu dữ liệu: chủ đề, bậc trình độ, nguồn
-- [ ] 4. Kiểm tra chất lượng và loại đoạn trùng lặp
+- [x] 1. Thu thập tài liệu ngữ pháp từ nguồn mở — `kb/sources.md` (Wikipedia, Wiktionary, Wikibooks CC BY-SA 4.0; British Council, Cambridge chỉ tra cứu); 73 URL nguồn khác nhau đã kiểm trả HTTP 200
+- [x] 2. Chia thành các đoạn có ngữ nghĩa trọn vẹn — 100 đoạn (chủ đề × khía cạnh), 75 ngữ pháp + 25 phân biệt từ, 189–249 từ, ≤ 391 token e5; đặc tả `kb/README.md`, dàn ý `kb/outline.csv`
+- [x] 3. Gán siêu dữ liệu: chủ đề, bậc trình độ, nguồn — 9 trường JSONL (`kb/grammar_chunks.jsonl`); CEFR A1 22 · A2 29 · B1 36 · B2 13; 100/100 có `reviewed_by`
+- [x] 4. Kiểm tra chất lượng và loại đoạn trùng lặp — `scripts/validate_kb.py --final`: 0 lỗi, 0 id thiếu; trùng nội dung = lỗi, 10 cặp giống nhất ≤ 0,543 (TF-IDF ký tự); `tests/test_validate_kb.py` 35 test
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -457,7 +457,7 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 </details>
 
-**Minh chứng Jira:** 
+**Minh chứng Jira:** WSEA-100 — nhánh `ai/WSEA-100-kho-tri-thuc-ngu-phap`; commit `98005d8` (đặc tả, dàn ý), `d9c39fb` (script kiểm tra), `64477a1` (lô 1), `649a037` (lô 2), commit bước 5 (lô 3–5, duyệt, minh chứng — điền mã sau khi commit). Minh chứng: `docs/kb/report.json` (100 đoạn, 0 lỗi, token max 391), `docs/kb/preview.md`; quyết định ở `docs/DECISIONS.md` mục 2026-10-29.
 
 
 ---
