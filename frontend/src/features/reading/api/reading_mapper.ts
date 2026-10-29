@@ -42,6 +42,7 @@ function topicValue(v: unknown): string {
 
 export function mapReadingItem(raw: Raw): ReadingItem {
   const p: Raw = isObj(raw.userProgress) ? raw.userProgress : {};
+  const duration = pick(p, ["durationSeconds", "lastDurationSeconds", "timeSpentSeconds"]);
   const minutes = pick(raw, [
     "estimatedMinutes",
     "readingTimeMinutes",
@@ -64,6 +65,7 @@ export function mapReadingItem(raw: Raw): ReadingItem {
         p.totalQuestions,
         num(pick(raw, ["totalQuestions", "questionCount"]))
       ),
+      durationSeconds: typeof duration === "number" ? duration : null,
     },
   };
 }

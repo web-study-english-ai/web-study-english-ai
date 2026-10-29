@@ -6,6 +6,7 @@ export interface ReadingProgress {
   answeredCount: number;
   correctCount: number;
   totalQuestions: number;
+  durationSeconds: number | null; // thời gian làm bài, null nếu chưa có dữ liệu
 }
 
 export interface ReadingItem {
