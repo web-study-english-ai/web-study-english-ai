@@ -19,7 +19,9 @@ export const listReadingsSchema = z.object({
       error: 'Trạng thái phải là NOT_STARTED, IN_PROGRESS hoặc COMPLETED',
     })
     .optional(),
-  sort: z.enum(['recommended', 'level_asc', 'level_desc', 'newest']).default('recommended'),
+  sort: z
+    .enum(['recommended', 'level_asc', 'level_desc', 'cefr_asc', 'cefr_desc', 'newest'])
+    .default('recommended'),
 });
 
 export class ListReadingsDto extends createZodDto(listReadingsSchema) {}
