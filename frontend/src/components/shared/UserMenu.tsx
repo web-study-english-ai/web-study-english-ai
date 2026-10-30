@@ -1,7 +1,6 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { Bell } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useCurrentUser } from "@/features/auth/hooks/useCurrentUser";
 
@@ -20,12 +19,6 @@ export function UserMenu() {
 
   return (
     <div className="flex items-center gap-3">
-      <button
-        className="flex h-9 w-9 items-center justify-center rounded-full bg-white text-foreground shadow-sm transition-colors hover:bg-muted"
-        aria-label="Thông báo"
-      >
-        <Bell className="h-4.5 w-4.5" />
-      </button>
 
       <button
         onClick={() => router.push("/profile")}

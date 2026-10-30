@@ -19,7 +19,7 @@ export function ChartCard({
   children,
 }: ChartCardProps) {
   return (
-    <div className={cn("rounded-2xl border border-border bg-white p-5", className)}>
+    <div className={cn("rounded-2xl border border-border bg-card p-5", className)}>
       <div className="mb-4 flex items-start justify-between gap-4">
         <div>
           <h2 className="font-heading text-base font-semibold text-foreground">{title}</h2>

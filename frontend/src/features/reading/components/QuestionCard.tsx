@@ -16,7 +16,7 @@ export function QuestionCard({ index, question, selected, onSelect }: Props) {
   const showLetter = question.options.length > 2;
 
   return (
-    <div className="rounded-2xl border border-border bg-white p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <p className="text-sm font-semibold text-foreground">
         Q{index + 1}. {question.questionText}
       </p>

@@ -30,7 +30,7 @@ export function ReviewReminderDialog({ open, dueCount, onDismiss }: Props) {
                <div className="absolute right-4 top-4">
           <button
             onClick={onDismiss}
-            className="flex h-6 w-6 items-center justify-center rounded-full bg-white/10 text-white/70 hover:text-white"
+            className="flex h-6 w-6 items-center justify-center rounded-full bg-card/10 text-white/70 hover:text-white"
             aria-label="Đóng"
           >
             <X className="h-3.5 w-3.5" />

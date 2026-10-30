@@ -13,17 +13,17 @@ export const LEVEL_META: Record<
 > = {
   excellent: {
     label: "Xuất sắc",
-    textClass: "text-blue-600",
+    textClass: "text-blue-600 dark:text-blue-400",
     message: "Bạn đang tiến bộ rất tốt! Hãy duy trì chuỗi ngày học để giữ vững đà bứt phá nhé. 🚀",
   },
   good: {
     label: "Tốt",
-    textClass: "text-green-600",
+    textClass: "text-green-600 dark:text-green-400",
     message: "Bạn học khá đều! Ôn thêm những từ khó để nâng tỷ lệ ghi nhớ nhé.",
   },
   average: {
     label: "Trung bình",
-    textClass: "text-yellow-600",
+    textClass: "text-yellow-600 dark:text-yellow-400",
     message: "Tỷ lệ ghi nhớ ở mức trung bình. Ôn tập theo lịch mỗi ngày sẽ cải thiện rõ rệt.",
   },
   low: {

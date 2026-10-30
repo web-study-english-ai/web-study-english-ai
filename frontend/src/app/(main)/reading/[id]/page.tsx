@@ -33,13 +33,13 @@ export default function ReadingDetailPage() {
             <button
               type="button"
               onClick={() => refetch()}
-              className="rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium hover:bg-muted"
+              className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted"
             >
               Thử lại
             </button>
             <Link
               href="/reading"
-              className="rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium hover:bg-muted"
+              className="rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted"
             >
               Về danh sách
             </Link>

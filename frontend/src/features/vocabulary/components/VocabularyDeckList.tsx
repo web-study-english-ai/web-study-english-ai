@@ -34,7 +34,7 @@ export function VocabularyDeckList({ deck, selected, onSelect, onRemove }: Props
             "flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-colors",
             selected?.id === item.id
               ? "border-primary bg-primary/5"
-              : "border-border bg-white hover:bg-muted/50"
+              : "border-border bg-card hover:bg-muted/50"
           )}
         >
           <div>

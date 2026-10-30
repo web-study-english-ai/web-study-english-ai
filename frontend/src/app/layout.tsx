@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/toast";
 import { QueryProvider } from "@/components/providers/QueryProvider";
 import { SessionProvider } from "@/components/providers/SessionProvider";
+import { ThemeSync } from "@/components/shared/ThemeSync";
 
 const sourceSans3Heading = Source_Sans_3({
   subsets: ['latin', 'vietnamese'],
@@ -33,7 +34,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={cn("h-full", "antialiased", geistMono.variable, "font-sans", ibmPlexSans.variable, sourceSans3Heading.variable)}
     >
       <body className="min-h-full flex flex-col">
-        <QueryProvider>
+        <QueryProvider> <ThemeSync />
           <SessionProvider>
             {children}
             <Toaster />
