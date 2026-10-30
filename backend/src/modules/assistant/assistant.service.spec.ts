@@ -2,12 +2,18 @@ import { NotFoundException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from '@/prisma/prisma.service';
 import { AssistantService, SuKienLuongTroLy } from './assistant.service';
-import { AssistantClient, TuyChonHoiTheoLuong } from './assistant.client';
+import {
+  AssistantClient,
+  MODEL_EMBED_MAC_DINH,
+  SO_CHIEU_VECTOR_CHUAN,
+  TuyChonHoiTheoLuong,
+} from './assistant.client';
 
 const prismaMock = {
-  assistantQuery: { findUnique: vi.fn(), create: vi.fn() },
+  assistantQuery: { findUnique: vi.fn(), findMany: vi.fn(), create: vi.fn() },
   kbChunk: { findMany: vi.fn() },
-  word: { findUnique: vi.fn() },
+  word: { findUnique: vi.fn(), findMany: vi.fn() },
+  user: { findUnique: vi.fn() },
   conversation: {
     findUnique: vi.fn(),
     findMany: vi.fn(),
@@ -16,29 +22,57 @@ const prismaMock = {
     delete: vi.fn(),
     deleteMany: vi.fn(),
   },
+  $queryRaw: vi.fn(),
 };
-const aiMock = { hoi: vi.fn(), hoiTheoLuong: vi.fn() };
+
+const aiMock = {
+  nhungCauHoi: vi.fn(),
+  hoi: vi.fn(),
+  hoiTheoLuong: vi.fn(),
+};
 
 const USER_ID = 'user-1';
 const WORD_ID = 'bbbbbbbb-bbbb-bbbb-bbbb-bbbbbbbbbbbb';
 const EVENT_ID = '11111111-1111-4111-8111-111111111111';
 const CHUNK_ID = 'cccccccc-cccc-cccc-cccc-cccccccccccc';
 const nguon = { id: CHUNK_ID, source: 'Oxford Grammar', topic: 'tenses' };
+const vectorGia = Array.from({ length: SO_CHIEU_VECTOR_CHUAN }, () => 0.05);
 
 const duLieuGhi = () => prismaMock.assistantQuery.create.mock.calls[0][0].data;
 
-describe('AssistantService', () => {
+describe('AssistantService (Hợp đồng API v0.3)', () => {
   let service: AssistantService;
 
   beforeEach(async () => {
     vi.clearAllMocks();
     prismaMock.assistantQuery.findUnique.mockResolvedValue(null);
+    prismaMock.assistantQuery.findMany.mockResolvedValue([]);
     prismaMock.assistantQuery.create.mockResolvedValue({});
     prismaMock.kbChunk.findMany.mockResolvedValue([nguon]);
     prismaMock.word.findUnique.mockResolvedValue(null);
+    prismaMock.word.findMany.mockResolvedValue([]);
+    prismaMock.user.findUnique.mockResolvedValue({ level: 'B1' });
     prismaMock.conversation.create.mockResolvedValue({ id: 'conv-1' });
     prismaMock.conversation.update.mockResolvedValue({ id: 'conv-1' });
     prismaMock.conversation.deleteMany.mockResolvedValue({ count: 0 });
+    prismaMock.$queryRaw
+      .mockResolvedValueOnce([
+        {
+          id: CHUNK_ID,
+          content: 'Hiện tại hoàn thành dùng để...',
+          source: 'Oxford Grammar',
+          topic: 'tenses',
+          cefr: 'B1',
+          distance: 0.14,
+        },
+      ])
+      .mockResolvedValueOnce([]);
+
+    aiMock.nhungCauHoi.mockResolvedValue({
+      embedding: vectorGia,
+      model: MODEL_EMBED_MAC_DINH,
+      dim: SO_CHIEU_VECTOR_CHUAN,
+    });
     aiMock.hoi.mockResolvedValue(null);
     aiMock.hoiTheoLuong.mockResolvedValue(null);
 
@@ -53,12 +87,15 @@ describe('AssistantService', () => {
     service = module.get<AssistantService>(AssistantService);
   });
 
-  describe('AI trả lời được', () => {
+  describe('AI trả lời được (luồng 3 bước: embed -> pgvector -> ask)', () => {
     beforeEach(() => {
-      aiMock.hoi.mockResolvedValue({ answer: 'Dùng khi...', source_ids: [CHUNK_ID] });
+      aiMock.hoi.mockResolvedValue({
+        answer: 'Dùng khi...',
+        source_ids: [CHUNK_ID, 'id-la-khong-co-trong-contexts'],
+      });
     });
 
-    it('trả câu trả lời của AI kèm nguồn, degraded = false', async () => {
+    it('trả câu trả lời của AI kèm nguồn hợp lệ (lọc source_ids ⊂ contexts), degraded = false', async () => {
       const kq = await service.ask(USER_ID, { question: 'Present perfect?' });
       expect(kq).toEqual({
         answer: 'Dùng khi...',
@@ -68,7 +105,7 @@ describe('AssistantService', () => {
       });
     });
 
-    it('ghi log đủ câu trả lời, id nguồn và thời gian xử lý', async () => {
+    it('ghi log đủ câu trả lời, id nguồn đã lọc và thời gian xử lý', async () => {
       await service.ask(USER_ID, { question: 'Present perfect?' });
       expect(duLieuGhi()).toMatchObject({
         userId: USER_ID,
@@ -88,38 +125,68 @@ describe('AssistantService', () => {
       });
     });
 
-    it('ghép ngữ cảnh từ đang học khi có wordId nhưng vẫn lưu câu hỏi gốc vào log', async () => {
+    it('nối (<term>) khi gọi /embed và truyền word: { term, pos, meaning_vi } sang /ask khi có wordId', async () => {
       prismaMock.word.findUnique.mockResolvedValue({
         term: 'abandon',
         pos: 'VERB',
         meaningVi: 'từ bỏ',
+        exampleEn: 'Never abandon hope.',
       });
       await service.ask(USER_ID, { question: 'Từ này dùng sao?', wordId: WORD_ID });
+
+      expect(aiMock.nhungCauHoi).toHaveBeenCalledWith(
+        'Từ này dùng sao? (abandon)',
+        expect.anything(),
+      );
       expect(aiMock.hoi).toHaveBeenCalledWith(
-        '[Từ đang học: abandon (VERB) - từ bỏ] Từ này dùng sao?',
-        expect.objectContaining({ wordId: WORD_ID }),
+        'Từ này dùng sao?',
+        expect.objectContaining({
+          word: { term: 'abandon', pos: 'VERB', meaning_vi: 'từ bỏ' },
+          userCefr: 'B1',
+        }),
       );
       expect(duLieuGhi().question).toBe('Từ này dùng sao?');
       expect(duLieuGhi().wordId).toBe(WORD_ID);
     });
   });
 
-  describe('AI không trả lời được', () => {
-    it('trả câu dự phòng, sources rỗng, degraded = true', async () => {
+  describe('Fallback khi AI không trả lời được', () => {
+    it('khi /embed lỗi hoặc lệch model: không truy vấn pgvector, trả câu dự phòng và sources rỗng', async () => {
+      aiMock.nhungCauHoi.mockResolvedValue(null);
       const kq = await service.ask(USER_ID, { question: 'Present perfect?' });
+
       expect(kq.degraded).toBe(true);
       expect(kq.sources).toEqual([]);
       expect(kq.answer).toContain('tạm thời không trả lời được');
+      expect(prismaMock.$queryRaw).not.toHaveBeenCalled();
+      expect(aiMock.hoi).not.toHaveBeenCalled();
     });
 
-    it('vẫn ghi log với answer = null để biết người học đang hỏi gì', async () => {
-      await service.ask(USER_ID, { question: 'Present perfect?' });
-      expect(duLieuGhi()).toMatchObject({ answer: null, sourceIds: [], degraded: true });
-    });
+    it('khi /ask lỗi nhưng đã truy hồi được pgvector: trả câu dự phòng kèm tối đa 3 nguồn đầu đã truy hồi', async () => {
+      prismaMock.$queryRaw.mockReset();
+      prismaMock.$queryRaw
+        .mockResolvedValueOnce([
+          { id: 'c-1', content: 'A', source: 'Nguồn 1', topic: 't1', cefr: 'A1', distance: 0.1 },
+          { id: 'c-2', content: 'B', source: 'Nguồn 2', topic: 't2', cefr: 'A2', distance: 0.12 },
+          { id: 'c-3', content: 'C', source: 'Nguồn 3', topic: 't3', cefr: 'B1', distance: 0.15 },
+          { id: 'c-4', content: 'D', source: 'Nguồn 4', topic: 't4', cefr: 'B2', distance: 0.18 },
+        ])
+        .mockResolvedValueOnce([]);
+      aiMock.hoi.mockResolvedValue(null);
 
-    it('không truy vấn kb_chunks khi không có nguồn', async () => {
-      await service.ask(USER_ID, { question: 'Present perfect?' });
-      expect(prismaMock.kbChunk.findMany).not.toHaveBeenCalled();
+      const kq = await service.ask(USER_ID, { question: 'Present perfect?' });
+      expect(kq.degraded).toBe(true);
+      expect(kq.answer).toContain('tạm thời không trả lời được');
+      expect(kq.sources).toEqual([
+        { id: 'c-1', source: 'Nguồn 1', topic: 't1' },
+        { id: 'c-2', source: 'Nguồn 2', topic: 't2' },
+        { id: 'c-3', source: 'Nguồn 3', topic: 't3' },
+      ]);
+      expect(duLieuGhi()).toMatchObject({
+        answer: null,
+        sourceIds: ['c-1', 'c-2', 'c-3'],
+        degraded: true,
+      });
     });
   });
 
@@ -139,6 +206,7 @@ describe('AssistantService', () => {
         degraded: false,
         conversationId: null,
       });
+      expect(aiMock.nhungCauHoi).not.toHaveBeenCalled();
       expect(aiMock.hoi).not.toHaveBeenCalled();
       expect(prismaMock.assistantQuery.create).not.toHaveBeenCalled();
     });
@@ -204,7 +272,7 @@ describe('AssistantService', () => {
       expect(prismaMock.assistantQuery.create).toHaveBeenCalledOnce();
     });
 
-    it('khi AI lỗi trong luồng thì phát câu dự phòng và done với degraded = true', async () => {
+    it('khi /ask lỗi trong luồng thì phát câu dự phòng và done với degraded = true kèm nguồn đã truy hồi', async () => {
       aiMock.hoiTheoLuong.mockResolvedValue(null);
 
       const suKienList: SuKienLuongTroLy[] = [];
@@ -216,7 +284,7 @@ describe('AssistantService', () => {
       expect(suKienList[0].event).toBe('delta');
       expect(suKienList[1]).toMatchObject({
         event: 'done',
-        data: { sources: [], degraded: true },
+        data: { sources: [nguon], degraded: true },
       });
     });
 
