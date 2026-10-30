@@ -101,7 +101,7 @@ def load_vocab(path: Path) -> tuple[list[dict], list[str]]:
             return [], [f"thiếu cột: {', '.join(sorted(missing))}"]
         rows = list(reader)
     for n, row in enumerate(rows, 2):  # dong 1 la header
-        word = (row.get("word") or "").strip()
+        word = emb.normalize_term(row.get("word") or "")
         for col in ("word", "pos", "meaning_vi"):
             if not (row.get(col) or "").strip():
                 errors.append(f"dòng {n} ({word or '?'}): {col} rỗng")
@@ -116,7 +116,7 @@ def load_vocab(path: Path) -> tuple[list[dict], list[str]]:
 
 
 def word_text_t2(row: dict) -> str:
-    base = emb.word_text(row["word"].strip(), row["pos"].strip(), row["meaning_vi"].strip())
+    base = emb.word_text(emb.normalize_term(row["word"]), row["pos"].strip(), row["meaning_vi"].strip())
     example = (row.get("example_en") or "").strip()
     return f"{base} — {example}" if example else base
 
@@ -162,7 +162,7 @@ def top_terms(q_vec: np.ndarray, vectors: np.ndarray, terms: list[str], k: int =
 
 
 def reverse_check(embedder: emb.Embedder, vocab: list[dict], t1_vectors: np.ndarray) -> None:
-    terms = [r["word"].strip() for r in vocab]
+    terms = [emb.normalize_term(r["word"]) for r in vocab]
     known = set(terms)
     print("\n== Kiểm tra tra ngược Việt→Anh (chỉ in, không ghi file) ==")
     absent = [g for _, g in REVERSE_CHECK if g not in known]
@@ -221,8 +221,8 @@ def main(argv: list[str] | None = None) -> int:
     ids = [str(c["id"]).strip() for c in chunks]
     kb_vectors, kb_secs = timed(embedder.encode_passages, [c["content"] for c in chunks])
 
-    terms = [r["word"].strip() for r in vocab]
-    word_texts = [emb.word_text(r["word"].strip(), r["pos"].strip(), r["meaning_vi"].strip()) for r in vocab]
+    terms = [emb.normalize_term(r["word"]) for r in vocab]
+    word_texts = [emb.word_text(emb.normalize_term(r["word"]), r["pos"].strip(), r["meaning_vi"].strip()) for r in vocab]
     word_vectors, word_secs = timed(embedder.encode_passages, word_texts)
 
     args.out_dir.mkdir(parents=True, exist_ok=True)

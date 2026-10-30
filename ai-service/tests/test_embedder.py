@@ -101,6 +101,11 @@ def test_load_model_passes_name_revision_cpu(monkeypatch):
     assert captured == {"name": emb.MODEL_NAME, "revision": emb.MODEL_REVISION, "device": "cpu"}
 
 
+def test_normalize_term_matches_backend_seed():
+    assert emb.normalize_term(" TRUE ") == "true"
+    assert emb.normalize_term("Look") == "look"
+
+
 def test_word_text_format():
     assert emb.word_text("grateful", "adj", "biết ơn") == "grateful (adj): biết ơn"
 

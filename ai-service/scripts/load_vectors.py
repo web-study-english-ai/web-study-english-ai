@@ -209,10 +209,10 @@ def map_terms(terms: list[str], db_rows: list[tuple[str, str]]) -> tuple[list[tu
     Tra (danh sach (word_id, chi so dong vector), danh sach term khong co trong DB),
     giu thu tu cua file.
     """
-    by_term = {term: wid for wid, term in db_rows}
+    by_term = {emb.normalize_term(term): wid for wid, term in db_rows}
     pairs, missing = [], []
     for i, term in enumerate(terms):
-        wid = by_term.get(term)
+        wid = by_term.get(emb.normalize_term(term))
         if wid is None:
             missing.append(term)
         else:
@@ -383,8 +383,11 @@ def main(argv: list[str] | None = None, environ=os.environ) -> int:
     print(f"Môi trường {args.env} → {target}{' (dry-run)' if args.dry_run else ''}")
     try:
         conn = psycopg.connect(url, connect_timeout=15)
-    except psycopg.Error as e:
-        return fail([redact(f"{type(e).__name__}: {e}", url)], "không kết nối được")
+    except (psycopg.Error, UnicodeError, OSError) as e:
+        # UnicodeError: host sai dang 'aws-....pooler' (nhan rong) -> bao gon thay vi traceback
+        return fail([redact(f"{type(e).__name__}: {e}", url),
+                     "kiểm tra lại host/mật khẩu trong KB_DATABASE_URL (Supabase → Connect → Session pooler)"],
+                    "không kết nối được")
 
     with conn:
         pg_version, types = read_schema(conn)

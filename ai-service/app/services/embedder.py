@@ -27,6 +27,14 @@ def word_text(term: str, pos: str, meaning_vi: str) -> str:
     return f"{term} ({pos}): {meaning_vi}"
 
 
+def normalize_term(term: str) -> str:
+    """Chuan hoa tu tieng Anh giong seed backend (trim + chu thuong) de khop words.term.
+
+    vocab_7000.csv tung bi Excel doi true/false thanh TRUE/FALSE; seed luu chu thuong.
+    """
+    return term.strip().lower()
+
+
 def model_info() -> dict:
     """Thong tin cach ma hoa, ghi kem moi lan sinh vector de doi chieu ve sau."""
     return {

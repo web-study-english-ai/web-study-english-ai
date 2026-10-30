@@ -1,0 +1,86 @@
+{
+  "task": "WSEA-110",
+  "created_at": "2026-10-30T18:49:15+00:00",
+  "env": "staging",
+  "target": "aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres",
+  "pgvector_version": "0.8.2",
+  "model": "intfloat/multilingual-e5-small",
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "dim": 384,
+  "query_prefix": "query: ",
+  "passage_prefix": "passage: ",
+  "manifest_created_at": "2026-10-30T18:48:42+00:00",
+  "rows": {
+    "kb_chunks": {
+      "insert": 0,
+      "update": 100,
+      "delete": 0
+    },
+    "word_embeddings": {
+      "insert": 2,
+      "update": 6998
+    }
+  },
+  "final_counts": {
+    "kb_chunks_total": 100,
+    "kb_chunks_with_model": 100,
+    "word_embeddings_total": 7000,
+    "word_embeddings_with_model": 7000
+  },
+  "missing_words": {
+    "count": 0,
+    "first": []
+  },
+  "extra_kb_ids": {
+    "count": 0,
+    "ids": [],
+    "pruned": false
+  },
+  "cross_check": {
+    "all_match": true,
+    "questions": [
+      {
+        "question": "khi nào dùng hiện tại hoàn thành thay vì quá khứ đơn",
+        "sql_top3": [
+          "gram_015",
+          "gram_013",
+          "gram_018"
+        ],
+        "numpy_top3": [
+          "gram_015",
+          "gram_013",
+          "gram_018"
+        ],
+        "match": true
+      },
+      {
+        "question": "khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",
+        "sql_top3": [
+          "gram_064",
+          "gram_070",
+          "gram_003"
+        ],
+        "numpy_top3": [
+          "gram_064",
+          "gram_070",
+          "gram_003"
+        ],
+        "match": true
+      },
+      {
+        "question": "sao người ta nói I am knowing him là sai ngữ pháp",
+        "sql_top3": [
+          "gram_007",
+          "gram_063",
+          "gram_026"
+        ],
+        "numpy_top3": [
+          "gram_007",
+          "gram_063",
+          "gram_026"
+        ],
+        "match": true
+      }
+    ]
+  }
+}

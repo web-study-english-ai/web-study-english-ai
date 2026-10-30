@@ -1,6 +1,6 @@
 {
   "task": "WSEA-110",
-  "created_at": "2026-10-30T15:17:15+00:00",
+  "created_at": "2026-10-30T18:48:42+00:00",
   "model": "intfloat/multilingual-e5-small",
   "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
   "dim": 384,
@@ -48,13 +48,13 @@
         7000,
         384
       ],
-      "sha256": "f5279197aa81c0ce373a1490c8be601c4f37c6ffbfb74e6705d62c2e70a39340"
+      "sha256": "637f287327bdc36660343f4f2ac6d6c24b19f3baa8f3580eb48a79591ac03cc4"
     }
   },
   "timing_seconds": {
-    "model_load": 21.99,
-    "encode_kb": 9.8,
-    "encode_words": 32.94
+    "model_load": 17.78,
+    "encode_kb": 9.4,
+    "encode_words": 32.54
   },
   "environment": {
     "python": "3.13.12",

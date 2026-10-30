@@ -58,9 +58,10 @@ def test_map_terms_and_missing_keep_file_order():
     assert missing == ["do", "go"]
 
 
-def test_map_terms_is_exact_match():
-    pairs, missing = lv.map_terms(["Have"], [("w-1", "have")])
-    assert pairs == [] and missing == ["Have"]
+def test_map_terms_normalizes_case_like_backend_seed():
+    # vocab_7000.csv co TRUE/FALSE (Excel viet hoa); seed backend luu chu thuong
+    pairs, missing = lv.map_terms(["TRUE", " False ", "go"], [("w-1", "true"), ("w-2", "false")])
+    assert pairs == [("w-1", 0), ("w-2", 1)] and missing == ["go"]
 
 
 def test_batched():
