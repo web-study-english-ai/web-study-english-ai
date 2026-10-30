@@ -491,7 +491,7 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-93 · Sinh vector ngữ nghĩa và nạp vào cơ sở dữ liệu
+### [x] WSEA-93 (Jira **WSEA-110**) · Sinh vector ngữ nghĩa và nạp vào cơ sở dữ liệu
 6h · Ưu tiên: Highest · `ai/WSEA-93-...`
 
 - [ ] 1. Chọn và tải mô hình sinh vector phù hợp tiếng Anh và tiếng Việt

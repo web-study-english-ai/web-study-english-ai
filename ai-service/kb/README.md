@@ -136,3 +136,20 @@ WSEA biên soạn · tham chiếu: <tên nguồn>
 Ví dụ: `WSEA biên soạn · tham chiếu: Wikipedia — English conditional sentences`,
 `WSEA biên soạn · tham chiếu: Wiktionary — lend (usage notes)`.
 Tên nguồn lấy từ bảng trong `sources.md`.
+
+## Sinh và nạp vector (WSEA-110)
+
+- Mô hình: `intfloat/multilingual-e5-small` (384 chiều, revision ghim trong `app/services/embedder.py`). Mọi cấu hình mã hoá (tiền tố `passage: ` / `query: `, chuẩn hoá L2, `normalize_term`) chỉ nằm ở module này.
+- Văn bản đem mã hoá: đoạn tri thức = `content` nguyên văn; từ vựng = `"{term} ({pos}): {meaning_vi}"`, `term` viết thường như seed backend.
+- Chạy trong `ai-service` (PowerShell):
+
+```powershell
+.\.venv\Scripts\python.exe scripts\embed_kb.py           # data/embeddings/*.npz + docs/kb/embedding_manifest.json
+$env:KB_DATABASE_URL = "<Session pooler cổng 5432 của môi trường>"   # chỉ đặt trong cửa sổ terminal, không ghi file
+.\.venv\Scripts\python.exe scripts\load_vectors.py --env staging --dry-run
+.\.venv\Scripts\python.exe scripts\load_vectors.py --env staging
+.\.venv\Scripts\python.exe scripts\bench_vector_search.py --env staging
+```
+
+- Production: `--env production --confirm-production`, và chỉ chạy sau khi đã `npx prisma migrate deploy` lên production.
+- Sửa `grammar_chunks.jsonl` hoặc `vocab_7000.csv` thì phải chạy lại `embed_kb.py` rồi nạp lại; `load_vectors.py` từ chối nạp khi sha256 không khớp manifest.
