@@ -8,3 +8,5 @@ httpx
 pytest-cov
 ipykernel
 sentence-transformers>=6.2,<7
+psycopg[binary]>=3.3,<4
+pgvector>=0.5,<0.6
