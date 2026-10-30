@@ -25,7 +25,7 @@ export function PassagePanel({ title, cefr, content }: Props) {
     .filter(Boolean);
 
   return (
-    <section className="rounded-2xl border border-border bg-white p-6 lg:sticky lg:top-4 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
+    <section className="rounded-2xl border border-border bg-card p-6 lg:sticky lg:top-4 lg:max-h-[calc(100vh-8rem)] lg:overflow-y-auto">
       <div className="mb-4 flex items-center gap-2">
         <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
           Đoạn văn đọc hiểu

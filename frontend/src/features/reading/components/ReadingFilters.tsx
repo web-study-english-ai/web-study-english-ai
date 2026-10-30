@@ -16,11 +16,11 @@ interface Props {
 }
 
 const selectClass =
-  "h-10 rounded-xl border border-border bg-white px-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/30";
+  "h-10 rounded-xl border border-border bg-card px-3 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/30";
 
 export function ReadingFilters({ value, topics, onChange }: Props) {
   return (
-    <div className="space-y-3 rounded-2xl border border-border bg-white p-4">
+    <div className="space-y-3 rounded-2xl border border-border bg-card p-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-center">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />

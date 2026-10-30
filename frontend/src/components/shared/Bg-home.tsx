@@ -42,8 +42,8 @@ export default function HeroCarousel() {
             key={image.src}
             className={`h-1.5 rounded-full transition-all duration-300 ${
               index === activeIndex
-                ? "w-6 bg-white"
-                : "w-1.5 bg-white/60"
+                ? "w-6 bg-card"
+                : "w-1.5 bg-card/60"
             }`}
           />
         ))}

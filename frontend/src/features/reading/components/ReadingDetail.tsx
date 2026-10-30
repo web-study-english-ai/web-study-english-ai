@@ -55,7 +55,7 @@ export function ReadingDetail({ detail, restoreDraft, onRetry }: Props) {
         </div>
       ) : (
         <>
-          <div className="sticky top-2 z-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-white/95 px-4 py-3 shadow-sm backdrop-blur">
+          <div className="sticky top-2 z-10 flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-border bg-card/95 px-4 py-3 shadow-sm backdrop-blur">
             <div className="flex flex-wrap items-center gap-4 text-sm">
               <span className="flex items-center gap-1.5 font-medium tabular-nums text-foreground">
                 <Clock className="h-4 w-4 text-muted-foreground" />
@@ -129,7 +129,7 @@ export function ReadingDetail({ detail, restoreDraft, onRetry }: Props) {
               <Button onClick={onRetry}>Làm lại</Button>
               <Link
                 href="/reading"
-                className="inline-flex h-9 items-center rounded-lg border border-border bg-white px-4 text-sm font-semibold text-foreground hover:bg-muted"
+                className="inline-flex h-9 items-center rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground hover:bg-muted"
               >
                 Về danh sách bài đọc
               </Link>

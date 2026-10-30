@@ -18,7 +18,7 @@ export function SourceList({ sources }: { sources: ChatSource[] }) {
             </>
           );
           const cls =
-            "inline-flex items-center gap-1 rounded-full border border-border bg-white px-2.5 py-1 text-xs text-foreground";
+            "inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs text-foreground";
 
           return (
             <li key={s.id}>
