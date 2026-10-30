@@ -7,7 +7,7 @@ import { formatDuration, levelStyle } from "../utils/reading_format";
 const primaryBtn =
   "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground transition-colors hover:bg-primary/90";
 const outlineBtn =
-  "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border bg-white px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted";
+  "inline-flex h-9 shrink-0 items-center justify-center gap-1.5 rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted";
 
 export function ReadingCard({ item }: { item: ReadingItem }) {
   const { status, answeredCount, correctCount, totalQuestions, durationSeconds } = item.progress;
@@ -19,7 +19,7 @@ export function ReadingCard({ item }: { item: ReadingItem }) {
     <article
       className={cn(
         "flex flex-col gap-4 border-b border-border p-4 last:border-b-0 sm:flex-row sm:items-center",
-        status === "IN_PROGRESS" && "bg-rose-50/60"
+        status === "IN_PROGRESS" && "bg-rose-50/60 dark:bg-primary/10"
       )}
     >
       <span

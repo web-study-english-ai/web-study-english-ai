@@ -55,7 +55,7 @@ export default function LearnWordsPage() {
         )}
 
         {!isLoading && isFinished && (
-          <div className="rounded-2xl border border-border bg-white p-10 text-center">
+          <div className="rounded-2xl border border-border bg-card p-10 text-center">
             <h2 className="font-heading text-xl font-semibold text-foreground">
               🎉 Bạn đã học xong {total} từ mới hôm nay!
             </h2>

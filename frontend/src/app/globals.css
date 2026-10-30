@@ -173,4 +173,7 @@
   html {
     @apply font-sans;
   }
+   .dark {
+    color-scheme: dark;
+  }
 }

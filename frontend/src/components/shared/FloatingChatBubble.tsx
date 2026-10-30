@@ -106,14 +106,14 @@ export function FloatingChatBubble() {
             <button
               onClick={() => setOpen(false)}
               aria-label="Đóng trợ lý AI"
-              className="rounded-full p-1 text-primary-foreground/80 hover:bg-white/10 hover:text-primary-foreground"
+              className="rounded-full p-1 text-primary-foreground/80 hover:bg-card/10 hover:text-primary-foreground"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Bỏ bo góc/viền sẵn có của ChatWindow vì panel đã có khung riêng */}
-          <div className="min-h-0 flex-1 bg-white [&>div]:rounded-none [&>div]:border-0">
+          <div className="min-h-0 flex-1 bg-card [&>div]:rounded-none [&>div]:border-0">
             <ChatWindow
               messages={messages}
               isSending={isSending}

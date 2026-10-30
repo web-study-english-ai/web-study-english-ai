@@ -19,7 +19,7 @@ export function VocabularyResultItem({ item, isActive, isAdded, onSelect, onAdd 
       onClick={onSelect}
       className={cn(
         "flex cursor-pointer items-center justify-between rounded-xl border p-4 transition-colors",
-        isActive ? "border-primary bg-primary/5" : "border-border bg-white hover:bg-muted/50"
+        isActive ? "border-primary bg-primary/5" : "border-border bg-card hover:bg-muted/50"
       )}
     >
       <div className="flex items-center gap-3">

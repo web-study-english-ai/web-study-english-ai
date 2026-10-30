@@ -27,7 +27,7 @@ export function AuthVisual({
       <div className={`pointer-events-none absolute -bottom-24 -right-10 h-72 w-72 rounded-full ${blobBg}`} />
 
       <div className="relative z-10 flex items-center gap-2">
-        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/90">
+        <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-card/90">
           <GraduationCap className="h-5 w-5 text-teal-700" />
         </span>
         <span className="font-heading text-base font-semibold text-white">Study English</span>

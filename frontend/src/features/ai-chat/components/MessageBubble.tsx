@@ -50,12 +50,12 @@ export function MessageBubble({ message, onRetry }: Props) {
   return (
     <div className="flex items-start gap-3">
       <AssistantAvatar />
-      <div className="max-w-[85%] break-words rounded-2xl rounded-tl-sm border border-teal-200 bg-teal-50/60 px-4 py-3 text-sm leading-relaxed text-foreground">
-        <p className="mb-2 text-sm font-semibold text-teal-700">Trợ lý AI</p>
+      <div className="max-w-[85%] break-words rounded-2xl rounded-tl-sm border border-teal-200 bg-teal-50/60 dark:border-teal-800 dark:bg-teal-950/30 px-4 py-3 text-sm leading-relaxed text-foreground">
+        <p className="mb-2 text-sm font-semibold text-teal-700 dark:text-teal-300">Trợ lý AI</p>
         <FormattedText text={message.content} />
 
         {message.examples && message.examples.length > 0 && (
-          <div className="mt-3 rounded-xl border border-border bg-white p-3">
+          <div className="mt-3 rounded-xl border border-border bg-card p-3">
             <p className="text-xs font-semibold text-teal-700">Ví dụ chi tiết</p>
             <ol className="mt-2 space-y-2">
               {message.examples.map((ex, i) => (
