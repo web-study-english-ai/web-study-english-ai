@@ -11,3 +11,9 @@ huggingface_hub==2.0.0
 # --- Model ML (torch ban CPU) ---
 torch==2.14.0+cpu
 numpy==2.4.6
+
+# --- Trợ lý: embedding (WSEA-111) ---
+# Dung ban da sinh vector nap DB: doi ban co the lam vector luc hoi lech vector da luu.
+sentence-transformers==6.2.0
+transformers==5.22.0
+tokenizers==0.23.3

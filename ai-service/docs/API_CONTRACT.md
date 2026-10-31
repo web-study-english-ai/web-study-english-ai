@@ -3,7 +3,7 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.3 · Cập nhật lần cuối: 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
+Phiên bản: 0.3 · Cập nhật lần cuối: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
 
 ## Quy ước chung
 
@@ -44,12 +44,15 @@ Nạp mô hình thành công → **200**:
   "service": "web-study-english-ai-service",
   "version": "0.1.0",
   "environment": "production",
-  "models": ["fsrs"],
+  "models": ["fsrs", "embedder"],
   "model_version": "v1"
 }
 ```
 
-Nạp mô hình thất bại → **503**, body giữ nguyên hình dạng:
+- `models` liệt kê mọi mô hình đã nạp: `"fsrs"` và, từ WSEA-111, `"embedder"` (mô hình vector của `/assistant/embed`).
+- Trạng thái `503` / `degraded` **chỉ phụ thuộc `fsrs`**. Embedder nạp thất bại thì `/health` vẫn `200` với `models: ["fsrs"]`; riêng `/assistant/embed` trả `503` và backend fallback.
+
+Nạp mô hình dự báo (`fsrs`) thất bại → **503**, body giữ nguyên hình dạng:
 
 ```json
 {
@@ -243,6 +246,7 @@ Sinh vector cho câu hỏi để backend tìm đoạn tri thức gần nhất.
 
 **Lỗi**: `401` · `422` (rỗng, quá 1000 ký tự, trường lạ) · `503` (mô hình chưa nạp xong) · `500`.
 **Timeout backend**: 5 giây (`AI_EMBED_TIMEOUT_MS`). `503` → thử lại 1 lần sau 2 giây rồi fallback.
+**Trạng thái**: đã triển khai trên Space 2026-10-31 (WSEA-111). Đo: phía server ~20 ms, khứ hồi từ VN 497–630 ms.
 
 ## Truy vấn pgvector phía backend (tham khảo — backend sở hữu)
 

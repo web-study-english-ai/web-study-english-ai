@@ -17,6 +17,7 @@ cơ sở dữ liệu: sửa file ở đây rồi nạp lại.
 | `sources.md` | Danh sách nguồn tham chiếu và giấy phép |
 | `outline.csv` | Dàn ý 100 đoạn: `id,topic,facet,title,cefr,source_url` |
 | `grammar_chunks.jsonl` | **File chính.** Mỗi dòng một đoạn tri thức hoàn chỉnh (viết ở bước sau) |
+| `eval_negatives.csv` | 12 câu âm để đánh giá truy hồi: `qid,question,group,lang`, `group` = `off` (ngoài lĩnh vực) hoặc `gap` (tiếng Anh nhưng kho chưa có). **Viết trước khi chạy, không sửa sau khi xem kết quả** (dùng bởi `scripts/eval_retrieval.py`) |
 
 ## Định dạng `grammar_chunks.jsonl`
 

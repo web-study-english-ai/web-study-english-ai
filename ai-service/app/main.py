@@ -12,12 +12,30 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from app.config import settings
 from app.models.weights import load_fsrs
 from app.routers import health, rag, retention, vision
+from app.services.embedder import Embedder
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+
+def load_embedder() -> Embedder | None:
+    """Nap mo hinh embedding va encode thu mot cau de ep nap ngay luc khoi dong.
+
+    Giong load_fsrs: loi thi tra None, dich vu van len. /assistant/embed tra 503
+    con /predict-retention khong bi anh huong.
+    """
+    started = time.perf_counter()
+    try:
+        embedder = Embedder(local_files_only=settings.embedder_local_files_only)
+        embedder.encode_queries(["warmup"])
+    except Exception:
+        logger.exception("Nap mo hinh embedding that bai")
+        return None
+    logger.info("Da nap mo hinh embedding trong %.1f giay", time.perf_counter() - started)
+    return embedder
 
 
 @asynccontextmanager
@@ -28,7 +46,8 @@ async def lifespan(app: FastAPI):
     de /health bao degraded thay vi container crash-loop tren HF Spaces.
     """
     model, meta = load_fsrs(settings)
-    app.state.models = {"fsrs": model}
+    embedder = load_embedder() if settings.embedder_enabled else None
+    app.state.models = {"fsrs": model, "embedder": embedder}
     app.state.model_meta = meta
     yield
     app.state.models.clear()

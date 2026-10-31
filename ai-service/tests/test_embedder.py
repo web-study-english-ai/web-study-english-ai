@@ -80,7 +80,7 @@ def test_lazy_load_uses_pinned_revision(monkeypatch):
         seen["called"] = True
         return FakeModel()
 
-    monkeypatch.setattr(emb.Embedder, "_load_model", staticmethod(fake_load))
+    monkeypatch.setattr(emb.Embedder, "_load_model", lambda self: fake_load())
     e = emb.Embedder()
     assert "called" not in seen            # chua nap khi khoi tao
     e.encode_queries(["x"])
@@ -97,8 +97,33 @@ def test_load_model_passes_name_revision_cpu(monkeypatch):
     fake_module = type(sys)("sentence_transformers")
     fake_module.SentenceTransformer = FakeST
     monkeypatch.setitem(sys.modules, "sentence_transformers", fake_module)
-    emb.Embedder._load_model()
-    assert captured == {"name": emb.MODEL_NAME, "revision": emb.MODEL_REVISION, "device": "cpu"}
+    emb.Embedder()._load_model()
+    assert captured == {
+        "name": emb.MODEL_NAME,
+        "revision": emb.MODEL_REVISION,
+        "device": "cpu",
+        "local_files_only": False,
+    }
+
+
+def _fake_sentence_transformers(monkeypatch):
+    captured = {}
+
+    class FakeST:
+        def __init__(self, name, **kwargs):
+            captured.update(name=name, **kwargs)
+
+    fake_module = type(sys)("sentence_transformers")
+    fake_module.SentenceTransformer = FakeST
+    monkeypatch.setitem(sys.modules, "sentence_transformers", fake_module)
+    return captured
+
+
+def test_local_files_only_passed_to_sentence_transformer(monkeypatch):
+    captured = _fake_sentence_transformers(monkeypatch)
+    emb.Embedder(local_files_only=True).model  # thuoc tinh model goi _load_model
+    assert captured["local_files_only"] is True
+    assert captured["revision"] == emb.MODEL_REVISION
 
 
 def test_normalize_term_matches_backend_seed():

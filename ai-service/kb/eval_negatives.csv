@@ -1,0 +1,13 @@
+qid,question,group,lang
+n01,thời tiết Hà Nội hôm nay thế nào,off,vi
+n02,công thức nấu phở bò,off,vi
+n03,cách viết hàm đệ quy trong python,off,mixed
+n04,giải phương trình bậc hai x^2 - 5x + 6 = 0,off,vi
+n05,đội nào vô địch world cup 2022,off,mixed
+n06,tôi bị đau đầu nên uống thuốc gì,off,vi
+n07,how do I apply for a US student visa,off,en
+n08,cách phát âm đuôi ed trong tiếng Anh,gap,mixed
+n09,IELTS writing task 2 nên chia bố cục mấy đoạn,gap,mixed
+n10,đảo ngữ Never have I seen dùng khi nào,gap,mixed
+n11,câu giả định I suggest that he go dùng thế nào,gap,mixed
+n12,mỗi ngày nên học bao nhiêu từ mới,gap,vi

@@ -46,6 +46,12 @@ class Settings(BaseSettings):
     # (vd 365 ngay) ma khong phai sua ma nguon mo hinh.
     fsrs_max_interval: int = Field(default=36500, ge=1, le=36500)
 
+    # Nap mo hinh embedding (WSEA-111) luc khoi dong. Tat trong pytest de khong nap torch.
+    embedder_enabled: bool = True
+    # Dockerfile bat true vi mo hinh da nuong vao image -> khong goi Hub luc khoi dong.
+    # KHONG dung HF_HUB_OFFLINE toan cuc: load_fsrs van can tai params.json tu Hub.
+    embedder_local_files_only: bool = False
+
     # Token Hugging Face - repo trong so la private nen bat buoc khi source=hub
     hf_token: SecretStr | None = None
 

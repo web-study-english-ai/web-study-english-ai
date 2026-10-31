@@ -51,11 +51,14 @@ class Embedder:
 
     `model` chi dung de truyen mo hinh gia trong test; binh thuong de None va
     mo hinh that duoc nap o lan encode dau tien.
+    `local_files_only=True`: chi doc mo hinh tu cache (da nuong vao image Docker),
+    khong goi mang toi Hub.
     """
 
-    def __init__(self, model=None, batch_size: int = 32):
+    def __init__(self, model=None, batch_size: int = 32, local_files_only: bool = False):
         self._model = model
         self.batch_size = batch_size
+        self.local_files_only = local_files_only
 
     @property
     def model(self):
@@ -63,11 +66,15 @@ class Embedder:
             self._model = self._load_model()
         return self._model
 
-    @staticmethod
-    def _load_model():
+    def _load_model(self):
         from sentence_transformers import SentenceTransformer
 
-        return SentenceTransformer(MODEL_NAME, revision=MODEL_REVISION, device="cpu")
+        return SentenceTransformer(
+            MODEL_NAME,
+            revision=MODEL_REVISION,
+            device="cpu",
+            local_files_only=self.local_files_only,
+        )
 
     def encode_queries(self, texts: list[str]) -> np.ndarray:
         return self._encode(texts, QUERY_PREFIX)
