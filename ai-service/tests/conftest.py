@@ -13,3 +13,4 @@ TEST_API_KEY = "test-key-chi-dung-trong-pytest-0123456789abcdef"
 os.environ["INTERNAL_API_KEY"] = TEST_API_KEY
 os.environ["FSRS_WEIGHTS_SOURCE"] = "default"
 os.environ["ENVIRONMENT"] = "test"
+os.environ["EMBEDDER_ENABLED"] = "false"

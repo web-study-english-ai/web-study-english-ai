@@ -15,16 +15,20 @@ async def health(request: Request, response: Response) -> HealthResponse:
     Nap mo hinh that bai -> HTTP 503 kem status="degraded". Tra 200 luc do la
     noi doi voi health check: HF Spaces va GitHub Actions se tuong dich vu on
     trong khi /predict-retention dang tra 503 cho moi request.
+
+    Chi FSRS quyet dinh degraded. Embedder hong thi /assistant/embed tra 503 va
+    backend fallback, con luong on tap van chay -> /health van 200.
     """
     models = request.app.state.models
     loaded = [name for name, m in models.items() if m is not None]
     meta = request.app.state.model_meta
 
-    if not loaded:
+    degraded = models.get("fsrs") is None
+    if degraded:
         response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
 
     return HealthResponse(
-        status="ok" if loaded else "degraded",
+        status="degraded" if degraded else "ok",
         service=settings.app_name,
         version=settings.app_version,
         environment=settings.environment,

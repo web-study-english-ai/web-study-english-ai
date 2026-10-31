@@ -46,6 +46,9 @@ class Settings(BaseSettings):
     # (vd 365 ngay) ma khong phai sua ma nguon mo hinh.
     fsrs_max_interval: int = Field(default=36500, ge=1, le=36500)
 
+    # Nap mo hinh embedding (WSEA-111) luc khoi dong. Tat trong pytest de khong nap torch.
+    embedder_enabled: bool = True
+
     # Token Hugging Face - repo trong so la private nen bat buoc khi source=hub
     hf_token: SecretStr | None = None
 

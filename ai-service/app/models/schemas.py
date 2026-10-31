@@ -94,6 +94,20 @@ class VisionResponse(BaseModel):
     labels: list[RecognizedLabel]
 
 
+class EmbedRequest(BaseModel):
+    # Bo khoang trang hai dau TRUOC khi kiem do dai: chuoi chi co khoang trang -> 422.
+    model_config = ConfigDict(extra="forbid", allow_inf_nan=False, str_strip_whitespace=True)
+
+    text: str = Field(min_length=1, max_length=1000)
+
+
+class EmbedResponse(BaseModel):
+    embedding: list[float]
+    model: str
+    revision: str
+    dim: int
+
+
 class AskRequest(BaseModel):
     model_config = STRICT_INPUT
 
