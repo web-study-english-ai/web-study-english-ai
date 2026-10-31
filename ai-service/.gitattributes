@@ -1,0 +1,4 @@
+# Du lieu kho tri thuc va bo cau danh gia: luon LF tren moi may (WSEA-111).
+# manifest va bao cao danh gia ghi sha256 cua cac file nay; CRLF tren Windows lam lech ma bam.
+kb/*.jsonl text eol=lf
+kb/*.csv text eol=lf

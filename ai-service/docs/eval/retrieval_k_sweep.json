@@ -1,0 +1,555 @@
+{
+  "task": "WSEA-111",
+  "created_at": "2026-10-31T11:57:24+00:00",
+  "model": "intfloat/multilingual-e5-small",
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "dim": 384,
+  "query_prefix": "query: ",
+  "passage_prefix": "passage: ",
+  "passage_vectors": "npz",
+  "manifest_created_at": "2026-10-30T18:48:42+00:00",
+  "distance": "1 - cosine (= toán tử <=> của pgvector)",
+  "files": {
+    "kb/eval_questions.csv": "441971f52986516d624e33ec2dc8ed91fa3525c1948427a7292a991a0346798a",
+    "kb/eval_negatives.csv": "ca2eaad514d3b77e991b3316669f68365f2d4eb290cc2d3f4111ca34b61f4192"
+  },
+  "n_chunks": 100,
+  "positives": {
+    "by_lang": {
+      "en": 6,
+      "mixed": 13,
+      "vi": 12
+    },
+    "metrics": {
+      "overall": {
+        "n": 31,
+        "hit@1": 0.6129032258064516,
+        "hit@3": 0.6451612903225806,
+        "hit@5": 0.8387096774193549,
+        "hit@8": 0.8709677419354839,
+        "hit@10": 0.8709677419354839,
+        "hit@20": 0.9032258064516129,
+        "recall@1": 0.5645161290322581,
+        "recall@3": 0.6451612903225806,
+        "recall@5": 0.8387096774193549,
+        "recall@8": 0.8709677419354839,
+        "recall@10": 0.8709677419354839,
+        "recall@20": 0.9032258064516129,
+        "mrr@20": 0.6807071960297766
+      },
+      "by_lang": {
+        "en": {
+          "n": 6,
+          "hit@1": 0.3333333333333333,
+          "hit@3": 0.3333333333333333,
+          "hit@5": 0.6666666666666666,
+          "hit@8": 0.6666666666666666,
+          "hit@10": 0.6666666666666666,
+          "hit@20": 0.6666666666666666,
+          "recall@1": 0.3333333333333333,
+          "recall@3": 0.3333333333333333,
+          "recall@5": 0.6666666666666666,
+          "recall@8": 0.6666666666666666,
+          "recall@10": 0.6666666666666666,
+          "recall@20": 0.6666666666666666,
+          "mrr@20": 0.39999999999999997
+        },
+        "mixed": {
+          "n": 13,
+          "hit@1": 0.7692307692307693,
+          "hit@3": 0.8461538461538461,
+          "hit@5": 0.9230769230769231,
+          "hit@8": 1.0,
+          "hit@10": 1.0,
+          "hit@20": 1.0,
+          "recall@1": 0.7307692307692307,
+          "recall@3": 0.8461538461538461,
+          "recall@5": 0.9230769230769231,
+          "recall@8": 1.0,
+          "recall@10": 1.0,
+          "recall@20": 1.0,
+          "mrr@20": 0.8365384615384616
+        },
+        "vi": {
+          "n": 12,
+          "hit@1": 0.5833333333333334,
+          "hit@3": 0.5833333333333334,
+          "hit@5": 0.8333333333333334,
+          "hit@8": 0.8333333333333334,
+          "hit@10": 0.8333333333333334,
+          "hit@20": 0.9166666666666666,
+          "recall@1": 0.5,
+          "recall@3": 0.5833333333333334,
+          "recall@5": 0.8333333333333334,
+          "recall@8": 0.8333333333333334,
+          "recall@10": 0.8333333333333334,
+          "recall@20": 0.9166666666666666,
+          "mrr@20": 0.6522435897435898
+        }
+      }
+    },
+    "hard": [
+      {
+        "qid": "q02",
+        "lang": "vi",
+        "question": "khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",
+        "gold": [
+          "gram_006"
+        ],
+        "first_gold_rank": 31,
+        "gold_distance": 0.1626,
+        "top3": [
+          {
+            "id": "gram_064",
+            "distance": 0.1336
+          },
+          {
+            "id": "gram_070",
+            "distance": 0.1413
+          },
+          {
+            "id": "gram_003",
+            "distance": 0.1434
+          }
+        ]
+      },
+      {
+        "qid": "q07",
+        "lang": "vi",
+        "question": "muốn nói hồi nhỏ tôi hay đi câu cá nhưng giờ không còn nữa thì dùng cấu trúc gì",
+        "gold": [
+          "gram_021"
+        ],
+        "first_gold_rank": 4,
+        "gold_distance": 0.128,
+        "top3": [
+          {
+            "id": "gram_001",
+            "distance": 0.1179
+          },
+          {
+            "id": "gram_008",
+            "distance": 0.1236
+          },
+          {
+            "id": "gram_057",
+            "distance": 0.128
+          }
+        ]
+      },
+      {
+        "qid": "q08",
+        "lang": "en",
+        "question": "Why is 'I have seen him yesterday' wrong?",
+        "gold": [
+          "gram_015"
+        ],
+        "first_gold_rank": 31,
+        "gold_distance": 0.2098,
+        "top3": [
+          {
+            "id": "gram_036",
+            "distance": 0.1896
+          },
+          {
+            "id": "gram_017",
+            "distance": 0.1915
+          },
+          {
+            "id": "gram_012",
+            "distance": 0.1933
+          }
+        ]
+      },
+      {
+        "qid": "q09",
+        "lang": "vi",
+        "question": "vì sao có những danh từ không thêm s và không đi với a được",
+        "gold": [
+          "gram_023"
+        ],
+        "first_gold_rank": 4,
+        "gold_distance": 0.134,
+        "top3": [
+          {
+            "id": "gram_026",
+            "distance": 0.1237
+          },
+          {
+            "id": "gram_025",
+            "distance": 0.1302
+          },
+          {
+            "id": "gram_029",
+            "distance": 0.133
+          }
+        ]
+      },
+      {
+        "qid": "q14",
+        "lang": "vi",
+        "question": "nói đáng lẽ ra hôm qua tôi nên học bài thì viết thế nào",
+        "gold": [
+          "gram_036"
+        ],
+        "first_gold_rank": 13,
+        "gold_distance": 0.1565,
+        "top3": [
+          {
+            "id": "gram_026",
+            "distance": 0.1428
+          },
+          {
+            "id": "gram_039",
+            "distance": 0.1467
+          },
+          {
+            "id": "gram_056",
+            "distance": 0.149
+          }
+        ]
+      },
+      {
+        "qid": "q19",
+        "lang": "en",
+        "question": "Where do I put enough, before or after an adjective?",
+        "gold": [
+          "gram_049"
+        ],
+        "first_gold_rank": 5,
+        "gold_distance": 0.177,
+        "top3": [
+          {
+            "id": "gram_021",
+            "distance": 0.1708
+          },
+          {
+            "id": "gram_017",
+            "distance": 0.171
+          },
+          {
+            "id": "gram_014",
+            "distance": 0.1766
+          }
+        ]
+      },
+      {
+        "qid": "q22",
+        "lang": "en",
+        "question": "When do I need commas around a which clause?",
+        "gold": [
+          "gram_061"
+        ],
+        "first_gold_rank": 28,
+        "gold_distance": 0.1992,
+        "top3": [
+          {
+            "id": "gram_057",
+            "distance": 0.181
+          },
+          {
+            "id": "gram_094",
+            "distance": 0.1822
+          },
+          {
+            "id": "gram_069",
+            "distance": 0.1824
+          }
+        ]
+      },
+      {
+        "qid": "q23",
+        "lang": "mixed",
+        "question": "stop smoking với stop to smoke khác nhau chỗ nào",
+        "gold": [
+          "gram_065"
+        ],
+        "first_gold_rank": 8,
+        "gold_distance": 0.1576,
+        "top3": [
+          {
+            "id": "gram_033",
+            "distance": 0.1406
+          },
+          {
+            "id": "gram_064",
+            "distance": 0.1478
+          },
+          {
+            "id": "gram_037",
+            "distance": 0.148
+          }
+        ]
+      },
+      {
+        "qid": "q24",
+        "lang": "mixed",
+        "question": "look forward to meet hay look forward to meeting mới đúng",
+        "gold": [
+          "gram_066"
+        ],
+        "first_gold_rank": 4,
+        "gold_distance": 0.1342,
+        "top3": [
+          {
+            "id": "gram_014",
+            "distance": 0.1272
+          },
+          {
+            "id": "gram_017",
+            "distance": 0.1315
+          },
+          {
+            "id": "gram_005",
+            "distance": 0.1323
+          }
+        ]
+      },
+      {
+        "qid": "q25",
+        "lang": "vi",
+        "question": "câu hỏi ngắn ở cuối câu để xác nhận, kiểu phải không, thì đặt thế nào",
+        "gold": [
+          "gram_070"
+        ],
+        "first_gold_rank": 4,
+        "gold_distance": 0.1331,
+        "top3": [
+          {
+            "id": "gram_069",
+            "distance": 0.1228
+          },
+          {
+            "id": "gram_057",
+            "distance": 0.1267
+          },
+          {
+            "id": "gram_068",
+            "distance": 0.1289
+          }
+        ]
+      },
+      {
+        "qid": "q27",
+        "lang": "en",
+        "question": "Can I say 'He said me the truth'?",
+        "gold": [
+          "gram_077"
+        ],
+        "first_gold_rank": 5,
+        "gold_distance": 0.2134,
+        "top3": [
+          {
+            "id": "gram_059",
+            "distance": 0.199
+          },
+          {
+            "id": "gram_056",
+            "distance": 0.2062
+          },
+          {
+            "id": "gram_058",
+            "distance": 0.2097
+          }
+        ]
+      }
+    ]
+  },
+  "negatives": {
+    "n": 12,
+    "by_group": {
+      "off": 7,
+      "gap": 5
+    },
+    "top1": [
+      {
+        "qid": "n01",
+        "group": "off",
+        "lang": "vi",
+        "question": "thời tiết Hà Nội hôm nay thế nào",
+        "id": "gram_002",
+        "distance": 0.194
+      },
+      {
+        "qid": "n02",
+        "group": "off",
+        "lang": "vi",
+        "question": "công thức nấu phở bò",
+        "id": "gram_012",
+        "distance": 0.1818
+      },
+      {
+        "qid": "n03",
+        "group": "off",
+        "lang": "mixed",
+        "question": "cách viết hàm đệ quy trong python",
+        "id": "gram_012",
+        "distance": 0.1539
+      },
+      {
+        "qid": "n04",
+        "group": "off",
+        "lang": "vi",
+        "question": "giải phương trình bậc hai x^2 - 5x + 6 = 0",
+        "id": "gram_030",
+        "distance": 0.1682
+      },
+      {
+        "qid": "n05",
+        "group": "off",
+        "lang": "mixed",
+        "question": "đội nào vô địch world cup 2022",
+        "id": "gram_086",
+        "distance": 0.2313
+      },
+      {
+        "qid": "n06",
+        "group": "off",
+        "lang": "vi",
+        "question": "tôi bị đau đầu nên uống thuốc gì",
+        "id": "gram_034",
+        "distance": 0.2003
+      },
+      {
+        "qid": "n07",
+        "group": "off",
+        "lang": "en",
+        "question": "how do I apply for a US student visa",
+        "id": "gram_050",
+        "distance": 0.2254
+      },
+      {
+        "qid": "n08",
+        "group": "gap",
+        "lang": "mixed",
+        "question": "cách phát âm đuôi ed trong tiếng Anh",
+        "id": "gram_070",
+        "distance": 0.12
+      },
+      {
+        "qid": "n09",
+        "group": "gap",
+        "lang": "mixed",
+        "question": "IELTS writing task 2 nên chia bố cục mấy đoạn",
+        "id": "gram_012",
+        "distance": 0.1552
+      },
+      {
+        "qid": "n10",
+        "group": "gap",
+        "lang": "mixed",
+        "question": "đảo ngữ Never have I seen dùng khi nào",
+        "id": "gram_013",
+        "distance": 0.1454
+      },
+      {
+        "qid": "n11",
+        "group": "gap",
+        "lang": "mixed",
+        "question": "câu giả định I suggest that he go dùng thế nào",
+        "id": "gram_059",
+        "distance": 0.1217
+      },
+      {
+        "qid": "n12",
+        "group": "gap",
+        "lang": "vi",
+        "question": "mỗi ngày nên học bao nhiêu từ mới",
+        "id": "gram_026",
+        "distance": 0.1403
+      }
+    ]
+  },
+  "distance_top1": {
+    "dương": {
+      "n": 31,
+      "min": 0.0833,
+      "p50": 0.1272,
+      "p90": 0.173,
+      "max": 0.199
+    },
+    "âm off": {
+      "n": 7,
+      "min": 0.1539,
+      "p50": 0.194,
+      "p90": 0.2277,
+      "max": 0.2313
+    },
+    "âm gap": {
+      "n": 5,
+      "min": 0.12,
+      "p50": 0.1403,
+      "p90": 0.1513,
+      "max": 0.1552
+    }
+  },
+  "thresholds": [
+    {
+      "threshold": 0.14,
+      "pos_kept": 0.7096774193548387,
+      "off_blocked": 1.0,
+      "gap_blocked": 0.6
+    },
+    {
+      "threshold": 0.15,
+      "pos_kept": 0.8387096774193549,
+      "off_blocked": 1.0,
+      "gap_blocked": 0.2
+    },
+    {
+      "threshold": 0.16,
+      "pos_kept": 0.8387096774193549,
+      "off_blocked": 0.8571428571428571,
+      "gap_blocked": 0.0
+    },
+    {
+      "threshold": 0.17,
+      "pos_kept": 0.8387096774193549,
+      "off_blocked": 0.7142857142857143,
+      "gap_blocked": 0.0
+    },
+    {
+      "threshold": 0.18,
+      "pos_kept": 0.9032258064516129,
+      "off_blocked": 0.7142857142857143,
+      "gap_blocked": 0.0
+    },
+    {
+      "threshold": 0.19,
+      "pos_kept": 0.967741935483871,
+      "off_blocked": 0.5714285714285714,
+      "gap_blocked": 0.0
+    },
+    {
+      "threshold": 0.2,
+      "pos_kept": 1.0,
+      "off_blocked": 0.42857142857142855,
+      "gap_blocked": 0.0
+    },
+    {
+      "threshold": 0.21,
+      "pos_kept": 1.0,
+      "off_blocked": 0.2857142857142857,
+      "gap_blocked": 0.0
+    },
+    {
+      "threshold": 0.22,
+      "pos_kept": 1.0,
+      "off_blocked": 0.2857142857142857,
+      "gap_blocked": 0.0
+    }
+  ],
+  "threshold_rule": "chặn khi distance top-1 > t",
+  "db": {
+    "target": "aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres",
+    "n_questions": 43,
+    "top1_match_rate": 1.0,
+    "order_match_rate": 1.0,
+    "max_abs_distance_diff": 3.2243992512115405e-07,
+    "sql_ms": {
+      "p50": 48.68,
+      "max": 140.82
+    },
+    "mismatches": []
+  }
+}
