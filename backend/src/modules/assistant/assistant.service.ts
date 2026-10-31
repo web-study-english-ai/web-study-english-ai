@@ -382,13 +382,16 @@ export class AssistantService implements OnModuleInit, OnModuleDestroy {
         this.traTuChinhXac(cauHoiGoc, tuDangHoc?.term),
         typeof this.prisma.$queryRaw === 'function'
           ? this.prisma.$queryRaw<DongWordVectorRaw[]>`
-              SELECT w.term, w.pos::text AS pos, w.meaning_vi, w.example_en,
-                     (we.embedding <=> ${chuoiVector}::vector) AS distance
-              FROM word_embeddings we
-              JOIN words w ON w.id = we.word_id
-              WHERE we.model = ${modelEmbed}
-              ORDER BY we.embedding <=> ${chuoiVector}::vector
-              LIMIT 3
+              SELECT w.term, w.pos::text AS pos, w.meaning_vi, w.example_en, t.distance
+              FROM (
+                SELECT word_id, (embedding <=> ${chuoiVector}::vector) AS distance
+                FROM word_embeddings
+                WHERE model = ${modelEmbed}
+                ORDER BY embedding <=> ${chuoiVector}::vector
+                LIMIT 3
+              ) t
+              JOIN words w ON w.id = t.word_id
+              ORDER BY t.distance
             `
           : Promise.resolve([] as DongWordVectorRaw[]),
       ]);

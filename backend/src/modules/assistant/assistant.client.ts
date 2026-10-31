@@ -92,7 +92,8 @@ interface RawAiResponse {
 @Injectable()
 export class AssistantClient implements OnModuleInit {
   private readonly logger = new Logger(AssistantClient.name);
-  private hongLuc: number | null = null;
+  private hongLucEmbed: number | null = null;
+  private hongLucAsk: number | null = null;
 
   constructor(
     private readonly config: ConfigService,
@@ -181,7 +182,9 @@ export class AssistantClient implements OnModuleInit {
     if (!vanBan) return null;
     if (opts.signal?.aborted) return null;
     if (!this.daCauHinh) return null;
-    if (this.hongLuc !== null && Date.now() - this.hongLuc < NGUNG_SAU_LOI_MS) return null;
+    if (this.hongLucEmbed !== null && Date.now() - this.hongLucEmbed < NGUNG_SAU_LOI_MS) {
+      return null;
+    }
 
     const url = `${this.config.get<string>('AI_SERVICE_URL')}/assistant/embed`;
     const timeoutMs = opts.timeoutMs ?? this.timeoutEmbedMs;
@@ -211,7 +214,7 @@ export class AssistantClient implements OnModuleInit {
 
         if (!res.ok) {
           this.logger.warn(`Dich vu embed tra ve ${res.status}`);
-          return this.danhDauHong();
+          return this.danhDauHongEmbed();
         }
 
         const data = (await res.json()) as RawEmbedResponse;
@@ -227,10 +230,10 @@ export class AssistantClient implements OnModuleInit {
           this.logger.warn(
             `Ket qua embed khong khop hop dong (dim=${String(data.dim)}, model=${String(data.model)}, mong doi dim=${SO_CHIEU_VECTOR_CHUAN}, model=${modelMongDoi})`,
           );
-          return this.danhDauHong();
+          return this.danhDauHongEmbed();
         }
 
-        this.khoiPhucNeuCan();
+        this.khoiPhucEmbedNeuCan();
         return {
           embedding: data.embedding,
           model: data.model,
@@ -245,11 +248,11 @@ export class AssistantClient implements OnModuleInit {
         this.logger.warn(
           `Khong goi duoc /assistant/embed: ${e instanceof Error ? e.message : 'loi la'}`,
         );
-        return this.danhDauHong();
+        return this.danhDauHongEmbed();
       }
     }
 
-    return this.danhDauHong();
+    return this.danhDauHongEmbed();
   }
 
   private choCoTinHieu(ms: number, signal?: AbortSignal): Promise<boolean> {
@@ -300,7 +303,7 @@ export class AssistantClient implements OnModuleInit {
   }
 
   private async thucHienHoiDon(question: string, opts: TuyChonHoi): Promise<PhanHoiTroLy | null> {
-    if (this.hongLuc !== null && Date.now() - this.hongLuc < NGUNG_SAU_LOI_MS) return null;
+    if (this.hongLucAsk !== null && Date.now() - this.hongLucAsk < NGUNG_SAU_LOI_MS) return null;
 
     const url = `${this.config.get<string>('AI_SERVICE_URL')}/assistant/ask`;
     const timeoutMs = opts.timeoutMs ?? this.timeoutNganMs;
@@ -398,7 +401,7 @@ export class AssistantClient implements OnModuleInit {
 
     if (opts.signal?.aborted) return null;
     if (!this.daCauHinh) return null;
-    if (this.hongLuc !== null && Date.now() - this.hongLuc < NGUNG_SAU_LOI_MS) return null;
+    if (this.hongLucAsk !== null && Date.now() - this.hongLucAsk < NGUNG_SAU_LOI_MS) return null;
 
     const url = `${this.config.get<string>('AI_SERVICE_URL')}/assistant/ask`;
     const timeoutMs = opts.timeoutMs ?? this.timeoutLuongDaiMs;
@@ -586,15 +589,27 @@ export class AssistantClient implements OnModuleInit {
     }
   }
 
+  private khoiPhucEmbedNeuCan(): void {
+    if (this.hongLucEmbed !== null) {
+      this.logger.log('Dich vu embed da tro lai');
+      this.hongLucEmbed = null;
+    }
+  }
+
+  private danhDauHongEmbed(): null {
+    this.hongLucEmbed = Date.now();
+    return null;
+  }
+
   private khoiPhucNeuCan(): void {
-    if (this.hongLuc !== null) {
+    if (this.hongLucAsk !== null) {
       this.logger.log('Dich vu tro ly da tro lai');
-      this.hongLuc = null;
+      this.hongLucAsk = null;
     }
   }
 
   private danhDauHong(): null {
-    this.hongLuc = Date.now();
+    this.hongLucAsk = Date.now();
     return null;
   }
 }
