@@ -512,13 +512,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-94 · Xây dựng chức năng truy hồi ngữ nghĩa
-6h · Ưu tiên: Highest · `ai/WSEA-94-...`
+### [x] WSEA-94 (Jira **WSEA-111**) · Xây dựng chức năng truy hồi ngữ nghĩa
+6h · Ưu tiên: Highest · `ai/WSEA-111-truy-hoi-ngu-nghia`
 
-- [ ] 1. Viết hàm chuyển câu hỏi thành vector
-- [ ] 2. Viết truy vấn tìm k đoạn gần nhất theo khoảng cách cosine
-- [ ] 3. Thử nghiệm với các giá trị k khác nhau
-- [ ] 4. Đánh giá sơ bộ chất lượng truy hồi trên tập câu hỏi mẫu
+- [x] 1. Viết hàm chuyển câu hỏi thành vector
+- [x] 2. Viết truy vấn tìm k đoạn gần nhất theo khoảng cách cosine
+- [x] 3. Thử nghiệm với các giá trị k khác nhau
+- [x] 4. Đánh giá sơ bộ chất lượng truy hồi trên tập câu hỏi mẫu
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 

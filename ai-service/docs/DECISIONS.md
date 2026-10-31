@@ -205,3 +205,49 @@ Mỗi mục 5 dòng là đủ. Ghi ngay lúc quyết định, đừng để cu�
 - **Phát hiện**: viết `JOIN words` rồi mới `LIMIT` khi tra từ vựng có lúc chậm (p50 2–13 ms, đỉnh 80 ms); lấy top-k trong truy vấn con rồi mới JOIN ổn định p50 0,89 ms, tối đa 1,2 ms → hợp đồng v0.3 dùng dạng truy vấn con.
 - **Đánh đổi đã chấp nhận**: mỗi môi trường phải chạy script nạp riêng, và phải làm TRƯỚC khi deploy backend dùng cột `embedding_model`.
 - **Sẽ xem lại nếu**: kho tri thức lên hàng nghìn đoạn, hoặc độ khớp ANN thấp làm giảm chất lượng (tăng `hnsw.ef_search`).
+
+### 2026-10-31 · WSEA-111 · Truy hồi ngữ nghĩa
+
+Số liệu truy hồi lấy từ `scripts/eval_retrieval.py` → `docs/eval/retrieval_k_sweep.json` (vector đoạn đọc từ `.npz` đã nạp DB, 31 câu dương `kb/eval_questions.csv`, 12 câu âm `kb/eval_negatives.csv`, distance = 1 − cosine = toán tử `<=>`). Đã đối chiếu với SQL thật trên staging (`eval_retrieval.py --db`, 2026-10-31 18h58): 43 câu (31 dương + 12 âm), top-1 SQL khớp numpy 1,00, nguyên thứ tự top-8 khớp 1,00, |Δdistance| max 0,000000 → số hit@k ở dưới phản ánh đúng hệ thống đang chạy. 48,68 ms (p50, max 140,82 ms) là thời gian khứ hồi từ laptop qua Session pooler, gồm mạng VN→Singapore, không phải thời gian truy vấn; phía server < 1 ms (`docs/kb/vector_bench.json`).
+
+#### a. `/assistant/embed`: nạp e5-small một lần lúc khởi động, mã hoá trong threadpool, `/health` chỉ phụ thuộc FSRS
+
+- **Bối cảnh**: backend cần vector câu hỏi để chạy pgvector (hợp đồng v0.3). Dịch vụ đang phục vụ `/predict-retention`, là đường không được cắt (MK-3).
+- **Quyết định**: tạo `Embedder` trong `lifespan` và encode thử `"warmup"` để ép nạp mô hình ngay khi khởi động; lỗi thì `logger.exception`, `embedder = None`, dịch vụ vẫn lên (giống `load_fsrs`). Endpoint gọi `encode_queries` qua `run_in_threadpool`. `/health` trả 503 + `degraded` **chỉ khi thiếu `fsrs`**; `models` liệt kê mọi mô hình đã nạp.
+- **Lý do**: nạp lười ở request đầu sẽ vượt timeout 5 s của backend. Encode chạy CPU nặng; để trên event loop thì chặn mọi request khác — đo: `/predict-retention` vẫn trả 200 trong 75 ms khi 8 request embed dài chạy song song. Dự báo quên là đường KHÔNG CẮT; embedder hỏng thì chính `/assistant/embed` trả 503 và backend fallback, không lý do gì để job ping và smoke test coi cả dịch vụ là hỏng.
+- **Hệ quả**: `/health` có thể trả 200 với `models: ["fsrs"]` khi embedder hỏng → muốn biết trợ lý có chạy không phải xem `models` chứa `"embedder"`. pytest đặt `EMBEDDER_ENABLED=false` để không nạp torch; test dùng mô hình giả.
+
+#### b. Nướng mô hình vào image Docker, chỉ embedder đọc cache cục bộ
+
+- **Bối cảnh**: Space khởi động lại khi deploy, sửa Settings hoặc HF bảo trì; tải mô hình từ Hub mỗi lần khởi động thì chậm và phụ thuộc mạng.
+- **Quyết định**: `snapshot_download` lúc build, revision ghim lấy từ `app/services/embedder.py` (một nguồn sự thật, không chép vào Dockerfile); lớp tải mô hình chỉ phụ thuộc 3 file `app/__init__.py`, `app/services/__init__.py`, `app/services/embedder.py`; tải bằng `appuser`, không `chown -R`. Đặt `EMBEDDER_LOCAL_FILES_ONLY=true`; **không** dùng `HF_HUB_OFFLINE` toàn cục. Ghim `sentence-transformers==6.2.0`, `transformers==5.22.0`, `tokenizers==0.23.3` = đúng bản đã sinh vector nạp DB.
+- **Lý do**: `HF_HUB_OFFLINE` chặn cả `load_fsrs`, vốn tải `params.json` từ Hub lúc khởi động. Đổi bản thư viện có thể làm vector lúc hỏi lệch vector đã lưu. `transformers` 5.22.0 cần Python ≥ 3.11.0 → không được hạ Python của image (đang `python:3.11-slim`).
+- **Hệ quả** (đo Docker `--cpus=2 -m 2g`): image 2,81 GB (trước 1,54 GB; lớp mô hình 494 MB), khởi động 14,4 s, nạp embedder 6,0 s, RAM nghỉ 710 MiB. Chạy `--network none` vẫn có embedder. Đổi mô hình hoặc revision phải sửa `embedder.py`, build lại image VÀ sinh lại toàn bộ vector.
+
+#### c. Giữ `AI_ASSISTANT_TOP_K = 8`
+
+- **Bối cảnh**: hợp đồng v0.3 cho backend lấy top-8 đoạn; cần số đo để giữ hay đổi.
+- **Quyết định**: giữ k = 8 cho truy vấn SQL. Khi chưa có rerank, prompt nên dùng top-5 chứ không phải top-3.
+- **Lý do**: hit@k với k = 1/3/5/8/10/20 là 0,613 / 0,645 / 0,839 / 0,871 / 0,871 / 0,903, MRR@20 0,681 (31 câu); 8 → 10 không tăng. Theo ngôn ngữ, hit@8: mixed 1,00 (n=13), vi 0,833 (n=12), en 0,667 (n=6). Nhiều gold nằm ở hạng 4–5 (6/31 câu: q07, q09, q24, q25 hạng 4; q19, q27 hạng 5) → từ top-3 lên top-5 tăng hit từ 0,645 lên 0,839.
+- **Hệ quả**: đưa 5 đoạn vào prompt thì ngữ cảnh dài hơn top-3. Câu hỏi tiếng Anh vẫn yếu (en hit@20 0,667).
+
+#### d. Không dùng ngưỡng distance cứng để kết luận "kho không có tài liệu"
+
+- **Bối cảnh**: hợp đồng giao cho dịch vụ AI quyết định "không đủ ngữ cảnh". Cần biết một ngưỡng distance top-1 có tách được câu không có tài liệu hay không.
+- **Quyết định**: việc từ chối giao cho prompt (LLM chỉ dùng ngữ cảnh; không có thì nói chưa có và `source_ids` rỗng) + rerank ở task sau. Có thể chặn sớm khi distance top-1 > 0,22 (rõ ngoài lĩnh vực).
+- **Lý do**: distance top-1 câu dương min 0,083 / p50 0,127 / p90 0,173 / max 0,199; câu âm `gap` (tiếng Anh nhưng kho chưa có) 0,120–0,155, nằm trong vùng câu dương; câu âm `off` 0,154–0,231. Ngưỡng 0,15 giữ 84% câu dương, chặn 100% câu off nhưng chỉ 20% câu gap. Ở 0,22: giữ 100% câu dương, chặn 29% câu off (n05, n07). Bằng chứng trên staging 31/10: câu "thời tiết Hà Nội hôm nay thế nào" vẫn nhận 3 nguồn gram_002 / gram_005 / gram_037.
+- **Hệ quả**: chất lượng từ chối phụ thuộc prompt và rerank, phải chấm trong bộ đánh giá độ trung thực. **Hạn chế**: 31 câu dương do Claude soạn, Hiếu duyệt; 12 câu âm viết trước khi chạy, không sửa sau khi xem kết quả; bộ nhỏ nên mỗi câu dương ≈ 3 điểm phần trăm. Số chính thức là bộ 60 câu của Phúc (WSEA-124).
+
+#### e. Giữ nguyên nhãn hai câu thất bại q02 và q08
+
+- **Bối cảnh**: hai câu có gold ở hạng 31 trên 100 đoạn: q02 (tiếng Việt diễn đạt vòng vo "chia động từ đuôi ing cho việc đang diễn ra…", gold gram_006, top-1 gram_064) và q08 (câu tiếng Anh "Why is 'I have seen him yesterday' wrong?", gold gram_015, top-1 gram_036).
+- **Quyết định**: không sửa câu hỏi hay gold sau khi xem kết quả.
+- **Lý do**: sửa nhãn cho khớp kết quả là làm đẹp số liệu. Hai câu này cho thấy giới hạn của truy hồi chỉ dựa vào vector: câu diễn đạt vòng vo, và câu tiếng Anh hỏi kho viết tiếng Việt.
+- **Hệ quả**: là lý do cần rerank / hybrid thêm từ khoá ở task sau; dùng lại q02, q08 để đo hiệu quả rerank.
+
+#### f. `.gitattributes` ép LF cho `kb/*.jsonl` và `kb/*.csv`
+
+- **Bối cảnh**: `embedding_manifest.json` và `retrieval_k_sweep.json` ghi sha256 các file này. Trên Windows `core.autocrlf=true` checkout ra CRLF → `eval_retrieval.py` (và cả `load_vectors.py`) báo sha256 của `grammar_chunks.jsonl` lệch manifest dù nội dung không đổi.
+- **Quyết định**: `ai-service/.gitattributes`: `kb/*.jsonl text eol=lf`, `kb/*.csv text eol=lf`.
+- **Lý do**: mã băm phải giống nhau trên mọi máy; sửa ở git thì không phải đổi script hay manifest.
+- **Hệ quả**: máy đã checkout trước đó cần checkout lại các file này một lần để nhận LF.
