@@ -203,5 +203,28 @@ describe('AssistantClient (Hợp đồng API v0.3)', () => {
       expect(lan2?.answer).toBe('Câu 2 OK');
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
+
+    it('khi /assistant/ask bị lỗi thì chỉ ngắt mạch Ask, không chặn /assistant/embed ở câu tiếp theo', async () => {
+      const vector384 = Array.from({ length: SO_CHIEU_VECTOR_CHUAN }, () => 0.01);
+      // Lượt 1: /assistant/ask trả về 503 -> bật mạch ngưng hongLucAsk
+      fetchMock.mockResolvedValueOnce({ ok: false, status: 503 });
+      const kqAsk = await client.hoi('Câu 1');
+      expect(kqAsk).toBeNull();
+
+      // Ngay lập tức gọi /assistant/embed cho Câu 2 -> vẫn phải gọi fetch bình thường
+      fetchMock.mockResolvedValueOnce({
+        ok: true,
+        status: 200,
+        json: () =>
+          Promise.resolve({
+            embedding: vector384,
+            model: MODEL_EMBED_MAC_DINH,
+            dim: 384,
+          }),
+      });
+      const kqEmbed = await client.nhungCauHoi('Câu 2');
+      expect(kqEmbed?.dim).toBe(384);
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
   });
 });
