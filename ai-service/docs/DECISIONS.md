@@ -165,11 +165,43 @@ Mỗi mục 5 dòng là đủ. Ghi ngay lúc quyết định, đừng để cu�
 
 ### 2026-10-29 — Kiến trúc dữ liệu chatbot: backend truy vấn pgvector, dịch vụ AI không giữ `DATABASE_URL`
 
-- **Trạng thái**: ĐỀ XUẤT — chờ Thạc Duy Anh và Bình xác nhận. Chưa sửa schema, chưa sửa code.
+- **Trạng thái**: ĐÃ CHỐT 2026-10-30 với Thạc Duy Anh. Migration `20261030155100_kb_vector_384_word_embeddings` (PR #103) đã áp lên staging 2026-10-30; giao diện ở `docs/API_CONTRACT.md` v0.3 (`POST /assistant/embed`, `POST /assistant/ask`).
 - **Bối cảnh**: một HF Space phục vụ cả staging lẫn production, trong khi mỗi môi trường có project Supabase riêng (`kb_chunks`, từ vựng). Nếu dịch vụ AI tự truy vấn cơ sở dữ liệu thì phải chọn một trong hai DB, hoặc giữ cả hai chuỗi kết nối rồi định tuyến theo từng request.
 - **Các phương án đã cân nhắc**: (a) dịch vụ AI giữ một `DATABASE_URL` và tự truy vấn pgvector · (b) dịch vụ AI giữ hai `DATABASE_URL`, chọn theo header môi trường · (c) dùng chung DB của backend: dịch vụ AI chỉ sinh vector, backend chạy truy vấn pgvector trên DB của môi trường mình.
-- **Chọn (đề xuất)**: (c).
+- **Chọn**: (c).
 - **Lý do**: Space không phân biệt môi trường. Không phải lưu khoá DB production trong Space, nên giảm chỗ có thể lộ bí mật. Mỗi môi trường tự nạp dữ liệu kho bằng script nên dữ liệu không lẫn giữa staging và production.
 - **Kéo theo**: `kb_chunks.embedding` đổi từ `vector(768)` sang `vector(384)` (số chiều của `multilingual-e5-small`); thêm bảng `word_embeddings` cho từ vựng; cần migration Prisma phía backend.
 - **Đánh đổi đã chấp nhận**: mỗi câu hỏi tốn thêm một lượt backend → AI để sinh vector rồi mới truy vấn. Logic truy hồi tách ra hai nơi; nếu dùng reranker thì nó phải nhận danh sách ứng viên từ backend.
 - **Sẽ xem lại nếu**: tách mỗi môi trường một Space riêng, hoặc độ trễ thêm vào làm vượt ngân sách 3 giây của backend.
+
+### 2026-10-30 — Mô hình vector `intfloat/multilingual-e5-small`, văn bản đoạn = `content` nguyên văn (Jira WSEA-110)
+
+- **Bối cảnh**: cần mô hình sinh vector đọc được câu hỏi tiếng Việt, tiếng Anh và câu trộn, chạy CPU trên Space. Cột `kb_chunks.embedding` lúc đầu là `vector(768)`.
+- **Các phương án đã cân nhắc**: `multilingual-e5-small` (384 chiều, 118M tham số) · `multilingual-e5-base` (768 chiều, 278M) · `paraphrase-multilingual-MiniLM-L12-v2` (384 chiều, chỉ đọc 128 token).
+- **Luật chọn, chốt TRƯỚC khi chạy**: giữ e5-small trừ khi e5-base hơn ≥ 0,10 Recall@5 và MRR cao hơn.
+- **Kết quả** (`scripts/compare_embedders.py`, 31 câu `kb/eval_questions.csv`, `docs/kb/embedder_comparison.json`): e5-small R@1 0,613 · R@5 0,839 · MRR@10 0,678 · 15 ms/câu · e5-base 0,548 · 0,839 · 0,671 · 39 ms/câu · MiniLM 0,581 · 0,774 · 0,637 (100/100 đoạn bị cắt ở 128 token).
+- **Chọn**: e5-small, ghim revision `614241f622f53c4eeff9890bdc4f31cfecc418b3`; tiền tố `query: ` / `passage: `; chuẩn hoá L2; văn bản đoạn là `content` nguyên văn. Cấu hình nằm duy nhất ở `app/services/embedder.py`, dùng chung cho script nạp và endpoint `/assistant/embed`.
+- **Lý do**: e5-base không vượt ngưỡng (bằng R@5, thấp hơn MRR) mà nặng gấp 2,4 và chậm gấp 2,6 lần. Chênh giữa các mô hình chỉ 1–2 câu trên 31, tức là mức nhiễu, nên quyết định theo luật đã chốt và chi phí chạy trên CPU.
+- **Thí nghiệm âm**: thêm tên chủ đề tiếng Anh vào đầu đoạn (để cứu câu hỏi tiếng Anh) làm R@5 giảm còn 0,806 (chủ đề) và 0,774 (chủ đề + khía cạnh) → không dùng.
+- **Đánh đổi đã chấp nhận**: câu hỏi tiếng Anh truy hồi yếu hơn (R@5 0,67 trên 6 câu) vì đoạn chủ yếu viết tiếng Việt. Khoảng cách cosine dồn trong dải hẹp (~0,08–0,21) nên ngưỡng "không đủ ngữ cảnh" phải hiệu chỉnh từ dữ liệu. Bộ 31 câu do Claude soạn từ tiêu đề dàn ý, Hiếu duyệt → số liệu có thể lạc quan; bộ 60 câu độc lập (đợt 8) là số chính thức.
+- **Sẽ xem lại nếu**: bộ 60 câu cho R@5 < 0,7, hoặc rerank không bù được câu hỏi tiếng Anh.
+
+### 2026-10-30 — Vector từ vựng: bảng riêng `word_embeddings`, văn bản `"{term} ({pos}): {meaning_vi}"` (Jira WSEA-110)
+
+- **Bối cảnh**: trợ lý cần tra ngược Việt→Anh ("biết ơn tiếng Anh là gì") trên 7.000 từ của bảng `words`.
+- **Các phương án đã cân nhắc**: trộn 7.000 từ vào `kb_chunks` · bảng riêng `word_embeddings(word_id → words.id)`; văn bản T1 `term (pos): meaning_vi` · T2 = T1 + câu ví dụ.
+- **Chọn**: bảng riêng (migration `20261030155100_kb_vector_384_word_embeddings`, Duy Anh, PR #103); T1; `term` chuẩn hoá `strip().lower()` giống seed backend (`emb.normalize_term`).
+- **Lý do**: trộn vào kho thì 7.000 dòng từ vựng lấn át 100 đoạn ngữ pháp và nhân bản dữ liệu `words`. T2 chỉ hơn 1/10 câu, làm hỏng câu khác và mã hoá chậm hơn 37%. Không chuẩn hoá thì `TRUE`/`FALSE` trong CSV (Excel viết hoa) không khớp `true`/`false` trong DB.
+- **Kết quả tra ngược 10 câu**: nguyên câu top-1 4/10, top-3 7/10; bỏ cụm khung ("tiếng Anh là gì", "dịch sang tiếng Anh"…) → 7/10, 8/10. Ba câu còn trượt (improve, angry, borrow) đều khớp nguyên văn một nghĩa trong `meaning_vi`.
+- **Đánh đổi đã chấp nhận**: một mình vector từ vựng chưa đủ tốt cho tra ngược.
+- **Sẽ xem lại nếu / việc tiếp**: task truy hồi: bóc cụm khung câu (bước phân loại ý định) → khớp chính xác cụm khoá với từng nghĩa trong `meaning_vi` → vector chỉ là đường dự phòng; thêm `vocab.match = "meaning"` vào hợp đồng.
+
+### 2026-10-31 — Nạp vector: mã hoá ra file một lần, nạp từng môi trường bằng script; SQL từ vựng lấy top-k trước rồi mới JOIN (Jira WSEA-110)
+
+- **Bối cảnh**: staging và production là hai project Supabase riêng; dịch vụ AI không giữ `DATABASE_URL` (mục 2026-10-29).
+- **Chọn**: `scripts/embed_kb.py` mã hoá một lần ra `data/embeddings/*.npz` + `docs/kb/embedding_manifest.json` (mô hình, revision, sha256 đầu vào và đầu ra). `scripts/load_vectors.py --env <môi trường>` kiểm sha256, manifest và schema (`vector(384)`), UPSERT trong một transaction, chạy lại không đổi kết quả, kiểm chéo top-3 SQL với numpy; production bắt buộc `--confirm-production`. Chuỗi kết nối chỉ lấy từ biến phiên `KB_DATABASE_URL` (Session pooler, cổng 5432).
+- **Kết quả staging 2026-10-31** (`docs/kb/load_report_staging.json`): `kb_chunks` 100/100, `word_embeddings` 7000/7000, kiểm chéo 3/3 khớp.
+- **Tốc độ** (`scripts/bench_vector_search.py`, `docs/kb/vector_bench.json`, `hnsw.ef_search` 40): `kb_chunks` 100 dòng → planner chọn Seq Scan, 0,5 ms phía server; đúng, chưa cần chỉ mục ở cỡ này. `word_embeddings` ~7.000 dòng → HNSW 0,93 ms so với tìm chính xác 12,95 ms (~14×), top-3 khớp 0,914 với tìm chính xác. Khứ hồi từ laptop ~51 ms là mạng VN → Singapore.
+- **Phát hiện**: viết `JOIN words` rồi mới `LIMIT` khi tra từ vựng có lúc chậm (p50 2–13 ms, đỉnh 80 ms); lấy top-k trong truy vấn con rồi mới JOIN ổn định p50 0,89 ms, tối đa 1,2 ms → hợp đồng v0.3 dùng dạng truy vấn con.
+- **Đánh đổi đã chấp nhận**: mỗi môi trường phải chạy script nạp riêng, và phải làm TRƯỚC khi deploy backend dùng cột `embedding_model`.
+- **Sẽ xem lại nếu**: kho tri thức lên hàng nghìn đoạn, hoặc độ khớp ANN thấp làm giảm chất lượng (tăng `hnsw.ef_search`).

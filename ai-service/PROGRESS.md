@@ -9,16 +9,16 @@
 
 ## 1. Trạng thái hiện tại
 
-- **Đợt hiện tại:** Đợt 7 theo lịch; phần AI của v1.0 trễ từ đợt 6
-- **Task vừa xong:** Jira **WSEA-97** — Tối ưu hiệu năng dịch vụ AI (file `TASKS.md` cũ ghi WSEA-80). Phần AI xong: đo từng bước + header `Server-Timing` (`dbb3fcd`), `scripts/bench_latency.py` (`88efbdb`), bản mới đã lên Space 22/10, số liệu mục 6.1.3, quyết định ở `docs/DECISIONS.md` mục 2026-10-22. **Chờ PR merge vào `develop`**
-- **Task kế tiếp:** Jira **WSEA-83** — Phối hợp kiểm thử tích hợp dịch vụ AI với backend; trong đó đo độ trễ từ backend trên Render (có và không keep-alive) và thời gian proxy HF giữ kết nối rảnh
-- **Nhánh:** `ai/WSEA-97-toi-uu-hieu-nang` (từ `develop` sau PR #75)
+- **Đợt hiện tại:** khoảng đợt 10 theo lịch; trợ lý (v1.1) đang trễ
+- **Task vừa xong:** Jira **WSEA-110** — Sinh vector ngữ nghĩa cho kho tri thức (TASKS.md ghi WSEA-93). Chọn `multilingual-e5-small` (DECISIONS 2026-10-30), nạp staging 100 đoạn + 7000 từ (2026-10-31), đo tốc độ (mục 6.3), hợp đồng API v0.3 trợ lý chốt với Duy Anh (mục 8). **Chờ PR merge**
+- **Task kế tiếp:** truy hồi ngữ nghĩa + endpoint `POST /assistant/embed`, `POST /assistant/ask` (đưa e5-small vào image Space, nạp lúc khởi động); tra từ vựng: bóc cụm khung câu + khớp `meaning_vi` trước, vector dự phòng
+- **Nhánh:** `ai/WSEA-110-sinh-vector-kho-tri-thuc`
 - **Việc dở dang cần làm tiếp:**
-  - Mở PR WSEA-97 vào `develop`, dán minh chứng Jira WSEA-97
-  - Jira WSEA-82 bước 7: backend staging gọi được AI (vấn đề #15), báo Bình đổi job ping sang `/health` của Space
-  - Sau WSEA-83: MK-3 → hợp đồng API v0.3 với Duy Anh (replay, cột `scheduler`, `elapsed_days`)
-- **Đang bị chặn bởi:** backend staging chưa gọi AI (vấn đề #15) — chờ Bình
-- **Cập nhật lần cuối:** 2026-10-23
+  - Minh chứng Jira WSEA-110 sau khi PR merge
+  - Release v1.1: kiểm production bằng SQL → `prisma migrate deploy` production → `load_vectors.py --env production --confirm-production` → RỒI MỚI deploy backend dùng `embedding_model`
+  - Báo backend sửa `TRUE`/`FALSE` thành `true`/`false` trong `backend/prisma/data/vocab_7000.csv`
+- **Đang bị chặn bởi:** không
+- **Cập nhật lần cuối:** 2026-10-31
 
 ## 2. Tiến độ theo mốc
 
@@ -31,7 +31,7 @@
 | v0.1 | 4 | Mô hình DSR đã huấn luyện, có số liệu so với SM-2 | ✅ | Trễ hạn, xong 2026-10-11 (WSEA-67). Tập test: DSR 0,3506 log-loss · SM-2 0,4015 · hằng số 0,3792 |
 | — | 5→7 | AI Service trên **HF Spaces**, `/predict-retention` gọi được từ backend | ⚠️ | Endpoint xong (WSEA-81). 15/10 chuyển sang Render, 19/10 quay lại HF Spaces gói PRO (16 GB đủ cho cả CLIP + e5). **20/10: Space đã chạy, smoke test 7/7; CHƯA tích hợp backend** (vấn đề #15) |
 | MK-3 / v1.0 | 6→7 | **Dự báo quên đúng trên production — SỐNG CÒN** | ⚠️ | Trễ theo WSEA-82. Trong lúc chờ, luồng ôn tập chạy bằng fallback `simple-scheduler.ts` |
-| — | 7 | Chunk + embedding + vector search chạy | ⬜ | |
+| — | 7 | Chunk + embedding + vector search chạy | 🔄 | Kho 100 đoạn (WSEA-100) · vector 100 đoạn + 7000 từ trên staging, HNSW (WSEA-110, 31/10). Còn truy hồi + endpoint |
 | — | 8 | Phân loại ý định + rerank đạt mục tiêu | ⬜ | |
 | v1.1 | 9 | Trợ lý RAG trên production | ⬜ | |
 | MK-4 / v1.2 | 10 | CLIP nhận diện ảnh; đủ 3 chức năng AI | ⬜ | |
@@ -216,6 +216,7 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 
 | Ngày | Cấu hình (chunk size, top-k, rerank?, intent?) | Recall@k | Độ trung thực (30 câu) | Acc. phân loại ý định | Latency TB | Ghi chú |
 |---|---|---|---|---|---|---|
+| 2026-10-30 | e5-small, đoạn = `content` nguyên văn, top-5, không rerank, không phân loại ý định — 31 câu Claude soạn, Hiếu duyệt | R@1 0,613 · R@5 0,839 · MRR 0,678 | — | — | mã hoá 15 ms/câu (CPU); SQL < 1 ms phía server | WSEA-110. e5-base R@5 0,839 / MRR 0,671; MiniLM 0,774 / 0,637. Tra ngược từ vựng 10 câu: 4/10 → 7/10 khi bỏ cụm khung |
 
 ## 7. Lỗi đã gặp và cách sửa
 
@@ -223,6 +224,8 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 
 | Ngày | Triệu chứng | Nguyên nhân | Cách sửa | Task |
 |---|---|---|---|---|
+| 2026-10-31 | `load_vectors.py` chỉ khớp 6998/7000 từ, thiếu `TRUE`, `FALSE` | `vocab_7000.csv` từng bị lưu lại bằng Excel → `true`/`false` thành `TRUE`/`FALSE`; seed backend lưu chữ thường | `emb.normalize_term` (strip + lower) dùng trong `embed_kb.py` và `load_vectors.py`; sinh lại, nạp lại → 7000/7000 | WSEA-110 |
+| 2026-10-31 | Sai host trong `KB_DATABASE_URL` → traceback `UnicodeEncodeError: 'idna' … label empty` | Dán nguyên chuỗi mẫu `aws-....pooler…` | Bắt `UnicodeError`/`OSError` khi kết nối, in một dòng hướng dẫn lấy Session pooler | WSEA-110 |
 | 2026-10-21 | `bench_latency.py` chế độ `new` trên máy local mất ~2 s mỗi request | `localhost` trên Windows phân giải ra `::1` (IPv6) trước, uvicorn chỉ nghe `127.0.0.1` → mỗi kết nối mới chờ IPv6 thất bại rồi mới sang IPv4 (đo: 2.035 ms so với 0,2 ms) | Đo cục bộ dùng `127.0.0.1`. URL mặc định của `bench_latency.py` là `127.0.0.1`, script in cảnh báo khi gặp `localhost`. `smoke_test.py` vẫn mặc định `localhost` | WSEA-97 |
 | 2026-09-28 | Mọi request có header khoá trả **500** thay vì 403/401 | Commit `a95872c` đổi `deps.py` sang gọi `.get_secret_value()` nhưng `config.py` vẫn khai `internal_api_key: str` → `AttributeError`. Không có test endpoint nào nên không ai phát hiện | Đổi sang `SecretStr` (`Field(min_length=32)`); thêm test ca "sai khoá → 401" để khoá lại | WSEA-81 |
 | 2026-09-28 | Gửi `NaN` trong JSON trả **500** thay vì 422 | FastAPI 0.115.6 nhét giá trị người dùng vào trường `input` của body lỗi; `NaN` không serialize được nên chính body lỗi làm văng 500 | Thêm `exception_handler` cho `RequestValidationError` trong `main.py`, chỉ trả `loc`/`msg`/`type`. Kèm `allow_inf_nan=False` ở schema | WSEA-81 |
@@ -234,6 +237,8 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 
 | Ngày | Endpoint | Thay đổi | Đã báo Duy Anh? | Commit |
 |---|---|---|---|---|
+| 2026-10-31 | SQL từ vựng (tham khảo) | Lấy top-k trong truy vấn con rồi mới JOIN `words` (ổn định < 1,2 ms) | ✅ 2026-10-31 | WSEA-110 |
+| 2026-10-30 | `POST /chat` → `POST /assistant/embed` + `POST /assistant/ask` | **v0.3**: AI chỉ sinh vector và sinh câu trả lời; backend chạy pgvector, gửi `contexts`/`vocab`/`history`; trả `source_ids`; SSE `delta` → khung cuối `{answer, source_ids}` → `[DONE]`; fallback kèm 3 nguồn | ✅ chốt 2026-10-30 | WSEA-110 |
 | 2026-09-28 | `POST /predict-retention` | Đường dẫn đổi từ `/predict/forgetting` (code cũ lệch hợp đồng) | ✅ 2026-10-09 | WSEA-81 |
 | 2026-09-28 | tất cả | Header đổi `X-Internal-Api-Key` → `x-api-key`; khoá sai `403` → `401` | ✅ 2026-10-09 | WSEA-81 |
 | 2026-09-28 | `POST /predict-retention` | **Bỏ `due_date`** — backend tự cộng ngày theo múi giờ người học | ✅ 2026-10-09 | WSEA-81 |
@@ -247,6 +252,14 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-10-31 · Đợt 10 (theo lịch) · WSEA-110 — Sinh vector và nạp pgvector
+
+- So sánh 3 mô hình trên 31 câu → chọn e5-small (R@5 0,839, MRR 0,678). Thêm tên chủ đề vào đoạn: kém hơn, bỏ.
+- `app/services/embedder.py` dùng chung; sinh 100 + 7000 vector; manifest có sha256.
+- Duy Anh: migration 384 + `word_embeddings` (PR #103), áp staging. Nạp 100/100 và 7000/7000 (sau khi sửa lỗi `TRUE`/`FALSE`), kiểm chéo SQL = numpy.
+- Đo: HNSW từ vựng 0,93 ms so với tìm chính xác 12,95 ms; kho 100 đoạn Seq Scan 0,5 ms. SQL từ vựng đổi sang dạng truy vấn con.
+- Hợp đồng v0.3 trợ lý chốt với Duy Anh (`/assistant/embed`, `/assistant/ask`).
 
 ### 2026-10-22 · Đợt 7 · WSEA-97 — Đo hiệu năng dịch vụ AI và quyết định tối ưu
 
