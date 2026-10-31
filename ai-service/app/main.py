@@ -29,7 +29,7 @@ def load_embedder() -> Embedder | None:
     """
     started = time.perf_counter()
     try:
-        embedder = Embedder()
+        embedder = Embedder(local_files_only=settings.embedder_local_files_only)
         embedder.encode_queries(["warmup"])
     except Exception:
         logger.exception("Nap mo hinh embedding that bai")
