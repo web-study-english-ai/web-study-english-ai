@@ -2,3 +2,4 @@
 # manifest va bao cao danh gia ghi sha256 cua cac file nay; CRLF tren Windows lam lech ma bam.
 kb/*.jsonl text eol=lf
 kb/*.csv text eol=lf
+kb/intent/*.csv text eol=lf
