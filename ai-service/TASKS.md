@@ -22,8 +22,16 @@
 > | WSEA-66 | **WSEA-83** | Phối hợp kiểm thử tích hợp dịch vụ AI |
 > | WSEA-67 | **WSEA-84** | Đệm xử lý sự cố kỹ thuật |
 > | WSEA-80 | **WSEA-97** | Tối ưu hiệu năng dịch vụ AI |
+> | WSEA-93 | **WSEA-110** | Sinh vector ngữ nghĩa và nạp vào cơ sở dữ liệu |
+> | WSEA-94 | **WSEA-111** | Xây dựng chức năng truy hồi ngữ nghĩa |
+> | WSEA-95 | **WSEA-112** | Hoàn thiện gán nhãn dữ liệu phân loại ý định |
+> | WSEA-108 | **WSEA-125** | Huấn luyện bộ phân loại ý định câu hỏi |
+> | WSEA-109 | **WSEA-126** | Tích hợp mô hình xếp hạng lại kết quả truy hồi |
+> | WSEA-110 | **WSEA-127** | Hoàn thiện pipeline truy hồi trong dịch vụ AI |
+> | WSEA-123 | **WSEA-140** | Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh |
+> | WSEA-124 | **WSEA-141** | Đánh giá chất lượng pipeline truy hồi |
 >
-> Các mã khác (WSEA-81 trở đi) chưa đối chiếu. **WSEA-81, 82, 83 trong file này là task khác** với Jira WSEA-81, 82, 83.
+> Các mã khác (WSEA-81 trở đi) chưa đối chiếu. **WSEA-110 và WSEA-125 trong file này cũng là task khác** với Jira cùng số (WSEA-110 trong file = pipeline = Jira WSEA-127; "WSEA-125 · Viết chương 4 báo cáo" trong file ≠ Jira WSEA-125). **WSEA-81, 82, 83 trong file này là task khác** với Jira WSEA-81, 82, 83.
 
 
 ---
@@ -562,13 +570,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 ## Đợt 8 · D22–D24 — Trợ lý phần 2
 
-### [ ] WSEA-108 · Huấn luyện bộ phân loại ý định câu hỏi
-7h · Ưu tiên: Highest · `ai/WSEA-108-...`
+### [x] WSEA-108 (Jira **WSEA-125**) · Huấn luyện bộ phân loại ý định câu hỏi
+7h · Ưu tiên: Highest · `ai/WSEA-125-phan-loai-y-dinh`
 
-- [ ] 1. Xây dựng đặc trưng đầu vào từ văn bản câu hỏi
-- [ ] 2. Huấn luyện mô hình phân loại trên tập đã gán nhãn
-- [ ] 3. Đánh giá độ chính xác và ma trận nhầm lẫn
-- [ ] 4. Tinh chỉnh và lưu mô hình cuối cùng
+- [x] 1. Xây dựng đặc trưng đầu vào từ văn bản câu hỏi — vector e5-small (cache `data/intent_vectors.npz`) và TF-IDF char_wb 2–5; `scripts/train_intent.py`
+- [x] 2. Huấn luyện mô hình phân loại trên tập đã gán nhãn — LogisticRegression, CV 5 gập seed 125 chỉ trên train; chọn e5, C = 3 (macro-F1 CV 0,7812); τ = 0,4
+- [x] 3. Đánh giá độ chính xác và ma trận nhầm lẫn — test 75 câu, 1 lần: accuracy 0,72, macro-F1 0,7079; `docs/eval/intent_report.json`
+- [x] 4. Tinh chỉnh và lưu mô hình cuối cùng — `app/resources/intent_e5_lr_v1.json` + `app/services/intent.py` (numpy), 75/75 khớp report; `tests/test_intent.py`, `tests/test_train_intent.py`
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -583,8 +591,8 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-109 · Tích hợp mô hình xếp hạng lại kết quả truy hồi
-6h · Ưu tiên: High · `ai/WSEA-109-...`
+### [ ] WSEA-109 (Jira **WSEA-126**) · Tích hợp mô hình xếp hạng lại kết quả truy hồi
+6h · Ưu tiên: High · `ai/WSEA-126-...`
 
 - [ ] 1. Tải và tích hợp mô hình cross-encoder
 - [ ] 2. Viết bước xếp hạng lại sau khi truy hồi thô
@@ -603,8 +611,8 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-110 · Hoàn thiện pipeline truy hồi trong dịch vụ AI
-5h · Ưu tiên: Highest · `ai/WSEA-110-...`
+### [ ] WSEA-110 (Jira **WSEA-127**) · Hoàn thiện pipeline truy hồi trong dịch vụ AI
+5h · Ưu tiên: Highest · `ai/WSEA-127-...`
 
 - [ ] 1. Ghép các bước: phân loại ý định, truy hồi, xếp hạng lại
 - [ ] 2. Viết endpoint trả về danh sách đoạn tri thức liên quan
@@ -628,8 +636,8 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 ## Đợt 9 · D25–D27 — Hoàn thiện trợ lý · v1.1
 
-### [ ] WSEA-123 · Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh
-7h · Ưu tiên: Highest · `ai/WSEA-123-...`
+### [ ] WSEA-123 (Jira **WSEA-140**) · Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh
+7h · Ưu tiên: Highest · `ai/WSEA-140-...`
 
 - [ ] 1. Viết khuôn mẫu riêng cho từng nhóm ý định
 - [ ] 2. Ràng buộc mô hình chỉ trả lời dựa trên ngữ cảnh cung cấp
@@ -649,8 +657,8 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-124 · Đánh giá chất lượng pipeline truy hồi
-6h · Ưu tiên: High · `ai/WSEA-124-...`
+### [ ] WSEA-124 (Jira **WSEA-141**) · Đánh giá chất lượng pipeline truy hồi
+6h · Ưu tiên: High · `ai/WSEA-141-...`
 
 - [ ] 1. Chạy bộ 60 câu hỏi qua toàn bộ pipeline
 - [ ] 2. Tính chỉ số Recall@k và MRR của bước truy hồi

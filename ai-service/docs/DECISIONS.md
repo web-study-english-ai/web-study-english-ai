@@ -289,3 +289,42 @@ Số liệu lấy từ `kb/intent/stats.json` (sinh bởi `scripts/build_intent_
 - **Lý do**: người soạn train (LLM, Hiếu duyệt) không độc lập với người chốt luật, nên gán mù trên train đo được ít. Người viết test chỉ xem bảng nhãn, độc lập với người chốt.
 - **Kết quả**: n = 50 (Tâm, Duy Anh; Bình không gán nhãn nên không tính), khớp 48/50, accuracy 0,96, κ = 0,9495 (mục tiêu ≥ 0,8). 2 câu lệch đều của Duy Anh: ie_0035 "Khi kết thư cho 1 người bạn, dùng cụm từ hoặc từ gì?" (tác giả `cach_dung`, chốt `nghia_tu`, theo ca "tìm cụm tương đương cho một tình huống"); ie_0043 "Forget to V và Forget V_ing…" (tác giả `phan_biet`, chốt `cach_dung`, theo ca "2 dạng động từ sau một từ cụ thể"). Nhãn "ngoai_pahm_vi" của Tâm (lỗi gõ) tính là `ngoai_pham_vi`.
 - **Hệ quả**: κ chỉ đo trên 50 câu test, không đo trên train. Cả 2 câu lệch đều thuộc ca khó đã có trong bảng mục 3 của `LABELING.md`; nhãn chốt theo bảng đó.
+
+### 2026-11-01 — Bộ phân loại ý định (WSEA-125)
+
+Số liệu lấy từ `docs/eval/intent_report.json` (sinh bởi `scripts/train_intent.py`, seed 125) và `app/resources/intent_e5_lr_v1.json` (`train_intent.py --export`). Dữ liệu: `kb/intent/intent_{train,test}.csv` của WSEA-112 (train 376 câu LLM soạn, test 75 câu người thật viết), sha256 ghi trong cả hai file. Mô hình: `LogisticRegression(class_weight="balanced", max_iter=5000)`.
+
+#### a. Đặc trưng: vector e5-small, không dùng TF-IDF
+
+- **Bối cảnh**: hai ứng viên — (A) vector e5-small `query: ` đã chuẩn hoá L2, mô hình này đã nằm trong image cho truy hồi (WSEA-110/111); (B) TF-IDF `char_wb` n-gram 2–5, `sublinear_tf`, fit trong từng gập.
+- **Quyết định**: chọn A. Luật chốt TRƯỚC khi chạy: lấy C tốt nhất của mỗi bên theo macro-F1 CV; chọn A trừ khi macro-F1(B) − macro-F1(A) > 0,03.
+- **Lý do**: A không thêm mô hình hay thư viện nào vào image; câu hỏi đã được mã hoá cho truy hồi thì dùng lại luôn vector đó. B chỉ đáng thêm nếu tốt hơn rõ. Kết quả CV: A (C = 3) macro-F1 0,7812 ± 0,0453, accuracy 0,7821 ± 0,0485; B (C = 10) macro-F1 0,7396 ± 0,0804, accuracy 0,7395 ± 0,0794 → B − A = −0,0416, B còn kém hơn và dao động giữa các gập lớn hơn.
+- **Hệ quả**: phân loại ý định phụ thuộc chặt vào revision e5: đổi `MODEL_REVISION` trong `embedder.py` thì phải chạy lại `train_intent.py` và `--export` (module nạp sẽ từ chối file cũ).
+
+#### b. C = 3 chọn bằng kiểm tra chéo chỉ trên train
+
+- **Quyết định**: lưới C ∈ {0.1, 0.3, 1, 3, 10}; `StratifiedKFold(5, shuffle=True, random_state=125)` dùng chung cho A và B, chỉ trên 376 câu train. Hoà macro-F1 thì lấy độ lệch chuẩn nhỏ hơn, vẫn hoà thì lấy C nhỏ hơn (mô hình đơn giản hơn).
+- **Lý do**: tập test chỉ dùng một lần ở cuối (cùng quy tắc với bài dự báo quên). Cùng một cách chia gập cho hai bên thì so A với B mới công bằng. TF-IDF nằm trong `Pipeline` nên từ điển n-gram chỉ học từ phần train của mỗi gập.
+- **Hệ quả**: với A, macro-F1 CV tăng từ 0,7039 (C = 0.1) lên 0,7812 (C = 3) rồi giảm còn 0,7767 (C = 10); không có hoà nên luật hoà điểm không phải dùng tới. Bảng đầy đủ ở `intent_report.json` → `cv.table`.
+
+#### c. Ngưỡng chặn sớm τ = 0,40 cho `ngoai_pham_vi`
+
+- **Bối cảnh**: câu lạc đề nên dừng trước khi truy hồi và gọi LLM. Chặn nhầm một câu hỏi tiếng Anh hợp lệ thì người học mất câu trả lời → ưu tiên precision.
+- **Quyết định**: luật chặn = đoán `ngoai_pham_vi` VÀ p(`ngoai_pham_vi`) ≥ τ. τ = giá trị nhỏ nhất trong lưới 0,30–0,95 (bước 0,05) có precision ≥ 0,95 trên xác suất out-of-fold (`cross_val_predict`) của mô hình đã chọn trên train → τ = 0,40, precision 0,9545.
+- **Giới hạn**: recall train tại τ chỉ 0,2763 (chặn 22 câu). Không có điểm ngưỡng nào tốt hơn hẳn: τ 0,35 → precision 0,8913 (dưới mục tiêu); τ 0,45 → precision 1 nhưng recall 0,2237. Trên test: chặn 10 câu, đúng 9 (precision 0,9, recall 0,4737); câu chặn sai là ie_0040 "Translate this sentence into Vietnamese for me: “My keyboard is very clean”" — yêu cầu dịch, nhãn `ngu_phap`.
+- **Hệ quả cho WSEA-127**: không chặn sớm CHỈ bằng ý định. Kết hợp với khoảng cách ngữ cảnh (distance top-1 của truy hồi, mục d WSEA-111) và đo trên bộ 43 câu (31 dương `kb/eval_questions.csv` + 12 âm `kb/eval_negatives.csv`) trước khi bật. Câu không bị chặn vẫn được prompt "không đủ căn cứ thì nói không biết" chặn phía sau.
+
+#### d. Kết quả trên tập test (chạy đúng một lần)
+
+- **Kết quả**: 75 câu, accuracy 0,72, macro-F1 0,7079; đường cơ sở luôn đoán `nghia_tu` (nhãn nhiều nhất của train): 0,2. Mô hình không được chọn (B, C = 10) chỉ để tham khảo: accuracy 0,7067, macro-F1 0,7018, recall `ngoai_pham_vi` 0,4211.
+- **Điểm yếu**: recall `phan_biet` 0,5 và `cach_dung` 0,5714 (so với `ngu_phap` 0,9231, `nghia_tu` 0,8). Ba cặp nhầm nhiều nhất, mỗi cặp 3 câu: `cach_dung` → `nghia_tu`, `phan_biet` → `cach_dung`, `phan_biet` → `ngu_phap` — chủ yếu là dạng "khi nào dùng X khi nào dùng Y".
+- **Quyết định**: không sửa nhãn, không thử lại cấu hình nào trên test sau khi xem kết quả.
+- **Lý do**: sửa nhãn hoặc chọn lại theo test là làm đẹp số liệu; số test phải giữ là ước lượng không thiên lệch.
+- **Hệ quả**: chênh CV → test: macro-F1 0,7812 → 0,7079 (0,07), accuracy 0,7821 → 0,72. Train do LLM viết, test do người thật viết — đúng rủi ro đã ghi ở mục c WSEA-112; muốn cải thiện thì bổ sung câu người thật vào train, không chỉnh trên test. Theo ngôn ngữ, en (n = 9) 0,5556 · mixed (n = 3) 0,6667 · vi_nodau (n = 6) 0,5 · vi (n = 57) 0,7719 — ba nhóm đầu n = 3–9 nên không kết luận.
+
+#### e. Lúc chạy dịch vụ dùng numpy, không dùng sklearn
+
+- **Bối cảnh**: sklearn không có trong `requirements.txt`; thêm thư viện là thêm thời gian build và khởi động lại Space.
+- **Quyết định**: `train_intent.py --export` ghi `coef` (5 × 384), `intercept` (5), τ, thông tin embedder và nguồn gốc vào `app/resources/intent_e5_lr_v1.json` (41 040 byte, nằm trong `app/` nên vào image, commit được). `app/services/intent.py` tự tính softmax(coef · x + intercept) bằng numpy (trừ max trước khi exp) và từ chối file sai format, sai shape, lệch nhãn, lệch model/revision/dim/tiền tố e5, τ ngoài (0, 1).
+- **Lý do**: suy luận LogisticRegression chỉ là một phép nhân ma trận; file JSON tái tạo được bằng `train_intent.py --export` từ dữ liệu đã băm. Vector cache là float32 nên sklearn suy luận float32, lệch ~2e-7 so với numpy float64. KHÔNG huấn luyện lại bằng float64 để khớp: như vậy hệ số đổi và thành mô hình khác với mô hình đã chấm test. Khi `--export`: 75/75 dự đoán trên test khớp `intent_report.json`, sai số xác suất so với sklearn tính float64 là 1,1e-16 (số in ra lúc chạy, không lưu trong JSON).
+- **Hệ quả**: `kb/` không vào image nên thứ tự nhãn được chép thành hằng `LABELS` trong `intent.py`; `tests/test_intent.py` giữ hằng này khớp `kb/intent/label_map.json`. File JSON có `generated_at` nên sha256 đổi sau mỗi lần `--export` dù trọng số giống hệt.
