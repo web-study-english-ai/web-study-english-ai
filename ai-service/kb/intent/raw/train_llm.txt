@@ -1,0 +1,437 @@
+# WSEA-112 · tập huấn luyện · author=llm (Claude soạn 01/11/2026, Hiếu duyệt nhãn)
+# Định dạng: nhãn | câu hỏi   (phân vân: thêm  | note: lý do)
+# Dòng bắt đầu bằng # bị bỏ qua. "# @lang <mã>" áp cho các dòng phía dưới: vi · vi_nodau · mixed · en
+# Duyệt: thấy sai nhãn thì sửa nhãn ngay tại dòng, hoặc báo số dòng cho Claude.
+
+# ================= LÔ 1/5 · nghia_tu · 80 câu =================
+# @lang vi
+nghia_tu | reluctant nghĩa là gì vậy
+nghia_tu | từ thorough có nghĩa là gì
+nghia_tu | cho mình hỏi take off nghĩa là gì
+nghia_tu | kiên nhẫn tiếng Anh nói thế nào
+nghia_tu | dịch giúp mình từ hàng xóm sang tiếng Anh
+nghia_tu | trái nghĩa của ancient là từ nào
+nghia_tu | có từ nào đồng nghĩa với happy mà nghe trang trọng hơn không
+nghia_tu | break the ice nghĩa là sao
+nghia_tu | đọc truyện thấy chữ sigh, nó nghĩa là gì thế
+nghia_tu | bàn chải đánh răng tiếng anh là gì
+nghia_tu | ambitious là tính từ chỉ người như thế nào
+nghia_tu | siêu thị tiếng Anh gọi là gì
+nghia_tu | nghĩa của từ obey
+nghia_tu | mình không hiểu từ overwhelmed trong bài đọc hôm nay
+nghia_tu | give up dịch ra tiếng Việt là gì
+nghia_tu | từ cozy dịch sao cho hay
+nghia_tu | lười biếng trong tiếng Anh có những từ nào
+nghia_tu | under the weather là gì
+nghia_tu | cô giáo ghi chữ neat vào vở mình, chữ đó nghĩa gì
+nghia_tu | con chuồn chuồn gọi bằng tiếng anh là gì
+nghia_tu | từ appreciate có mấy nghĩa
+nghia_tu | trên thùng hàng có in chữ fragile, nghĩa là gì vậy
+nghia_tu | từ đồng nghĩa của begin
+nghia_tu | tiết kiệm tiền nói bằng tiếng Anh thế nào
+nghia_tu | piece of cake là ý gì
+nghia_tu | curious nghĩa là tò mò đúng không
+nghia_tu | giải thích nghĩa của household
+nghia_tu | trái nghĩa với cheap
+nghia_tu | figure out có nghĩa gì
+nghia_tu | từ awkward hiểu thế nào cho đúng
+nghia_tu | đặc sản tiếng anh là gì nhỉ
+nghia_tu | ASAP là viết tắt của gì, nghĩa là gì
+nghia_tu | đồng nghiệp dịch sang tiếng Anh
+nghia_tu | look forward to nghĩa là gì
+nghia_tu | landscape là cái gì
+nghia_tu | run trong "run a business" nghĩa là gì
+nghia_tu | mình gặp từ nevertheless mà không hiểu
+nghia_tu | hộ chiếu tiếng Anh là gì
+nghia_tu | brave có từ nào nghĩa tương tự không
+nghia_tu | rush hour là giờ gì
+nghia_tu | tra giúp mình từ efficient
+nghia_tu | chăm chỉ tiếng Anh có mấy cách nói
+nghia_tu | weird thì hiểu là gì vậy bạn
+nghia_tu | từ grateful mang nghĩa gì
+# @lang vi_nodau
+nghia_tu | sincere nghia la gi
+nghia_tu | tu enormous co nghia gi vay
+nghia_tu | con meo tieng anh la gi
+nghia_tu | dich giup tu trach nhiem
+nghia_tu | tu trai nghia cua polite
+nghia_tu | hang out la gi
+nghia_tu | nghia cua tu decent
+nghia_tu | may giat tieng anh goi la gi
+nghia_tu | tu dong nghia voi smart
+nghia_tu | carry on nghia la sao
+nghia_tu | cho hoi tu rely nghia la gi
+nghia_tu | ky niem tieng anh noi sao
+# @lang mixed
+nghia_tu | meaning của obsolete là gì vậy
+nghia_tu | spontaneous mean gì ạ
+nghia_tu | cho mình xin synonym của important
+nghia_tu | từ hesitate ko hiểu, giải thích giúp
+nghia_tu | sustainable là j vậy
+nghia_tu | nhà vệ sinh in English là gì
+nghia_tu | antonym của brave là gì
+nghia_tu | translate giúp mình chữ khó chịu
+nghia_tu | get over nghĩa j
+nghia_tu | define giúp mình từ nostalgic
+nghia_tu | hạnh phúc thì English có những từ nào
+nghia_tu | cutting corners là idiom gì vậy
+# @lang en
+nghia_tu | what does meticulous mean
+nghia_tu | meaning of resilient
+nghia_tu | what is the opposite of transparent
+nghia_tu | how do you say "cái ô" in English
+nghia_tu | what's another word for tired
+nghia_tu | what does "call it a day" mean
+nghia_tu | define cautious
+nghia_tu | synonym for quick?
+nghia_tu | what does the phrasal verb run out of mean
+nghia_tu | translate "đáng tin cậy" into English
+nghia_tu | what does ETA stand for
+nghia_tu | bittersweet meaning
+
+# ================= LÔ 2/5 · cach_dung · 80 câu =================
+# Ca biên (giới từ của một động từ, dạng từ) đã chốt cach_dung 01/11, xem LABELING mục 3.
+# @lang vi
+cach_dung | interested đi với giới từ gì
+cach_dung | sau enjoy là V-ing hay to V
+cach_dung | đặt giúp mình một câu với từ although
+cach_dung | depend thì theo sau là giới từ nào
+cach_dung | advice có thêm s được không
+cach_dung | từ furniture đếm được không
+cach_dung | make thường đi với những danh từ nào
+cach_dung | cách dùng từ unless trong câu
+cach_dung | nevertheless đặt ở đâu trong câu
+cach_dung | cho mình ví dụ câu có dùng regret
+cach_dung | apologize thì xin lỗi ai về việc gì nói sao
+cach_dung | từ kinda có dùng trong bài viết trang trọng được không
+cach_dung | sau would you mind động từ chia thế nào
+cach_dung | look forward to thì phía sau là V-ing đúng không
+cach_dung | since đứng đầu câu được không
+cach_dung | on the other hand dùng khi nào
+cach_dung | khi nào thì nói anyway
+cach_dung | information có đi với an được không
+cach_dung | nói explain me có đúng không
+cach_dung | cách dùng từ afford
+cach_dung | insist + giới từ nào vậy
+cach_dung | sau let thì động từ để nguyên mẫu hay thêm to
+cach_dung | đặt câu với take care of
+cach_dung | cheers có dùng để cảm ơn được không
+cach_dung | gọi sếp là guy có bất lịch sự không
+cach_dung | news đi với is hay are
+cach_dung | according to dùng thế nào cho đúng
+cach_dung | viết deal with trong email công việc có ổn không
+cach_dung | remind ai về việc gì thì dùng of hay about
+cach_dung | be keen + gì
+cach_dung | cách dùng otherwise trong câu
+cach_dung | a lot of dùng cho danh từ đếm được hay không đếm được
+cach_dung | agree with, agree to, agree on dùng sao
+cach_dung | danh từ của decide là gì
+cach_dung | tính từ của danger là gì
+cach_dung | hardly đứng ở vị trí nào trong câu
+cach_dung | congratulate ai về việc gì thì dùng giới từ nào
+cach_dung | cho mình 2 câu ví dụ với however
+cach_dung | spend thời gian làm gì thì động từ sau chia sao
+cach_dung | dùng mind trong câu hỏi lịch sự thế nào
+cach_dung | trong email có nên viết wanna không
+cach_dung | responsible thì đi kèm chữ gì phía sau
+cach_dung | succeed dùng giới từ nào cho đúng
+cach_dung | nói thank for you có được không
+# @lang vi_nodau
+cach_dung | sau avoid la V-ing hay to V
+cach_dung | dat cau voi tu persuade
+cach_dung | tu equipment co dem duoc khong
+cach_dung | cach dung tu despite
+cach_dung | contribute di voi gioi tu gi
+cach_dung | sau would rather dong tu chia sao
+cach_dung | tu gonna co dung trong bai thi viet duoc khong
+cach_dung | vi du cau co tu appreciate
+cach_dung | manage + to V hay V-ing
+cach_dung | accuse ai ve viec gi dung gioi tu nao
+cach_dung | homework co them s duoc khong
+cach_dung | tu actually dat o dau trong cau
+# @lang mixed
+cach_dung | cho mình example với từ struggle
+cach_dung | afraid + giới từ gì vậy, mình hay sai
+cach_dung | suggest có dùng structure suggest sb to do được ko
+cach_dung | từ basically có hơi informal ko
+cach_dung | usage của whereas là sao
+cach_dung | prefer + gì, mình hay viết sai
+cach_dung | decision thường đi với động từ nào
+cach_dung | anyway để cuối câu được ko
+cach_dung | sentence mẫu với take advantage of giúp mình
+cach_dung | furthermore dùng trong IELTS writing ok không
+cach_dung | allow sb to do hay doing vậy
+cach_dung | hope thì sau đó là to V hay mệnh đề that
+# @lang en
+cach_dung | what preposition goes with aware
+cach_dung | is it "discuss about" or just "discuss"
+cach_dung | can you give me an example sentence with reluctant
+cach_dung | is gotta okay in formal writing
+cach_dung | how do I use whom in a sentence
+cach_dung | does recommend take a gerund or an infinitive
+cach_dung | what verbs collocate with attention
+cach_dung | is "advices" correct
+cach_dung | where does only go in a sentence
+cach_dung | how to use even though
+cach_dung | which preposition comes after different
+cach_dung | is "listen music" correct or do I need "to"
+
+# ================= LÔ 3/5 · ngu_phap · 80 câu =================
+# @lang vi
+ngu_phap | câu điều kiện loại 3 công thức thế nào
+ngu_phap | khi nào dùng thì quá khứ tiếp diễn
+ngu_phap | cấu trúc câu bị động thì tương lai đơn
+ngu_phap | câu này đúng không: He don't like coffee
+ngu_phap | sửa giúp mình câu "I am agree with you"
+ngu_phap | mệnh đề quan hệ rút gọn làm sao
+ngu_phap | dịch giúp: tôi đã học tiếng Anh được 3 năm
+ngu_phap | thì hiện tại hoàn thành tiếp diễn dùng trong trường hợp nào
+ngu_phap | câu tường thuật lùi thì như thế nào
+ngu_phap | trật tự tính từ trong tiếng Anh là gì
+ngu_phap | khi nào thêm es vào động từ
+ngu_phap | so sánh hơn của tính từ dài viết thế nào
+ngu_phap | câu hỏi đuôi lập thế nào
+ngu_phap | đảo ngữ với never dùng ra sao
+ngu_phap | mạo từ the dùng khi nào
+ngu_phap | động từ khuyết thiếu là gì, gồm những từ nào
+ngu_phap | thì tương lai hoàn thành cách dùng
+ngu_phap | kiểm tra giúp câu: Yesterday I go to school by bus
+ngu_phap | sau giới từ thì động từ chia dạng gì
+ngu_phap | cấu trúc câu ước ở hiện tại
+ngu_phap | danh từ số nhiều bất quy tắc có những từ nào
+ngu_phap | dịch sang tiếng Anh: nếu trời mưa thì mình ở nhà
+ngu_phap | câu chẻ it is ... that dùng để làm gì
+ngu_phap | khi nào dùng thì hiện tại đơn để nói về tương lai
+ngu_phap | cách chuyển câu chủ động sang bị động
+ngu_phap | sao câu "She can sings" lại sai
+ngu_phap | mệnh đề danh từ là gì
+ngu_phap | cách thành lập trạng từ từ tính từ
+ngu_phap | quy tắc thêm ed cho động từ có quy tắc
+ngu_phap | câu điều kiện hỗn hợp là gì
+ngu_phap | sửa lỗi ngữ pháp giúp mình: My sister have two cat
+ngu_phap | thì quá khứ hoàn thành dùng khi nào
+ngu_phap | chủ ngữ là danh động từ thì động từ chia số ít hay số nhiều
+ngu_phap | dịch: cô ấy là người mà tôi gặp hôm qua
+ngu_phap | cấu trúc so sánh kép càng... càng...
+ngu_phap | lượng từ đi với danh từ không đếm được gồm những gì
+ngu_phap | câu hỏi Wh- đặt như thế nào
+ngu_phap | thể sai khiến have something done
+ngu_phap | các trường hợp không dùng mạo từ
+ngu_phap | mình viết "There is many people" có đúng không
+ngu_phap | khi nào động từ phải chia ở dạng tiếp diễn
+ngu_phap | giới từ chỉ thời gian dùng thế nào
+ngu_phap | viết lại sang bị động giúp mình: They built this bridge in 1990
+ngu_phap | đại từ phản thân dùng khi nào
+# @lang vi_nodau
+ngu_phap | cong thuc thi hien tai hoan thanh
+ngu_phap | cau bi dong la gi
+ngu_phap | cau nay dung ko: she have a dog
+ngu_phap | cau dieu kien loai 1 dung khi nao
+ngu_phap | menh de quan he khong xac dinh la gi
+ngu_phap | dich giup cau: toi thich doc sach vao buoi toi
+ngu_phap | khi nao dung thi qua khu don
+ngu_phap | cach dat cau hoi yes no
+ngu_phap | dong tu bat quy tac chia qua khu the nao
+ngu_phap | so sanh nhat cua tinh tu ngan
+ngu_phap | sua cau: I have went there
+ngu_phap | thi tuong lai gan cau truc ra sao
+# @lang mixed
+ngu_phap | present perfect dùng khi nào vậy
+ngu_phap | passive voice của thì quá khứ đơn công thức sao
+ngu_phap | check grammar giúp mình câu "I very like it"
+ngu_phap | relative clause rút gọn bằng V-ing khi nào
+ngu_phap | conditional type 2 cấu trúc là gì
+ngu_phap | reported speech dạng câu hỏi chuyển thế nào
+ngu_phap | câu này sai grammar chỗ nào: Do she likes it?
+ngu_phap | adjective order là sao, có mẹo nhớ không
+ngu_phap | translate giúp: anh ấy đã làm việc ở đây từ năm 2020
+ngu_phap | gerund làm chủ ngữ được ko
+ngu_phap | modal verb + have + V3 nghĩa là gì
+ngu_phap | tag question với I am thì sao
+# @lang en
+ngu_phap | when do we use the past perfect
+ngu_phap | how do you form the passive in the present continuous
+ngu_phap | is this sentence correct: She has went home
+ngu_phap | what are the rules for subject verb agreement
+ngu_phap | how to make reported speech for commands
+ngu_phap | can you correct this: I am living here since 2019
+ngu_phap | what is a zero conditional
+ngu_phap | how do I form questions in the present perfect
+ngu_phap | what are the rules for using articles
+ngu_phap | how do I make comparative adjectives
+ngu_phap | translate to English: tôi chưa bao giờ đến Đà Lạt
+ngu_phap | explain the structure of the third conditional
+
+# ================= LÔ 4/5 · phan_biet · 80 câu =================
+# Không gồm "dạng động từ / giới từ của MỘT từ" (remember to do vs doing...) — đó là cach_dung.
+# @lang vi
+phan_biet | speak và talk khác nhau thế nào
+phan_biet | phân biệt few và a few
+phan_biet | khi nào dùng will, khi nào dùng be going to
+phan_biet | hiện tại đơn với hiện tại tiếp diễn khác gì
+phan_biet | borrow và lend khác nhau chỗ nào
+phan_biet | see, look, watch phân biệt giúp mình
+phan_biet | its với it's
+phan_biet | bored hay boring
+phan_biet | other, another, the other khác nhau sao
+phan_biet | raise và rise
+phan_biet | so với such dùng khác nhau thế nào
+phan_biet | phân biệt affect và effect
+phan_biet | ago và before khác gì
+phan_biet | must và have to khác nhau ra sao
+phan_biet | lie với lay hay nhầm quá
+phan_biet | used to và be used to khác nhau thế nào
+phan_biet | too với either
+phan_biet | quá khứ đơn với hiện tại hoàn thành, mình hay nhầm
+phan_biet | in the end và at the end
+phan_biet | alone với lonely
+phan_biet | economic và economical
+phan_biet | listen và hear khác nhau sao
+phan_biet | job và work
+phan_biet | make và do dùng khác nhau sao
+phan_biet | sometimes, sometime, some time
+phan_biet | đại từ sở hữu và tính từ sở hữu khác nhau thế nào
+phan_biet | who với whom
+phan_biet | although và despite dùng sao cho đúng
+phan_biet | trip, journey, travel
+phan_biet | fun và funny
+phan_biet | while với during
+phan_biet | until và by khác nhau thế nào
+phan_biet | sensible và sensitive
+phan_biet | if và whether
+phan_biet | hard và hardly
+phan_biet | among và between
+phan_biet | can và could khác gì
+phan_biet | so sánh hơn với so sánh nhất khác nhau thế nào
+phan_biet | a và an dùng khi nào
+phan_biet | like với as
+phan_biet | already và yet
+phan_biet | house và home
+phan_biet | câu điều kiện loại 1 với loại 2 khác nhau chỗ nào
+phan_biet | countryside và village nói cái nào
+# @lang vi_nodau
+phan_biet | phan biet much va many
+phan_biet | fewer va less khac gi
+phan_biet | during va for khac nhau sao
+phan_biet | good va well
+phan_biet | bring va take khac nhau ntn
+phan_biet | tinh tu duoi ed va ing
+phan_biet | will va shall
+phan_biet | in on at chi thoi gian phan biet
+phan_biet | each va every
+phan_biet | almost va most
+phan_biet | look at va see
+phan_biet | person va people
+# @lang mixed
+phan_biet | presently với currently khác nhau ko
+phan_biet | win vs beat dùng sao
+phan_biet | "a number of" với "the number of"
+phan_biet | hope vs wish khác chỗ nào
+phan_biet | except vs besides
+phan_biet | loose vs lose hay viết sai
+phan_biet | past simple vs past continuous khác nhau thế nào
+phan_biet | principal vs principle
+phan_biet | made of và made from
+phan_biet | check vs control
+phan_biet | expect vs wait for
+phan_biet | sympathetic với nice có giống nhau ko
+# @lang en
+phan_biet | what's the difference between learn and study
+phan_biet | historic vs historical
+phan_biet | when to use who and when to use which
+phan_biet | maybe vs may be
+phan_biet | job or career, which one should I use
+phan_biet | difference between "I have done" and "I have been doing"
+phan_biet | compliment or complement
+phan_biet | should I say lay down or lie down
+phan_biet | what's the difference between a while and awhile
+phan_biet | farther vs further
+phan_biet | everyday vs every day
+phan_biet | whose vs who's
+
+# ================= LÔ 5/5 · ngoai_pham_vi · 80 câu =================
+# Gồm: xã giao, hỏi về bot/app, thời sự, việc khác, ngôn ngữ khác, phát âm, cách học/thi, sinh danh sách / bài tập / bài viết hộ.
+# @lang vi
+ngoai_pham_vi | xin chào
+ngoai_pham_vi | bạn là ai vậy
+ngoai_pham_vi | cảm ơn bạn nhiều nha
+ngoai_pham_vi | hôm nay có mưa không
+ngoai_pham_vi | tỉ số trận Việt Nam tối qua bao nhiêu
+ngoai_pham_vi | giải giúp mình phương trình x^2 - 5x + 6 = 0
+ngoai_pham_vi | viết code python đảo ngược chuỗi
+ngoai_pham_vi | tiếng Hàn saranghae nghĩa là gì
+ngoai_pham_vi | từ schedule phát âm thế nào
+ngoai_pham_vi | làm sao để nói tiếng Anh trôi chảy
+ngoai_pham_vi | mỗi ngày nên ôn bao nhiêu từ là đủ
+ngoai_pham_vi | thi TOEIC 600 cần học trong bao lâu
+ngoai_pham_vi | làm sao đổi mật khẩu tài khoản
+ngoai_pham_vi | sao mình không thấy thẻ ôn tập hôm nay
+ngoai_pham_vi | cho mình danh sách 20 từ vựng chủ đề nghề nghiệp
+ngoai_pham_vi | viết giúp mình bài luận tiếng Anh về môi trường
+ngoai_pham_vi | kể chuyện cười đi
+ngoai_pham_vi | bạn có thích mình không
+ngoai_pham_vi | tối nay ăn món gì
+ngoai_pham_vi | thủ đô của Úc là gì
+ngoai_pham_vi | giờ ở London là mấy giờ
+ngoai_pham_vi | mình buồn quá
+ngoai_pham_vi | tư vấn mua laptop dưới 15 triệu
+ngoai_pham_vi | tổng thống Mỹ hiện tại là ai
+ngoai_pham_vi | học tiếng Anh qua phim có hiệu quả không
+ngoai_pham_vi | app này có bản điện thoại không
+ngoai_pham_vi | nên học IELTS hay TOEIC
+ngoai_pham_vi | trọng âm của từ photography rơi vào đâu
+ngoai_pham_vi | tiếng Pháp chào buổi sáng nói sao
+ngoai_pham_vi | tóm tắt giúp mình bài báo này
+ngoai_pham_vi | dịch giúp mình tài liệu PDF 10 trang
+ngoai_pham_vi | làm bài tập hóa giúp mình
+ngoai_pham_vi | tạo cho mình 10 câu trắc nghiệm ngữ pháp
+ngoai_pham_vi | bao giờ thì có kết quả thi
+ngoai_pham_vi | mật khẩu wifi là gì
+ngoai_pham_vi | đọc từ comfortable sao cho chuẩn
+ngoai_pham_vi | hôm nay ngày bao nhiêu
+ngoai_pham_vi | có nên đi du học không
+ngoai_pham_vi | lập kế hoạch học tiếng Anh 3 tháng cho mình
+ngoai_pham_vi | làm sao nhớ từ vựng lâu hơn
+ngoai_pham_vi | ok
+ngoai_pham_vi | bạn dùng mô hình AI nào
+ngoai_pham_vi | gợi ý phim Mỹ hay để xem cuối tuần
+ngoai_pham_vi | viết email xin nghỉ phép bằng tiếng Anh giúp mình
+# @lang vi_nodau
+ngoai_pham_vi | chao ban
+ngoai_pham_vi | hom nay thoi tiet sai gon the nao
+ngoai_pham_vi | giai bai toan nay giup minh
+ngoai_pham_vi | tu vegetable doc sao
+ngoai_pham_vi | lam sao de gioi tieng anh nhanh
+ngoai_pham_vi | ban ten gi
+ngoai_pham_vi | cho minh 10 tu vung ve dong vat
+ngoai_pham_vi | sao minh khong dang nhap duoc
+ngoai_pham_vi | tieng trung xie xie nghia la gi
+ngoai_pham_vi | hoc tieng anh bao lau thi giao tiep duoc
+ngoai_pham_vi | ke chuyen ma di
+ngoai_pham_vi | bye nhe
+# @lang mixed
+ngoai_pham_vi | hello bot
+ngoai_pham_vi | recommend cho mình vài app luyện listening
+ngoai_pham_vi | pronunciation của Wednesday sao vậy
+ngoai_pham_vi | check giúp mình có lỗi login ko
+ngoai_pham_vi | viết caption Instagram tiếng Anh giúp mình
+ngoai_pham_vi | tips làm bài reading TOEIC
+ngoai_pham_vi | bonjour là tiếng gì
+ngoai_pham_vi | code JavaScript fetch API sao
+ngoai_pham_vi | nên học vocab theo topic hay theo list
+ngoai_pham_vi | thanks bot, hôm nay vậy đủ rồi
+ngoai_pham_vi | kết quả Premier League tối qua
+ngoai_pham_vi | làm slide presentation giúp mình
+# @lang en
+ngoai_pham_vi | hi there
+ngoai_pham_vi | what's the weather like in Da Nang today
+ngoai_pham_vi | how do you pronounce colonel
+ngoai_pham_vi | who are you
+ngoai_pham_vi | write me a cover letter for a marketing job
+ngoai_pham_vi | what is the capital of Canada
+ngoai_pham_vi | how can I improve my speaking skills
+ngoai_pham_vi | give me a list of 15 words about food
+ngoai_pham_vi | tell me a joke
+ngoai_pham_vi | what's 15% of 240
+ngoai_pham_vi | how many words should I learn per day
+ngoai_pham_vi | what does gracias mean

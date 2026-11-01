@@ -1,0 +1,30 @@
+# WSEA-112 · tập kiểm tra · tác giả: Phạm Thái Bình (file "AIchatbot.docx", tạo 01/11/2026)
+# Câu giữ nguyên văn. Tác giả KHÔNG gán nhãn: nhãn do Claude gán theo LABELING.md, Hiếu duyệt và chốt 01/11/2026.
+# @lang vi
+nghia_tu | Culture có nghĩa là gì
+nghia_tu | Từ trái nghĩa với polite là gì
+phan_biet | Cụm get along có đồng nghĩa với be friendly không | note: ca biên: hai cụm → phan_biet theo luật ưu tiên (như "affect và effect nghĩa là gì"); Hiếu chốt 01/11
+phan_biet | Khi nào dùng which khi nào dùng what
+cach_dung | Suggest đi với to V hay Ving
+cach_dung | Apologize đi với giới từ nào nhỉ
+cach_dung | Cho tôi 2 câu ví dụ với từ decide
+cach_dung | Từ afford đặt câu thế nào cho tự nhiên nhỉ
+nghia_tu | Look after có nghĩa là gì nhỉ
+cach_dung | Từ huge có dùng được trong bài viết trang trọng không
+ngu_phap | Khi nào thì dùng quá khứ tiếp diễn
+# @lang mixed
+ngu_phap | Check xem câu này của mình đúng chưa: He don’t like play guitar
+# @lang vi
+ngu_phap | Câu hỏi thì quá khứ đơn có dạng như nào
+ngu_phap | Câu điều kiện loại 1 và loại 2 có cấu trúc như nào | note: ca biên: hỏi cấu trúc của cả hai, không hỏi khác nhau → ngu_phap; Hiếu chốt 01/11
+ngu_phap | Dịch câu này sang tiếng anh: ngày mai tôi sẽ về quê
+phan_biet | Borrow khác lend chỗ nào
+phan_biet | Phân biệt giúp tôi listen và hear
+phan_biet | Khi nào thì dùng will khi nào thì dùng be going to thế
+phan_biet | So sánh cách dùng giữa although và because
+ngoai_pham_vi | Thời tiết hôm nay như nào nhỉ
+ngoai_pham_vi | Trứng chiên như nào thì ngon nhất
+ngoai_pham_vi | Từ schedule phát âm như nào thì chuẩn giọng Mỹ nhất
+ngoai_pham_vi | Làm sao để có thể thuộc được 15 từ dễ dàng nhất trong 1 ngày
+ngoai_pham_vi | Ngày mai có mưa không nhỉ
+ngoai_pham_vi | Mất bao lâu để học từ B2 lên C1 thế
