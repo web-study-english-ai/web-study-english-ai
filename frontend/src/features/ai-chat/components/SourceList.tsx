@@ -1,4 +1,4 @@
-import { BookMarked, ExternalLink } from "lucide-react";
+import { BookMarked } from "lucide-react";
 import { ChatSource } from "../types/ai-chat_types";
 
 export function SourceList({ sources }: { sources: ChatSource[] }) {
@@ -9,34 +9,15 @@ export function SourceList({ sources }: { sources: ChatSource[] }) {
         Nguồn tham chiếu
       </p>
       <ul className="flex flex-wrap gap-2">
-        {sources.map((s, i) => {
-          const chip = (
-            <>
+        {sources.map((s, i) => (
+          <li key={s.id}>
+            <span className="inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs text-foreground">
               <span className="text-muted-foreground">[{i + 1}]</span>
-              {s.title}
-              {s.url && <ExternalLink className="h-3 w-3 text-muted-foreground" />}
-            </>
-          );
-          const cls =
-            "inline-flex items-center gap-1 rounded-full border border-border bg-card px-2.5 py-1 text-xs text-foreground";
-
-          return (
-            <li key={s.id}>
-              {s.url ? (
-                <a
-                  href={s.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={`${cls} transition-colors hover:bg-muted`}
-                >
-                  {chip}
-                </a>
-              ) : (
-                <span className={cls}>{chip}</span>
-              )}
-            </li>
-          );
-        })}
+              {s.source}
+              {s.topic && <span className="text-muted-foreground">· {s.topic}</span>}
+            </span>
+          </li>
+        ))}
       </ul>
     </div>
   );

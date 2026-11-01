@@ -1,6 +1,6 @@
 import { Bot, RotateCcw } from "lucide-react";
 import { ChatMessage } from "../types/ai-chat_types";
-import { FormattedText, InlineFormatted } from "./FormattedText";
+import { FormattedText } from "./FormattedText";
 import { SourceList } from "./SourceList";
 
 export function AssistantAvatar() {
@@ -54,23 +54,10 @@ export function MessageBubble({ message, onRetry }: Props) {
         <p className="mb-2 text-sm font-semibold text-teal-700 dark:text-teal-300">Trợ lý AI</p>
         <FormattedText text={message.content} />
 
-        {message.examples && message.examples.length > 0 && (
-          <div className="mt-3 rounded-xl border border-border bg-card p-3">
-            <p className="text-xs font-semibold text-teal-700">Ví dụ chi tiết</p>
-            <ol className="mt-2 space-y-2">
-              {message.examples.map((ex, i) => (
-                <li key={i} className="text-xs">
-                  <p>
-                    <span className="font-medium">
-                      {i + 1}. {ex.label}:
-                    </span>{" "}
-                    <InlineFormatted text={ex.en} boldClassName="font-semibold text-rose-500" />
-                  </p>
-                  <p className="text-muted-foreground">({ex.vi})</p>
-                </li>
-              ))}
-            </ol>
-          </div>
+        {message.degraded && (
+          <p className="mt-2 text-xs italic text-muted-foreground">
+            Trợ lý đang bận, đây là tài liệu liên quan
+          </p>
         )}
 
         {message.sources && message.sources.length > 0 && (

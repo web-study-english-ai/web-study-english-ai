@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { sendChatMessageMock } from "../api/ai-chat_mock";
+import { askAssistant } from "../api/ai-chat";
 import { ChatMessage } from "../types/ai-chat_types";
 
 const WELCOME: ChatMessage = {
@@ -11,8 +11,8 @@ const WELCOME: ChatMessage = {
     "Xin chào! Mình là trợ lý học tiếng Anh. Bạn có thể hỏi mình về ngữ pháp, từ vựng, cách phát âm hoặc nhờ mình sửa câu viết của bạn.",
 };
 
-// Tốc độ "gõ chữ" mô phỏng — API mock trả nguyên câu một lần, không phải stream thật,
-// nên ta tự hiện dần ký tự ở phía client cho giống trải nghiệm streaming.
+// Backend (bản JSON) trả nguyên câu một lần, nên ta hiện dần ký tự ở client cho giống streaming.
+// Khi chuyển sang /ask/stream thì thay revealContent bằng việc đọc SSE thật.
 const REVEAL_CHARS_PER_TICK = 3;
 const REVEAL_INTERVAL_MS = 20;
 
@@ -42,41 +42,54 @@ function revealContent(
   });
 }
 
-export function useChatMock() {
+export function useChat() {
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME]);
   const [isSending, setIsSending] = useState(false);
   const [streamingId, setStreamingId] = useState<string | null>(null);
 
+  // Giữ mạch hội thoại: lấy từ lượt trả lời trước, gửi lại ở lượt sau
+  const conversationIdRef = useRef<string | undefined>(undefined);
+  const abortRef = useRef<AbortController | null>(null);
   const isMountedRef = useRef(true);
+
   useEffect(() => {
     isMountedRef.current = true;
     return () => {
       isMountedRef.current = false;
+      abortRef.current?.abort();
     };
   }, []);
 
   // Dùng chung cho cả gửi mới lẫn thử lại sau khi lỗi
-  async function runAssistantReply(userText: string) {
+  async function runAssistantReply(userText: string, clientEventId: string) {
     setIsSending(true);
-    try {
-      const reply = await sendChatMessageMock(userText);
-      const id = `a-${Date.now()}`;
+    const controller = new AbortController();
+    abortRef.current = controller;
 
-      // Hiện khung trả lời trống trước, chữ sẽ chạy dần vào content
+    try {
+      const reply = await askAssistant(
+        { question: userText, conversationId: conversationIdRef.current, clientEventId },
+        controller.signal,
+      );
+      if (!isMountedRef.current) return;
+
+      if (reply.conversationId) conversationIdRef.current = reply.conversationId;
+
+      const id = `a-${Date.now()}`;
       setMessages((prev) => [...prev, { id, role: "assistant", content: "" }]);
       setStreamingId(id);
-      await revealContent(id, reply.content, setMessages, isMountedRef);
+      await revealContent(id, reply.answer, setMessages, isMountedRef);
 
-      // Ví dụ & nguồn tham chiếu chỉ hiện sau khi chữ đã hiện xong hẳn
+      // Nguồn tham chiếu chỉ hiện sau khi chữ đã hiện xong hẳn
       if (isMountedRef.current) {
         setMessages((prev) =>
           prev.map((m) =>
-            m.id === id ? { ...m, examples: reply.examples, sources: reply.sources } : m,
+            m.id === id ? { ...m, sources: reply.sources, degraded: reply.degraded } : m,
           ),
         );
       }
     } catch {
-      // Lỗi thì hiện ngay, không mô phỏng gõ chữ, kèm nội dung gốc để bấm "Thử lại"
+      if (controller.signal.aborted || !isMountedRef.current) return;
       setMessages((prev) => [
         ...prev,
         {
@@ -85,6 +98,7 @@ export function useChatMock() {
           content: "Xin lỗi, mình chưa thể trả lời lúc này. Bạn thử lại nhé.",
           isError: true,
           retryText: userText,
+          retryEventId: clientEventId,
         },
       ]);
     } finally {
@@ -100,7 +114,7 @@ export function useChatMock() {
     if (!content || isSending) return;
 
     setMessages((prev) => [...prev, { id: `u-${Date.now()}`, role: "user", content }]);
-    await runAssistantReply(content);
+    await runAssistantReply(content, crypto.randomUUID());
   }
 
   async function retryMessage(messageId: string) {
@@ -108,9 +122,9 @@ export function useChatMock() {
     const target = messages.find((m) => m.id === messageId);
     if (!target?.retryText) return;
 
-    // Bỏ bong bóng lỗi cũ, thử lại với đúng câu hỏi ban đầu
+    // Bỏ bong bóng lỗi cũ, thử lại với đúng câu hỏi và cùng clientEventId
     setMessages((prev) => prev.filter((m) => m.id !== messageId));
-    await runAssistantReply(target.retryText);
+    await runAssistantReply(target.retryText, target.retryEventId ?? crypto.randomUUID());
   }
 
   return {
