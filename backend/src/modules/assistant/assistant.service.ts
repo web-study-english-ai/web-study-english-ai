@@ -1,4 +1,6 @@
 import {
+  HttpException,
+  HttpStatus,
   Injectable,
   Logger,
   NotFoundException,
@@ -20,13 +22,38 @@ import {
 /** Khi AI không dùng được thì nói thẳng, tuyệt đối không bịa câu trả lời ngữ pháp */
 const CAU_TRA_LOI_DU_PHONG =
   'Trợ lý đang tạm thời không trả lời được. Bạn thử lại sau ít phút, hoặc xem phần nghĩa và ví dụ ngay trên thẻ từ.';
+/** Khi câu hỏi nằm ngoài phạm vi học tiếng Anh hoặc có dấu hiệu chèn lệnh (prompt injection) */
+export const CAU_TU_CHOI_NGOAI_PHAM_VI =
+  'Mình là trợ lý học tiếng Anh nên chỉ hỗ trợ giải đáp về từ vựng, ngữ pháp và cách sử dụng câu tiếng Anh. Bạn hãy đặt câu hỏi liên quan đến tiếng Anh nhé!';
 /** Giới hạn lưu trữ lịch sử hội thoại: 30 ngày kể từ lần tương tác cuối */
 export const HAN_LUU_HOI_THOAI_NGAY = 30;
+const MOT_PHUT_MS = 60 * 1000;
 const MOT_NGAY_MS = 24 * 60 * 60 * 1000;
 const DO_DAI_TIEU_DE_TOI_DA = 60;
 const TOP_K_MAC_DINH = 8;
 const SO_NGUON_DU_PHONG_KHI_ASK_LOI = 3;
+const GIOI_HAN_MOI_PHUT_MAC_DINH = 10;
+const GIOI_HAN_MOI_NGAY_MAC_DINH = 50;
+const TTL_CACHE_MAC_DINH_MS = 60 * 60 * 1000;
+const SO_MUC_CACHE_TOI_DA = 200;
 
+/** Mẫu phát hiện tấn công chèn câu lệnh (Prompt Injection / Jailbreak) */
+const MAU_PROMPT_INJECTION =
+  /(ignore\s+(all\s+)?(previous|prior|above)\s+instructions|disregard\s+(all\s+)?instructions|system\s+prompt|jailbreak|bỏ\s+qua\s+(mọi\s+|tất\s+cả\s+)?hướng\s+dẫn|quên\s+hết\s+(các\s+)?quy\s+tắc)/i;
+
+/** Tín hiệu cho thấy câu hỏi có liên quan đến việc học tiếng Anh */
+const MAU_TIN_HIEU_TIENG_ANH =
+  /(tiếng\s*anh|nghĩa\s*là|dịch|ngữ\s*pháp|từ\s*vựng|từ\s*loại|thì\s+|tense|grammar|verb|noun|adj|adv|câu\s*này|phát\s*âm|cách\s*dùng|phân\s*biệt|khác\s*gì|khác\s*nhau|ví\s*dụ|synonym|antonym|idiom|phrasal|collocation|preposition|viết\s*câu|sửa\s*câu)/i;
+
+/** Mẫu chủ đề rõ ràng ngoài phạm vi học tiếng Anh */
+const MAU_CHU_DE_NGOAI_PHAM_VI =
+  /(thời\s*tiết\s*hôm\s*nay|dự\s*báo\s*thời\s*tiết|công\s*thức\s*nấu|cách\s*nấu\s*món|kết\s*quả\s*bóng\s*đá|tỷ\s*số\s*trận|giá\s*(vàng|bitcoin|cổ\s*phiếu|chứng\s*khoán|xăng)|viết\s*(code|chương\s*trình)\s*(python|java|javascript|c\+\+|sql|html|php)|giải\s*(phương\s*trình|bài\s*toán)|tính\s*(tích\s*phân|đạo\s*hàm)|tư\s*vấn\s*(tình\s*cảm|y\s*tế|thuốc\s*chữa))/i;
+
+interface MucCacheTroLy {
+  answer: string;
+  sources: NguonDan[];
+  hetHanLuc: number;
+}
 export interface NguonDan {
   id: string;
   source: string;
@@ -78,6 +105,9 @@ interface KetQuaTruyHoi {
 export class AssistantService implements OnModuleInit, OnModuleDestroy {
   private readonly logger = new Logger(AssistantService.name);
   private boHenGioDonDep: NodeJS.Timeout | null = null;
+  private readonly boNhoDemCauHoi = new Map<string, MucCacheTroLy>();
+  private readonly luotGoiTheoPhut = new Map<string, number[]>();
+  private readonly luotGoiTheoNgay = new Map<string, { ngay: string; soLuot: number }>();
 
   constructor(
     private readonly prisma: PrismaService,
@@ -88,6 +118,23 @@ export class AssistantService implements OnModuleInit, OnModuleDestroy {
   private get topK(): number {
     const cauHinh = Number(this.config?.get('AI_ASSISTANT_TOP_K')) || TOP_K_MAC_DINH;
     return Math.min(20, Math.max(1, Math.trunc(cauHinh)));
+  }
+
+  private get gioiHanMoiPhut(): number {
+    const cauHinh =
+      Number(this.config?.get('AI_ASSISTANT_RATE_LIMIT_PER_MIN')) || GIOI_HAN_MOI_PHUT_MAC_DINH;
+    return Math.max(1, Math.trunc(cauHinh));
+  }
+
+  private get gioiHanMoiNgay(): number {
+    const cauHinh =
+      Number(this.config?.get('AI_ASSISTANT_RATE_LIMIT_PER_DAY')) || GIOI_HAN_MOI_NGAY_MAC_DINH;
+    return Math.max(1, Math.trunc(cauHinh));
+  }
+
+  private get cacheTtlMs(): number {
+    const cauHinh = Number(this.config?.get('AI_ASSISTANT_CACHE_TTL_MS')) || TTL_CACHE_MAC_DINH_MS;
+    return Math.max(1_000, Math.trunc(cauHinh));
   }
 
   onModuleInit(): void {
@@ -122,8 +169,63 @@ export class AssistantService implements OnModuleInit, OnModuleDestroy {
       }
     }
 
-    const batDau = Date.now();
+    // 1. Giới hạn tần suất gọi theo người dùng (Rate Limit)
+    this.kiemTraVaGhiNhanTanSuat(userId);
+
     const cauHoiGoc = dto.question.trim().slice(0, 1000);
+
+    // 2. Chặn sớm câu hỏi ngoài phạm vi hoặc có dấu hiệu Prompt Injection (Guardrail)
+    if (this.laCauHoiNgoaiPhamVi(cauHoiGoc, dto.wordId)) {
+      const conversationId = await this.damBaoHoiThoai(userId, dto.question, dto.conversationId);
+      await this.prisma.assistantQuery.create({
+        data: {
+          userId,
+          conversationId,
+          question: dto.question,
+          answer: CAU_TU_CHOI_NGOAI_PHAM_VI,
+          wordId: dto.wordId ?? null,
+          sourceIds: [],
+          degraded: false,
+          durationMs: 0,
+          clientEventId: dto.clientEventId ?? null,
+        },
+      });
+      return {
+        answer: CAU_TU_CHOI_NGOAI_PHAM_VI,
+        sources: [],
+        degraded: false,
+        conversationId,
+      };
+    }
+
+    // 3. Kiểm tra bộ nhớ đệm (Cache) cho câu hỏi độc lập thường gặp
+    if (!dto.conversationId) {
+      const tuCache = this.docTuCache(cauHoiGoc, dto.wordId);
+      if (tuCache) {
+        const conversationId = await this.damBaoHoiThoai(userId, dto.question);
+        await this.prisma.assistantQuery.create({
+          data: {
+            userId,
+            conversationId,
+            question: dto.question,
+            answer: tuCache.answer,
+            wordId: dto.wordId ?? null,
+            sourceIds: tuCache.sources.map((s) => s.id),
+            degraded: false,
+            durationMs: 0,
+            clientEventId: dto.clientEventId ?? null,
+          },
+        });
+        return {
+          answer: tuCache.answer,
+          sources: tuCache.sources,
+          degraded: false,
+          conversationId,
+        };
+      }
+    }
+
+    const batDau = Date.now();
     const truyHoi = await this.truyHoiNguCanh(
       userId,
       cauHoiGoc,
@@ -169,6 +271,10 @@ export class AssistantService implements OnModuleInit, OnModuleDestroy {
       truyHoi.contexts,
       phanHoi !== null,
     );
+
+    if (phanHoi !== null && !dto.conversationId) {
+      this.luuVaoCache(cauHoiGoc, dto.wordId, phanHoi.answer, sourcesTraVe);
+    }
 
     // Ghi cả lượt hỏng: không có answer thì vẫn biết người học đang vướng chỗ nào
     await this.prisma.assistantQuery.create({
@@ -223,8 +329,69 @@ export class AssistantService implements OnModuleInit, OnModuleDestroy {
       }
     }
 
-    const batDau = Date.now();
+    // 1. Giới hạn tần suất gọi theo người dùng (Rate Limit)
+    this.kiemTraVaGhiNhanTanSuat(userId);
+
     const cauHoiGoc = dto.question.trim().slice(0, 1000);
+
+    // 2. Chặn sớm câu hỏi ngoài phạm vi hoặc có dấu hiệu Prompt Injection (Guardrail)
+    if (this.laCauHoiNgoaiPhamVi(cauHoiGoc, dto.wordId)) {
+      const conversationId = await this.damBaoHoiThoai(userId, dto.question, dto.conversationId);
+      await this.prisma.assistantQuery.create({
+        data: {
+          userId,
+          conversationId,
+          question: dto.question,
+          answer: CAU_TU_CHOI_NGOAI_PHAM_VI,
+          wordId: dto.wordId ?? null,
+          sourceIds: [],
+          degraded: false,
+          durationMs: 0,
+          clientEventId: dto.clientEventId ?? null,
+        },
+      });
+      emit({ event: 'delta', data: { text: CAU_TU_CHOI_NGOAI_PHAM_VI } });
+      const ketQua: KetQuaHoiTroLy = {
+        answer: CAU_TU_CHOI_NGOAI_PHAM_VI,
+        sources: [],
+        degraded: false,
+        conversationId,
+      };
+      emit({ event: 'done', data: ketQua });
+      return ketQua;
+    }
+
+    // 3. Kiểm tra bộ nhớ đệm (Cache) cho câu hỏi độc lập thường gặp
+    if (!dto.conversationId) {
+      const tuCache = this.docTuCache(cauHoiGoc, dto.wordId);
+      if (tuCache) {
+        const conversationId = await this.damBaoHoiThoai(userId, dto.question);
+        await this.prisma.assistantQuery.create({
+          data: {
+            userId,
+            conversationId,
+            question: dto.question,
+            answer: tuCache.answer,
+            wordId: dto.wordId ?? null,
+            sourceIds: tuCache.sources.map((s) => s.id),
+            degraded: false,
+            durationMs: 0,
+            clientEventId: dto.clientEventId ?? null,
+          },
+        });
+        emit({ event: 'delta', data: { text: tuCache.answer } });
+        const ketQua: KetQuaHoiTroLy = {
+          answer: tuCache.answer,
+          sources: tuCache.sources,
+          degraded: false,
+          conversationId,
+        };
+        emit({ event: 'done', data: ketQua });
+        return ketQua;
+      }
+    }
+
+    const batDau = Date.now();
     const truyHoi = await this.truyHoiNguCanh(
       userId,
       cauHoiGoc,
@@ -275,6 +442,10 @@ export class AssistantService implements OnModuleInit, OnModuleDestroy {
       truyHoi.contexts,
       phanHoi !== null,
     );
+
+    if (phanHoi !== null && !dto.conversationId) {
+      this.luuVaoCache(cauHoiGoc, dto.wordId, phanHoi.answer, sourcesTraVe);
+    }
 
     await this.prisma.assistantQuery.create({
       data: {
@@ -733,5 +904,95 @@ export class AssistantService implements OnModuleInit, OnModuleDestroy {
 
   private mocHetHan(): Date {
     return new Date(Date.now() - HAN_LUU_HOI_THOAI_NGAY * MOT_NGAY_MS);
+  }
+  /**
+   * Kiểm tra câu hỏi có thuộc diện Prompt Injection hoặc nằm ngoài phạm vi học tiếng Anh hay không.
+   */
+  private laCauHoiNgoaiPhamVi(cauHoi: string, wordId?: string): boolean {
+    const chuanHoa = cauHoi.replace(/\s+/g, ' ').trim();
+    if (MAU_PROMPT_INJECTION.test(chuanHoa)) {
+      return true;
+    }
+    if (wordId || MAU_TIN_HIEU_TIENG_ANH.test(chuanHoa)) {
+      return false;
+    }
+    return MAU_CHU_DE_NGOAI_PHAM_VI.test(chuanHoa);
+  }
+
+  /**
+   * Giới hạn tần suất gọi trợ lý theo người dùng (theo phút và theo ngày).
+   * Ném lỗi 429 Too Many Requests khi vượt ngưỡng.
+   */
+  private kiemTraVaGhiNhanTanSuat(userId: string): void {
+    const bayGio = Date.now();
+    const dauCuaSoPhut = bayGio - MOT_PHUT_MS;
+    const lichSuPhut = (this.luotGoiTheoPhut.get(userId) ?? []).filter((t) => t > dauCuaSoPhut);
+
+    if (lichSuPhut.length >= this.gioiHanMoiPhut) {
+      throw new HttpException(
+        'Bạn đã gửi quá nhiều câu hỏi trong thời gian ngắn. Vui lòng đợi ít phút rồi thử lại.',
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
+    const homNay = new Date(bayGio).toISOString().slice(0, 10);
+    const thongKeNgay = this.luotGoiTheoNgay.get(userId);
+    const soLuotHomNay = thongKeNgay && thongKeNgay.ngay === homNay ? thongKeNgay.soLuot : 0;
+
+    if (soLuotHomNay >= this.gioiHanMoiNgay) {
+      throw new HttpException(
+        'Bạn đã dùng hết hạn mức hỏi trợ lý trong ngày hôm nay. Vui lòng quay lại vào ngày mai nhé.',
+        HttpStatus.TOO_MANY_REQUESTS,
+      );
+    }
+
+    lichSuPhut.push(bayGio);
+    this.luotGoiTheoPhut.set(userId, lichSuPhut);
+    this.luotGoiTheoNgay.set(userId, { ngay: homNay, soLuot: soLuotHomNay + 1 });
+  }
+
+  private taoKhoaCache(cauHoi: string, wordId?: string): string {
+    const cauHoiChuan = cauHoi.replace(/\s+/g, ' ').trim().toLowerCase();
+    return `${(wordId ?? '').toLowerCase()}::${cauHoiChuan}`;
+  }
+
+  private docTuCache(cauHoi: string, wordId?: string): MucCacheTroLy | null {
+    const khoa = this.taoKhoaCache(cauHoi, wordId);
+    const muc = this.boNhoDemCauHoi.get(khoa);
+    if (!muc) return null;
+
+    if (Date.now() > muc.hetHanLuc) {
+      this.boNhoDemCauHoi.delete(khoa);
+      return null;
+    }
+
+    // Làm mới thứ tự LRU
+    this.boNhoDemCauHoi.delete(khoa);
+    this.boNhoDemCauHoi.set(khoa, muc);
+    return muc;
+  }
+
+  private luuVaoCache(
+    cauHoi: string,
+    wordId: string | undefined,
+    answer: string,
+    sources: NguonDan[],
+  ): void {
+    if (!answer.trim()) return;
+    const khoa = this.taoKhoaCache(cauHoi, wordId);
+    if (this.boNhoDemCauHoi.has(khoa)) {
+      this.boNhoDemCauHoi.delete(khoa);
+    } else if (this.boNhoDemCauHoi.size >= SO_MUC_CACHE_TOI_DA) {
+      const [khoaCuNhat] = this.boNhoDemCauHoi.keys();
+      if (khoaCuNhat !== undefined) {
+        this.boNhoDemCauHoi.delete(khoaCuNhat);
+      }
+    }
+
+    this.boNhoDemCauHoi.set(khoa, {
+      answer,
+      sources,
+      hetHanLuc: Date.now() + this.cacheTtlMs,
+    });
   }
 }
