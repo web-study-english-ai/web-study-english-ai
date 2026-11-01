@@ -272,13 +272,64 @@ In summary, consistency consistently triumphs over intensity. If you wish to ach
   },
 ];
 
+import * as fs from 'fs';
+import * as path from 'path';
+
 export async function seedReadingPassages() {
-  console.log('🌱 Bắt đầu nạp 3 bài đọc hiểu CEFR B1 vào CSDL...');
+  console.log('🌱 Bắt đầu nạp bài đọc hiểu vào CSDL...');
+
+  let passagesToSeed: PassageSeed[] = [...b1ReadingPassages];
+
+  const jsonPath = path.join(__dirname, 'data', 'reading_passages_seed.json');
+  if (fs.existsSync(jsonPath)) {
+    try {
+      const raw = fs.readFileSync(jsonPath, 'utf-8');
+      const jsonPassages: any[] = JSON.parse(raw);
+      console.log(` 📖 Đã tìm thấy file reading_passages_seed.json với ${jsonPassages.length} bài đọc!`);
+
+      const cefrMap: Record<string, CefrLevel> = {
+        A1: CefrLevel.A1,
+        A2: CefrLevel.A2,
+        B1: CefrLevel.B1,
+        B2: CefrLevel.B2,
+      };
+
+      const converted: PassageSeed[] = jsonPassages.map((p, idx) => ({
+        slug: p.slug,
+        title: p.title,
+        summary: p.summary,
+        content: p.content,
+        topic: p.topic,
+        cefr: cefrMap[p.cefr] ?? CefrLevel.B1,
+        estimatedMinutes: p.estimatedMinutes ?? 5,
+        sortOrder: p.sortOrder ?? idx + 1,
+        questions: (p.questions || []).map((q: any, qIdx: number) => ({
+          orderIndex: q.orderIndex ?? qIdx + 1,
+          questionText: q.questionText,
+          options: q.options,
+          correctOptionIndex: q.correctOptionIndex ?? 0,
+          explanation: q.explanation || `Đáp án đúng là phương án ${(q.correctOptionIndex ?? 0) + 1}.`,
+        })),
+      }));
+
+      // Gộp: ưu tiên bài từ JSON, nếu trùng slug với bài mẫu thì dùng bài mẫu
+      const existingSlugs = new Set(b1ReadingPassages.map((b) => b.slug));
+      for (const item of converted) {
+        if (!existingSlugs.has(item.slug)) {
+          passagesToSeed.push(item);
+        }
+      }
+    } catch (err) {
+      console.warn('⚠️ Lỗi khi đọc reading_passages_seed.json, sử dụng các bài đọc mẫu mặc định:', err);
+    }
+  }
+
+  console.log(`🚀 Tổng số bài đọc chuẩn bị nạp: ${passagesToSeed.length} bài.`);
 
   let passagesCreated = 0;
   let questionsCreated = 0;
 
-  for (const item of b1ReadingPassages) {
+  for (const item of passagesToSeed) {
     const { questions, ...passageData } = item;
 
     // Upsert reading passage theo slug
@@ -316,7 +367,9 @@ export async function seedReadingPassages() {
       questionsCreated++;
     }
 
-    console.log(` ✅ Đã nạp bài đọc: [${passage.slug}] - ${passage.title} (${questions.length} câu hỏi)`);
+    if (passagesCreated % 25 === 0 || passagesCreated === passagesToSeed.length) {
+      console.log(` ⏳ Đã nạp ${passagesCreated}/${passagesToSeed.length} bài (${questionsCreated} câu hỏi)...`);
+    }
   }
 
   console.log(`\n🎉 Hoàn tất nạp bài đọc! Tổng cộng: ${passagesCreated} bài đọc, ${questionsCreated} câu hỏi trắc nghiệm.`);
@@ -332,3 +385,4 @@ if (require.main === module) {
       await prisma.$disconnect();
     });
 }
+
