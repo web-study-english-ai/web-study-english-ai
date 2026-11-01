@@ -288,4 +288,4 @@ Số liệu lấy từ `kb/intent/stats.json` (sinh bởi `scripts/build_intent_
 - **Quyết định**: so nhãn người viết test tự gán khi viết câu với nhãn chốt theo `LABELING.md`.
 - **Lý do**: người soạn train (LLM, Hiếu duyệt) không độc lập với người chốt luật, nên gán mù trên train đo được ít. Người viết test chỉ xem bảng nhãn, độc lập với người chốt.
 - **Kết quả**: n = 50 (Tâm, Duy Anh; Bình không gán nhãn nên không tính), khớp 48/50, accuracy 0,96, κ = 0,9495 (mục tiêu ≥ 0,8). 2 câu lệch đều của Duy Anh: ie_0035 "Khi kết thư cho 1 người bạn, dùng cụm từ hoặc từ gì?" (tác giả `cach_dung`, chốt `nghia_tu`, theo ca "tìm cụm tương đương cho một tình huống"); ie_0043 "Forget to V và Forget V_ing…" (tác giả `phan_biet`, chốt `cach_dung`, theo ca "2 dạng động từ sau một từ cụ thể"). Nhãn "ngoai_pahm_vi" của Tâm (lỗi gõ) tính là `ngoai_pham_vi`.
-- **Hệ quả**: κ chỉ đo trên 50 câu test, không đo trên train. Cả 2 câu lệch rơi vào ca khó đã có trong bảng mục 3 → luật đủ rõ, không cần sửa.
+- **Hệ quả**: κ chỉ đo trên 50 câu test, không đo trên train. Cả 2 câu lệch đều thuộc ca khó đã có trong bảng mục 3 của `LABELING.md`; nhãn chốt theo bảng đó.
