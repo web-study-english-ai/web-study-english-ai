@@ -1,0 +1,667 @@
+{
+  "task": "WSEA-125",
+  "generated_at": "2026-11-01T10:52:50+00:00",
+  "seed": 125,
+  "versions": {
+    "sklearn": "1.9.1",
+    "numpy": "2.4.6"
+  },
+  "inputs": {
+    "kb/intent/intent_train.csv": "e0f98a7977ab25547f0a8cf1ab978afe1fa7772c4b19fb4081cf3223ed59d4b2",
+    "kb/intent/intent_test.csv": "d0c242dc51df926f32ee643f1ee66bcb55c98d0442bedace78090d76fbf83ab4"
+  },
+  "embedder": {
+    "model": "intfloat/multilingual-e5-small",
+    "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+    "dim": 384,
+    "query_prefix": "query: ",
+    "passage_prefix": "passage: "
+  },
+  "labels": [
+    "nghia_tu",
+    "cach_dung",
+    "ngu_phap",
+    "phan_biet",
+    "ngoai_pham_vi"
+  ],
+  "counts": {
+    "train": {
+      "nghia_tu": 77,
+      "cach_dung": 75,
+      "ngu_phap": 75,
+      "phan_biet": 73,
+      "ngoai_pham_vi": 76
+    },
+    "test": {
+      "nghia_tu": 15,
+      "cach_dung": 14,
+      "ngu_phap": 13,
+      "phan_biet": 14,
+      "ngoai_pham_vi": 19
+    }
+  },
+  "features": {
+    "A": "e5 + LogisticRegression",
+    "B": "TF-IDF char_wb(2,5) + LogisticRegression"
+  },
+  "cv": {
+    "folds": 5,
+    "shuffle": true,
+    "random_state": 125,
+    "C_grid": [
+      0.1,
+      0.3,
+      1,
+      3,
+      10
+    ],
+    "model": "LogisticRegression(class_weight='balanced', max_iter=5000)",
+    "table": [
+      {
+        "features": "A",
+        "C": 0.1,
+        "accuracy_mean": 0.7075,
+        "accuracy_std": 0.0473,
+        "macro_f1_mean": 0.7039,
+        "macro_f1_std": 0.0491
+      },
+      {
+        "features": "A",
+        "C": 0.3,
+        "accuracy_mean": 0.7235,
+        "accuracy_std": 0.0509,
+        "macro_f1_mean": 0.7207,
+        "macro_f1_std": 0.0524
+      },
+      {
+        "features": "A",
+        "C": 1,
+        "accuracy_mean": 0.7448,
+        "accuracy_std": 0.0524,
+        "macro_f1_mean": 0.7401,
+        "macro_f1_std": 0.0546
+      },
+      {
+        "features": "A",
+        "C": 3,
+        "accuracy_mean": 0.7821,
+        "accuracy_std": 0.0485,
+        "macro_f1_mean": 0.7812,
+        "macro_f1_std": 0.0453
+      },
+      {
+        "features": "A",
+        "C": 10,
+        "accuracy_mean": 0.7768,
+        "accuracy_std": 0.06,
+        "macro_f1_mean": 0.7767,
+        "macro_f1_std": 0.0561
+      },
+      {
+        "features": "B",
+        "C": 0.1,
+        "accuracy_mean": 0.6755,
+        "accuracy_std": 0.0656,
+        "macro_f1_mean": 0.6714,
+        "macro_f1_std": 0.0695
+      },
+      {
+        "features": "B",
+        "C": 0.3,
+        "accuracy_mean": 0.6862,
+        "accuracy_std": 0.0711,
+        "macro_f1_mean": 0.6831,
+        "macro_f1_std": 0.0742
+      },
+      {
+        "features": "B",
+        "C": 1,
+        "accuracy_mean": 0.7075,
+        "accuracy_std": 0.0716,
+        "macro_f1_mean": 0.7073,
+        "macro_f1_std": 0.0738
+      },
+      {
+        "features": "B",
+        "C": 3,
+        "accuracy_mean": 0.7262,
+        "accuracy_std": 0.0691,
+        "macro_f1_mean": 0.727,
+        "macro_f1_std": 0.0686
+      },
+      {
+        "features": "B",
+        "C": 10,
+        "accuracy_mean": 0.7395,
+        "accuracy_std": 0.0794,
+        "macro_f1_mean": 0.7396,
+        "macro_f1_std": 0.0804
+      }
+    ]
+  },
+  "selection": {
+    "rule": "C tốt nhất mỗi bên theo macro-F1 CV; chọn A trừ khi macro-F1(B) − macro-F1(A) > 0.03",
+    "best": {
+      "A": {
+        "features": "A",
+        "C": 3,
+        "accuracy_mean": 0.7821,
+        "accuracy_std": 0.0485,
+        "macro_f1_mean": 0.7812,
+        "macro_f1_std": 0.0453
+      },
+      "B": {
+        "features": "B",
+        "C": 10,
+        "accuracy_mean": 0.7395,
+        "accuracy_std": 0.0794,
+        "macro_f1_mean": 0.7396,
+        "macro_f1_std": 0.0804
+      }
+    },
+    "f1_gap_b_minus_a": -0.0416,
+    "chosen": "A",
+    "chosen_C": 3,
+    "other": "B",
+    "other_C": 10
+  },
+  "tau": {
+    "rule": "τ nhỏ nhất trong lưới 0.3–0.95 có precision(ngoai_pham_vi) ≥ 0.95 trên cross_val_predict(train)",
+    "target_precision": 0.95,
+    "tau": 0.4,
+    "precision_at_tau": 0.9545,
+    "recall_at_tau": 0.2763,
+    "reached": true,
+    "grid": [
+      {
+        "tau": 0.3,
+        "n_blocked": 66,
+        "precision": 0.7879,
+        "recall": 0.6842
+      },
+      {
+        "tau": 0.35,
+        "n_blocked": 46,
+        "precision": 0.8913,
+        "recall": 0.5395
+      },
+      {
+        "tau": 0.4,
+        "n_blocked": 22,
+        "precision": 0.9545,
+        "recall": 0.2763
+      },
+      {
+        "tau": 0.45,
+        "n_blocked": 17,
+        "precision": 1.0,
+        "recall": 0.2237
+      },
+      {
+        "tau": 0.5,
+        "n_blocked": 10,
+        "precision": 1.0,
+        "recall": 0.1316
+      },
+      {
+        "tau": 0.55,
+        "n_blocked": 4,
+        "precision": 1.0,
+        "recall": 0.0526
+      },
+      {
+        "tau": 0.6,
+        "n_blocked": 1,
+        "precision": 1.0,
+        "recall": 0.0132
+      },
+      {
+        "tau": 0.65,
+        "n_blocked": 0,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "tau": 0.7,
+        "n_blocked": 0,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "tau": 0.75,
+        "n_blocked": 0,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "tau": 0.8,
+        "n_blocked": 0,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "tau": 0.85,
+        "n_blocked": 0,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "tau": 0.9,
+        "n_blocked": 0,
+        "precision": null,
+        "recall": 0.0
+      },
+      {
+        "tau": 0.95,
+        "n_blocked": 0,
+        "precision": null,
+        "recall": 0.0
+      }
+    ]
+  },
+  "test": {
+    "n": 75,
+    "evaluated_once": true,
+    "chosen": {
+      "features": "A",
+      "C": 3,
+      "n": 75,
+      "accuracy": 0.72,
+      "macro_f1": 0.7079,
+      "per_label": {
+        "nghia_tu": {
+          "precision": 0.7059,
+          "recall": 0.8,
+          "f1-score": 0.75,
+          "support": 15
+        },
+        "cach_dung": {
+          "precision": 0.6154,
+          "recall": 0.5714,
+          "f1-score": 0.5926,
+          "support": 14
+        },
+        "ngu_phap": {
+          "precision": 0.6,
+          "recall": 0.9231,
+          "f1-score": 0.7273,
+          "support": 13
+        },
+        "phan_biet": {
+          "precision": 0.875,
+          "recall": 0.5,
+          "f1-score": 0.6364,
+          "support": 14
+        },
+        "ngoai_pham_vi": {
+          "precision": 0.8824,
+          "recall": 0.7895,
+          "f1-score": 0.8333,
+          "support": 19
+        }
+      },
+      "confusion_matrix": {
+        "rows": "nhãn thật",
+        "cols": "nhãn đoán",
+        "labels": [
+          "nghia_tu",
+          "cach_dung",
+          "ngu_phap",
+          "phan_biet",
+          "ngoai_pham_vi"
+        ],
+        "values": [
+          [
+            12,
+            1,
+            2,
+            0,
+            0
+          ],
+          [
+            3,
+            8,
+            2,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            12,
+            0,
+            1
+          ],
+          [
+            1,
+            3,
+            3,
+            7,
+            0
+          ],
+          [
+            1,
+            1,
+            1,
+            1,
+            15
+          ]
+        ]
+      },
+      "top_confusions": [
+        {
+          "true": "cach_dung",
+          "pred": "nghia_tu",
+          "n": 3
+        },
+        {
+          "true": "phan_biet",
+          "pred": "cach_dung",
+          "n": 3
+        },
+        {
+          "true": "phan_biet",
+          "pred": "ngu_phap",
+          "n": 3
+        }
+      ],
+      "n_wrong": 21,
+      "accuracy_by_lang": {
+        "en": {
+          "n": 9,
+          "accuracy": 0.5556
+        },
+        "mixed": {
+          "n": 3,
+          "accuracy": 0.6667
+        },
+        "vi": {
+          "n": 57,
+          "accuracy": 0.7719
+        },
+        "vi_nodau": {
+          "n": 6,
+          "accuracy": 0.5
+        }
+      },
+      "accuracy_by_author": {
+        "binh": {
+          "n": 25,
+          "accuracy": 0.8
+        },
+        "duyanh": {
+          "n": 25,
+          "accuracy": 0.64
+        },
+        "tam": {
+          "n": 25,
+          "accuracy": 0.72
+        }
+      },
+      "early_block": {
+        "tau": 0.4,
+        "n_blocked": 10,
+        "precision": 0.9,
+        "recall": 0.4737
+      },
+      "wrong": [
+        {
+          "id": "ie_0003",
+          "text": "Cụm get along có đồng nghĩa với be friendly không",
+          "label": "phan_biet",
+          "pred": "nghia_tu",
+          "p_max": 0.3988
+        },
+        {
+          "id": "ie_0004",
+          "text": "Khi nào dùng which khi nào dùng what",
+          "label": "phan_biet",
+          "pred": "cach_dung",
+          "p_max": 0.3478
+        },
+        {
+          "id": "ie_0008",
+          "text": "Từ afford đặt câu thế nào cho tự nhiên nhỉ",
+          "label": "cach_dung",
+          "pred": "ngu_phap",
+          "p_max": 0.291
+        },
+        {
+          "id": "ie_0018",
+          "text": "Khi nào thì dùng will khi nào thì dùng be going to thế",
+          "label": "phan_biet",
+          "pred": "cach_dung",
+          "p_max": 0.3666
+        },
+        {
+          "id": "ie_0022",
+          "text": "Từ schedule phát âm như nào thì chuẩn giọng Mỹ nhất",
+          "label": "ngoai_pham_vi",
+          "pred": "nghia_tu",
+          "p_max": 0.2583
+        },
+        {
+          "id": "ie_0029",
+          "text": "Tu tieng Anh cho xe can cau la tu gi?",
+          "label": "nghia_tu",
+          "pred": "ngu_phap",
+          "p_max": 0.2534
+        },
+        {
+          "id": "ie_0031",
+          "text": "Từ Sincerely khi kết thư có trang trọng không?",
+          "label": "cach_dung",
+          "pred": "nghia_tu",
+          "p_max": 0.4445
+        },
+        {
+          "id": "ie_0034",
+          "text": "Dat 1 cau vi du voi tu employee",
+          "label": "cach_dung",
+          "pred": "ngoai_pham_vi",
+          "p_max": 0.2498
+        },
+        {
+          "id": "ie_0035",
+          "text": "Khi kết thư cho 1 người bạn, dùng cụm từ hoặc từ gì?",
+          "label": "nghia_tu",
+          "pred": "ngu_phap",
+          "p_max": 0.3028
+        },
+        {
+          "id": "ie_0040",
+          "text": "Translate this sentence into Vietnamese for me: “My keyboard is very clean”",
+          "label": "ngu_phap",
+          "pred": "ngoai_pham_vi",
+          "p_max": 0.4462
+        },
+        {
+          "id": "ie_0041",
+          "text": "Thì tương lai gần với thì tương lai đơn khác nhau ở chỗ nào",
+          "label": "phan_biet",
+          "pred": "ngu_phap",
+          "p_max": 0.4456
+        },
+        {
+          "id": "ie_0042",
+          "text": "Cách dùng Will vs Be going to khác nhau ở đâu",
+          "label": "phan_biet",
+          "pred": "cach_dung",
+          "p_max": 0.3471
+        },
+        {
+          "id": "ie_0043",
+          "text": "Forget to V và Forget V_ing, cụm nào dùng cho Đã Quên làm j",
+          "label": "cach_dung",
+          "pred": "ngu_phap",
+          "p_max": 0.3102
+        },
+        {
+          "id": "ie_0050",
+          "text": "What does the Fox say?",
+          "label": "ngoai_pham_vi",
+          "pred": "ngu_phap",
+          "p_max": 0.2934
+        },
+        {
+          "id": "ie_0055",
+          "text": "khi nao dung what khi nao dung which",
+          "label": "phan_biet",
+          "pred": "ngu_phap",
+          "p_max": 0.2838
+        },
+        {
+          "id": "ie_0058",
+          "text": "what time is it",
+          "label": "ngoai_pham_vi",
+          "pred": "phan_biet",
+          "p_max": 0.2755
+        },
+        {
+          "id": "ie_0060",
+          "text": "what dose the fox say",
+          "label": "ngoai_pham_vi",
+          "pred": "cach_dung",
+          "p_max": 0.3178
+        },
+        {
+          "id": "ie_0062",
+          "text": "từ congratulate đi kèm với giới từ gì",
+          "label": "cach_dung",
+          "pred": "nghia_tu",
+          "p_max": 0.3512
+        },
+        {
+          "id": "ie_0063",
+          "text": "tìm giúp mình 3 từ đồng nghĩa với từ important",
+          "label": "nghia_tu",
+          "pred": "cach_dung",
+          "p_max": 0.3213
+        },
+        {
+          "id": "ie_0069",
+          "text": "khi nào thì dùng thì quá khứ đơn, khi nào dùng quá khư tiếp diễn",
+          "label": "phan_biet",
+          "pred": "ngu_phap",
+          "p_max": 0.5747
+        },
+        {
+          "id": "ie_0071",
+          "text": "đặt một với từ rage baite",
+          "label": "cach_dung",
+          "pred": "nghia_tu",
+          "p_max": 0.252
+        }
+      ]
+    },
+    "not_chosen_for_reference_only": {
+      "features": "B",
+      "C": 10,
+      "n": 75,
+      "accuracy": 0.7067,
+      "macro_f1": 0.7018,
+      "per_label": {
+        "nghia_tu": {
+          "precision": 0.7647,
+          "recall": 0.8667,
+          "f1-score": 0.8125,
+          "support": 15
+        },
+        "cach_dung": {
+          "precision": 0.7857,
+          "recall": 0.7857,
+          "f1-score": 0.7857,
+          "support": 14
+        },
+        "ngu_phap": {
+          "precision": 0.5417,
+          "recall": 1.0,
+          "f1-score": 0.7027,
+          "support": 13
+        },
+        "phan_biet": {
+          "precision": 0.6667,
+          "recall": 0.5714,
+          "f1-score": 0.6154,
+          "support": 14
+        },
+        "ngoai_pham_vi": {
+          "precision": 1.0,
+          "recall": 0.4211,
+          "f1-score": 0.5926,
+          "support": 19
+        }
+      },
+      "confusion_matrix": {
+        "rows": "nhãn thật",
+        "cols": "nhãn đoán",
+        "labels": [
+          "nghia_tu",
+          "cach_dung",
+          "ngu_phap",
+          "phan_biet",
+          "ngoai_pham_vi"
+        ],
+        "values": [
+          [
+            13,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            11,
+            2,
+            1,
+            0
+          ],
+          [
+            0,
+            0,
+            13,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            5,
+            8,
+            0
+          ],
+          [
+            3,
+            3,
+            2,
+            3,
+            8
+          ]
+        ]
+      },
+      "top_confusions": [
+        {
+          "true": "phan_biet",
+          "pred": "ngu_phap",
+          "n": 5
+        },
+        {
+          "true": "ngoai_pham_vi",
+          "pred": "nghia_tu",
+          "n": 3
+        },
+        {
+          "true": "ngoai_pham_vi",
+          "pred": "cach_dung",
+          "n": 3
+        }
+      ],
+      "n_wrong": 22
+    },
+    "majority_baseline": {
+      "predict": "nghia_tu",
+      "accuracy": 0.2
+    }
+  }
+}
