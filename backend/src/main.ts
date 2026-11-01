@@ -33,11 +33,13 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, swaggerConfig);
   SwaggerModule.setup('api/docs', app, cleanupOpenApiDoc(document));
 
-  const port = config.get<number>('PORT') ?? 3001;
-  await app.listen(port);
+  const port = process.env.PORT
+    ? parseInt(process.env.PORT, 10)
+    : (config.get<number>('PORT') ?? 3001);
+  await app.listen(port, '0.0.0.0');
 
-  console.log(`Backend đang chạy tại http://localhost:${port}/api`);
-  console.log(`Tài liệu API tại      http://localhost:${port}/api/docs`);
+  console.log(`Backend đang chạy tại http://0.0.0.0:${port}/api`);
+  console.log(`Tài liệu API tại      http://0.0.0.0:${port}/api/docs`);
 }
 
 void bootstrap();
