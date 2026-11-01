@@ -419,8 +419,10 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-82 · Chuẩn bị dữ liệu cho bộ phân loại ý định
+### [→] WSEA-82 · Chuẩn bị dữ liệu cho bộ phân loại ý định
 5h · Ưu tiên: High · `ai/WSEA-82-...`
+
+> Gộp vào WSEA-112 (xem mục WSEA-95 ở đợt 7).
 
 - [ ] 1. Xác định các nhóm ý định: hỏi nghĩa, cách dùng, ngữ pháp, phân biệt từ
 - [ ] 2. Viết 200 câu hỏi mẫu đầu tiên và gán nhãn
@@ -533,13 +535,15 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-95 · Hoàn thiện gán nhãn dữ liệu phân loại ý định
-5h · Ưu tiên: High · `ai/WSEA-95-...`
+### [x] WSEA-95 · Hoàn thiện gán nhãn dữ liệu phân loại ý định
+5h · Ưu tiên: High · `ai/WSEA-112-gan-nhan-y-dinh`
 
-- [ ] 1. Viết thêm 300 câu hỏi mẫu cho đủ 500 câu
-- [ ] 2. Gán nhãn và kiểm tra tính nhất quán
-- [ ] 3. Chia tập huấn luyện và tập kiểm tra
-- [ ] 4. Xuất dữ liệu ra định dạng phù hợp để huấn luyện
+> Jira: WSEA-112. Gộp luôn WSEA-82 (chuẩn bị dữ liệu ý định).
+
+- [x] 1. Viết thêm 300 câu hỏi mẫu cho đủ 500 câu — 376 câu train (LLM soạn, Hiếu duyệt) + 75 câu test (Tâm, Duy Anh, Bình)
+- [x] 2. Gán nhãn và kiểm tra tính nhất quán — kappa nhãn tác giả 0,9495 (48/50 câu), `kb/intent/review/author_agreement.json`
+- [x] 3. Chia tập huấn luyện và tập kiểm tra — chia theo người viết; lọc gần trùng e5 cosine ≥ 0,92 loại 24 câu train
+- [x] 4. Xuất dữ liệu ra định dạng phù hợp để huấn luyện — `kb/intent/intent_{train,test}.csv` + `label_map.json` + `stats.json` (`scripts/build_intent_dataset.py`)
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 

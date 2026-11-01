@@ -251,3 +251,41 @@ Số liệu truy hồi lấy từ `scripts/eval_retrieval.py` → `docs/eval/ret
 - **Quyết định**: `ai-service/.gitattributes`: `kb/*.jsonl text eol=lf`, `kb/*.csv text eol=lf`.
 - **Lý do**: mã băm phải giống nhau trên mọi máy; sửa ở git thì không phải đổi script hay manifest.
 - **Hệ quả**: máy đã checkout trước đó cần checkout lại các file này một lần để nhận LF.
+
+### 2026-11-01 — Dataset ý định (WSEA-112)
+
+Số liệu lấy từ `kb/intent/stats.json` (sinh bởi `scripts/build_intent_dataset.py`, seed 112) và `kb/intent/review/author_agreement.json`. Luật gán nhãn chi tiết ở `kb/intent/LABELING.md`.
+
+#### a. 5 nhãn và luật ưu tiên
+
+- **Bối cảnh**: trợ lý cần biết loại câu hỏi để chặn sớm câu lạc đề không cần gọi LLM, chọn nguồn truy hồi và khuôn prompt.
+- **Quyết định**: 5 nhãn `nghia_tu`, `cach_dung`, `ngu_phap`, `phan_biet`, `ngoai_pham_vi`. Câu khớp nhiều nhãn theo thứ tự `ngoai_pham_vi` > `phan_biet` > `nghia_tu` > `cach_dung` > `ngu_phap`. Phát âm, phương pháp học, thi cử, ngôn ngữ khác xếp vào `ngoai_pham_vi`.
+- **Lý do**: lạc đề phải chặn trước; câu có từ 2 lựa chọn cần khuôn so sánh dù kèm hỏi nghĩa; hỏi nghĩa một từ thì tra từ điển trước rồi mới tới cách dùng. Phát âm đã cắt khỏi phạm vi, kho không có tài liệu.
+- **Hệ quả**: ca khó được chốt dần vào bảng mục 3 của `LABELING.md` (ghi ngày chốt); người gán không tự đặt thêm nhãn.
+
+#### b. Chia train/test theo NGƯỜI VIẾT
+
+- **Quyết định**: train và test do người viết khác nhau soạn. Train 376 câu, tác giả `llm` 376. Test 75 câu: Tâm, Duy Anh, Bình mỗi người 25.
+- **Lý do**: cùng người viết thì mô hình học văn phong thay vì ý định, độ chính xác bị thổi phồng (cùng tinh thần chia theo người dùng ở bài dự báo quên).
+- **Hệ quả**: train cân bằng nhãn (77 / 75 / 75 / 73 / 76) và ngôn ngữ (vi 200 · vi_nodau 58 · mixed 59 · en 59). Test lệch hơn: theo nhãn 15 / 14 / 13 / 14 / 19 (`ngoai_pham_vi` nhiều nhất), theo ngôn ngữ vi 57 · vi_nodau 6 · mixed 3 · en 9 → độ chính xác trên `mixed` và `vi_nodau` đo từ rất ít câu. 4 câu test có `note`.
+
+#### c. Train do LLM soạn
+
+- **Bối cảnh**: kế hoạch ban đầu là Hiếu viết tay 100 + LLM nháp 300; trễ tiến độ nên không kịp viết tay.
+- **Quyết định**: toàn bộ train do LLM soạn (`train_llm.txt` 400 câu), Hiếu duyệt từng câu.
+- **Rủi ro**: văn phong train lệch văn phong người học thật (LLM viết đều, ít lỗi tự nhiên hơn). Bù lại, test hoàn toàn do người thật viết, nên số đo trên test phản ánh khả năng tổng quát sang câu thật, không bị thổi phồng bởi văn phong chung.
+- **Sẽ xem lại nếu**: độ chính xác trên test thấp hơn hẳn trên train → bổ sung câu người thật vào train.
+
+#### d. Ngưỡng gần trùng 0,92 (bảo thủ)
+
+- **Quyết định**: câu train có cosine e5-small (`query: `) ≥ 0,92 với một câu test bất kỳ bị loại khỏi train; test giữ nguyên. Loại 24/400 câu train.
+- **Lý do**: cosine e5 dồn cao nên cặp khác nội dung vẫn vượt ngưỡng; 24 câu bị loại có cosine 0,9201–0,9815, trong đó có cặp chỉ giống khung câu như "sincere nghia la gi" ↔ "have nghia la gi" (0,9226), "who are you" ↔ "how are you" (0,9285), "thì quá khứ hoàn thành dùng khi nào" ↔ "Thì quá khứ tiếp diễn dùng khi nào" (0,9520). Chọn bảo thủ: thà mất vài câu train còn hơn để lọt câu gần trùng làm thổi phồng điểm test.
+- **Hệ quả**: train còn 376 câu. Danh sách câu bị loại kèm câu test tương ứng ghi trong `stats.json` → `near_dup.removed_from_train`.
+
+#### e. Đo nhất quán bằng nhãn tác giả thay cho gán mù
+
+- **Bối cảnh**: kế hoạch ban đầu là Phúc gán mù 100 câu train rồi tính Cohen's κ.
+- **Quyết định**: so nhãn người viết test tự gán khi viết câu với nhãn chốt theo `LABELING.md`.
+- **Lý do**: người soạn train (LLM, Hiếu duyệt) không độc lập với người chốt luật, nên gán mù trên train đo được ít. Người viết test chỉ xem bảng nhãn, độc lập với người chốt.
+- **Kết quả**: n = 50 (Tâm, Duy Anh; Bình không gán nhãn nên không tính), khớp 48/50, accuracy 0,96, κ = 0,9495 (mục tiêu ≥ 0,8). 2 câu lệch đều của Duy Anh: ie_0035 "Khi kết thư cho 1 người bạn, dùng cụm từ hoặc từ gì?" (tác giả `cach_dung`, chốt `nghia_tu`, theo ca "tìm cụm tương đương cho một tình huống"); ie_0043 "Forget to V và Forget V_ing…" (tác giả `phan_biet`, chốt `cach_dung`, theo ca "2 dạng động từ sau một từ cụ thể"). Nhãn "ngoai_pahm_vi" của Tâm (lỗi gõ) tính là `ngoai_pham_vi`.
+- **Hệ quả**: κ chỉ đo trên 50 câu test, không đo trên train. Cả 2 câu lệch rơi vào ca khó đã có trong bảng mục 3 → luật đủ rõ, không cần sửa.

@@ -1,0 +1,43 @@
+# WSEA-112 · tập kiểm tra · tác giả: Thạc Duy Anh (file "AI_chatbot.docx", tạo 31/10/2026)
+# Câu giữ nguyên văn (kể cả lỗi gõ); chỉ bỏ số thứ tự và nhãn trong ngoặc.
+# Nhãn cuối theo LABELING.md; nhãn tác giả khác thì ghi ở note.
+# @lang vi
+nghia_tu | Apple nghĩa là gì?
+nghia_tu | Dog dịch ra là gì?
+nghia_tu | Từ nào để diễn tả cảm xúc tức giận?
+# @lang vi_nodau
+nghia_tu | Tu tieng Anh cho xe can cau la tu gi?
+# @lang en
+nghia_tu | What is the meaning of “Truck”?
+# @lang vi
+cach_dung | Từ Sincerely khi kết thư có trang trọng không?
+cach_dung | Từ need đi với V-ing hay to V
+# @lang en
+cach_dung | Which preposition goes with "instead"?
+# @lang vi_nodau
+cach_dung | Dat 1 cau vi du voi tu employee
+# @lang vi
+nghia_tu | Khi kết thư cho 1 người bạn, dùng cụm từ hoặc từ gì? | note: tác giả gán cach_dung; đổi nghia_tu (tìm cụm tương đương cho một ý, không xoay quanh một từ cho trước), Hiếu chốt 01/11
+ngu_phap | Dịch cho tôi câu này “I want to punch leader”
+ngu_phap | Quy tắc của thì hiện tại hoàn thành là gì
+ngu_phap | Thì quá khứ tiếp diễn dùng khi nào
+# @lang vi_nodau
+ngu_phap | Cau truc cua thi hien tai hoan thanh tiep dien la gi
+# @lang en
+ngu_phap | Translate this sentence into Vietnamese for me: “My keyboard is very clean”
+# @lang vi
+phan_biet | Thì tương lai gần với thì tương lai đơn khác nhau ở chỗ nào
+phan_biet | Cách dùng Will vs Be going to khác nhau ở đâu
+# @lang mixed
+cach_dung | Forget to V và Forget V_ing, cụm nào dùng cho Đã Quên làm j | note: tác giả gán phan_biet; đổi cach_dung theo LABELING mục 3 (dạng động từ sau MỘT từ, luật suggest), Hiếu chốt 01/11
+# @lang vi
+phan_biet | Từ Big và Large cách dùng khác nhau như nào
+phan_biet | See, Watch và Look cách dùng khác nhau ra sao
+ngoai_pham_vi | Nay em ăn cơm chưa?
+ngoai_pham_vi | Kết quả trận bóng hôm nay là gì?
+# @lang mixed
+ngoai_pham_vi | IOS vs Android nên dùng hệ điều hành gì?
+# @lang vi
+ngoai_pham_vi | Thay đổi địa chỉ DNS kiểu gì?
+# @lang en
+ngoai_pham_vi | What does the Fox say?
