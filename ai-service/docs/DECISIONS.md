@@ -392,3 +392,55 @@ Số liệu lấy từ `docs/eval/rerank_report.json` (sinh bởi `scripts/eval_
   - lượng tử hoá: repo đã có bản int8 khoảng 113 MiB;
   - GPU.
 - **Hạn chế**: 31 câu dương do Claude soạn, Hiếu duyệt; câu en chỉ n = 6.
+
+### 2026-11-02 — WSEA-127: luật quyết định pipeline (chốt trước khi chạy)
+
+- **Bối cảnh**: theo hợp đồng v0.3, **backend** chạy SQL pgvector rồi gửi `contexts` (khoảng 8 ứng viên, `AI_ASSISTANT_TOP_K`), `vocab`, `history` sang `POST /assistant/ask`. "Pipeline truy hồi trong dịch vụ AI" là phần xử lý **sau** khi nhận ứng viên và **trước** LLM: quyết định có trả lời hay không, rồi chọn đoạn nào đưa vào prompt.
+- Hằng số nằm ở `app/services/pipeline_rules.py`. Luật chốt **trước** khi viết code pipeline và trước khi chạy kiểm offline; không sửa sau khi thấy kết quả.
+
+#### a. Luật quyết định
+
+Áp theo thứ tự; luật đầu tiên khớp thì dừng.
+
+1. **`contexts` rỗng VÀ `vocab` rỗng** → `"no_context"`.
+2. **`"out_of_scope"`** khi khớp đủ cả 5 điều kiện:
+   - `intent.label == "ngoai_pham_vi"`;
+   - `confidence ≥ τ` (τ đọc từ file trọng số, hiện 0,40);
+   - `word` null;
+   - không có `vocab` nào `match = "exact"`;
+   - `history` rỗng.
+
+   Lý do có các điều kiện miễn chặn:
+   - câu nối tiếp ngắn ("còn cái kia thì sao?") dễ bị đoán lạc đề;
+   - đã có từ khớp đúng trong kho thì gần như chắc câu nằm trong phạm vi;
+   - bộ ý định có recall `ngoai_pham_vi` out-of-fold chỉ 0,2763 (WSEA-125 mục c), nên nó **không phải bộ lọc chính**, chỉ chặn khi rất chắc.
+3. **distance top-1 > `MAX_TOP1_DISTANCE` = 0,22 VÀ không có `vocab` exact** → `"no_context"`.
+   - WSEA-111 mục d: top-1 câu dương max 0,199; câu âm max 0,231. Ở 0,22 giữ 100% câu dương, chỉ chặn câu rác rõ ràng (n05, n07). Đây là lưới an toàn, không phải bộ lọc chính.
+   - So sánh nghiêm ngặt (`>`).
+   - Ca biên: `contexts` rỗng nhưng có `vocab` thì không có top-1 → bỏ qua luật 3.
+4. **Còn lại** → `"answer"`:
+   - `contexts`: sắp theo `distance` tăng dần (hoà thì giữ thứ tự backend gửi), bỏ id trùng (giữ lần xuất hiện đầu), lấy `K_PROMPT` = 5;
+   - `vocab`: `exact` trước, rồi `vector` theo `distance` tăng dần (hoà thì giữ thứ tự gửi), lấy `K_VOCAB` = 3.
+   - Backend đã gửi đúng thứ tự và không trùng theo hợp đồng; dịch vụ vẫn tự sắp và bỏ trùng để không phụ thuộc vào điều đó.
+
+#### b. Những gì không làm ở bước này
+
+- **Xếp hạng lại** = identity (tham số `reranker=None`). Lý do: WSEA-126 tắt rerank theo luật chi phí (p95 1.149 ms, RAM +726 MiB).
+- **Câu "trong lĩnh vực nhưng kho chưa có"** (câu âm nhóm `gap`) KHÔNG chặn ở đây. WSEA-111 cho thấy distance của nhóm này (0,120–0,155) nằm trong vùng câu dương, nên không có ngưỡng nào tách được. Để LLM tự từ chối theo prompt (WSEA-140).
+
+#### c. Luật đạt cho kiểm offline (B3)
+
+Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negatives.csv`, cùng top-8 e5 như WSEA-111.
+
+- **(a)** Số câu dương bị chặn (quyết định ≠ `"answer"`) ≤ `MAX_WRONG_BLOCK_POS` = 1 trên 31 câu.
+- **(b)** Tỷ lệ câu dương có gold trong `contexts` đầu ra **phải bằng đúng** hit@5 gốc = 0,8387 (26/31, `docs/eval/retrieval_k_sweep.json`). Lệch là bug, không phải kết quả.
+  - **Phạm vi đo**: chạy bước chọn ngữ cảnh (luật 4) cho **cả 31 câu, không phụ thuộc quyết định chặn**. Nếu chỉ đo trên câu được trả lời thì một câu bị chặn hợp lệ theo (a) có thể kéo tỷ lệ xuống dưới 0,8387 dù code không có bug.
+  - Việc chặn đã do (a) kiểm; (b) chỉ kiểm phần sắp xếp, bỏ trùng và cắt top-5.
+- **(c)** Câu âm bị chặn: chỉ ghi nhận theo nhóm `off`/`gap`, không đặt ngưỡng đạt.
+- **Giới hạn của kiểm offline**:
+  - **Ngưỡng không độc lập với dữ liệu kiểm.** `MAX_TOP1_DISTANCE` = 0,22 được chọn từ chính phân phối của 43 câu này (WSEA-111). Vì vậy với luật 3, (a) đạt là do cách chọn ngưỡng, không phải bằng chứng độc lập. Phần (a) thực sự kiểm là luật 2 (ý định).
+  - **Kiểm trùng lặp** (chạy 02/11, trước khi viết code pipeline).
+    - Cách so: chuẩn hoá câu (strip + lower + gộp khoảng trắng), so 43 câu của `kb/eval_questions.csv` + `kb/eval_negatives.csv` với toàn bộ dữ liệu của bộ ý định trong `kb/intent/`.
+    - Phạm vi: `intent_train.csv` + `intent_test.csv` (451 câu), quét thêm cột câu hỏi của các file nguồn `kb/intent/raw/*.txt` (475 câu).
+    - Kết quả: **0 câu trùng** ở cả hai, không có qid nào. Bộ ý định không học thuộc câu kiểm. Không sửa luật vì kết quả này.
+  - **Số chính thức** của pipeline là bộ 60 câu do Phúc soạn (WSEA-141), không phải bộ 43 câu này.
