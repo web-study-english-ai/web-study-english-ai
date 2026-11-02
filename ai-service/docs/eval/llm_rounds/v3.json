@@ -108,7 +108,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đúng ý, mọi gạch đầu dòng và câu kết có [n]: mốc đã qua → QKĐ, không mốc/khoảng chưa kết thúc → HTHT — gram_015 'có mốc thời gian đã qua thì dùng quá khứ đơn'; kết quả tới hiện tại — gram_015 'nhấn mạnh kết quả hoặc ảnh hưởng tới bây giờ'; When/Have you ever — gram_015 'hỏi When ...? thì dùng quá khứ đơn; hỏi Have you ever ...?'; từ dấu hiệu [4] — gram_014 'just, already, ever, never', 'nếu câu có mốc quá khứ đã kết thúc như yesterday, last year thì dùng quá khứ đơn'."
+      "reason_cc": "Đúng ý, mọi gạch đầu dòng và câu kết có [n]: mốc đã qua → QKĐ, không mốc/khoảng chưa kết thúc → HTHT — gram_015 'có mốc thời gian đã qua thì dùng quá khứ đơn'; kết quả tới hiện tại — gram_015 'nhấn mạnh kết quả hoặc ảnh hưởng tới bây giờ'; When/Have you ever — gram_015 'hỏi When ...? thì dùng quá khứ đơn; hỏi Have you ever ...?'; từ dấu hiệu [4] — gram_014 'just, already, ever, never', 'nếu câu có mốc quá khứ đã kết thúc như yesterday, last year thì dùng quá khứ đơn'.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d02",
@@ -177,7 +181,11 @@
       },
       "c_machine": null,
       "grade_cc": "sai",
-      "reason_cc": "Câu mở đầu vẫn không có [n] (vi phạm đúng điểm v3 sửa). Nặng hơn: 'will chỉ dùng cho quyết định được đưa ra ngay lúc nói [1]' là khẳng định sai so với tài liệu — gram_020 còn nêu will cho 'dự đoán theo ý kiến, cảm nghĩ' và 'lời hứa, lời đề nghị'; gram_019 liệt kê 4 cách dùng. Chữ 'chỉ' biến một cách dùng thành duy nhất. Phân vân mot_phan/sai → chọn mức thấp hơn."
+      "reason_cc": "Câu mở đầu vẫn không có [n] (vi phạm đúng điểm v3 sửa). Nặng hơn: 'will chỉ dùng cho quyết định được đưa ra ngay lúc nói [1]' là khẳng định sai so với tài liệu — gram_020 còn nêu will cho 'dự đoán theo ý kiến, cảm nghĩ' và 'lời hứa, lời đề nghị'; gram_019 liệt kê 4 cách dùng. Chữ 'chỉ' biến một cách dùng thành duy nhất. Phân vân mot_phan/sai → chọn mức thấp hơn.",
+      "grade_claude": "sai",
+      "grade_final": "sai",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d03",
@@ -246,7 +254,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Nội dung đủ 5 điểm và đúng gram_033 ('nguồn gốc', 'mustn't ... cấm; don't have to ... không cần', 'has to', 'had to / will have to', 'Do I have to ...?'), ví dụ lấy từ gram_033, source_ids đúng [gram_033]. Nhưng 5 gạch đầu dòng chứa thông tin từ tài liệu đều không kết thúc bằng [n] (chỉ câu mở đầu và cuối khối ví dụ có [1]) → trích nguồn thiếu theo quy tắc 3."
+      "reason_cc": "Nội dung đủ 5 điểm và đúng gram_033 ('nguồn gốc', 'mustn't ... cấm; don't have to ... không cần', 'has to', 'had to / will have to', 'Do I have to ...?'), ví dụ lấy từ gram_033, source_ids đúng [gram_033]. Nhưng 5 gạch đầu dòng chứa thông tin từ tài liệu đều không kết thúc bằng [n] (chỉ câu mở đầu và cuối khối ví dụ có [1]) → trích nguồn thiếu theo quy tắc 3.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "hieu_quyet",
+      "hieu_decision": "dung"
     },
     {
       "id": "d04",
@@ -318,7 +330,11 @@
       },
       "c_machine": null,
       "grade_cc": "sai",
-      "reason_cc": "Kết luận do homework có [1] — gram_076 'make homework (đúng: do homework)'; make tạo ra cái mới, 'make a cake' đúng gram_076. Nhưng 'Do thường đi với các công việc, nhiệm vụ như homework, chores…' đưa 'chores' — không có trong tài liệu (gram_076 nêu housework, the dishes, exercise) — và hai gạch đầu dòng giải thích không có [n]. Khẳng định không có trong tài liệu → theo thang là 'sai'; phân vân mot_phan/sai → chọn mức thấp hơn. Trình bày: còn ' 。' (dấu chấm toàn chiều U+3002 kèm dấu cách) sau 'make homework'."
+      "reason_cc": "Kết luận do homework có [1] — gram_076 'make homework (đúng: do homework)'; make tạo ra cái mới, 'make a cake' đúng gram_076. Nhưng 'Do thường đi với các công việc, nhiệm vụ như homework, chores…' đưa 'chores' — không có trong tài liệu (gram_076 nêu housework, the dishes, exercise) — và hai gạch đầu dòng giải thích không có [n]. Khẳng định không có trong tài liệu → theo thang là 'sai'; phân vân mot_phan/sai → chọn mức thấp hơn. Trình bày: còn ' 。' (dấu chấm toàn chiều U+3002 kèm dấu cách) sau 'make homework'.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "hieu_quyet",
+      "hieu_decision": "dung"
     },
     {
       "id": "d05",
@@ -390,7 +406,11 @@
       },
       "c_machine": null,
       "grade_cc": "sai",
-      "reason_cc": "Lặp lại lỗi v1 và nặng hơn: 'Trong tài liệu, effect ... thường đi kèm giới từ of (ví dụ: the effect of your health)【1】' — gram_089 KHÔNG nói effect đi với of; tài liệu nói 'have an effect on + tân ngữ (have an effect on your health)'. Câu gán sai cho tài liệu và ví dụ 'the effect of your health' là bóp méo ví dụ 'effect on your health'. Ý affect là động từ, không giới từ đúng gram_089 'affect + tân ngữ, không có giới từ'."
+      "reason_cc": "Lặp lại lỗi v1 và nặng hơn: 'Trong tài liệu, effect ... thường đi kèm giới từ of (ví dụ: the effect of your health)【1】' — gram_089 KHÔNG nói effect đi với of; tài liệu nói 'have an effect on + tân ngữ (have an effect on your health)'. Câu gán sai cho tài liệu và ví dụ 'the effect of your health' là bóp méo ví dụ 'effect on your health'. Ý affect là động từ, không giới từ đúng gram_089 'affect + tân ngữ, không có giới từ'.",
+      "grade_claude": "sai",
+      "grade_final": "sai",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d06",
@@ -757,7 +777,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Ba ví dụ dùng đúng reluctant (adj), có bản dịch; ví dụ 1 sửa đúng thành 'không muốn nhận lời mời', ví dụ 3 'không sẵn lòng chi thêm tiền' đúng. Ví dụ 2 'She felt reluctant about telling the truth – Cô ấy miễn cưỡng khi nói sự thật' vẫn dễ hiểu là cô ấy đã nói (dù không muốn), không giữ rõ ý 'không muốn nói' — đúng loại lỗi quy tắc 4 v3 cấm. Phân vân dung/mot_phan → chọn mức thấp hơn."
+      "reason_cc": "Ba ví dụ dùng đúng reluctant (adj), có bản dịch; ví dụ 1 sửa đúng thành 'không muốn nhận lời mời', ví dụ 3 'không sẵn lòng chi thêm tiền' đúng. Ví dụ 2 'She felt reluctant about telling the truth – Cô ấy miễn cưỡng khi nói sự thật' vẫn dễ hiểu là cô ấy đã nói (dù không muốn), không giữ rõ ý 'không muốn nói' — đúng loại lỗi quy tắc 4 v3 cấm. Phân vân dung/mot_phan → chọn mức thấp hơn.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "hieu_quyet",
+      "hieu_decision": "dung"
     },
     {
       "id": "d11",
@@ -838,7 +862,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đúng ý câu nối tiếp, cả hai câu chứa thông tin có [1] → gram_013: 'khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn'; 'today, this week ... khoảng thời gian đó vẫn đang tiếp diễn'. Ví dụ tự đặt đúng; thụt lề lồng nhau giữ đúng sau hậu xử lý v3."
+      "reason_cc": "Đúng ý câu nối tiếp, cả hai câu chứa thông tin có [1] → gram_013: 'khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn'; 'today, this week ... khoảng thời gian đó vẫn đang tiếp diễn'. Ví dụ tự đặt đúng; thụt lề lồng nhau giữ đúng sau hậu xử lý v3.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d12",
@@ -921,5 +949,29 @@
     "cases": "kb/eval_llm_cases.jsonl",
     "cases_sha256": "67765c422b538afb967172a83416de3187a0d5b07587dd3e520226a84ea92dc0"
   },
-  "graded_by_cc": true
+  "graded_by_cc": true,
+  "verdict": {
+    "A": {
+      "pass_n": 12,
+      "n": 12,
+      "pass": true
+    },
+    "C": {
+      "pass_n": 5,
+      "n": 5,
+      "pass": true
+    },
+    "B": {
+      "dung": 4,
+      "sai": 2,
+      "n": 6,
+      "min_dung": 5,
+      "pass": false
+    },
+    "word_only": {
+      "d10": "dung"
+    },
+    "word_only_pass": true,
+    "pass": false
+  }
 }

@@ -42,6 +42,7 @@ def cited_ids(text: str, contexts: Sequence[Any]) -> list[str]:
 def strip_citations(text: str) -> str:
     s = CITE_RE.sub("", text)
     s = UNICODE_SPACE_RE.sub(" ", s)
+    s = s.replace("。", ".")  # dau cham toan chieu "。" (v3 d04) -> "."; khoang trang truoc no xoa o dong duoi
     s = SPACE_BEFORE_PUNCT_RE.sub(r"\1", s)
     s = MID_LINE_SPACES_RE.sub(" ", s)
     lines = [line.rstrip() for line in s.splitlines()]

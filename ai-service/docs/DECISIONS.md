@@ -628,3 +628,28 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
   - d11: gạch đầu dòng lồng nhau giữ thụt lề 2 dấu cách.
   - Điểm v2 không chấm lại theo kiểm này; số chính thức của v3 lấy từ lần chạy v3.
 - v3 là vòng cuối (tối đa 3 vòng). Chưa đạt → giữ bản tốt nhất, ghi trung thực phần chưa đạt, KHÔNG sửa tiêu chí. Commit code + prompt TRƯỚC khi chạy v3.
+
+#### g. Kết luận vòng chỉnh prompt (3 vòng, kết quả âm)
+
+- Đúng luật tối đa 3 vòng: **không có v4, tiêu chí mục d không sửa**. Mỗi vòng chạy đúng 1 lần trên 12 ca phát triển, model chính `openai/gpt-oss-120b` cho mọi ca (không lần nào dùng dự phòng, không 429, không `finish_reason = length`).
+
+| vòng | code | (A) | (C) máy | (B) đúng / một phần / sai | d10 | token | kết luận |
+|---|---|---|---|---|---|---|---|
+| v1 | `1494a21` | 12/12 | 5/5 | 3 / 2 / 1 | sai | 32.880 | TRƯỢT |
+| v2 | `27332fb` | 12/12 | 5/5 | 4 / 2 / 0 | một phần | 35.049 | TRƯỢT |
+| v3 | `cb92b9f` | 12/12 | 5/5 | 4 / 0 / 2 | đúng | 35.836 | TRƯỢT |
+
+  - Điểm cuối = khớp giữa Claude Code và Claude ở chat, hoặc Hiếu quyết khi lệch: v1 lệch d04 (Hiếu `dung`); v2 lệch d02, d10 (Hiếu `mot_phan` cả hai); v3 lệch d03, d04, d10 (Hiếu `dung` cả ba).
+  - (B) cần ≥ 5/6 đúng VÀ 0 sai: **không vòng nào đạt**.
+- **Bản dùng thật: PROMPT v2 + HẬU XỬ LÝ v3** (+ `。` → `.`).
+  - `prompts.py` khôi phục nguyên văn từ `27332fb`, `PROMPT_VERSION = "v2"` (chỉ đổi comment dòng này). `tests/test_prompts.py` khôi phục cùng commit.
+  - `answer.py` giữ bản v3 (nhận `【n】`, khoảng trắng Unicode, giữ thụt lề) và thêm: dấu chấm toàn chiều `。` (U+3002, v3 d04) đổi thành `.`, xoá khoảng trắng đứng trước.
+  - Lý do: v2 là vòng duy nhất **0 sai**; ca `mot_phan` d03 của v2 là lỗi hậu xử lý (`【1】`), đã sửa ở v3; prompt v3 hồi quy d02 (`sai`: "will chỉ dùng cho ...") và d05 (`sai`: gán "effect đi với of" cho tài liệu). Đổi lại, v3 làm d10 tốt hơn (bản dịch giữ ý "không muốn") — chấp nhận mất điểm này vì d10 là `mot_phan`, còn hồi quy của v3 là `sai`.
+- **Kiểm hậu xử lý trên raw v2** (KHÔNG gọi LLM, KHÔNG phải lần chạy thật) → `docs/eval/llm_rounds/v2_reprocessed.json` (`official: false`): áp `answer.py` hiện tại lên `raw_text` của v2.
+  - (A) 12/12; không còn ca grounded có `source_ids` rỗng (d03: [] → [gram_033], hết `【1】`); d05, d11 hết " ." trước dấu chấm.
+  - Điểm (B) của v2 **không** mang sang, vì chấm trên answer cũ; không chấm lại để tránh tự cộng điểm. Đây chỉ là bằng chứng lỗi d03 nằm ở hậu xử lý.
+- **Giả thuyết** (chưa kiểm chứng; mỗi vòng chỉ 1 lần chạy, n = 12, temperature 0,2 vẫn có dao động): luật trích dày ở v3 ("MỌI câu, kể cả câu mở đầu và kết luận, phải kết thúc bằng [n]") có thể khiến model gắn [n] cho cả câu tự suy ra, tức gán bừa cho tài liệu (v3 d05 "Trong tài liệu, effect ... thường đi kèm giới từ of"). Không đủ dữ liệu để tách ảnh hưởng của luật khỏi dao động giữa các lần chạy.
+- **Rủi ro còn lại**:
+  - Bịa quy tắc và gán cho tài liệu: d05 sai ở v1 và v3, cùng một kiểu ("effect đi với of"). Prompt v2 không loại trừ được lỗi này, chỉ chưa thấy ở lần chạy v2.
+  - **Số chính thức** cho phần sinh là WSEA-141 (Phúc chấm 20 câu), không phải 12 ca phát triển này.
+  - **Demo tránh câu affect/effect** cho tới khi có số WSEA-141.

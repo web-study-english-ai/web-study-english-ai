@@ -97,5 +97,10 @@ def test_keep_leading_indent_collapse_mid_line():  # v3: v2 mat thut le gach dau
     assert ids == ["gram_015", "gram_013"]
 
 
+def test_fullwidth_period():  # v3 d04: "make homework [1]。"
+    assert postprocess("Đúng là do homework, không phải make homework [1]。\n- Ý khác  。", CTX) == \
+        ("Đúng là do homework, không phải make homework.\n- Ý khác.", ["gram_015"])
+
+
 def test_emphasis_around_fixed_text_still_matches():
     assert postprocess("**" + TEXT_NO_CONTEXT + "**", CTX) == (TEXT_NO_CONTEXT, [])
