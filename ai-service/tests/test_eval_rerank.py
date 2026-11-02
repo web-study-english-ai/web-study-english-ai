@@ -129,7 +129,7 @@ def test_latency_warmup_not_measured():
 
 # --- decide: ca bien ------------------------------------------------------------------------
 
-OK = {"hit@3_rerank": 0.90, "hit@5_base": 0.90, "p95_ms": 100.0, "ram_mib": 300.0}
+OK = {"n": 31, "hits3_rerank": 26, "hits5_base": 26, "p95_ms": 100.0, "ram_mib": 300.0}
 
 
 def test_decide_all_pass():
@@ -138,21 +138,29 @@ def test_decide_all_pass():
     assert len(d["reasons"]) == 3 and all(r.startswith("✓") for r in d["reasons"])
 
 
-def test_decide_hit3_exactly_at_margin_passes_despite_float():
-    # 0.90 - 0.03 = 0.8700000000000001 trong so thuc -> van phai BAT
-    assert er.decide({**OK, "hit@3_rerank": 0.87})["decision"] == "BAT"
+def test_count_hits_is_integer():
+    rows = [row("q1", ["d2"]), row("q2", ["d4"]), row("q3", ["d9"])]
+    assert er.count_hits(rows, 3) == 1
+    assert er.count_hits(rows, 5) == 2
+    assert isinstance(er.count_hits(rows, 5), int)
 
 
-def test_decide_hit3_below_margin_fails():
-    d = er.decide({**OK, "hit@3_rerank": 0.869})
-    assert d["decision"] == "TAT"
-    assert d["reasons"][0].startswith("✗")
+@pytest.mark.parametrize("hits3,expected", [
+    (26, "BAT"),  # mat 0 cau
+    (25, "BAT"),  # mat 1 cau = dung RULE_MAX_LOST
+    (24, "TAT"),  # mat 2 cau
+    (28, "BAT"),  # hit@3 rerank vuot hit@5 goc
+])
+def test_decide_counts_lost_questions(hits3, expected):
+    assert er.RULE_MAX_LOST == 1
+    d = er.decide({**OK, "hits3_rerank": hits3})
+    assert d["decision"] == expected
+    assert d["reasons"][0].startswith("✓" if expected == "BAT" else "✗")
 
 
-def test_decide_one_question_drop_at_n31_exceeds_margin():
-    # n=31: mat 1 cau = 0.032 > 0.03 -> TAT (luat chot truoc, ghi ro de khong bat ngo)
-    assert er.decide({**OK, "hit@3_rerank": 27 / 31, "hit@5_base": 28 / 31})["decision"] == "TAT"
-    assert er.decide({**OK, "hit@3_rerank": 28 / 31, "hit@5_base": 28 / 31})["decision"] == "BAT"
+def test_decide_reason_format_in_question_counts():
+    assert er.decide({**OK, "hits3_rerank": 25})["reasons"][0] == "✓ hit@3 rerank 25/31 ≥ hit@5 gốc 26/31 − 1"
+    assert er.decide({**OK, "hits3_rerank": 24})["reasons"][0] == "✗ hit@3 rerank 24/31 < hit@5 gốc 26/31 − 1"
 
 
 @pytest.mark.parametrize("key,limit", [("p95_ms", er.RULE_P95_MS), ("ram_mib", er.RULE_RAM_MIB)])
@@ -183,7 +191,7 @@ def test_build_candidate_report_wires_metrics_and_decision():
     before = er.cut(pos)
     e5_sep = er.separation([0.1, 0.1], [0.3], higher_is_positive=False)
     rep = er.build_candidate_report(cand, before, er.metrics(before), e5_sep)
-    assert rep["rule_input"] == {"hit@3_rerank": 1.0, "hit@5_base": 1.0, "p95_ms": 50.0, "ram_mib": 200.0}
+    assert rep["rule_input"] == {"n": 2, "hits3_rerank": 2, "hits5_base": 2, "p95_ms": 50.0, "ram_mib": 200.0}
     assert rep["decision"] == "BAT"
     assert rep["negatives"]["rerank_top1"]["auc"] == 1.0
     assert rep["top_out"][0]["ids"] == ["d4", "d0", "d1"]
@@ -195,3 +203,23 @@ def test_parse_candidates():
     assert er.parse_args(["--candidates", "a,B,A"]).candidates == ["A", "B"]
     with pytest.raises(SystemExit):
         er.parse_args(["--candidates", "C"])
+
+
+def test_multiple_candidates_spawn_one_process_each(monkeypatch):
+    args = er.parse_args(["--candidates", "A,B", "--revision-b", "abc123"])
+    cmds = er.child_commands(args)
+    assert len(cmds) == 2
+    for key, cmd in zip("AB", cmds):
+        assert cmd[cmd.index("--candidates") + 1] == key
+        assert cmd[cmd.index("--out") + 1].endswith(f"rerank_report_{key}.json")
+        assert cmd[cmd.index("--revision-b") + 1] == "abc123"
+        assert "--revision-a" not in cmd
+
+    ran = []
+    monkeypatch.setattr("subprocess.run", lambda cmd, check: ran.append(cmd) or type("R", (), {"returncode": 0}))
+    assert er.main(["--candidates", "A,B"]) == 0
+    assert len(ran) == 2  # khong nap mo hinh nao trong tien trinh cha
+
+
+def test_max_length_fixed_for_all_candidates():
+    assert er.MAX_LENGTH == 512

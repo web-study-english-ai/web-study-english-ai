@@ -15,8 +15,8 @@ Quy trinh:
 5. Do tai nguyen: thoi gian nap, dung luong tren dia, RSS, do tre 1 luot 8 cap.
 6. Ap luat chot truoc (decide) -> BAT / TAT.
 
-Nhieu ung vien trong mot tien trinh: RSS cua ung vien sau bi anh huong boi ung vien truoc
-(da del + gc nhung allocator khong tra het). Muon so RAM sach thi chay tung ung vien rieng.
+Nhieu ung vien (--candidates A,B): script tu goi lai chinh no bang subprocess cho TUNG ung vien,
+moi ung vien ghi report rieng (rerank_report_A.json, rerank_report_B.json), de RSS khong lan.
 
 Dau ra: docs/eval/rerank_report.json + tom tat in ra man hinh.
 Ham tinh chi so la ham thuan, nhan bo cham truyen vao; test o tests/test_eval_rerank.py.
@@ -49,7 +49,11 @@ CANDIDATES = {"A": "cross-encoder/mmarco-mMiniLMv2-L12-H384-v1", "B": "BAAI/bge-
 TOP_N_IN = 8       # so doan e5 dua vao reranker
 TOP_K_OUT = 3      # so doan giu lai sau rerank de dua cho LLM
 TORCH_THREADS = 2
-RULE_HIT3_MARGIN = 0.03   # BAT neu hit@3_rerank >= hit@5_goc - 0.03
+# Sua 02/11: bien 0,03 < 1 cau (1/31 = 0,032) nen luat cu doi khong mat cau nao.
+# Sua SAU khi da chay ung vien A (B1b), TRUOC khi chay B. Khong doi ket luan cua A: A TAT vi
+# p95 va RAM; dieu kien hit dat theo ca luat cu (0,871 >= 0,809) lan luat moi (27 >= 26 - 1).
+RULE_MAX_LOST = 1  # duoc mat toi da 1 cau: BAT neu so cau trung hit@3_rerank >= hit@5_goc - 1
+MAX_LENGTH = 512   # cat cap (cau hoi, doan) o 512 token cho moi ung vien (B mac dinh 8192)
 RULE_P95_MS = 300
 RULE_RAM_MIB = 600
 NOISE_NOTE = "n=31, 1 câu = 0,032; chênh < 0,065 coi như nhiễu"
@@ -58,7 +62,7 @@ NOISE_NOTE = "n=31, 1 câu = 0,032; chênh < 0,065 coi như nhiễu"
 KS = (1, 3, 5, 8)
 MRR_K = TOP_N_IN
 WARMUP = 3
-EPS = 1e-9  # dung sai so thuc khi so voi nguong (vd 0.87 vs 0.90 - 0.03)
+EPS = 1e-9  # dung sai so thuc khi so p95/RAM voi nguong
 
 DEFAULT_OUT = ROOT / "docs" / "eval" / "rerank_report.json"
 
@@ -179,24 +183,29 @@ def latency_ms(scorer: Scorer, batches: list[list[tuple[str, str]]], warmup: int
 # --- Luat quyet dinh -------------------------------------------------------------------------
 
 
-def decide(m: dict, margin: float = RULE_HIT3_MARGIN, p95_ms: float = RULE_P95_MS,
-           ram_mib: float = RULE_RAM_MIB) -> dict:
-    """m: {'hit@3_rerank', 'hit@5_base', 'p95_ms', 'ram_mib'} -> {'decision', 'reasons'}.
+def count_hits(rows: list[dict], k: int) -> int:
+    """So cau co it nhat mot gold trong top-k (so nguyen, de so luat theo so cau)."""
+    return sum(int(ce.hit_at_k(r["ranked"], set(r["gold"]), k)) for r in rows)
 
+
+def decide(m: dict, max_lost: int = RULE_MAX_LOST, p95_ms: float = RULE_P95_MS,
+           ram_mib: float = RULE_RAM_MIB) -> dict:
+    """m: {'n', 'hits3_rerank', 'hits5_base', 'p95_ms', 'ram_mib'} -> {'decision', 'reasons'}.
+
+    Dieu kien 1 so theo SO CAU (so nguyen), khong theo ti le thap phan.
     BAT khi CA BA dieu kien deu dat; thieu so do nao thi TAT.
     """
     reasons, ok = [], True
 
-    h3, h5 = m.get("hit@3_rerank"), m.get("hit@5_base")
-    if h3 is None or h5 is None:
+    n, h3, h5 = m.get("n"), m.get("hits3_rerank"), m.get("hits5_base")
+    if n is None or h3 is None or h5 is None:
         ok = False
-        reasons.append("✗ thiếu hit@3 sau rerank hoặc hit@5 gốc")
+        reasons.append("✗ thiếu n, số câu trúng hit@3 sau rerank hoặc hit@5 gốc")
     else:
-        need = h5 - margin
-        passed = h3 >= need - EPS
+        passed = int(h3) >= int(h5) - max_lost
         ok &= passed
-        reasons.append(f"{'✓' if passed else '✗'} hit@3 rerank {h3:.3f} "
-                       f"{'≥' if passed else '<'} hit@5 gốc {h5:.3f} − {margin} = {need:.3f}")
+        reasons.append(f"{'✓' if passed else '✗'} hit@3 rerank {h3}/{n} "
+                       f"{'≥' if passed else '<'} hit@5 gốc {h5}/{n} − {max_lost}")
 
     for key, limit, unit, label in (("p95_ms", p95_ms, "ms", "độ trễ p95"),
                                     ("ram_mib", ram_mib, "MiB", "RAM tăng thêm")):
@@ -262,7 +271,7 @@ def evaluate_candidate(key: str, name: str, revision: str | None, pos_e5: list[d
     gc.collect()
     rss0 = rss_mib()
     t = time.perf_counter()
-    model = CrossEncoder(name, revision=sha or revision, device="cpu")
+    model = CrossEncoder(name, revision=sha or revision, device="cpu", max_length=MAX_LENGTH)
     load_s = time.perf_counter() - t
     rss1 = rss_mib()
     torch.set_num_threads(TORCH_THREADS)
@@ -288,7 +297,7 @@ def evaluate_candidate(key: str, name: str, revision: str | None, pos_e5: list[d
         "model": name,
         "revision_requested": revision,
         "revision": sha,
-        "max_length": getattr(model, "max_length", None),
+        "max_length": getattr(model, "max_seq_length", None),
         "load_s": round(load_s, 2),
         "disk_mib": disk_mib,
         "rss_mib": {"before_load": _r(rss0), "after_load": _r(rss1), "after_scoring": _r(rss2),
@@ -319,8 +328,9 @@ def build_candidate_report(cand: dict, pos_before: list[dict], before_metrics: d
     rr_sep = separation([r["scores"][0] for r in pos_after], [r["scores"][0] for r in neg_after],
                         higher_is_positive=True)
     rule_input = {
-        "hit@3_rerank": after_metrics["overall"]["hit@3"],
-        "hit@5_base": before_metrics["overall"]["hit@5"],
+        "n": len(pos_before),
+        "hits3_rerank": count_hits(pos_after, 3),
+        "hits5_base": count_hits(pos_before, 5),
         "p95_ms": cand["latency_ms"]["p95"],
         "ram_mib": cand["rss_mib"]["increase"],
     }
@@ -428,10 +438,43 @@ def e5_rankings(positives: list[dict], negatives: list[dict], ids: list[str], p_
     return pos, neg
 
 
+def out_for(out: Path, key: str) -> Path:
+    """docs/eval/rerank_report.json -> docs/eval/rerank_report_B.json"""
+    return out.with_name(f"{out.stem}_{key}{out.suffix}")
+
+
+def child_commands(args, script: Path = Path(__file__)) -> list[list[str]]:
+    """Moi ung vien mot lenh rieng (cung tham so, report rieng) de RSS khong lan giua cac mo hinh."""
+    cmds = []
+    for key in args.candidates:
+        cmd = [sys.executable, str(script), "--candidates", key]
+        for flag, value in (("--revision-a", args.revision_a), ("--revision-b", args.revision_b)):
+            if value is not None:
+                cmd += [flag, value]
+        for flag in ("chunks", "questions", "negatives", "kb_npz", "words_npz", "manifest"):
+            cmd += [f"--{flag.replace('_', '-')}", str(getattr(args, flag))]
+        cmds.append(cmd + ["--out", str(out_for(args.out, key))])
+    return cmds
+
+
+def run_separately(args) -> int:
+    import subprocess
+
+    print(f"⚠ {len(args.candidates)} ứng viên: chạy MỖI ứng viên ở một tiến trình riêng để RAM không lẫn "
+          f"(report riêng: {', '.join(ev.rel(out_for(args.out, k)) for k in args.candidates)})")
+    codes = []
+    for cmd in child_commands(args):
+        print(f"\n$ {' '.join(cmd[1:])}", flush=True)
+        codes.append(subprocess.run(cmd, check=False).returncode)
+    return max(codes)
+
+
 def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     args = parse_args(argv)
+    if len(args.candidates) > 1:
+        return run_separately(args)
 
     positives, negatives, errors = load_questions(args)
     if errors:
@@ -472,8 +515,12 @@ def build_report(args, manifest: dict | None, n_chunks: int, n_negatives: int,
         "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
         "rules": {
             "top_n_in": TOP_N_IN, "top_k_out": TOP_K_OUT, "torch_threads": TORCH_THREADS,
-            "hit3_margin": RULE_HIT3_MARGIN, "p95_ms": RULE_P95_MS, "ram_mib": RULE_RAM_MIB,
-            "decision": "BAT khi hit@3 rerank ≥ hit@5 gốc − margin VÀ p95 ≤ p95_ms VÀ RAM tăng ≤ ram_mib",
+            "max_lost": RULE_MAX_LOST, "max_length": MAX_LENGTH,
+            "p95_ms": RULE_P95_MS, "ram_mib": RULE_RAM_MIB,
+            "decision": "BAT khi số câu trúng hit@3 rerank ≥ số câu trúng hit@5 gốc − max_lost "
+                        "VÀ p95 ≤ p95_ms VÀ RAM tăng ≤ ram_mib",
+            "rule_history": "02/11: thay biên 0,03 (tỉ lệ) bằng max_lost=1 (số câu) và thêm max_length=512; "
+                            "sửa sau khi đã chạy A, trước khi chạy B; không đổi kết luận của A",
             "ram_definition": "max(RSS sau nạp, RSS sau chấm) − RSS trước nạp",
             "noise": NOISE_NOTE,
         },
