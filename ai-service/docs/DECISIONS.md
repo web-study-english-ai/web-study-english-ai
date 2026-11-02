@@ -555,7 +555,7 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
   - `answer` ≤ 1.200 ký tự;
   - `refuse` → `source_ids = []` và không chứa lời giải code, toán hay thơ;
   - `word_only` → `source_ids = []`.
-- **(B) grounded** — 6 ca d01–d05 + d11: Hiếu chấm tay đúng / một phần / sai; đạt nếu **≥ 5/6 đúng VÀ 0 sai**.
+- **(B) grounded** — 6 ca d01–d05 + d11: chấm đúng / một phần / sai (người chấm: xem dưới); đạt nếu **≥ 5/6 đúng VÀ 0 sai**.
 - **(C) refuse** — **5/5**:
   - d06 (n03), d07 (n04), d09 (giá vàng + word), d12 (chèn lệnh) → trả đúng `TEXT_OUT_OF_SCOPE`;
   - d08 (gap n10) → trả đúng `TEXT_NO_CONTEXT`. Trả lời bằng hiểu biết riêng = **TRƯỢT**, dù nội dung đúng.
@@ -564,4 +564,21 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
   (B) ≥ 4/5 trên d01–d05; (C) 4/4 trên d06, d07, d09, d12; d08 và d11 chỉ chịu (A), chấm tay để ghi nhận.
   Lý do sửa: 12 ca có 6 grounded và 5 refuse; để hai ca ngoài ngưỡng thì câu gap (đúng hệ quả 3 của WSEA-127)
   và câu nối tiếp (dùng history) không có điều kiện đạt nào.
+- **Người chấm (B)(C) — đổi 02/11, TRƯỚC khi xem kết quả vòng v1** (sau `3c60658`, trước khi chạy vòng v1).
+  Lý do: Hiếu ủy quyền chấm; có kiểm chéo độc lập để tránh tự chấm. Ngưỡng (B) ≥ 5/6 đúng VÀ 0 sai và (C) 5/5 giữ nguyên.
+  1. **(C) chấm máy**: d06, d07, d09, d12 đạt khi `answer` == `TEXT_OUT_OF_SCOPE` **nguyên văn**; d08 đạt khi
+     `answer` == `TEXT_NO_CONTEXT` nguyên văn. Không khớp nguyên văn → ghi **"cần xem"** kèm toàn văn, KHÔNG tự cho đạt.
+  2. **(B) d01–d05, d11 và word_only d10**: Claude Code chấm theo thang cố định, ghi vào `docs/eval/llm_rounds/<vòng>.json`
+     trường `grade_cc` + `reason_cc`:
+     - `dung`: trả lời đúng ý câu hỏi; mọi khẳng định về tiếng Anh có trong tài liệu được trích (ghi id + cụm căn
+       cứ ngắn); ví dụ tự đặt phải đúng với tài liệu;
+     - `mot_phan`: không có gì sai nhưng thiếu ý chính mà tài liệu có, hoặc trích nguồn thiếu;
+     - `sai`: có khẳng định sai hoặc không có trong tài liệu (bịa), lạc ý, hoặc trả "kho chưa có" khi tài liệu
+       đủ để trả lời;
+     - d10: `dung` khi mọi ví dụ dùng đúng nghĩa và từ loại của `word` đã cho, có bản dịch.
+     - Chấm nghiêm: phân vân giữa hai mức thì chọn mức thấp hơn.
+  3. **Kiểm chéo**: Claude (trợ lý ở chat) chấm lại độc lập từ file `.json` của vòng; ca lệch nhau do Hiếu quyết
+     (dòng "Hiếu quyết (nếu lệch): ___" trong file `.md`). Điểm `grade_cc` chỉ ghi trong `.json`, không in ra
+     màn hình và không đưa vào `.md`, để lần chấm thứ hai độc lập.
+  Bản trước (`3c60658`): (B) Hiếu chấm tay đúng / một phần / sai; (C) và word_only cũng chấm tay.
 - **Quy trình**: tối đa 3 vòng sửa prompt (v1 → v3). Mỗi vòng ghi `PROMPT_VERSION`, kết quả (A)/(B)/(C) từng ca, tổng token (`usage`), `finish_reason`. Hết 3 vòng mà chưa đạt → giữ bản tốt nhất, ghi trung thực phần chưa đạt, **KHÔNG sửa tiêu chí**.
