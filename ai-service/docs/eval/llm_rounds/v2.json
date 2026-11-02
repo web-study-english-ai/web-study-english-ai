@@ -109,7 +109,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đúng ý, mọi khẳng định có [n]: HTHT không nêu thời điểm / kết quả tới hiện tại / khoảng chưa kết thúc — gram_015 'hiện tại hoàn thành không nêu thời điểm cụ thể', 'this week, so far, since'; QKĐ có mốc đã qua — gram_015 'yesterday, in 2018'; Mẹo nhớ chép đúng gram_015 'có mốc thời gian đã qua thì dùng quá khứ đơn'. Không có ví dụ nhưng câu hỏi chỉ hỏi khi nào dùng; có lý do (mẹo nhớ). Không ghi trình độ."
+      "reason_cc": "Đúng ý, mọi khẳng định có [n]: HTHT không nêu thời điểm / kết quả tới hiện tại / khoảng chưa kết thúc — gram_015 'hiện tại hoàn thành không nêu thời điểm cụ thể', 'this week, so far, since'; QKĐ có mốc đã qua — gram_015 'yesterday, in 2018'; Mẹo nhớ chép đúng gram_015 'có mốc thời gian đã qua thì dùng quá khứ đơn'. Không có ví dụ nhưng câu hỏi chỉ hỏi khi nào dùng; có lý do (mẹo nhớ). Không ghi trình độ.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d02",
@@ -179,7 +183,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Nội dung đúng: be going to cho dự định có từ trước — gram_020 'be going to cho dự định đã có từ trước', ví dụ 'I'm going to study medicine next year. I've already applied.' lấy từ gram_020; will cho quyết định tức thì / dự đoán theo cảm nghĩ — gram_019 'Quyết định tức thì', 'đoán theo cảm nghĩ'. Trích nguồn thiếu: câu mở đầu 'Khi nói về một kế hoạch ... dùng be going to.' là thông tin từ tài liệu nhưng không kết thúc bằng [n] (vi phạm quy tắc 3 v2). Cụm 'kế hoạch ... thường có bằng chứng hoặc dấu hiệu rõ ràng' vẫn gộp ý dự đoán có dấu hiệu vào ý kế hoạch như v1 (chấp nhận như v1 vì Mẹo nhớ gram_020 gộp tương tự)."
+      "reason_cc": "Nội dung đúng: be going to cho dự định có từ trước — gram_020 'be going to cho dự định đã có từ trước', ví dụ 'I'm going to study medicine next year. I've already applied.' lấy từ gram_020; will cho quyết định tức thì / dự đoán theo cảm nghĩ — gram_019 'Quyết định tức thì', 'đoán theo cảm nghĩ'. Trích nguồn thiếu: câu mở đầu 'Khi nói về một kế hoạch ... dùng be going to.' là thông tin từ tài liệu nhưng không kết thúc bằng [n] (vi phạm quy tắc 3 v2). Cụm 'kế hoạch ... thường có bằng chứng hoặc dấu hiệu rõ ràng' vẫn gộp ý dự đoán có dấu hiệu vào ý kế hoạch như v1 (chấp nhận như v1 vì Mẹo nhớ gram_020 gộp tương tự).",
+      "grade_claude": "dung",
+      "grade_final": "mot_phan",
+      "grade_source": "hieu_quyet",
+      "hieu_decision": "mot_phan"
     },
     {
       "id": "d03",
@@ -246,7 +254,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Nội dung đủ và đúng 5 điểm của gram_033 ('nguồn gốc', 'mustn't ... cấm; don't have to ... không cần', 'has to', 'had to / will have to', 'Do I have to ...? phổ biến hơn'); ví dụ tự đặt đúng (must = ý người nói, have to = quy định trường). Nhưng LLM trích bằng ngoặc toàn chiều '【1】' (U+3010/U+3011) → hậu xử lý không nhận, source_ids rỗng và '【1】' còn sót trong answer → trích nguồn thiếu."
+      "reason_cc": "Nội dung đủ và đúng 5 điểm của gram_033 ('nguồn gốc', 'mustn't ... cấm; don't have to ... không cần', 'has to', 'had to / will have to', 'Do I have to ...? phổ biến hơn'); ví dụ tự đặt đúng (must = ý người nói, have to = quy định trường). Nhưng LLM trích bằng ngoặc toàn chiều '【1】' (U+3010/U+3011) → hậu xử lý không nhận, source_ids rỗng và '【1】' còn sót trong answer → trích nguồn thiếu.",
+      "grade_claude": "mot_phan",
+      "grade_final": "mot_phan",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d04",
@@ -318,7 +330,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đúng: do homework, có lý do từ tài liệu — gram_076 'do thường nói về thực hiện một việc, nhiệm vụ', 'make thường nói về tạo ra cái mới', và 'Lỗi điển hình: make homework (đúng: do homework)'. Có [1]. Ngắn nhưng đủ ý chính v1 thiếu (lý do)."
+      "reason_cc": "Đúng: do homework, có lý do từ tài liệu — gram_076 'do thường nói về thực hiện một việc, nhiệm vụ', 'make thường nói về tạo ra cái mới', và 'Lỗi điển hình: make homework (đúng: do homework)'. Có [1]. Ngắn nhưng đủ ý chính v1 thiếu (lý do).",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d05",
@@ -387,7 +403,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đúng: the effect of the weather. 'Effect là danh từ, chỉ kết quả hoặc sự ảnh hưởng' — gram_089 'effect thường là danh từ, nghĩa là sự ảnh hưởng hoặc kết quả'; 'Affect thường là động từ, tác động, làm thay đổi' — gram_089 'affect thường là động từ, nghĩa là tác động, làm thay đổi'. '(the effect of …)' giờ chỉ là cụm của câu hỏi dùng làm ví dụ, không còn khái quát thành quy tắc giới từ như v1. Có lý do (cần danh từ). Lỗi trình bày không tính vào thang: còn ' .' trước dấu chấm vì LLM dùng U+202F trước [1]."
+      "reason_cc": "Đúng: the effect of the weather. 'Effect là danh từ, chỉ kết quả hoặc sự ảnh hưởng' — gram_089 'effect thường là danh từ, nghĩa là sự ảnh hưởng hoặc kết quả'; 'Affect thường là động từ, tác động, làm thay đổi' — gram_089 'affect thường là động từ, nghĩa là tác động, làm thay đổi'. '(the effect of …)' giờ chỉ là cụm của câu hỏi dùng làm ví dụ, không còn khái quát thành quy tắc giới từ như v1. Có lý do (cần danh từ). Lỗi trình bày không tính vào thang: còn ' .' trước dấu chấm vì LLM dùng U+202F trước [1].",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d06",
@@ -745,7 +765,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Ba ví dụ dùng đúng reluctant (adj) — miễn cưỡng, không sẵn lòng, có bản dịch (đạt điều mà v1 trượt). Nhưng bản dịch ví dụ 1 'Anh ấy miễn cưỡng nhận lời mời, vì vậy anh ấy ở nhà' đọc như anh ấy ĐÃ nhận lời, mâu thuẫn với vế 'nên ở nhà' (câu Anh: không muốn nhận lời); ví dụ 2 'miễn cưỡng yêu cầu giúp đỡ' cũng dễ hiểu là đã nhờ. Bản dịch gây hiểu sai nghĩa với người mới học. Phân vân dung/mot_phan → chọn mức thấp hơn."
+      "reason_cc": "Ba ví dụ dùng đúng reluctant (adj) — miễn cưỡng, không sẵn lòng, có bản dịch (đạt điều mà v1 trượt). Nhưng bản dịch ví dụ 1 'Anh ấy miễn cưỡng nhận lời mời, vì vậy anh ấy ở nhà' đọc như anh ấy ĐÃ nhận lời, mâu thuẫn với vế 'nên ở nhà' (câu Anh: không muốn nhận lời); ví dụ 2 'miễn cưỡng yêu cầu giúp đỡ' cũng dễ hiểu là đã nhờ. Bản dịch gây hiểu sai nghĩa với người mới học. Phân vân dung/mot_phan → chọn mức thấp hơn.",
+      "grade_claude": "dung",
+      "grade_final": "mot_phan",
+      "grade_source": "hieu_quyet",
+      "hieu_decision": "mot_phan"
     },
     {
       "id": "d11",
@@ -823,7 +847,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đúng ý câu nối tiếp, trích [1] ánh xạ đúng gram_013 (v1 hỏng vì '[Tài liệu 1]'): 'khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn'; câu cuối khoảng chưa kết thúc — gram_013 'today, this week, this year'. Ví dụ tự đặt đúng với gram_013. Lỗi trình bày không tính: ' .' do U+202F."
+      "reason_cc": "Đúng ý câu nối tiếp, trích [1] ánh xạ đúng gram_013 (v1 hỏng vì '[Tài liệu 1]'): 'khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn'; câu cuối khoảng chưa kết thúc — gram_013 'today, this week, this year'. Ví dụ tự đặt đúng với gram_013. Lỗi trình bày không tính: ' .' do U+202F.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d12",
@@ -906,5 +934,29 @@
     "cases": "kb/eval_llm_cases.jsonl",
     "cases_sha256": "67765c422b538afb967172a83416de3187a0d5b07587dd3e520226a84ea92dc0"
   },
-  "graded_by_cc": true
+  "graded_by_cc": true,
+  "verdict": {
+    "A": {
+      "pass_n": 12,
+      "n": 12,
+      "pass": true
+    },
+    "C": {
+      "pass_n": 5,
+      "n": 5,
+      "pass": true
+    },
+    "B": {
+      "dung": 4,
+      "sai": 0,
+      "n": 6,
+      "min_dung": 5,
+      "pass": false
+    },
+    "word_only": {
+      "d10": "mot_phan"
+    },
+    "word_only_pass": false,
+    "pass": false
+  }
 }
