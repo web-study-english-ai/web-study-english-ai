@@ -159,13 +159,6 @@ def test_embedder_missing_503(make_client, monkeypatch):
     assert rec.requests == []
 
 
-def test_sse_501(make_client):
-    c, rec = make_client()
-    res = post(c, body(), headers={**AUTH, "accept": "text/event-stream"})
-    assert res.status_code == 501
-    assert rec.requests == []
-
-
 def test_auth_and_validation(make_client):
     c, rec = make_client()
     assert post(c, body(), headers={}).status_code == 401

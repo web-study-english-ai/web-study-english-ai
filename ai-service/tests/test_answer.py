@@ -1,5 +1,6 @@
 """Test app/services/answer.py (WSEA-140): [n] -> source_ids, xoa ky hieu trich. Ham thuan."""
 
+import re
 from types import SimpleNamespace
 
 import pytest
@@ -100,6 +101,44 @@ def test_keep_leading_indent_collapse_mid_line():  # v3: v2 mat thut le gach dau
 def test_fullwidth_period():  # v3 d04: "make homework [1]。"
     assert postprocess("Đúng là do homework, không phải make homework [1]。\n- Ý khác  。", CTX) == \
         ("Đúng là do homework, không phải make homework.\n- Ý khác.", ["gram_015"])
+
+
+STREAM_TEXTS = [
+    "Dùng **hiện tại hoàn thành** khi không nêu thời điểm [1][2]. Ví dụ: *I have been to Da Lat.* [1]",
+    "- Nguồn gốc: must【1】.\n  - Phủ định: mustn't [Tài liệu 1, 2] ; ok  [3] .\n\n* Bullet *nghiêng* 2*3*4",
+    "Giữ [sic] và [một ghi chú dài hơn hai mươi tư ký tự] nhé [2]。",
+    "  Mở đầu thụt lề [1]\n\n\n- a  b   c [9]\n",
+]
+
+
+@pytest.mark.parametrize("text", STREAM_TEXTS)
+@pytest.mark.parametrize("size", [1, 2, 3, 7])
+def test_stream_cleaner_deltas_join_to_answer(text, size):
+    from app.services.answer import StreamCleaner, clean_text
+    sc = StreamCleaner()
+    deltas = [sc.feed(text[i:i + size]) for i in range(0, len(text), size)]
+    tail, answer, ids = sc.finish(CTX)
+    assert "".join(deltas) + tail == answer == clean_text(text)
+    assert (answer, ids) == postprocess(text, CTX)
+    for d in deltas + [tail]:
+        assert "【" not in d and "Tài liệu" not in d and "**" not in d
+        assert not re.search(r"\[\d", d)
+
+
+def test_stream_cleaner_holds_unclosed_marker():
+    from app.services.answer import StreamCleaner
+    sc = StreamCleaner()
+    assert sc.feed("Dùng since [") == "Dùng since"
+    assert sc.feed("1") == ""
+    assert sc.feed("]. Hết") == ". Hết"
+
+
+def test_stream_cleaner_fixed_text_final_only():
+    from app.services.answer import StreamCleaner
+    sc = StreamCleaner()
+    sc.feed("Ừm. " + TEXT_NO_CONTEXT)
+    _, answer, ids = sc.finish(CTX)
+    assert (answer, ids) == (TEXT_NO_CONTEXT, [])
 
 
 def test_emphasis_around_fixed_text_still_matches():

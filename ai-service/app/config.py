@@ -68,6 +68,8 @@ class Settings(BaseSettings):
     llm_fallback_model: str = "openai/gpt-oss-20b"  # chi dung khi model chinh tra 429
     # Ngan sach TONG cho ca lan chinh + lan du phong; phai < 15 s timeout JSON cua backend.
     llm_timeout_s: float = Field(default=12.0, gt=0, lt=15)
+    # Ngan sach TONG cho mot luong SSE (ca lan du phong); phai < 45 s timeout SSE cua backend.
+    llm_stream_timeout_s: float = Field(default=40.0, gt=0, lt=45)
     llm_temperature: float = Field(default=prompts.TEMPERATURE, ge=0, le=2)
     llm_max_completion_tokens: int = Field(default=prompts.MAX_COMPLETION_TOKENS, ge=1, le=65536)
     llm_reasoning_effort: Literal["low", "medium", "high"] = prompts.REASONING_EFFORT

@@ -69,11 +69,70 @@ def fixed_text_in(answer: str) -> str | None:
     return None
 
 
+def clean_text(text: str) -> str:
+    """Xoa ky hieu trich + nhan manh + don khoang trang (chua xet cau co dinh)."""
+    return strip_emphasis(strip_citations(text))
+
+
 def postprocess(text: str, contexts: Sequence[Any]) -> tuple[str, list[str]]:
     """-> (answer, source_ids). contexts = doan pipeline da chon, dung thu tu danh so trong prompt."""
     ids = cited_ids(text, contexts)
-    answer = strip_emphasis(strip_citations(text))
+    answer = clean_text(text)
     fixed = fixed_text_in(answer)
     if fixed is not None:
         return fixed, []
     return answer, ids
+
+
+# --- SSE (B4): delta khong lo ky hieu trich / dau * ----------------------------------------------
+# Cach lam: delta = phan moi cua clean_text(raw[:diem_an_toan]). Cat truoc moi doan duoi CHUA chac:
+# ngoac "[" / "【" chua dong (ngan, co the la [n]), dau "*" co the mo nhan manh tren dong dang viet,
+# khoang trang cuoi (co the bi xoa khi gap dau cau). Nho vay ghep cac delta = clean_text(raw) = answer
+# cua khung cuoi (tru khi answer bi thay bang cau co dinh).
+
+MAX_MARKER_LEN = 24  # "[tài liệu 1, 2, 3, 4]" ~ 22 ky tu; ngoac mo lau hon the khong phai ky hieu trich
+_TRAILING_SPACE_RE = re.compile(r"(?:\s|[​‌‍⁠﻿])+$")
+
+
+def safe_cut(raw: str) -> int:
+    """Vi tri cuoi ma phan truoc no da chac chan (khong con ky hieu trich/nhan manh dang do)."""
+    cut = len(raw)
+    m = _TRAILING_SPACE_RE.search(raw)
+    if m:
+        cut = m.start()
+    tail_start = max(0, len(raw) - MAX_MARKER_LEN)
+    for opener, closer in (("[", "]"), ("【", "】")):
+        i = raw.find(opener, tail_start)
+        while i != -1:
+            if closer not in raw[i:]:
+                cut = min(cut, i)
+                break
+            i = raw.find(opener, i + 1)
+    line_start = raw.rfind("\n") + 1  # dong dang viet: "*" mo nhan manh co the chua dong
+    for j in range(line_start, len(raw)):
+        if raw[j] == "*" and (j + 1 == len(raw) or not raw[j + 1].isspace()):
+            cut = min(cut, j)
+            break
+    return cut
+
+
+class StreamCleaner:
+    """Nhan tung doan text tho tu LLM, tra delta da sach. finish() tra (delta cuoi, answer, source_ids)."""
+
+    def __init__(self) -> None:
+        self.raw = ""
+        self.emitted = ""
+
+    def _emit(self, clean: str) -> str:
+        if not clean.startswith(self.emitted):
+            return ""  # khong rut lai duoc delta da gui; khung cuoi van la ban chuan
+        delta, self.emitted = clean[len(self.emitted):], clean
+        return delta
+
+    def feed(self, chunk: str) -> str:
+        self.raw += chunk
+        return self._emit(clean_text(self.raw[:safe_cut(self.raw)]))
+
+    def finish(self, contexts: Sequence[Any]) -> tuple[str, str, list[str]]:
+        answer, ids = postprocess(self.raw, contexts)
+        return self._emit(answer), answer, ids
