@@ -348,14 +348,23 @@ export async function seedReadingPassages() {
     });
     passagesCreated++;
 
-    // Xoá câu hỏi cũ và nạp lại để đảm bảo tính toàn vẹn (idempotency)
-    await prisma.readingQuestion.deleteMany({
-      where: { passageId: passage.id },
-    });
-
+        // Upsert câu hỏi theo cặp khóa duy nhất (passageId, orderIndex) để giữ nguyên id câu hỏi,
+    // không làm hỏng bản nháp và lịch sử làm bài khi chạy lại seed
     for (const q of questions) {
-      await prisma.readingQuestion.create({
-        data: {
+      await prisma.readingQuestion.upsert({
+        where: {
+          passageId_orderIndex: {
+            passageId: passage.id,
+            orderIndex: q.orderIndex,
+          },
+        },
+        update: {
+          questionText: q.questionText,
+          options: q.options,
+          correctOptionIndex: q.correctOptionIndex,
+          explanation: q.explanation,
+        },
+        create: {
           passageId: passage.id,
           orderIndex: q.orderIndex,
           questionText: q.questionText,
@@ -366,6 +375,14 @@ export async function seedReadingPassages() {
       });
       questionsCreated++;
     }
+
+    // Chỉ xoá những câu hỏi dư thừa có orderIndex không còn nằm trong danh sách mới
+    await prisma.readingQuestion.deleteMany({
+      where: {
+        passageId: passage.id,
+        orderIndex: { notIn: questions.map((q) => q.orderIndex) },
+      },
+    });
 
     if (passagesCreated % 25 === 0 || passagesCreated === passagesToSeed.length) {
       console.log(` ⏳ Đã nạp ${passagesCreated}/${passagesToSeed.length} bài (${questionsCreated} câu hỏi)...`);
