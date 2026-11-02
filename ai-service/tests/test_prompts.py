@@ -69,7 +69,8 @@ def test_no_context_block_when_empty():
     res = answer_result(req)
     assert res.contexts == []
     text = user_msg(pr.build_messages(req, res))
-    assert pr.NO_DOCS_LINE in text
+    assert pr.NO_DOCS_WORD_LINE in text and pr.NO_DOCS_LINE not in text  # v2: chi ro quy tac 4
+    assert "quy tắc 4" in pr.NO_DOCS_WORD_LINE
     assert not re.search(r"\[\d+\]", text)
     assert "TỪ ĐANG HỌC: reluctant (adj) — miễn cưỡng" in text
     assert pr.context_number_map(res.contexts) == {}
@@ -154,7 +155,7 @@ def test_system_prompt_is_fixed_and_quotes_fixed_texts():
 
 
 def test_generation_constants():
-    assert pr.PROMPT_VERSION == "v1"
+    assert pr.PROMPT_VERSION == "v2"
     assert pr.GENERATION_PARAMS == {"temperature": 0.2, "max_completion_tokens": 500,
                                     "reasoning_effort": "low", "include_reasoning": False}
     assert "max_tokens" not in pr.GENERATION_PARAMS and "reasoning_format" not in pr.GENERATION_PARAMS
@@ -182,3 +183,19 @@ def test_dev_cases_file_shape():
     assert all(r["contexts"] == "empty" and r["word"] for r in word_only)
     assert {r["source"] for r in rows} >= {"n03", "n04"}
     assert any(r["history"] for r in rows)
+
+
+def test_no_docs_without_word_uses_plain_line():
+    req = make_req(vocab=[{"term": "since", "pos": "prep", "meaning_vi": "kể từ", "match": "exact",
+                           "distance": 0.0}])
+    text = user_msg(pr.build_messages(req, answer_result(req)))
+    assert pr.NO_DOCS_LINE in text and pr.NO_DOCS_WORD_LINE not in text
+
+
+def test_v2_rules_present_in_system_prompt():
+    sp = pr.SYSTEM_PROMPT
+    assert 'không viết "Tài liệu 1"' in sp
+    assert "phải kết thúc bằng [n]" in sp
+    assert "không tự khái quát" in sp
+    assert '"từ này", "nó"' in sp and "KHÔNG dùng câu của quy tắc 5" in sp
+    assert "Không ghi tên trình độ" in sp

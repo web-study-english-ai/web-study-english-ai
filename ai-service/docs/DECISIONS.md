@@ -582,3 +582,25 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
      màn hình và không đưa vào `.md`, để lần chấm thứ hai độc lập.
   Bản trước (`3c60658`): (B) Hiếu chấm tay đúng / một phần / sai; (C) và word_only cũng chấm tay.
 - **Quy trình**: tối đa 3 vòng sửa prompt (v1 → v3). Mỗi vòng ghi `PROMPT_VERSION`, kết quả (A)/(B)/(C) từng ca, tổng token (`usage`), `finish_reason`. Hết 3 vòng mà chưa đạt → giữ bản tốt nhất, ghi trung thực phần chưa đạt, **KHÔNG sửa tiêu chí**.
+
+#### e. Vòng v1 → v2
+
+- **Kết quả v1** (`docs/eval/llm_rounds/v1.json`, chạy trên code ở `1494a21`, chấm và kiểm chéo ở `dc0580b`): **TRƯỢT**.
+  - (A) 12/12; (C) máy 5/5 (d06, d07, d09, d12 trả đúng nguyên văn `TEXT_OUT_OF_SCOPE`, d08 đúng nguyên văn `TEXT_NO_CONTEXT`).
+  - (B) đúng 3/6 (d01, d03, d04), một phần 2 (d02, d11), sai 1 (d05) → trượt (cần ≥ 5/6 đúng VÀ 0 sai).
+  - word_only d10: sai → trượt.
+  - Kiểm chéo: Claude Code và Claude ở chat khớp 6/7; lệch d04 (Claude Code `mot_phan`, Claude ở chat `dung`), Hiếu quyết `dung`.
+  - Token cả vòng 32.880 (12 lần gọi, suy luận 249); p50 969 ms; không 429, không `finish_reason = length`.
+- **4 lỗi nội dung và cách sửa** (sửa SAU khi xem v1 là đúng quy trình vòng chỉnh; tiêu chí mục d và 12 ca KHÔNG đổi):
+  1. **d10 trả "kho chưa có" dù có `word`**. Tin nhắn user v1 ghi "TÀI LIỆU: (không có tài liệu nào cho lượt này)", đẩy LLM sang quy tắc 5.
+     Sửa: quy tắc 4 nói rõ có TỪ ĐANG HỌC và câu hỏi về chính từ đó (kể cả "từ này", "nó") thì LUÔN dùng quy tắc 4, KHÔNG dùng câu của quy tắc 5, kể cả khi không có tài liệu; quy tắc 5 loại trừ trường hợp quy tắc 4. Khi `contexts` rỗng mà có `word`, phần TÀI LIỆU ghi "(không có — dùng TỪ ĐANG HỌC theo quy tắc 4)" (`NO_DOCS_WORD_LINE`); không có `word` thì giữ dòng cũ.
+  2. **d11 trích dạng "[Tài liệu 1]"** → `source_ids` rỗng, chuỗi còn sót trong answer.
+     Sửa hai phía: quy tắc 3 chỉ cho trích dạng [1], [2], cấm "Tài liệu 1"; `answer.py` nhận thêm `[Tài liệu n]`, `[tài liệu 1, 2]` (không phân biệt hoa thường) để ánh xạ và xoá.
+  3. **d05 tự khái quát "effect thường đi kèm giới từ of" và gắn [1]** — tài liệu chỉ nói "have an effect on".
+     Sửa: quy tắc 3 cấm tự khái quát thành quy tắc chung nếu tài liệu không nói; được dùng cụm trong câu hỏi làm ví dụ nhưng không biến thành quy tắc.
+  4. **d02 trích thiếu** (chỉ câu cuối có [1]); d04 trả đúng nhưng không kèm lý do (Hiếu chấm `dung`, nhưng Claude Code chấm `mot_phan` vì lý do này).
+     Sửa: quy tắc 3 bắt mỗi câu hoặc gạch đầu dòng có thông tin từ tài liệu kết thúc bằng [n], và luôn kèm lý do hoặc quy tắc ngắn từ tài liệu, kể cả với người mới học.
+- **2 lỗi trình bày**:
+  5. **In đậm/in nghiêng markdown** ở d01–d05 dù quy tắc 8 cấm in đậm. Sửa: quy tắc 8 cấm cả in nghiêng; `answer.py` gỡ `**x**` và `*x*` (giữ nội dung, không đụng dấu `*` của gạch đầu dòng, không đụng `2*3*4`) trước khi so câu cố định.
+  6. **Ghi tên trình độ** ("Ví dụ (A2):" ở d02). Sửa: quy tắc 8 cấm ghi A1/A2/B1/B2 trong câu trả lời.
+- `PROMPT_VERSION = "v2"`. Commit code + prompt TRƯỚC khi chạy v2. Người chấm và thang như mục d.

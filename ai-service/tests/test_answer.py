@@ -57,3 +57,27 @@ def test_fixed_text_inside_longer_answer_returns_exact_fixed(fixed):
 
 def test_cited_ids_alone():
     assert cited_ids("x [3] y [3] z [2]", CTX) == ["gram_018", "gram_013"]
+
+
+# --- v2: "[Tai lieu n]" va markdown nhan manh ----------------------------------------------------
+
+
+@pytest.mark.parametrize("text, ids, clean", [
+    ("Dùng quá khứ đơn. [Tài liệu 1]", ["gram_015"], "Dùng quá khứ đơn."),
+    ("Ý A [tài liệu 1, 2] và ý B [TÀI LIỆU 3].", ["gram_015", "gram_013", "gram_018"], "Ý A và ý B."),
+    ("Ý [Tài  liệu 2][1].", ["gram_013", "gram_015"], "Ý."),
+    ("Ý [Tài liệu 9].", [], "Ý."),
+])
+def test_tai_lieu_citations(text, ids, clean):
+    assert postprocess(text, CTX) == (clean, ids)
+
+
+def test_strip_bold_and_italic_keep_bullets():
+    text = "* Dùng **be going to** cho *kế hoạch* [1]\n* Ví dụ: *I'm going to study.*\n- **Lưu ý**: 2*3*4 giữ"
+    ans, ids = postprocess(text, CTX)
+    assert ans == "* Dùng be going to cho kế hoạch\n* Ví dụ: I'm going to study.\n- Lưu ý: 2*3*4 giữ"
+    assert ids == ["gram_015"]
+
+
+def test_emphasis_around_fixed_text_still_matches():
+    assert postprocess("**" + TEXT_NO_CONTEXT + "**", CTX) == (TEXT_NO_CONTEXT, [])
