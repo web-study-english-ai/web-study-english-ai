@@ -328,3 +328,67 @@ Số liệu lấy từ `docs/eval/intent_report.json` (sinh bởi `scripts/train
 - **Quyết định**: `train_intent.py --export` ghi `coef` (5 × 384), `intercept` (5), τ, thông tin embedder và nguồn gốc vào `app/resources/intent_e5_lr_v1.json` (41 040 byte, nằm trong `app/` nên vào image, commit được). `app/services/intent.py` tự tính softmax(coef · x + intercept) bằng numpy (trừ max trước khi exp) và từ chối file sai format, sai shape, lệch nhãn, lệch model/revision/dim/tiền tố e5, τ ngoài (0, 1).
 - **Lý do**: suy luận LogisticRegression chỉ là một phép nhân ma trận; file JSON tái tạo được bằng `train_intent.py --export` từ dữ liệu đã băm. Vector cache là float32 nên sklearn suy luận float32, lệch ~2e-7 so với numpy float64. KHÔNG huấn luyện lại bằng float64 để khớp: như vậy hệ số đổi và thành mô hình khác với mô hình đã chấm test. Khi `--export`: 75/75 dự đoán trên test khớp `intent_report.json`, sai số xác suất so với sklearn tính float64 là 1,1e-16 (số in ra lúc chạy, không lưu trong JSON).
 - **Hệ quả**: `kb/` không vào image nên thứ tự nhãn được chép thành hằng `LABELS` trong `intent.py`; `tests/test_intent.py` giữ hằng này khớp `kb/intent/label_map.json`. File JSON có `generated_at` nên sha256 đổi sau mỗi lần `--export` dù trọng số giống hệt.
+
+### 2026-11-02 WSEA-126 rerank — TẮT, không đưa cross-encoder vào dịch vụ
+
+Số liệu lấy từ `docs/eval/rerank_report.json` (sinh bởi `scripts/eval_rerank.py --candidates A`). Bộ câu giống WSEA-111: 31 câu dương `kb/eval_questions.csv`, 12 câu âm `kb/eval_negatives.csv`, vector đoạn đọc từ `.npz` đã nạp DB (có kiểm manifest). Reranker chấm lại top-8 theo e5 bằng cặp (câu hỏi nguyên văn, `content` nguyên văn), không thêm tiền tố `query: `/`passage: ` (đó là quy ước riêng của e5).
+
+#### a. Luật chốt trước, chạy A đúng theo luật đó
+
+- **Luật**, chốt ở commit `9813fa4` (02/11 14:15): đưa top-8 vào, giữ top-3 cho LLM, `torch.set_num_threads(2)`. BẬT khi đạt CẢ BA điều kiện:
+  - hit@3 sau rerank ≥ hit@5 gốc − 0,03;
+  - độ trễ p95 của một lượt 8 cặp ≤ 300 ms;
+  - RAM tăng thêm khi nạp mô hình ≤ 600 MiB.
+- **Hai ứng viên**: A `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` và B `BAAI/bge-reranker-v2-m3`.
+- **Chạy A** lúc 02/11 14:18 (`created_at` 07:18:58 UTC), dùng script ở `9813fa4` → `docs/eval/rerank_report.json`. File này là kết quả chính thức của A và **không chạy lại**.
+
+#### b. Lịch sử luật
+
+- Biên 0,03 nhỏ hơn 1 câu (1/31 = 0,032), nên luật cũ thực chất đòi không được mất câu nào. Điểm này được phát hiện TRƯỚC khi chạy A, nhưng chưa sửa.
+- Luật được sửa SAU khi chạy A, ở commit kế tiếp `a3681cf` (refactor): `RULE_MAX_LOST = 1`, tức so theo **số câu** (hit@3 rerank ≥ hit@5 gốc − 1 câu); đồng thời thêm `MAX_LENGTH = 512` cho mọi ứng viên.
+- Điều kiện chất lượng của A đạt theo cả hai luật: theo luật cũ 0,871 ≥ 0,839 − 0,03 = 0,809; theo luật mới 27/31 ≥ 26/31 − 1. A bị TẮT vì độ trễ và RAM, hai điều kiện này không sửa → quyết định không đổi. Report vẫn mang trường `hit3_margin` của luật cũ; khi trích dẫn phải ghi kèm commit `9813fa4`.
+
+#### c. Số liệu A
+
+- **Mô hình**: revision `1427fd652930e4ba29e8149678df786c240d8825`, giấy phép Apache-2.0, max_length 512, `model.safetensors` 448,8 MiB (fp32). Dung lượng trên đĩa sau khi tải 469,9 MiB (safetensors + tokenizer).
+- **Trước → sau rerank** (n = 31; hit@8 không đổi vì rerank chỉ đổi thứ tự trong top-8):
+
+| nhóm | n | hit@1 | hit@3 | hit@5 | hit@8 | MRR@8 |
+|---|---|---|---|---|---|---|
+| tất cả | 31 | 0,613 → 0,806 | 0,645 → 0,871 | 0,839 → 0,871 | 0,871 → 0,871 | 0,678 → 0,839 |
+| vi | 12 | 0,583 → 0,750 | 0,583 → 0,833 | 0,833 → 0,833 | 0,833 → 0,833 | 0,646 → 0,792 |
+| mixed | 13 | 0,769 → 0,923 | 0,846 → 1,000 | 0,923 → 1,000 | 1,000 → 1,000 | 0,837 → 0,962 |
+| en | 6 | 0,333 → 0,667 | 0,333 → 0,667 | 0,667 → 0,667 | 0,667 → 0,667 | 0,400 → 0,667 |
+
+- **Đổi hạng gold**: 8 câu, đều đi lên, không câu nào tụt: q07 4→1, q09 4→2, q17 2→1, q19 5→1, q23 8→1, q24 4→2, q25 4→1, q27 5→1. hit@3 tăng 7 câu (0,226), vượt xa mức nhiễu (< 0,065, tức 2 câu).
+- **Tách câu âm** (top-1, 31 dương / 12 âm):
+
+| tín hiệu | dương min / p50 / max | âm min / p50 / max | AUC |
+|---|---|---|---|
+| điểm rerank (cao = liên quan) | −4,334 / 1,515 / 10,166 | −9,142 / −2,730 / 1,811 | 0,892 |
+| distance e5 (thấp = liên quan) | 0,083 / 0,127 / 0,199 | 0,120 / 0,162 / 0,231 | 0,804 |
+
+- **Chi phí** (laptop, 2 luồng):
+  - độ trễ một lượt 8 cặp: p50 1.011 ms, p95 1.149 ms, max 1.157 ms (31 câu, đã làm nóng 3 lượt);
+  - RSS 482 → 1.161 MiB sau khi nạp → 1.208 MiB sau khi chấm, tức tăng 726 MiB;
+  - thời gian nạp 50,6 s là lần chạy đầu, có gồm thời gian tải mô hình → không dùng con số này.
+
+#### d. Quyết định: TẮT
+
+- **Lý do**: p95 1.149 ms > 300 ms và RAM tăng 726 MiB > 600 MiB. Chất lượng đạt (mục c), nhưng chi phí trượt cả hai ngưỡng.
+- Số đo trên laptop. Space CPU basic (2 vCPU) chậm hơn laptop, nên trên production độ trễ chỉ cao hơn, kết luận càng chắc. Riêng rerank đã thêm khoảng 1 s cho mỗi câu (đo trên laptop).
+
+#### e. Ứng viên B không chạy
+
+- B (`BAAI/bge-reranker-v2-m3`) **không chạy**. A đã trượt chi phí, mà B lớn khoảng 5 lần A, nên gần như chắc chắn cũng trượt.
+- Đây là **suy luận, không phải số đo**. Không có số liệu nào của B.
+
+#### f. Hệ quả
+
+- **WSEA-127**: đưa top-5 theo e5 vào prompt, không rerank (giữ mục c WSEA-111). Tín hiệu "không đủ ngữ cảnh" dùng distance e5 kết hợp ý định (mục c WSEA-125).
+- Điểm rerank tách câu âm tốt hơn (AUC 0,892 so với 0,804), nhưng không dùng được vì mô hình đã TẮT. Ngoài ra chỉ có 12 câu âm nên AUC còn thô.
+- **Hướng phát triển**, cần đo lại theo cùng luật:
+  - ONNX, có sẵn trong repo của A;
+  - lượng tử hoá: repo đã có bản int8 khoảng 113 MiB;
+  - GPU.
+- **Hạn chế**: 31 câu dương do Claude soạn, Hiếu duyệt; câu en chỉ n = 6.

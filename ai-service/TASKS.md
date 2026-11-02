@@ -591,13 +591,15 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-109 (Jira **WSEA-126**) · Tích hợp mô hình xếp hạng lại kết quả truy hồi
-6h · Ưu tiên: High · `ai/WSEA-126-...`
+### [x] WSEA-109 (Jira **WSEA-126**) · Tích hợp mô hình xếp hạng lại kết quả truy hồi — đóng 02/11, **quyết định TẮT**
+6h · Ưu tiên: High · `ai/WSEA-126-xep-hang-lai`
 
-- [ ] 1. Tải và tích hợp mô hình cross-encoder
-- [ ] 2. Viết bước xếp hạng lại sau khi truy hồi thô
-- [ ] 3. So sánh chất lượng truy hồi trước và sau khi xếp hạng lại
-- [ ] 4. Tối ưu số lượng đoạn đưa vào bước xếp hạng
+> Đo xong và quyết định **không** đưa rerank vào dịch vụ: chất lượng đạt luật nhưng p95 1.149 ms > 300 ms, RAM +726 MiB > 600 MiB (luật chốt trước ở `9813fa4`). Chi tiết: `docs/DECISIONS.md` mục 2026-11-02 WSEA-126.
+
+- [x] 1. Tải và tích hợp mô hình cross-encoder — đã tải A `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` @ `1427fd65` và chạy offline; **không tích hợp vào `app/`** vì TẮT. B `BAAI/bge-reranker-v2-m3` không chạy (lớn ~5 lần A, suy luận, không đo)
+- [x] 2. Viết bước xếp hạng lại sau khi truy hồi thô — `rerank_rows` trong `scripts/eval_rerank.py` (chỉ offline), test `tests/test_eval_rerank.py` dùng bộ chấm giả
+- [x] 3. So sánh chất lượng truy hồi trước và sau khi xếp hạng lại — hit@3 0,645 → 0,871, hit@1 0,613 → 0,806, MRR@8 0,678 → 0,839; 8 câu lên hạng, 0 câu tụt; `docs/eval/rerank_report.json`
+- [ ] 4. Tối ưu số lượng đoạn đưa vào bước xếp hạng — không làm: rerank TẮT. Prompt dùng top-5 theo e5 (DECISIONS WSEA-111 mục c)
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -614,7 +616,7 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 ### [ ] WSEA-110 (Jira **WSEA-127**) · Hoàn thiện pipeline truy hồi trong dịch vụ AI
 5h · Ưu tiên: Highest · `ai/WSEA-127-...`
 
-- [ ] 1. Ghép các bước: phân loại ý định, truy hồi, xếp hạng lại
+- [ ] 1. Ghép các bước: phân loại ý định, truy hồi, xếp hạng lại — bỏ bước xếp hạng lại (WSEA-126 TẮT): top-5 theo e5 vào prompt
 - [ ] 2. Viết endpoint trả về danh sách đoạn tri thức liên quan
 - [ ] 3. Xử lý trường hợp không tìm thấy đoạn phù hợp
 - [ ] 4. Viết kiểm thử bằng Pytest
