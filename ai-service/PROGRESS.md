@@ -10,16 +10,16 @@
 ## 1. Trạng thái hiện tại
 
 - **Đợt hiện tại:** khoảng đợt 10 theo lịch; trợ lý (v1.1) đang trễ
-- **Task vừa xong:** Jira **WSEA-125** — Huấn luyện bộ phân loại ý định (TASKS.md ghi WSEA-108). e5-small + LogisticRegression C = 3, τ = 0,4; test accuracy 0,72, macro-F1 0,7079; trọng số `app/resources/intent_e5_lr_v1.json`, nạp bằng `app/services/intent.py` (mục 6.3, DECISIONS 2026-11-01 · WSEA-125). **Chưa commit/PR**
-- **Task trước:** Jira **WSEA-112** — Dataset ý định (TASKS.md ghi WSEA-95), đã merge (PR #113). Jira WSEA-111 (truy hồi ngữ nghĩa) đã merge (PR #110)
-- **Task kế tiếp:** Jira **WSEA-127** — nối bộ phân loại ý định vào pipeline (nạp trong lifespan; chặn sớm kết hợp distance top-1, đo trên bộ 43 câu). Sau đó `POST /assistant/ask` (prompt chỉ dùng ngữ cảnh, top-5, từ chối khi không có) + rerank; tra từ vựng: bóc cụm khung câu + khớp `meaning_vi` trước, vector dự phòng
-- **Nhánh:** `ai/WSEA-125-phan-loai-y-dinh`
+- **Task vừa xong:** Jira **WSEA-126** — Rerank cross-encoder (TASKS.md ghi WSEA-109): **quyết định TẮT**. Ứng viên A `mmarco-mMiniLMv2-L12-H384-v1` tăng hit@3 từ 0,645 lên 0,871, nhưng p95 1.149 ms > 300 ms và RAM tăng 726 MiB > 600 MiB. B không chạy (suy luận, không đo). Xem mục 6.3, DECISIONS 2026-11-02 WSEA-126. Script đã commit (`9813fa4`, `a3681cf`); docs + `docs/eval/rerank_report.json` **chưa commit**
+- **Task trước:** Jira **WSEA-125** — Phân loại ý định (TASKS.md ghi WSEA-108), đã merge (PR #116). Jira WSEA-112 (dataset ý định) đã merge (PR #113)
+- **Task kế tiếp:** Jira **WSEA-127** — nối bộ phân loại ý định vào pipeline (nạp trong lifespan; chặn sớm kết hợp distance top-1, đo trên bộ 43 câu). Sau đó `POST /assistant/ask` (prompt chỉ dùng ngữ cảnh, **top-5 theo e5, không rerank**, từ chối khi không có; tín hiệu "không đủ ngữ cảnh" = distance e5 + ý định); tra từ vựng: bóc cụm khung câu + khớp `meaning_vi` trước, vector dự phòng
+- **Nhánh:** `ai/WSEA-126-xep-hang-lai`
 - **Việc dở dang cần làm tiếp:**
-  - Commit + PR WSEA-125; minh chứng Jira WSEA-110, WSEA-111, WSEA-125
+  - Commit docs + PR WSEA-126; minh chứng Jira WSEA-110, WSEA-111, WSEA-125, WSEA-126
   - Release v1.1: kiểm production bằng SQL → `prisma migrate deploy` production → `load_vectors.py --env production --confirm-production` → RỒI MỚI deploy backend dùng `embedding_model`
   - Báo backend sửa `TRUE`/`FALSE` thành `true`/`false` trong `backend/prisma/data/vocab_7000.csv`
 - **Đang bị chặn bởi:** không
-- **Cập nhật lần cuối:** 2026-11-01
+- **Cập nhật lần cuối:** 2026-11-02
 
 ## 2. Tiến độ theo mốc
 
@@ -33,7 +33,7 @@
 | — | 5→7 | AI Service trên **HF Spaces**, `/predict-retention` gọi được từ backend | ⚠️ | Endpoint xong (WSEA-81). 15/10 chuyển sang Render, 19/10 quay lại HF Spaces gói PRO (16 GB đủ cho cả CLIP + e5). **20/10: Space đã chạy, smoke test 7/7; CHƯA tích hợp backend** (vấn đề #15) |
 | MK-3 / v1.0 | 6→7 | **Dự báo quên đúng trên production — SỐNG CÒN** | ⚠️ | Trễ theo WSEA-82. Trong lúc chờ, luồng ôn tập chạy bằng fallback `simple-scheduler.ts` |
 | — | 7 | Chunk + embedding + vector search chạy | ✅ | Kho 100 đoạn (WSEA-100) · vector 100 đoạn + 7000 từ trên staging, HNSW (WSEA-110, 31/10) · `/assistant/embed` trên Space, hit@8 0,871 (WSEA-111, 31/10). Frontend chưa gọi API (#16) |
-| — | 8 | Phân loại ý định + rerank đạt mục tiêu | 🟨 | Phân loại ý định xong (WSEA-125, 01/11): test accuracy 0,72, macro-F1 0,7079; chưa nối vào app (WSEA-127). Rerank chưa làm |
+| — | 8 | Phân loại ý định + rerank đạt mục tiêu | 🟨 | Phân loại ý định xong (WSEA-125, 01/11): test accuracy 0,72, macro-F1 0,7079; chưa nối vào app (WSEA-127). Rerank đo xong, **TẮT** (WSEA-126, 02/11): hit@3 0,645 → 0,871 nhưng p95 1.149 ms, RAM +726 MiB vượt luật |
 | v1.1 | 9 | Trợ lý RAG trên production | ⬜ | |
 | MK-4 / v1.2 | 10 | CLIP nhận diện ảnh; đủ 3 chức năng AI | ⬜ | |
 | MK-5 | 10 | Đóng băng tính năng | ⬜ | |
@@ -73,8 +73,8 @@ Ký hiệu: ⬜ chưa làm · 🟨 đang làm · ✅ xong · ⚠️ trễ/có v�
 | 10 | **Đánh số WSEA trong `TASKS.md` lệch với Jira thật.** Task "Xây dựng endpoint" ghi WSEA-64 nhưng Jira là WSEA-81; commit trước đó dùng WSEA-66 cho "huấn luyện mô hình" trong khi `TASKS.md` ghi WSEA-66 = "kiểm thử tích hợp". Cần rà toàn bộ file, nếu không minh chứng Jira sẽ gắn nhầm task. | Cao | Hiếu | Đợt 5 | Mở |
 | 1 | **Thứ tự cắt giảm không thống nhất giữa các tài liệu.** Bối cảnh dự án ghi: Could have → đọc hiểu → bỏ rerank → bỏ phân loại ý định → giảm nhãn ảnh 2000→500. File 11 (sheet Mốc và bàn giao) ghi: cắt **toàn bộ** nhận diện ảnh trước tiên, rồi phân loại ý định + rerank. MK-3 cũng ghi "huỷ nhận diện ảnh nếu mô hình dự báo lỗi". Cần chốt một bản và sửa tài liệu còn lại. | Cao | Hiếu | Đợt __ | Mở |
 | 2 | **SM-2 không tự sinh xác suất nhớ.** Muốn so log-loss/AUC với DSR phải định nghĩa cách quy đổi (vd dùng khoảng ôn SM-2 làm S rồi áp cùng công thức R(t,S), hoặc hàm mũ `0.9^(t/I)`). Chọn một cách, ghi rõ trong báo cáo. | Cao | Hiếu | Trước khi đánh giá | ✅ Đóng 2026-10-11 — chọn cách 1: khoảng SM-2 làm S rồi áp cùng R(t,S) (WSEA-67, `docs/DECISIONS.md`) |
-| 3 | Chưa chốt mô hình **rerank** và **phân loại ý định** (vd cross-encoder nhỏ; e5 embedding + LogisticRegression). Cần đo RAM và thời gian khởi động (HF CPU basic 16 GB). | TB | Hiếu | Đợt 7 | Mở — phân loại ý định đã chốt 2026-11-01 (WSEA-125): e5 + LogisticRegression chạy bằng numpy, file trọng số 41 040 byte, không thêm mô hình vào image. Còn rerank |
-| 4 | Tổng RAM và thời gian khởi động khi nạp cùng lúc DSR + CLIP + e5 (+ reranker) — chưa đo. 19/10 quay lại HF 16 GB nên RAM không còn là rào cản; còn lo thời gian nạp lại sau mỗi lần Space khởi động lại. | TB | Hiếu | Đợt 7 (task "Chốt nơi đặt mô hình nặng") | Mở |
+| 3 | Chưa chốt mô hình **rerank** và **phân loại ý định** (vd cross-encoder nhỏ; e5 embedding + LogisticRegression). Cần đo RAM và thời gian khởi động (HF CPU basic 16 GB). | TB | Hiếu | Đợt 7 | Mở — phân loại ý định đã chốt 2026-11-01 (WSEA-125): e5 + LogisticRegression chạy bằng numpy, file trọng số 41 040 byte, không thêm mô hình vào image. Rerank chốt 2026-11-02 (WSEA-126): **TẮT**, không thêm reranker vào image (p95 1.149 ms, RAM +726 MiB) |
+| 4 | Tổng RAM và thời gian khởi động khi nạp cùng lúc DSR + CLIP + e5 — chưa đo (02/11: bỏ reranker, WSEA-126 TẮT). 19/10 quay lại HF 16 GB nên RAM không còn là rào cản; còn lo thời gian nạp lại sau mỗi lần Space khởi động lại. | TB | Hiếu | Đợt 7 (task "Chốt nơi đặt mô hình nặng") | Mở |
 | 5 | Cold start làm request đầu chậm/timeout → backend cần timeout + fallback. | TB | Hiếu, Duy Anh | Đợt 5 | ✅ Đóng 2026-10-09 — timeout 3 s, 503 thử lại 1 lần sau 2 s rồi fallback. Sau khi quay lại HF: Space ngủ/khởi động lại → xem vấn đề #13 |
 | 6 | 40.007 file CSV — huấn luyện toàn bộ có thể quá nặng. Có thể lấy mẫu một tập user; phải ghi rõ số user từng tập. | TB | Hiếu | Đợt 2 | Mở |
 | 7 | Khoá nội bộ dùng header `x-api-key` (theo CLAUDE.md). Xác nhận đúng tên header và tên biến môi trường với Duy Anh, ghi vào `docs/API_CONTRACT.md`. | Thấp | Hiếu, Duy Anh | Đợt 5 | ✅ Đóng 2026-10-09 — header `x-api-key`; biến ai-service `INTERNAL_API_KEY`, biến backend `AI_SERVICE_KEY`, cùng giá trị |
@@ -221,6 +221,7 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 
 | Ngày | Cấu hình (chunk size, top-k, rerank?, intent?) | Recall@k | Độ trung thực (30 câu) | Acc. phân loại ý định | Latency TB | Ghi chú |
 |---|---|---|---|---|---|---|
+| 2026-11-02 | Rerank top-8 e5 → top-3 bằng `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` @ `1427fd65`, max_length 512, 2 luồng — 31 câu dương + 12 câu âm; luật chốt trước ở `9813fa4`, chạy 1 lần 14h18 | hit@1 0,613 → 0,806 · @3 0,645 → 0,871 · @5 0,839 → 0,871 · @8 0,871 (không đổi) · MRR@8 0,678 → 0,839 | — | — | rerank 1 lượt 8 cặp (laptop): p50 1.011 ms · p95 1.149 ms; RAM +726 MiB; đĩa 470 MiB | WSEA-126, `docs/eval/rerank_report.json`. **TẮT** (p95 > 300 ms, RAM > 600 MiB). 8 câu lên hạng, 0 câu tụt. AUC câu âm: điểm rerank 0,892 so với distance e5 0,804. B `bge-reranker-v2-m3` không chạy (lớn ~5 lần, suy luận) |
 | 2026-11-01 | Phân loại ý định: e5-small + LogisticRegression C = 3, τ = 0,4 cho `ngoai_pham_vi` — train 376 câu LLM, test 75 câu người thật, chấm 1 lần | — | — | test accuracy 0,72 · macro-F1 0,7079 (CV 0,7812 ± 0,0453) · cơ sở 0,2 | — | WSEA-125, `docs/eval/intent_report.json`. TF-IDF CV 0,7396 → không chọn. Chặn sớm test 10 câu, precision 0,9, recall 0,4737; recall CV 0,2763. Yếu: `phan_biet` R 0,5, `cach_dung` R 0,5714 |
 | 2026-10-31 | e5-small, vector đoạn từ `.npz` đã nạp DB, quét k = 1/3/5/8/10/20, không rerank, không phân loại ý định — 31 câu dương + 12 câu âm (7 off, 5 gap) viết trước khi chạy | hit@1 0,613 · @3 0,645 · @5 0,839 · @8 0,871 · @10 0,871 · @20 0,903 · MRR@20 0,681 | — | — | `/assistant/embed` trên Space: server ~20 ms, khứ hồi VN 497–630 ms; trọn vòng staging 1,5–1,8 s khi backend đã thức | WSEA-111, `docs/eval/retrieval_k_sweep.json`. hit@8: mixed 1,00 · vi 0,833 · en 0,667. Ngưỡng distance không tách được câu gap (0,120–0,155) khỏi câu dương (p50 0,127) → không dùng ngưỡng cứng. q02, q08 gold hạng 31. SQL staging khớp numpy 43/43 |
 | 2026-10-30 | e5-small, đoạn = `content` nguyên văn, top-5, không rerank, không phân loại ý định — 31 câu Claude soạn, Hiếu duyệt | R@1 0,613 · R@5 0,839 · MRR 0,678 | — | — | mã hoá 15 ms/câu (CPU); SQL < 1 ms phía server | WSEA-110. e5-base R@5 0,839 / MRR 0,671; MiniLM 0,774 / 0,637. Tra ngược từ vựng 10 câu: 4/10 → 7/10 khi bỏ cụm khung |
@@ -261,6 +262,14 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-11-02 · Đợt 10 (theo lịch) · WSEA-126 — Rerank cross-encoder: TẮT
+
+- `scripts/eval_rerank.py` chấm lại top-8 e5 bằng CrossEncoder; luật chốt trước ở `9813fa4`: BẬT khi hit@3 rerank ≥ hit@5 gốc − 0,03, p95 ≤ 300 ms, RAM tăng ≤ 600 MiB. Hàm thuần nhận bộ chấm giả để test.
+- Chạy A (`mmarco-mMiniLMv2-L12-H384-v1`) đúng 1 lần lúc 14h18: hit@3 0,645 → 0,871, MRR@8 0,678 → 0,839, 8 câu lên hạng, không câu nào tụt. Nhưng p95 1.149 ms và RAM +726 MiB → **TẮT**.
+- Biên 0,03 < 1 câu (1/31) được phát hiện trước khi chạy nhưng chưa sửa; sửa thành `RULE_MAX_LOST = 1` SAU khi chạy A (`a3681cf`). Quyết định không đổi vì điều kiện chất lượng đạt theo cả hai luật (27/31 ≥ 26/31).
+- B (`bge-reranker-v2-m3`) không chạy: A đã trượt chi phí, B lớn ~5 lần A → suy luận, không đo.
+- Hệ quả WSEA-127: top-5 theo e5 vào prompt, không rerank; "không đủ ngữ cảnh" dùng distance e5 + ý định. DECISIONS 2026-11-02 WSEA-126.
 
 ### 2026-11-01 · Đợt 10 (theo lịch) · WSEA-125 — Huấn luyện bộ phân loại ý định
 
