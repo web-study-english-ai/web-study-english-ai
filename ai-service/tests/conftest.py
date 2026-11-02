@@ -14,3 +14,9 @@ os.environ["INTERNAL_API_KEY"] = TEST_API_KEY
 os.environ["FSRS_WEIGHTS_SOURCE"] = "default"
 os.environ["ENVIRONMENT"] = "test"
 os.environ["EMBEDDER_ENABLED"] = "false"
+# .env co the chua LLM_API_KEY that: de bang khoa gia + host .invalid -> test khong bao gio goi Groq.
+TEST_LLM_KEY = "gsk_test_khoa_gia_chi_dung_trong_pytest_0123456789"
+os.environ["LLM_API_KEY"] = TEST_LLM_KEY
+os.environ["LLM_BASE_URL"] = "http://llm.invalid/openai/v1"
+os.environ["LLM_MODEL"] = "openai/gpt-oss-120b"
+os.environ["LLM_FALLBACK_MODEL"] = "openai/gpt-oss-20b"

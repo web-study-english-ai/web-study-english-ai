@@ -3,7 +3,7 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.3.1 · Cập nhật lần cuối: 2026-11-02 (WSEA-127, v0.3.1 — bổ sung, **không phá vỡ**): thêm `POST /assistant/rank` (backend không bắt buộc gọi); `/assistant/ask` ghi rõ `contexts` không bắt buộc đã sắp; `/health` có thể liệt kê `"intent"` · Bản 0.3: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
+Phiên bản: 0.3.2 · Cập nhật lần cuối: 2026-11-02 (WSEA-140, v0.3.2 — bổ sung, **không phá vỡ**): `POST /assistant/ask` đã triển khai JSON + SSE; `decision` ≠ `"answer"` trả câu cố định, `source_ids` rỗng, không gọi LLM; `503` có `detail` ghi mã lý do; gọi lại 1 lần bằng model dự phòng khi `429`; ngân sách 12 s (JSON) / 40 s (SSE); `delta` không chứa ký hiệu trích; thêm bảng biến môi trường LLM của dịch vụ AI · Bản 0.3.1: 2026-11-02 (WSEA-127, bổ sung, không phá vỡ): thêm `POST /assistant/rank` (backend không bắt buộc gọi); `/assistant/ask` ghi rõ `contexts` không bắt buộc đã sắp; `/health` có thể liệt kê `"intent"` · Bản 0.3: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
 
 ## Quy ước chung
 
@@ -355,6 +355,36 @@ data: [DONE]
 **Lỗi**: `401` · `422` · `503` (không gọi được LLM, hết hạn mức) · `500`.
 **Timeout backend**: 15 giây (JSON) / 45 giây (SSE), như hiện tại.
 
+**Hành vi đã triển khai (v0.3.2, WSEA-140)** — JSON và SSE đều chạy; bổ sung, không đổi tên trường hay mã lỗi.
+
+- `/ask` chạy đúng pipeline của `POST /assistant/rank` trước. **`decision` ≠ `"answer"` thì KHÔNG gọi LLM**, trả một trong hai câu cố định, `source_ids = []`:
+  - `out_of_scope`: "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé."
+  - `no_context`: "Kho tài liệu của mình hiện chưa có nội dung cho câu hỏi này, nên mình chưa trả lời để tránh nói sai. Bạn có thể hỏi về ngữ pháp, nghĩa và cách dùng từ, hoặc phân biệt những từ dễ nhầm."
+  - LLM cũng được dặn dùng đúng hai câu này khi tự từ chối (câu lạc đề lọt pipeline, câu trong lĩnh vực nhưng kho chưa có). Khi đó `answer` là đúng nguyên văn câu cố định và `source_ids = []`. Backend có thể so khớp nguyên văn hai câu này nếu cần phân biệt.
+- **`source_ids`**: LLM trích bằng số thứ tự đoạn; dịch vụ đổi số → `id`, chỉ giữ id thuộc các đoạn đã chọn (⊂ `contexts[].id` của request), bỏ trùng, theo thứ tự xuất hiện. `answer` không còn ký hiệu trích (`[1]`, `【1】`, `[Tài liệu 1]`) và không còn dấu nhấn mạnh markdown `**x**` / `*x*` (gạch đầu dòng giữ nguyên).
+- **Ca chỉ có `word`** (không có `contexts`, `vocab`): `decision = "answer"`, LLM trả lời từ `word`, `source_ids = []` — đây không phải câu "kho chưa có".
+- **`503`**: `detail` có dạng `"Khong goi duoc LLM (<reason>)"`, `<reason>` là một trong:
+
+  | `reason` | Khi nào |
+  |---|---|
+  | `no_key` | Dịch vụ thiếu `LLM_API_KEY` |
+  | `rate_limited` | Model chính `429`, gọi lại 1 lần bằng model dự phòng vẫn `429` |
+  | `timeout` | Hết ngân sách thời gian (dưới) |
+  | `upstream_error` | Nhà cung cấp LLM trả `5xx`/`4xx` khác, hoặc lỗi kết nối |
+  | `empty_content` | LLM trả nội dung rỗng (kể cả khi suy luận ăn hết giới hạn token), hoặc rỗng sau khi bỏ ký hiệu trích (JSON; với SSE ca rỗng sau khi bỏ ký hiệu chỉ biết ở cuối luồng → đóng luồng, không khung cuối) |
+  | `bad_response` | Phản hồi của nhà cung cấp hỏng (JSON sai dạng) |
+
+  Ngoài ra `503` `"Mo hinh embedding chua nap"` như `/assistant/rank`. Mọi `5xx` vẫn là tín hiệu fallback.
+- **Model dự phòng**: model chính trả `429` → dịch vụ gọi lại **đúng 1 lần** bằng model dự phòng (hạn mức Groq tính riêng từng model), trong phần thời gian còn lại. Lỗi khác không thử lại.
+- **Ngân sách thời gian phía dịch vụ** (tính tổng cả lần dự phòng): **12 s** cho JSON (dưới 15 s của backend), **40 s** cho SSE (dưới 45 s của backend).
+- **SSE**:
+  - Lỗi xảy ra **trước token đầu tiên** (kể cả `429` hai lần, hết giờ, thiếu khoá) → trả mã HTTP + JSON `detail` như trên, **không mở luồng**.
+  - `decision` ≠ `"answer"`: đúng 3 khung — `{"delta": <câu cố định>}`, `{"answer": <câu cố định>, "source_ids": []}`, `[DONE]`.
+  - `delta` **không chứa ký hiệu trích hay dấu `**`**: dịch vụ giữ lại phần đuôi chưa chắc chắn tới khi biết rõ. Ghép mọi `delta` = `answer` của khung cuối, **trừ** khi khung cuối được thay bằng câu cố định — khi đó luôn dùng khung cuối.
+  - Lỗi **giữa luồng**: dịch vụ đóng luồng, **không gửi khung cuối, không gửi `[DONE]`** → backend `degraded = true` như đã chốt.
+  - Header: `Content-Type: text/event-stream`, `Cache-Control: no-cache`, `X-Accel-Buffering: no`.
+- `Server-Timing` (chỉ để chẩn đoán): JSON có `intent`, `select`, `llm`, `app`; SSE có `intent`, `select`, `llm_first` (tới token đầu), `app` (tới lúc mở luồng).
+
 ## POST /assistant/rank
 
 (v0.3.1, WSEA-127) Chạy **pipeline truy hồi** của dịch vụ AI (phần sau khi nhận ứng viên, trước LLM) và trả quyết định cùng các đoạn đã chọn. **Không gọi LLM, không tốn token.**
@@ -414,3 +444,16 @@ Response 200 có header `Server-Timing` (`intent`, `select`, `app`; ms) khi pipe
 | `AI_EMBED_MODEL` | `intfloat/multilingual-e5-small` | Phải khớp `kb_chunks.embedding_model` và `word_embeddings.model` |
 | `AI_EMBED_TIMEOUT_MS` | `5000` | Timeout riêng cho `/assistant/embed` |
 | `AI_ASSISTANT_TOP_K` | `8` | Số đoạn ứng viên gửi sang `/assistant/ask` (tối đa 20) |
+
+## Biến môi trường của dịch vụ AI — trợ lý (v0.3.2, WSEA-140)
+
+Đặt trên Space (Settings → Variables and secrets). Backend không cần biết các biến này; ghi ở đây để hai bên hiểu ngân sách thời gian.
+
+| Biến | Loại | Mặc định | Ghi chú |
+|---|---|---|---|
+| `LLM_API_KEY` | **Secret** | — | Khoá nhà cung cấp LLM (Groq). Thiếu → `/ask` trả `503` `no_key` khi cần gọi LLM; các endpoint khác không ảnh hưởng |
+| `LLM_BASE_URL` | Variable | `https://api.groq.com/openai/v1` | API tương thích OpenAI, gọi bằng `httpx` với `User-Agent` riêng |
+| `LLM_MODEL` | Variable | `openai/gpt-oss-120b` | Model chính |
+| `LLM_FALLBACK_MODEL` | Variable | `openai/gpt-oss-20b` | Chỉ dùng khi model chính trả `429` |
+| `LLM_TIMEOUT_S` | Variable | `12` | Ngân sách tổng cho `/ask` JSON (phải < 15 s của backend) |
+| `LLM_STREAM_TIMEOUT_S` | Variable | `40` | Ngân sách tổng cho `/ask` SSE (phải < 45 s của backend) |

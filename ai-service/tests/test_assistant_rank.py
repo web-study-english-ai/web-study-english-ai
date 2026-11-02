@@ -106,13 +106,7 @@ def test_rank_500_on_bad_vector(client, monkeypatch):
     assert "Traceback" not in res.text
 
 
-# --- /ask van 501, /health co intent -------------------------------------------------------------
-
-
-def test_ask_still_501_with_valid_v03_body(client):
-    res = client.post("/assistant/ask", json=body(word={"term": "since", "pos": "prep", "meaning_vi": "kể từ"},
-                                                  user_cefr="B1"), headers=AUTH)
-    assert res.status_code == 501
+# --- /health co intent (/ask JSON: tests/test_assistant_ask.py, SSE: tests/test_assistant_ask_sse.py) ---
 
 
 def test_health_lists_intent_from_real_file():

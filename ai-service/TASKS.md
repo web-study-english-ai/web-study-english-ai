@@ -28,7 +28,7 @@
 > | WSEA-108 | **WSEA-125** | Huấn luyện bộ phân loại ý định câu hỏi |
 > | WSEA-109 | **WSEA-126** | Tích hợp mô hình xếp hạng lại kết quả truy hồi |
 > | WSEA-110 | **WSEA-127** | Hoàn thiện pipeline truy hồi trong dịch vụ AI |
-> | WSEA-123 | **WSEA-140** | Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh |
+> | WSEA-123 | **WSEA-140** | Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh — ✅ code xong 2026-11-02 (`91b12c9`…`b5abf4b`, cuối nhánh là commit tài liệu B5), chưa push, chờ deploy |
 > | WSEA-124 | **WSEA-141** | Đánh giá chất lượng pipeline truy hồi |
 >
 > Các mã khác (WSEA-81 trở đi) chưa đối chiếu. **WSEA-110 và WSEA-125 trong file này cũng là task khác** với Jira cùng số (WSEA-110 trong file = pipeline = Jira WSEA-127; "WSEA-125 · Viết chương 4 báo cáo" trong file ≠ Jira WSEA-125). **WSEA-81, 82, 83 trong file này là task khác** với Jira WSEA-81, 82, 83.
@@ -640,13 +640,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 ## Đợt 9 · D25–D27 — Hoàn thiện trợ lý · v1.1
 
-### [ ] WSEA-123 (Jira **WSEA-140**) · Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh
-7h · Ưu tiên: Highest · `ai/WSEA-140-...`
+### [x] WSEA-123 (Jira **WSEA-140**) · Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh
+7h · Ưu tiên: Highest · `ai/WSEA-140-prompt-llm`
 
-- [ ] 1. Viết khuôn mẫu riêng cho từng nhóm ý định
-- [ ] 2. Ràng buộc mô hình chỉ trả lời dựa trên ngữ cảnh cung cấp
-- [ ] 3. Tích hợp gọi dịch vụ mô hình ngôn ngữ, xử lý phản hồi theo luồng
-- [ ] 4. Cài đặt phương án dự phòng khi dịch vụ lỗi
+- [x] 1. Viết khuôn mẫu riêng cho từng nhóm ý định — 1 system prompt chung + 1 dòng gợi ý MỀM theo nhãn (bộ ý định chỉ đúng 72%), `app/services/prompts.py`
+- [x] 2. Ràng buộc mô hình chỉ trả lời dựa trên ngữ cảnh cung cấp — quy tắc bám tài liệu + trích [n] → `source_ids`; 3 vòng chỉnh trên 12 ca phát triển, **không vòng nào đạt**, chọn prompt v2 + hậu xử lý v3 (DECISIONS WSEA-140 mục g)
+- [x] 3. Tích hợp gọi dịch vụ mô hình ngôn ngữ, xử lý phản hồi theo luồng — `httpx` → Groq, `/assistant/ask` JSON + SSE (hợp đồng v0.3.2)
+- [x] 4. Cài đặt phương án dự phòng khi dịch vụ lỗi — 429 → model dự phòng 1 lần; lỗi khác → 503 + `reason`; SSE đứt giữa chừng → không khung cuối (backend degraded)
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
