@@ -155,7 +155,7 @@ def test_system_prompt_is_fixed_and_quotes_fixed_texts():
 
 
 def test_generation_constants():
-    assert pr.PROMPT_VERSION == "v2"
+    assert pr.PROMPT_VERSION == "v3"
     assert pr.GENERATION_PARAMS == {"temperature": 0.2, "max_completion_tokens": 500,
                                     "reasoning_effort": "low", "include_reasoning": False}
     assert "max_tokens" not in pr.GENERATION_PARAMS and "reasoning_format" not in pr.GENERATION_PARAMS
@@ -195,7 +195,8 @@ def test_no_docs_without_word_uses_plain_line():
 def test_v2_rules_present_in_system_prompt():
     sp = pr.SYSTEM_PROMPT
     assert 'không viết "Tài liệu 1"' in sp
-    assert "phải kết thúc bằng [n]" in sp
+    assert "kể cả câu mở đầu và câu kết luận, phải kết thúc bằng [n]" in sp
+    assert "không phải \"miễn cưỡng nhận lời\"" in sp  # v3
     assert "không tự khái quát" in sp
     assert '"từ này", "nó"' in sp and "KHÔNG dùng câu của quy tắc 5" in sp
     assert "Không ghi tên trình độ" in sp

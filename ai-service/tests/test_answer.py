@@ -79,5 +79,23 @@ def test_strip_bold_and_italic_keep_bullets():
     assert ids == ["gram_015"]
 
 
+def test_fullwidth_brackets():  # v3: v2 d03 viet 【1】
+    assert postprocess("Ý A【1】. Ý B 【1】【3】, ý C【1, 3】.", CTX) == ("Ý A. Ý B, ý C.", ["gram_015", "gram_018"])
+    assert postprocess("Giữ 【ghi chú】 và [sic].", CTX) == ("Giữ 【ghi chú】 và [sic].", [])
+
+
+@pytest.mark.parametrize("space", [" ", " ", " ", "​", "　", "\t", "   "])
+def test_unicode_space_before_citation_and_punct(space):  # v3: v2 d05/d11 co U+202F truoc [1]
+    text = f"Effect là danh từ (the effect of …){space}[1]. Affect là động từ{space}[1]{space}, đúng{space}!"
+    assert postprocess(text, CTX) == ("Effect là danh từ (the effect of …). Affect là động từ, đúng!", ["gram_015"])
+
+
+def test_keep_leading_indent_collapse_mid_line():  # v3: v2 mat thut le gach dau dong long nhau
+    text = "- Ví dụ:  [1]\n  - I lost   my keys.  [2]\n    - sâu hơn\n\n  Đoạn thụt lề"
+    ans, ids = postprocess(text, CTX)
+    assert ans == "- Ví dụ:\n  - I lost my keys.\n    - sâu hơn\n\n  Đoạn thụt lề"
+    assert ids == ["gram_015", "gram_013"]
+
+
 def test_emphasis_around_fixed_text_still_matches():
     assert postprocess("**" + TEXT_NO_CONTEXT + "**", CTX) == (TEXT_NO_CONTEXT, [])

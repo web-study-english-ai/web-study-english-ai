@@ -604,3 +604,27 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
   5. **In đậm/in nghiêng markdown** ở d01–d05 dù quy tắc 8 cấm in đậm. Sửa: quy tắc 8 cấm cả in nghiêng; `answer.py` gỡ `**x**` và `*x*` (giữ nội dung, không đụng dấu `*` của gạch đầu dòng, không đụng `2*3*4`) trước khi so câu cố định.
   6. **Ghi tên trình độ** ("Ví dụ (A2):" ở d02). Sửa: quy tắc 8 cấm ghi A1/A2/B1/B2 trong câu trả lời.
 - `PROMPT_VERSION = "v2"`. Commit code + prompt TRƯỚC khi chạy v2. Người chấm và thang như mục d.
+
+#### f. Vòng v2 → v3 (vòng cuối theo luật)
+
+- **Kết quả v2** (`docs/eval/llm_rounds/v2.json`, chạy trên code ở `27332fb`, chấm ở `fbac680`, kiểm chéo ở `908daec`): **TRƯỢT**.
+  - (A) 12/12; (C) máy 5/5.
+  - (B) đúng 4/6 (d01, d04, d05, d11), một phần 2 (d02, d03), sai 0 → trượt (cần ≥ 5/6 đúng).
+  - word_only d10: một phần → trượt.
+  - Kiểm chéo: khớp 5/7; lệch d02 và d10 (Claude Code `mot_phan`, Claude ở chat `dung`), Hiếu quyết cả hai `mot_phan`.
+  - Token cả vòng 35.049 (12 lần gọi, suy luận 357); p50 925 ms, max 3.590 ms; không 429, không `finish_reason = length`.
+  - So với v1: d04, d05, d11 lên `dung`; d10 từ `sai` lên `mot_phan`; d03 từ `dung` xuống `mot_phan` (lỗi trích, không phải nội dung).
+- **Lỗi còn lại và cách sửa** (tiêu chí mục d và 12 ca KHÔNG đổi):
+  - **Phần code (`answer.py`)** — lỗi hậu xử lý, không phải lỗi của LLM:
+    1. d03 trích bằng ngoặc toàn chiều `【1】` (U+3010/U+3011) → `source_ids` rỗng, `【1】` sót trong answer. Sửa: nhận `【1】`, `【1】【3】`, `【1, 3】`.
+    2. d05, d11 có U+202F (khoảng trắng hẹp) trước `[1]` → còn " ." sau khi xoá ký hiệu. Sửa: trước khi dọn dấu câu, mọi khoảng trắng Unicode (U+00A0, U+202F, U+2009, U+3000, tab..., cả U+200B/U+FEFF vốn không thuộc `\s`) đổi thành dấu cách; xoá khoảng trắng đứng ngay trước `. , ; : ! ? )`.
+    3. Gạch đầu dòng lồng nhau mất một mức thụt lề (bước gộp khoảng trắng đôi áp cả đầu dòng). Sửa: chỉ gộp khoảng trắng đôi ở giữa dòng, giữ thụt lề đầu dòng.
+  - **Phần prompt (`PROMPT_VERSION = "v3"`, đúng 2 thay đổi)**:
+    4. d02 câu mở đầu không có [n]. Sửa quy tắc 3: MỌI câu dùng thông tin từ tài liệu, kể cả câu mở đầu và câu kết luận, phải kết thúc bằng [n].
+    5. d10 bản dịch "Anh ấy miễn cưỡng nhận lời mời, vì vậy anh ấy ở nhà" làm sai ý "reluctant to accept". Sửa quy tắc 4: bản dịch phải sát nghĩa câu tiếng Anh, giữ đúng ý phủ định hoặc "không muốn" (vd "reluctant to accept" = "không muốn nhận lời", không phải "miễn cưỡng nhận lời").
+- **Kiểm hậu xử lý trên raw v2** (02/11, KHÔNG gọi LLM, chỉ để tham khảo, KHÔNG phải kết quả vòng): áp `postprocess` mới lên `raw_text` của v2.
+  - d03: `source_ids` [] → [gram_033], không còn `【1】`.
+  - d05, d11: hết " ." trước dấu chấm; `source_ids` không đổi (gram_089, gram_013).
+  - d11: gạch đầu dòng lồng nhau giữ thụt lề 2 dấu cách.
+  - Điểm v2 không chấm lại theo kiểm này; số chính thức của v3 lấy từ lần chạy v3.
+- v3 là vòng cuối (tối đa 3 vòng). Chưa đạt → giữ bản tốt nhất, ghi trung thực phần chưa đạt, KHÔNG sửa tiêu chí. Commit code + prompt TRƯỚC khi chạy v3.
