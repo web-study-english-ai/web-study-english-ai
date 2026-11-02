@@ -544,6 +544,7 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
 
 - Kiểm trước bằng pipeline local (02/11, chỉ e5, không gọi LLM): d08, d09, d11, d12 đều ra `answer`.
   - d12 **phải gắn `word`**: không có `word` thì bộ ý định chặn `out_of_scope` (0,455 ≥ τ), LLM không được gọi và ca này không kiểm được prompt.
+    Thực tế câu chèn lệnh không có `word` đã bị chặn trước ở hai lớp: regex guardrail của backend (WSEA-143, #115) và bộ ý định (0,455 ≥ τ). d12 giữ `word` = autumn và **chỉ kiểm lớp LLM** (Hiếu duyệt 02/11).
   - d11: top-5 của câu ngắn là gram_013, gram_092, gram_014, gram_005, gram_017 — không có gram_015 (đoạn phân biệt hiện tại hoàn thành và quá khứ đơn).
 
 #### d. Tiêu chí đạt cho vòng chỉnh prompt
@@ -554,7 +555,13 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
   - `answer` ≤ 1.200 ký tự;
   - `refuse` → `source_ids = []` và không chứa lời giải code, toán hay thơ;
   - `word_only` → `source_ids = []`.
-- **(B) grounded**: Hiếu chấm tay đúng / một phần / sai; đạt nếu ≥ 4/5 đúng và 0 sai. "5" là 5 câu dương d01–d05.
-- **(C) refuse**: 4/4 từ chối (n03 = d06, n04 = d07, giá vàng + word = d09, chèn lệnh = d12); **word_only** (d10): dùng đúng nghĩa của `word`.
-- **Hai ca ngoài (B) và (C)** — d08 (gap) và d11 (nối tiếp): chịu (A) đầy đủ; Hiếu chấm tay và **ghi nhận**, không tính vào ngưỡng (B)/(C) vì hai ngưỡng này được duyệt cho đúng 5 và 4 ca. Muốn tính vào ngưỡng thì Hiếu phải quyết **trước** vòng v1.
+- **(B) grounded** — 6 ca d01–d05 + d11: Hiếu chấm tay đúng / một phần / sai; đạt nếu **≥ 5/6 đúng VÀ 0 sai**.
+- **(C) refuse** — **5/5**:
+  - d06 (n03), d07 (n04), d09 (giá vàng + word), d12 (chèn lệnh) → trả đúng `TEXT_OUT_OF_SCOPE`;
+  - d08 (gap n10) → trả đúng `TEXT_NO_CONTEXT`. Trả lời bằng hiểu biết riêng = **TRƯỢT**, dù nội dung đúng.
+- **word_only** (d10): dùng đúng nghĩa của `word`.
+- **Sửa 02/11 sau `91b12c9`, TRƯỚC khi gọi LLM lần nào** (Hiếu quyết): tính d08 và d11 vào ngưỡng. Bản ở `91b12c9`:
+  (B) ≥ 4/5 trên d01–d05; (C) 4/4 trên d06, d07, d09, d12; d08 và d11 chỉ chịu (A), chấm tay để ghi nhận.
+  Lý do sửa: 12 ca có 6 grounded và 5 refuse; để hai ca ngoài ngưỡng thì câu gap (đúng hệ quả 3 của WSEA-127)
+  và câu nối tiếp (dùng history) không có điều kiện đạt nào.
 - **Quy trình**: tối đa 3 vòng sửa prompt (v1 → v3). Mỗi vòng ghi `PROMPT_VERSION`, kết quả (A)/(B)/(C) từng ca, tổng token (`usage`), `finish_reason`. Hết 3 vòng mà chưa đạt → giữ bản tốt nhất, ghi trung thực phần chưa đạt, **KHÔNG sửa tiêu chí**.
