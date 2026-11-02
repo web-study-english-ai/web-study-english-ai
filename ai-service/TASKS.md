@@ -613,13 +613,15 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-110 (Jira **WSEA-127**) · Hoàn thiện pipeline truy hồi trong dịch vụ AI
-5h · Ưu tiên: Highest · `ai/WSEA-127-...`
+### [x] WSEA-110 (Jira **WSEA-127**) · Hoàn thiện pipeline truy hồi trong dịch vụ AI
+5h · Ưu tiên: Highest · `ai/WSEA-127-pipeline-truy-hoi`
 
-- [ ] 1. Ghép các bước: phân loại ý định, truy hồi, xếp hạng lại — bỏ bước xếp hạng lại (WSEA-126 TẮT): top-5 theo e5 vào prompt
-- [ ] 2. Viết endpoint trả về danh sách đoạn tri thức liên quan
-- [ ] 3. Xử lý trường hợp không tìm thấy đoạn phù hợp
-- [ ] 4. Viết kiểm thử bằng Pytest
+> Commit: `de7b528` (luật chốt trước) · `cd1c440` (pipeline + `/assistant/rank`) · `9011f9c` (luật 1, 3 miễn khi có `word`, sửa trước kiểm) · `c755bb7` (kiểm offline B3) · commit docs v0.3.1. Chi tiết: `docs/DECISIONS.md` mục 2026-11-02 — WSEA-127.
+
+- [x] 1. Ghép các bước: phân loại ý định, truy hồi, xếp hạng lại — bỏ bước xếp hạng lại (WSEA-126 TẮT): top-5 theo e5 vào prompt. `app/services/pipeline.py` (luật 1–4), bộ ý định nạp trong lifespan
+- [x] 2. Viết endpoint trả về danh sách đoạn tri thức liên quan — `POST /assistant/rank` (hợp đồng v0.3.1); `/ask` vẫn 501 tới WSEA-140
+- [x] 3. Xử lý trường hợp không tìm thấy đoạn phù hợp — `no_context` (`empty_candidates`, `top1_too_far`), `out_of_scope`; câu "trong lĩnh vực nhưng kho chưa có" để LLM từ chối (WSEA-140)
+- [x] 4. Viết kiểm thử bằng Pytest — `tests/test_pipeline.py`, `tests/test_assistant_rank.py`, `tests/test_check_pipeline.py`; kiểm offline `scripts/check_pipeline.py`: (a) 0/31 chặn nhầm, (b) 26/31 = hit@5 gốc; smoke local 7/7
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 

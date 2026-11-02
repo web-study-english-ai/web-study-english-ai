@@ -454,3 +454,30 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
   - Ca `contexts` rỗng + `vocab` rỗng + có `word` → `"answer"` với `contexts = []`, `vocab = []`; LLM dùng `word`.
   - Luật 2 vốn đã miễn khi có `word`, không đổi. Hằng số trong `pipeline_rules.py` không đổi.
 - **Không ảnh hưởng số liệu B3**: cả 43 câu kiểm offline đều có `word` = null, nên quyết định của từng câu giống hệt dưới luật cũ và luật mới.
+
+#### e. Kết quả
+
+- **Kiểm offline B3** (commit `c755bb7`, chạy theo luật ở `9011f9c`, `docs/eval/pipeline_check.json`; 31 câu dương + 12 câu âm, top-8 e5 như WSEA-111):
+  - **(a) ĐẠT**: 0/31 câu dương bị chặn. q26 bị đoán `ngoai_pham_vi` nhưng độ tin cậy chỉ 0,28 < τ nên không bị chặn.
+  - **(b) ĐẠT**: gold trong top-5 là 26/31 = 0,8387, đúng bằng hit@5 gốc. 5 câu thiếu gold (q02, q08, q14, q22, q23) đúng là các câu có gold ở hạng > 5 trong WSEA-111.
+  - **(c) câu âm `off`**: chặn 5/7.
+    - Luật 2 chặn n01, n02, n05, n06.
+    - Luật 3 chặn n07 (distance top-1 0,2254).
+    - Lọt n03 (hàm đệ quy python) và n04 (phương trình bậc hai).
+  - **(c) câu âm `gap`**: n12 "mỗi ngày nên học bao nhiêu từ mới" bị chặn nhầm thành `out_of_scope` (độ tin cậy 0,62), dù câu này thuộc chuyện học tiếng Anh. 4/5 câu còn lại chuyển sang LLM.
+  - **Bước ý định** (encode e5 + phân loại, CPU laptop): p50 11,7 ms, p95 13,9 ms.
+- **Smoke B4 local** (Hiếu chạy 02/11 khoảng 20h58): 7/7 ca đạt.
+  1. `answer`, top-5 đúng thứ tự.
+  2. `out_of_scope` (độ tin cậy 0,62).
+  3. Có `word` → `answer`, dù ý định là `ngoai_pham_vi` 0,62.
+  4. `no_context` / `empty_candidates`.
+  5. Có `word`, ứng viên rỗng → `answer`.
+  6. `no_context` / `top1_too_far`.
+  7. Thiếu khoá → 401.
+
+  Server-Timing trên laptop: `intent` 10–16 ms, `select` < 0,02 ms.
+- **Hệ quả cho WSEA-140** (prompt + LLM):
+  1. Prompt phải tự từ chối những câu pipeline để lọt: n03, n04, và câu lạc đề khi có `word` (ca 3 smoke).
+  2. Câu trả lời cho `out_of_scope` phải mềm và nói rõ trợ lý hỗ trợ những gì, vì có chặn nhầm kiểu n12.
+  3. Ca chỉ có `word`, `contexts` rỗng: trả lời từ `word`, `source_ids` = `[]`.
+- **Còn phải làm**: đo lại độ trễ trên Space CPU basic sau khi deploy, gộp vào sau WSEA-140. Mọi số ở trên là đo trên laptop.

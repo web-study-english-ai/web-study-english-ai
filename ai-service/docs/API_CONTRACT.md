@@ -3,7 +3,7 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.3 · Cập nhật lần cuối: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
+Phiên bản: 0.3.1 · Cập nhật lần cuối: 2026-11-02 (WSEA-127, v0.3.1 — bổ sung, **không phá vỡ**): thêm `POST /assistant/rank` (backend không bắt buộc gọi); `/assistant/ask` ghi rõ `contexts` không bắt buộc đã sắp; `/health` có thể liệt kê `"intent"` · Bản 0.3: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
 
 ## Quy ước chung
 
@@ -49,7 +49,8 @@ Nạp mô hình thành công → **200**:
 }
 ```
 
-- `models` liệt kê mọi mô hình đã nạp: `"fsrs"` và, từ WSEA-111, `"embedder"` (mô hình vector của `/assistant/embed`).
+- `models` liệt kê mọi mô hình đã nạp: `"fsrs"`; từ WSEA-111, `"embedder"` (mô hình vector của `/assistant/embed`); từ WSEA-127 (v0.3.1), `"intent"` (bộ phân loại ý định của pipeline trợ lý). Thứ tự: `["fsrs", "embedder", "intent"]`.
+- Bộ ý định nạp thất bại cũng không làm `degraded`: pipeline bỏ luật chặn theo ý định, `reason` gắn thêm `;intent_unavailable`.
 - Trạng thái `503` / `degraded` **chỉ phụ thuộc `fsrs`**. Embedder nạp thất bại thì `/health` vẫn `200` với `models: ["fsrs"]`; riêng `/assistant/embed` trả `503` và backend fallback.
 
 Nạp mô hình dự báo (`fsrs`) thất bại → **503**, body giữ nguyên hình dạng:
@@ -208,7 +209,8 @@ Trả mảng rỗng khi không có nhãn nào vượt ngưỡng tin cậy — đ
 Người học ──▶ Backend
                │ 1. POST /assistant/embed {text}            ──▶ AI: trả vector 384 chiều
                │ 2. SQL pgvector trên DB của môi trường mình  (kb_chunks + word_embeddings, words)
-               │ 3. POST /assistant/ask {question, contexts, vocab, ...} ──▶ AI: rerank (nếu có) + prompt + LLM
+               │ 3. POST /assistant/ask {question, contexts, vocab, ...} ──▶ AI: pipeline (quyết định + chọn top-5) + prompt + LLM
+               │    (POST /assistant/rank: cùng body, chỉ chạy pipeline, không gọi LLM — tuỳ chọn, để đánh giá/gỡ lỗi)
                ▼
             Trả lời (JSON hoặc SSE) + nguồn
 ```
@@ -316,11 +318,12 @@ Sinh câu trả lời từ các đoạn ngữ cảnh do backend gửi kèm. Cùn
 | `question` | string | có | 1–1000 ký tự. Câu gốc, không nối ngữ cảnh |
 | `word` | object \| null | không | `term` 1–100 ký tự, `pos`, `meaning_vi`. Thay cho `word_id` (AI không có DB để tra id) |
 | `user_cefr` | `"A1"`…`"B2"` \| null | không | Điều chỉnh độ khó của lời giải thích |
-| `contexts` | mảng | có (được rỗng) | 0–20 phần tử, sắp theo `distance` tăng dần, `id` không trùng; `content` ≤ 4000 ký tự; `distance` trong [0, 2] |
+| `contexts` | mảng | có (được rỗng) | 0–20 phần tử, `id` không trùng (trùng → `422`), nên sắp theo `distance` tăng dần (từ v0.3.1 không bắt buộc); `content` ≤ 4000 ký tự; `distance` trong [0, 2] |
 | `vocab` | mảng | không, mặc định `[]` | 0–10 phần tử; `match` là `"exact"` hoặc `"vector"`; `example_en` có thể null |
 | `history` | mảng | không, mặc định `[]` | 0–6 lượt gần nhất, `role` là `"user"` hoặc `"assistant"`, `content` ≤ 2000 ký tự |
 
 - Backend gửi khoảng 8 ứng viên (`AI_ASSISTANT_TOP_K`, tối đa 20). Dịch vụ AI được phép xếp lại (rerank) và cắt bớt trước khi đưa vào prompt.
+- (v0.3.1) `contexts` **không bắt buộc đã sắp**: AI tự sắp theo `distance` tăng dần (hoà thì giữ thứ tự gửi), bỏ id trùng (giữ lần đầu; dù vậy request có id trùng vẫn bị `422` theo bảng trên), rồi cắt top-5. Rerank đã tắt (WSEA-126). `/ask` sẽ chạy cùng pipeline như `POST /assistant/rank` trước khi gọi LLM.
 
 **Response 200 — JSON** (`Accept: application/json`)
 
@@ -351,6 +354,50 @@ data: [DONE]
 
 **Lỗi**: `401` · `422` · `503` (không gọi được LLM, hết hạn mức) · `500`.
 **Timeout backend**: 15 giây (JSON) / 45 giây (SSE), như hiện tại.
+
+## POST /assistant/rank
+
+(v0.3.1, WSEA-127) Chạy **pipeline truy hồi** của dịch vụ AI (phần sau khi nhận ứng viên, trước LLM) và trả quyết định cùng các đoạn đã chọn. **Không gọi LLM, không tốn token.**
+
+- **Backend KHÔNG bắt buộc gọi.** Endpoint dùng để đánh giá (bộ câu WSEA-141) và gỡ lỗi. `/assistant/ask` sẽ chạy đúng pipeline này trước khi gọi LLM.
+- Cùng khoá `x-api-key`, cùng quy ước `extra="forbid"`.
+
+**Request**: body **giống hệt** `POST /assistant/ask` (cùng bảng ràng buộc).
+
+**Response 200**
+
+```json
+{
+  "decision": "answer",
+  "reason": "ok",
+  "intent": { "label": "ngu_phap", "confidence": 0.81 },
+  "contexts": [
+    { "id": "gram_015", "distance": 0.086, "rank": 1 },
+    { "id": "gram_013", "distance": 0.097, "rank": 2 }
+  ],
+  "vocab": ["already"]
+}
+```
+
+| Trường | Kiểu | Ý nghĩa |
+|---|---|---|
+| `decision` | `"answer"` \| `"no_context"` \| `"out_of_scope"` | Quyết định của pipeline (bảng dưới) |
+| `reason` | string | Mã lý do cố định (bảng dưới). Thêm hậu tố `;intent_unavailable` khi bộ ý định chưa nạp |
+| `intent` | `{label, confidence}` \| null | Ý định đoán được. `null` khi không chạy bước ý định (luật 1 khớp, hoặc bộ ý định chưa nạp) |
+| `contexts` | mảng `{id, distance, rank}` | Đoạn sẽ đưa vào prompt: tối đa 5, `rank` từ 1. `id` ⊂ `contexts[].id` của request. Rỗng khi `decision` ≠ `"answer"` |
+| `vocab` | mảng string (`term`) | Từ vựng sẽ đưa vào prompt: `exact` trước, rồi `vector` theo `distance`, tối đa 3. Rỗng khi `decision` ≠ `"answer"` |
+
+Luật áp theo thứ tự, luật đầu tiên khớp thì dừng (chi tiết và lý do: `docs/DECISIONS.md` mục 2026-11-02 — WSEA-127):
+
+| `decision` | `reason` | Khi nào |
+|---|---|---|
+| `no_context` | `empty_candidates` | `contexts` rỗng VÀ `vocab` rỗng VÀ `word` null |
+| `out_of_scope` | `intent_out_of_scope` | Ý định `ngoai_pham_vi` với độ tin cậy ≥ τ (0,40) VÀ `word` null VÀ không có `vocab` exact VÀ `history` rỗng |
+| `no_context` | `top1_too_far` | `distance` nhỏ nhất của `contexts` > 0,22 VÀ không có `vocab` exact VÀ `word` null |
+| `answer` | `ok` | Còn lại. Có `word` mà không có ứng viên nào thì vẫn `answer` với `contexts` và `vocab` rỗng |
+
+**Lỗi**: `401` (thiếu/sai khoá) · `422` (body sai, kể cả `contexts` có id trùng) · `503` (mô hình embedding chưa nạp) · `500` (embedding hoặc bộ ý định trả kết quả không hợp lệ).
+Response 200 có header `Server-Timing` (`intent`, `select`, `app`; ms) khi pipeline chạy tới các bước đó — chỉ để chẩn đoán.
 
 ## Fallback trợ lý phía backend
 
