@@ -1,0 +1,1163 @@
+{
+  "task": "WSEA-127",
+  "step": "B3",
+  "created_at": "2026-11-02T13:55:43+00:00",
+  "rule_commit": "9011f9ca9eca41952050b262a6ea9ac2c8f29f94",
+  "rule_files_dirty": false,
+  "rules": {
+    "k_prompt": 5,
+    "k_vocab": 3,
+    "max_top1_distance": 0.22,
+    "max_wrong_block_pos": 1,
+    "tau": 0.4,
+    "candidates": 8
+  },
+  "e5": {
+    "model": "intfloat/multilingual-e5-small",
+    "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+    "dim": 384,
+    "query_prefix": "query: ",
+    "passage_prefix": "passage: "
+  },
+  "manifest_created_at": "2026-10-30T18:48:42+00:00",
+  "files": {
+    "kb/eval_questions.csv": "441971f52986516d624e33ec2dc8ed91fa3525c1948427a7292a991a0346798a",
+    "kb/eval_negatives.csv": "ca2eaad514d3b77e991b3316669f68365f2d4eb290cc2d3f4111ca34b61f4192",
+    "kb/grammar_chunks.jsonl": "6369a86a46a310e3058f72d281e903ade9164ce240184dfbe5a587e0c3556ee4",
+    "docs/eval/retrieval_k_sweep.json": "2d76af606bf4d197ba2e285278f3064fc31e69982c8f7e1be294e31dbeaef921"
+  },
+  "n_positives": 31,
+  "n_negatives": 12,
+  "a": {
+    "blocked": 0,
+    "blocked_qids": [],
+    "limit": 1,
+    "pass": true
+  },
+  "b": {
+    "hits": 26,
+    "n": 31,
+    "rate": 0.8387,
+    "expected_hit5": 0.8387,
+    "pass": true,
+    "missing_qids": [
+      "q02",
+      "q08",
+      "q14",
+      "q22",
+      "q23"
+    ]
+  },
+  "c": {
+    "gap": {
+      "n": 5,
+      "answer": 4,
+      "no_context": 0,
+      "out_of_scope": 1,
+      "blocked_qids": [
+        "n12"
+      ]
+    },
+    "off": {
+      "n": 7,
+      "answer": 2,
+      "no_context": 1,
+      "out_of_scope": 4,
+      "blocked_qids": [
+        "n01",
+        "n02",
+        "n05",
+        "n06",
+        "n07"
+      ]
+    }
+  },
+  "intent_ms": {
+    "n": 43,
+    "p50": 11.69,
+    "p95": 13.9,
+    "max": 14.88
+  },
+  "rows": [
+    {
+      "qid": "q01",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "khi nào dùng hiện tại hoàn thành thay vì quá khứ đơn",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.5238
+      },
+      "top1_id": "gram_015",
+      "top1_distance": 0.0862,
+      "intent_ms": 13.39,
+      "selected_ids": [
+        "gram_015",
+        "gram_013",
+        "gram_018",
+        "gram_014",
+        "gram_017"
+      ],
+      "gold": [
+        "gram_015",
+        "gram_013"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q02",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4286
+      },
+      "top1_id": "gram_064",
+      "top1_distance": 0.1336,
+      "intent_ms": 14.06,
+      "selected_ids": [
+        "gram_064",
+        "gram_070",
+        "gram_003",
+        "gram_021",
+        "gram_009"
+      ],
+      "gold": [
+        "gram_006"
+      ],
+      "gold_in_top5": false
+    },
+    {
+      "qid": "q03",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "sao người ta nói I am knowing him là sai ngữ pháp",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3662
+      },
+      "top1_id": "gram_007",
+      "top1_distance": 0.1453,
+      "intent_ms": 11.59,
+      "selected_ids": [
+        "gram_007",
+        "gram_063",
+        "gram_026",
+        "gram_001",
+        "gram_035"
+      ],
+      "gold": [
+        "gram_007"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q04",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "tôi học tiếng Anh từ năm 2020 đến giờ thì dùng since hay for",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3094
+      },
+      "top1_id": "gram_016",
+      "top1_distance": 0.111,
+      "intent_ms": 11.9,
+      "selected_ids": [
+        "gram_016",
+        "gram_009",
+        "gram_013",
+        "gram_021",
+        "gram_017"
+      ],
+      "gold": [
+        "gram_016"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q05",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "kể chuyện có hai việc trong quá khứ thì việc xảy ra trước chia thế nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4916
+      },
+      "top1_id": "gram_018",
+      "top1_distance": 0.1204,
+      "intent_ms": 11.08,
+      "selected_ids": [
+        "gram_018",
+        "gram_011",
+        "gram_009",
+        "gram_017",
+        "gram_013"
+      ],
+      "gold": [
+        "gram_018"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q06",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "nói về kế hoạch đã quyết định từ trước thì dùng will hay be going to",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.4129
+      },
+      "top1_id": "gram_020",
+      "top1_distance": 0.0855,
+      "intent_ms": 13.23,
+      "selected_ids": [
+        "gram_020",
+        "gram_019",
+        "gram_064",
+        "gram_050",
+        "gram_021"
+      ],
+      "gold": [
+        "gram_020"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q07",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "muốn nói hồi nhỏ tôi hay đi câu cá nhưng giờ không còn nữa thì dùng cấu trúc gì",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4399
+      },
+      "top1_id": "gram_001",
+      "top1_distance": 0.1179,
+      "intent_ms": 13.96,
+      "selected_ids": [
+        "gram_001",
+        "gram_008",
+        "gram_057",
+        "gram_021",
+        "gram_010"
+      ],
+      "gold": [
+        "gram_021"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q08",
+      "kind": "pos",
+      "lang": "en",
+      "group": null,
+      "question": "Why is 'I have seen him yesterday' wrong?",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.452
+      },
+      "top1_id": "gram_036",
+      "top1_distance": 0.1896,
+      "intent_ms": 11.63,
+      "selected_ids": [
+        "gram_036",
+        "gram_017",
+        "gram_012",
+        "gram_062",
+        "gram_056"
+      ],
+      "gold": [
+        "gram_015"
+      ],
+      "gold_in_top5": false
+    },
+    {
+      "qid": "q09",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "vì sao có những danh từ không thêm s và không đi với a được",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.327
+      },
+      "top1_id": "gram_026",
+      "top1_distance": 0.1237,
+      "intent_ms": 12.07,
+      "selected_ids": [
+        "gram_026",
+        "gram_025",
+        "gram_029",
+        "gram_023",
+        "gram_051"
+      ],
+      "gold": [
+        "gram_023"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q10",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "khi nào dùng a, khi nào dùng the",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4101
+      },
+      "top1_id": "gram_025",
+      "top1_distance": 0.1148,
+      "intent_ms": 11.69,
+      "selected_ids": [
+        "gram_025",
+        "gram_026",
+        "gram_021",
+        "gram_004",
+        "gram_001"
+      ],
+      "gold": [
+        "gram_025",
+        "gram_026"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q11",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "nước thì nói much water hay many water",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "phan_biet",
+        "confidence": 0.2732
+      },
+      "top1_id": "gram_027",
+      "top1_distance": 0.1258,
+      "intent_ms": 11.32,
+      "selected_ids": [
+        "gram_027",
+        "gram_024",
+        "gram_037",
+        "gram_030",
+        "gram_031"
+      ],
+      "gold": [
+        "gram_027"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q12",
+      "kind": "pos",
+      "lang": "en",
+      "group": null,
+      "question": "Is there any difference between must and have to?",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "phan_biet",
+        "confidence": 0.5511
+      },
+      "top1_id": "gram_033",
+      "top1_distance": 0.1339,
+      "intent_ms": 12.17,
+      "selected_ids": [
+        "gram_033",
+        "gram_035",
+        "gram_036",
+        "gram_034",
+        "gram_049"
+      ],
+      "gold": [
+        "gram_033"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q13",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "muốn đoán chắc chắn về hiện tại, kiểu anh ấy chắc hẳn đang mệt, thì dùng động từ nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3468
+      },
+      "top1_id": "gram_035",
+      "top1_distance": 0.1368,
+      "intent_ms": 11.83,
+      "selected_ids": [
+        "gram_035",
+        "gram_019",
+        "gram_059",
+        "gram_003",
+        "gram_050"
+      ],
+      "gold": [
+        "gram_035"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q14",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "nói đáng lẽ ra hôm qua tôi nên học bài thì viết thế nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3387
+      },
+      "top1_id": "gram_026",
+      "top1_distance": 0.1428,
+      "intent_ms": 12.75,
+      "selected_ids": [
+        "gram_026",
+        "gram_039",
+        "gram_056",
+        "gram_021",
+        "gram_025"
+      ],
+      "gold": [
+        "gram_036"
+      ],
+      "gold_in_top5": false
+    },
+    {
+      "qid": "q15",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "If I were you hay If I was you, cái nào đúng",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.3188
+      },
+      "top1_id": "gram_039",
+      "top1_distance": 0.1278,
+      "intent_ms": 12.22,
+      "selected_ids": [
+        "gram_039",
+        "gram_040",
+        "gram_063",
+        "gram_057",
+        "gram_010"
+      ],
+      "gold": [
+        "gram_039"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q16",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "muốn diễn tả tiếc nuối về chuyện đã không xảy ra, kiểu giá mà hôm đó tôi đã đi, thì dùng cấu trúc gì",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4098
+      },
+      "top1_id": "gram_041",
+      "top1_distance": 0.128,
+      "intent_ms": 14.88,
+      "selected_ids": [
+        "gram_041",
+        "gram_021",
+        "gram_040",
+        "gram_018",
+        "gram_056"
+      ],
+      "gold": [
+        "gram_041",
+        "gram_040"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q17",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "more better có đúng không",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.3451
+      },
+      "top1_id": "gram_044",
+      "top1_distance": 0.1224,
+      "intent_ms": 11.1,
+      "selected_ids": [
+        "gram_044",
+        "gram_046",
+        "gram_045",
+        "gram_040",
+        "gram_013"
+      ],
+      "gold": [
+        "gram_046"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q18",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "vào thứ hai dùng in hay on, còn vào buổi sáng thì dùng gì",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "phan_biet",
+        "confidence": 0.2705
+      },
+      "top1_id": "gram_047",
+      "top1_distance": 0.1437,
+      "intent_ms": 11.79,
+      "selected_ids": [
+        "gram_047",
+        "gram_048",
+        "gram_094",
+        "gram_021",
+        "gram_074"
+      ],
+      "gold": [
+        "gram_047"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q19",
+      "kind": "pos",
+      "lang": "en",
+      "group": null,
+      "question": "Where do I put enough, before or after an adjective?",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.3771
+      },
+      "top1_id": "gram_021",
+      "top1_distance": 0.1708,
+      "intent_ms": 11.15,
+      "selected_ids": [
+        "gram_021",
+        "gram_017",
+        "gram_014",
+        "gram_054",
+        "gram_049"
+      ],
+      "gold": [
+        "gram_049"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q20",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "khi nào nên viết câu nhấn mạnh vật bị tác động thay vì người làm hành động",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3454
+      },
+      "top1_id": "gram_053",
+      "top1_distance": 0.1074,
+      "intent_ms": 12.23,
+      "selected_ids": [
+        "gram_053",
+        "gram_052",
+        "gram_060",
+        "gram_055",
+        "gram_010"
+      ],
+      "gold": [
+        "gram_053"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q21",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "chuyển câu Where do you live sang câu gián tiếp có cần đảo trợ động từ không",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.3872
+      },
+      "top1_id": "gram_057",
+      "top1_distance": 0.1131,
+      "intent_ms": 12.8,
+      "selected_ids": [
+        "gram_057",
+        "gram_068",
+        "gram_062",
+        "gram_052",
+        "gram_069"
+      ],
+      "gold": [
+        "gram_057"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q22",
+      "kind": "pos",
+      "lang": "en",
+      "group": null,
+      "question": "When do I need commas around a which clause?",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4224
+      },
+      "top1_id": "gram_057",
+      "top1_distance": 0.181,
+      "intent_ms": 11.95,
+      "selected_ids": [
+        "gram_057",
+        "gram_094",
+        "gram_069",
+        "gram_070",
+        "gram_063"
+      ],
+      "gold": [
+        "gram_061"
+      ],
+      "gold_in_top5": false
+    },
+    {
+      "qid": "q23",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "stop smoking với stop to smoke khác nhau chỗ nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "phan_biet",
+        "confidence": 0.3986
+      },
+      "top1_id": "gram_033",
+      "top1_distance": 0.1406,
+      "intent_ms": 11.59,
+      "selected_ids": [
+        "gram_033",
+        "gram_064",
+        "gram_037",
+        "gram_054",
+        "gram_029"
+      ],
+      "gold": [
+        "gram_065"
+      ],
+      "gold_in_top5": false
+    },
+    {
+      "qid": "q24",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "look forward to meet hay look forward to meeting mới đúng",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "nghia_tu",
+        "confidence": 0.2368
+      },
+      "top1_id": "gram_014",
+      "top1_distance": 0.1272,
+      "intent_ms": 11.17,
+      "selected_ids": [
+        "gram_014",
+        "gram_017",
+        "gram_005",
+        "gram_066",
+        "gram_013"
+      ],
+      "gold": [
+        "gram_066"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q25",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "câu hỏi ngắn ở cuối câu để xác nhận, kiểu phải không, thì đặt thế nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4821
+      },
+      "top1_id": "gram_069",
+      "top1_distance": 0.1228,
+      "intent_ms": 13.12,
+      "selected_ids": [
+        "gram_069",
+        "gram_057",
+        "gram_068",
+        "gram_070",
+        "gram_010"
+      ],
+      "gold": [
+        "gram_070"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q26",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "làm bài tập về nhà là make homework hay do homework",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.2777
+      },
+      "top1_id": "gram_076",
+      "top1_distance": 0.0963,
+      "intent_ms": 11.56,
+      "selected_ids": [
+        "gram_076",
+        "gram_012",
+        "gram_026",
+        "gram_029",
+        "gram_022"
+      ],
+      "gold": [
+        "gram_076"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q27",
+      "kind": "pos",
+      "lang": "en",
+      "group": null,
+      "question": "Can I say 'He said me the truth'?",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3904
+      },
+      "top1_id": "gram_059",
+      "top1_distance": 0.199,
+      "intent_ms": 10.89,
+      "selected_ids": [
+        "gram_059",
+        "gram_056",
+        "gram_058",
+        "gram_063",
+        "gram_077"
+      ],
+      "gold": [
+        "gram_077"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q28",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "mượn sách của bạn và cho bạn mượn sách khác nhau thế nào trong tiếng Anh",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "phan_biet",
+        "confidence": 0.3488
+      },
+      "top1_id": "gram_079",
+      "top1_distance": 0.1073,
+      "intent_ms": 13.26,
+      "selected_ids": [
+        "gram_079",
+        "gram_063",
+        "gram_072",
+        "gram_027",
+        "gram_096"
+      ],
+      "gold": [
+        "gram_079"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q29",
+      "kind": "pos",
+      "lang": "vi",
+      "group": null,
+      "question": "lỡ chuyến xe buýt và làm mất chìa khoá thì dùng động từ nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3375
+      },
+      "top1_id": "gram_086",
+      "top1_distance": 0.1312,
+      "intent_ms": 11.88,
+      "selected_ids": [
+        "gram_086",
+        "gram_053",
+        "gram_008",
+        "gram_064",
+        "gram_052"
+      ],
+      "gold": [
+        "gram_086"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q30",
+      "kind": "pos",
+      "lang": "en",
+      "group": null,
+      "question": "Is it 'the effect of the weather' or 'the affect of the weather'?",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "phan_biet",
+        "confidence": 0.289
+      },
+      "top1_id": "gram_089",
+      "top1_distance": 0.173,
+      "intent_ms": 11.96,
+      "selected_ids": [
+        "gram_089",
+        "gram_017",
+        "gram_069",
+        "gram_053",
+        "gram_075"
+      ],
+      "gold": [
+        "gram_089"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "q31",
+      "kind": "pos",
+      "lang": "mixed",
+      "group": null,
+      "question": "nhắc ai đó nhớ làm việc gì thì dùng remember hay remind",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.3198
+      },
+      "top1_id": "gram_098",
+      "top1_distance": 0.0833,
+      "intent_ms": 10.79,
+      "selected_ids": [
+        "gram_098",
+        "gram_065",
+        "gram_076",
+        "gram_011",
+        "gram_060"
+      ],
+      "gold": [
+        "gram_098"
+      ],
+      "gold_in_top5": true
+    },
+    {
+      "qid": "n01",
+      "kind": "neg",
+      "lang": "vi",
+      "group": "off",
+      "question": "thời tiết Hà Nội hôm nay thế nào",
+      "decision": "out_of_scope",
+      "reason": "intent_out_of_scope",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.7191
+      },
+      "top1_id": "gram_002",
+      "top1_distance": 0.194,
+      "intent_ms": 11.02,
+      "selected_ids": []
+    },
+    {
+      "qid": "n02",
+      "kind": "neg",
+      "lang": "vi",
+      "group": "off",
+      "question": "công thức nấu phở bò",
+      "decision": "out_of_scope",
+      "reason": "intent_out_of_scope",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.5697
+      },
+      "top1_id": "gram_012",
+      "top1_distance": 0.1818,
+      "intent_ms": 10.29,
+      "selected_ids": []
+    },
+    {
+      "qid": "n03",
+      "kind": "neg",
+      "lang": "mixed",
+      "group": "off",
+      "question": "cách viết hàm đệ quy trong python",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.438
+      },
+      "top1_id": "gram_012",
+      "top1_distance": 0.1539,
+      "intent_ms": 10.42,
+      "selected_ids": [
+        "gram_012",
+        "gram_008",
+        "gram_058",
+        "gram_003",
+        "gram_014"
+      ]
+    },
+    {
+      "qid": "n04",
+      "kind": "neg",
+      "lang": "vi",
+      "group": "off",
+      "question": "giải phương trình bậc hai x^2 - 5x + 6 = 0",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.393
+      },
+      "top1_id": "gram_030",
+      "top1_distance": 0.1682,
+      "intent_ms": 12.07,
+      "selected_ids": [
+        "gram_030",
+        "gram_037",
+        "gram_012",
+        "gram_061",
+        "gram_068"
+      ]
+    },
+    {
+      "qid": "n05",
+      "kind": "neg",
+      "lang": "mixed",
+      "group": "off",
+      "question": "đội nào vô địch world cup 2022",
+      "decision": "out_of_scope",
+      "reason": "intent_out_of_scope",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.525
+      },
+      "top1_id": "gram_086",
+      "top1_distance": 0.2313,
+      "intent_ms": 10.85,
+      "selected_ids": []
+    },
+    {
+      "qid": "n06",
+      "kind": "neg",
+      "lang": "vi",
+      "group": "off",
+      "question": "tôi bị đau đầu nên uống thuốc gì",
+      "decision": "out_of_scope",
+      "reason": "intent_out_of_scope",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.5004
+      },
+      "top1_id": "gram_034",
+      "top1_distance": 0.2003,
+      "intent_ms": 10.58,
+      "selected_ids": []
+    },
+    {
+      "qid": "n07",
+      "kind": "neg",
+      "lang": "en",
+      "group": "off",
+      "question": "how do I apply for a US student visa",
+      "decision": "no_context",
+      "reason": "top1_too_far",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.3465
+      },
+      "top1_id": "gram_050",
+      "top1_distance": 0.2254,
+      "intent_ms": 10.83,
+      "selected_ids": []
+    },
+    {
+      "qid": "n08",
+      "kind": "neg",
+      "lang": "mixed",
+      "group": "gap",
+      "question": "cách phát âm đuôi ed trong tiếng Anh",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "nghia_tu",
+        "confidence": 0.2477
+      },
+      "top1_id": "gram_070",
+      "top1_distance": 0.12,
+      "intent_ms": 12.06,
+      "selected_ids": [
+        "gram_070",
+        "gram_004",
+        "gram_008",
+        "gram_010",
+        "gram_085"
+      ]
+    },
+    {
+      "qid": "n09",
+      "kind": "neg",
+      "lang": "mixed",
+      "group": "gap",
+      "question": "IELTS writing task 2 nên chia bố cục mấy đoạn",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3959
+      },
+      "top1_id": "gram_012",
+      "top1_distance": 0.1552,
+      "intent_ms": 11.1,
+      "selected_ids": [
+        "gram_012",
+        "gram_003",
+        "gram_014",
+        "gram_074",
+        "gram_002"
+      ]
+    },
+    {
+      "qid": "n10",
+      "kind": "neg",
+      "lang": "mixed",
+      "group": "gap",
+      "question": "đảo ngữ Never have I seen dùng khi nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.4321
+      },
+      "top1_id": "gram_013",
+      "top1_distance": 0.1454,
+      "intent_ms": 10.84,
+      "selected_ids": [
+        "gram_013",
+        "gram_062",
+        "gram_018",
+        "gram_014",
+        "gram_036"
+      ]
+    },
+    {
+      "qid": "n11",
+      "kind": "neg",
+      "lang": "mixed",
+      "group": "gap",
+      "question": "câu giả định I suggest that he go dùng thế nào",
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.4084
+      },
+      "top1_id": "gram_059",
+      "top1_distance": 0.1217,
+      "intent_ms": 11.44,
+      "selected_ids": [
+        "gram_059",
+        "gram_001",
+        "gram_041",
+        "gram_039",
+        "gram_020"
+      ]
+    },
+    {
+      "qid": "n12",
+      "kind": "neg",
+      "lang": "vi",
+      "group": "gap",
+      "question": "mỗi ngày nên học bao nhiêu từ mới",
+      "decision": "out_of_scope",
+      "reason": "intent_out_of_scope",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.6215
+      },
+      "top1_id": "gram_026",
+      "top1_distance": 0.1403,
+      "intent_ms": 11.52,
+      "selected_ids": []
+    }
+  ]
+}

@@ -17,7 +17,8 @@ async def health(request: Request, response: Response) -> HealthResponse:
     trong khi /predict-retention dang tra 503 cho moi request.
 
     Chi FSRS quyet dinh degraded. Embedder hong thi /assistant/embed tra 503 va
-    backend fallback, con luong on tap van chay -> /health van 200.
+    backend fallback, con luong on tap van chay -> /health van 200. Bo y dinh
+    ("intent") hong thi pipeline bo luat 2 -> cung khong lam degraded.
     """
     models = request.app.state.models
     loaded = [name for name, m in models.items() if m is not None]

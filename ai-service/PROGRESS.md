@@ -10,12 +10,12 @@
 ## 1. Trạng thái hiện tại
 
 - **Đợt hiện tại:** khoảng đợt 10 theo lịch; trợ lý (v1.1) đang trễ
-- **Task vừa xong:** Jira **WSEA-126** — Rerank cross-encoder (TASKS.md ghi WSEA-109): **quyết định TẮT**. Ứng viên A `mmarco-mMiniLMv2-L12-H384-v1` tăng hit@3 từ 0,645 lên 0,871, nhưng p95 1.149 ms > 300 ms và RAM tăng 726 MiB > 600 MiB. B không chạy (suy luận, không đo). Xem mục 6.3, DECISIONS 2026-11-02 WSEA-126. Script đã commit (`9813fa4`, `a3681cf`); docs + `docs/eval/rerank_report.json` **chưa commit**
-- **Task trước:** Jira **WSEA-125** — Phân loại ý định (TASKS.md ghi WSEA-108), đã merge (PR #116). Jira WSEA-112 (dataset ý định) đã merge (PR #113)
-- **Task kế tiếp:** Jira **WSEA-127** — nối bộ phân loại ý định vào pipeline (nạp trong lifespan; chặn sớm kết hợp distance top-1, đo trên bộ 43 câu). Sau đó `POST /assistant/ask` (prompt chỉ dùng ngữ cảnh, **top-5 theo e5, không rerank**, từ chối khi không có; tín hiệu "không đủ ngữ cảnh" = distance e5 + ý định); tra từ vựng: bóc cụm khung câu + khớp `meaning_vi` trước, vector dự phòng
-- **Nhánh:** `ai/WSEA-126-xep-hang-lai`
+- **Task vừa xong:** Jira **WSEA-127** — Pipeline truy hồi trong dịch vụ AI (TASKS.md ghi WSEA-110). `app/services/pipeline.py`: luật 1–4 chốt trước (quyết định `answer` / `no_context` / `out_of_scope`, chọn top-5 theo e5, không rerank); bộ ý định nạp trong lifespan; `POST /assistant/rank` (hợp đồng v0.3.1). Kiểm offline: 0/31 câu dương bị chặn, gold trong top-5 26/31 = hit@5 gốc; câu âm off chặn 5/7; smoke local 7/7. **Trợ lý: pipeline xong, `/assistant/ask` vẫn 501 tới WSEA-140.** Xem mục 6.3, DECISIONS 2026-11-02 — WSEA-127. Đã commit trên nhánh, **chưa push/PR**
+- **Task trước:** Jira **WSEA-126** — Rerank (TASKS.md ghi WSEA-109): **TẮT**, đã merge (PR #118). Jira WSEA-125 (phân loại ý định) đã merge (PR #116)
+- **Task kế tiếp:** Jira **WSEA-140** — prompt + LLM cho `POST /assistant/ask`, chạy pipeline WSEA-127 trước LLM. Prompt phải: tự từ chối câu lạc đề lọt pipeline (n03, n04, câu lạc đề khi có `word`); trả lời mềm cho `out_of_scope` vì có chặn nhầm (n12); ca chỉ có `word` thì `source_ids = []`. Sau đó đo lại độ trễ trên Space; đánh giá bằng bộ 60 câu WSEA-141
+- **Nhánh:** `ai/WSEA-127-pipeline-truy-hoi`
 - **Việc dở dang cần làm tiếp:**
-  - Commit docs + PR WSEA-126; minh chứng Jira WSEA-110, WSEA-111, WSEA-125, WSEA-126
+  - Push + PR WSEA-127; báo Duy Anh hợp đồng v0.3.1 (`/assistant/rank` không bắt buộc gọi; `contexts` không cần sắp); minh chứng Jira WSEA-110, WSEA-111, WSEA-125, WSEA-126, WSEA-127
   - Release v1.1: kiểm production bằng SQL → `prisma migrate deploy` production → `load_vectors.py --env production --confirm-production` → RỒI MỚI deploy backend dùng `embedding_model`
   - Báo backend sửa `TRUE`/`FALSE` thành `true`/`false` trong `backend/prisma/data/vocab_7000.csv`
 - **Đang bị chặn bởi:** không
@@ -33,7 +33,7 @@
 | — | 5→7 | AI Service trên **HF Spaces**, `/predict-retention` gọi được từ backend | ⚠️ | Endpoint xong (WSEA-81). 15/10 chuyển sang Render, 19/10 quay lại HF Spaces gói PRO (16 GB đủ cho cả CLIP + e5). **20/10: Space đã chạy, smoke test 7/7; CHƯA tích hợp backend** (vấn đề #15) |
 | MK-3 / v1.0 | 6→7 | **Dự báo quên đúng trên production — SỐNG CÒN** | ⚠️ | Trễ theo WSEA-82. Trong lúc chờ, luồng ôn tập chạy bằng fallback `simple-scheduler.ts` |
 | — | 7 | Chunk + embedding + vector search chạy | ✅ | Kho 100 đoạn (WSEA-100) · vector 100 đoạn + 7000 từ trên staging, HNSW (WSEA-110, 31/10) · `/assistant/embed` trên Space, hit@8 0,871 (WSEA-111, 31/10). Frontend chưa gọi API (#16) |
-| — | 8 | Phân loại ý định + rerank đạt mục tiêu | 🟨 | Phân loại ý định xong (WSEA-125, 01/11): test accuracy 0,72, macro-F1 0,7079; chưa nối vào app (WSEA-127). Rerank đo xong, **TẮT** (WSEA-126, 02/11): hit@3 0,645 → 0,871 nhưng p95 1.149 ms, RAM +726 MiB vượt luật |
+| — | 8 | Phân loại ý định + rerank đạt mục tiêu | 🟨 | Phân loại ý định xong (WSEA-125, 01/11): test accuracy 0,72, macro-F1 0,7079; chưa nối vào app (WSEA-127). Rerank đo xong, **TẮT** (WSEA-126, 02/11): hit@3 0,645 → 0,871 nhưng p95 1.149 ms, RAM +726 MiB vượt luật. Pipeline truy hồi xong (WSEA-127, 02/11): ý định đã nối vào app, `/assistant/rank`; `/ask` chờ WSEA-140 |
 | v1.1 | 9 | Trợ lý RAG trên production | ⬜ | |
 | MK-4 / v1.2 | 10 | CLIP nhận diện ảnh; đủ 3 chức năng AI | ⬜ | |
 | MK-5 | 10 | Đóng băng tính năng | ⬜ | |
@@ -221,6 +221,7 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 
 | Ngày | Cấu hình (chunk size, top-k, rerank?, intent?) | Recall@k | Độ trung thực (30 câu) | Acc. phân loại ý định | Latency TB | Ghi chú |
 |---|---|---|---|---|---|---|
+| 2026-11-02 | Pipeline WSEA-127 (luật `9011f9c`): top-8 e5 → luật 1–4 → top-5, không rerank, ý định e5 + LR τ 0,40, ngưỡng top-1 0,22 — 31 câu dương + 12 câu âm, chạy 1 lần | gold trong top-5 26/31 = 0,8387 (= hit@5 gốc) | — | — | bước ý định p50 11,7 ms · p95 13,9 ms (laptop); select < 0,02 ms | WSEA-127, `docs/eval/pipeline_check.json`. Câu dương bị chặn 0/31. Câu âm off chặn 5/7 (luật 2: n01 n02 n05 n06; luật 3: n07), lọt n03 n04; gap: n12 chặn nhầm (0,62). Smoke local 7/7 |
 | 2026-11-02 | Rerank top-8 e5 → top-3 bằng `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` @ `1427fd65`, max_length 512, 2 luồng — 31 câu dương + 12 câu âm; luật chốt trước ở `9813fa4`, chạy 1 lần 14h18 | hit@1 0,613 → 0,806 · @3 0,645 → 0,871 · @5 0,839 → 0,871 · @8 0,871 (không đổi) · MRR@8 0,678 → 0,839 | — | — | rerank 1 lượt 8 cặp (laptop): p50 1.011 ms · p95 1.149 ms; RAM +726 MiB; đĩa 470 MiB | WSEA-126, `docs/eval/rerank_report.json`. **TẮT** (p95 > 300 ms, RAM > 600 MiB). 8 câu lên hạng, 0 câu tụt. AUC câu âm: điểm rerank 0,892 so với distance e5 0,804. B `bge-reranker-v2-m3` không chạy (lớn ~5 lần, suy luận) |
 | 2026-11-01 | Phân loại ý định: e5-small + LogisticRegression C = 3, τ = 0,4 cho `ngoai_pham_vi` — train 376 câu LLM, test 75 câu người thật, chấm 1 lần | — | — | test accuracy 0,72 · macro-F1 0,7079 (CV 0,7812 ± 0,0453) · cơ sở 0,2 | — | WSEA-125, `docs/eval/intent_report.json`. TF-IDF CV 0,7396 → không chọn. Chặn sớm test 10 câu, precision 0,9, recall 0,4737; recall CV 0,2763. Yếu: `phan_biet` R 0,5, `cach_dung` R 0,5714 |
 | 2026-10-31 | e5-small, vector đoạn từ `.npz` đã nạp DB, quét k = 1/3/5/8/10/20, không rerank, không phân loại ý định — 31 câu dương + 12 câu âm (7 off, 5 gap) viết trước khi chạy | hit@1 0,613 · @3 0,645 · @5 0,839 · @8 0,871 · @10 0,871 · @20 0,903 · MRR@20 0,681 | — | — | `/assistant/embed` trên Space: server ~20 ms, khứ hồi VN 497–630 ms; trọn vòng staging 1,5–1,8 s khi backend đã thức | WSEA-111, `docs/eval/retrieval_k_sweep.json`. hit@8: mixed 1,00 · vi 0,833 · en 0,667. Ngưỡng distance không tách được câu gap (0,120–0,155) khỏi câu dương (p50 0,127) → không dùng ngưỡng cứng. q02, q08 gold hạng 31. SQL staging khớp numpy 43/43 |
@@ -262,6 +263,13 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-11-02 · Đợt 10 (theo lịch) · WSEA-127 — Pipeline truy hồi trong dịch vụ AI
+
+- Luật chốt trước khi code (`de7b528`): no_context khi rỗng / top-1 > 0,22; out_of_scope khi ý định ≥ τ và không có word, vocab exact, history; còn lại chọn top-5 theo distance, vocab exact trước. Rerank = identity.
+- `app/services/pipeline.py` + `POST /assistant/rank` + `AskRequest` v0.3 (`cd1c440`). Sửa trước kiểm: luật 1 và 3 miễn khi có `word` (`9011f9c`).
+- Kiểm offline 1 lần (`c755bb7`): 0/31 câu dương bị chặn; gold trong top-5 26/31 = hit@5 gốc; off chặn 5/7, lọt n03 n04; gap n12 chặn nhầm. Smoke local 7/7 (Hiếu, ~20h58).
+- Hợp đồng API v0.3.1 (bổ sung, không phá vỡ). `/ask` vẫn 501 tới WSEA-140. pytest 439 passed.
 
 ### 2026-11-02 · Đợt 10 (theo lịch) · WSEA-126 — Rerank cross-encoder: TẮT
 
