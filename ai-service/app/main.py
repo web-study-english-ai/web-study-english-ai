@@ -14,6 +14,7 @@ from app.models.weights import load_fsrs
 from app.routers import health, rag, retention, vision
 from app.services.embedder import Embedder
 from app.services.intent import IntentClassifier
+from app.services.llm import LLMClient
 
 logging.basicConfig(
     level=logging.INFO,
@@ -59,10 +60,17 @@ async def lifespan(app: FastAPI):
     """
     model, meta = load_fsrs(settings)
     embedder = load_embedder() if settings.embedder_enabled else None
+    # Client LLM (WSEA-140): mot AsyncClient cho moi request; thieu khoa van tao, /ask tra 503 no_key.
+    # De o app.state.llm, KHONG o models: /health liet ke models (hop dong), LLM khong phai mo hinh nap.
+    llm = LLMClient.from_settings(settings)
+    if settings.llm_api_key is None:
+        logger.warning("Chua co LLM_API_KEY: /assistant/ask se tra 503 khi can goi LLM")
     app.state.models = {"fsrs": model, "embedder": embedder, "intent": load_intent()}
+    app.state.llm = llm
     app.state.model_meta = meta
     yield
     app.state.models.clear()
+    await llm.aclose()
 
 
 app = FastAPI(
