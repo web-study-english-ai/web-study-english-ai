@@ -10,14 +10,17 @@
 ## 1. Trạng thái hiện tại
 
 - **Đợt hiện tại:** khoảng đợt 10 theo lịch; trợ lý (v1.1) đang trễ
-- **Task vừa xong:** Jira **WSEA-127** — Pipeline truy hồi trong dịch vụ AI (TASKS.md ghi WSEA-110). `app/services/pipeline.py`: luật 1–4 chốt trước (quyết định `answer` / `no_context` / `out_of_scope`, chọn top-5 theo e5, không rerank); bộ ý định nạp trong lifespan; `POST /assistant/rank` (hợp đồng v0.3.1). Kiểm offline: 0/31 câu dương bị chặn, gold trong top-5 26/31 = hit@5 gốc; câu âm off chặn 5/7; smoke local 7/7. **Trợ lý: pipeline xong, `/assistant/ask` vẫn 501 tới WSEA-140.** Xem mục 6.3, DECISIONS 2026-11-02 — WSEA-127. Đã commit trên nhánh, **chưa push/PR**
-- **Task trước:** Jira **WSEA-126** — Rerank (TASKS.md ghi WSEA-109): **TẮT**, đã merge (PR #118). Jira WSEA-125 (phân loại ý định) đã merge (PR #116)
-- **Task kế tiếp:** Jira **WSEA-140** — prompt + LLM cho `POST /assistant/ask`, chạy pipeline WSEA-127 trước LLM. Prompt phải: tự từ chối câu lạc đề lọt pipeline (n03, n04, câu lạc đề khi có `word`); trả lời mềm cho `out_of_scope` vì có chặn nhầm (n12); ca chỉ có `word` thì `source_ids = []`. Sau đó đo lại độ trễ trên Space; đánh giá bằng bộ 60 câu WSEA-141
-- **Nhánh:** `ai/WSEA-127-pipeline-truy-hoi`
+- **Task vừa xong:** Jira **WSEA-140** — Prompt + LLM cho `POST /assistant/ask` (TASKS.md ghi WSEA-123). **Trợ lý `/ask` xong ở mức code (JSON + SSE), chờ deploy.** Groq `openai/gpt-oss-120b` (dự phòng `gpt-oss-20b` khi 429) gọi bằng `httpx`; pipeline WSEA-127 chạy trước, `decision` ≠ answer trả câu cố định không gọi LLM; trích [n] → `source_ids`; SSE ẩn ký hiệu trích trong `delta`. Hợp đồng v0.3.2. **Kết quả âm**: 3 vòng chỉnh prompt trên 12 ca phát triển, không vòng nào đạt tiêu chí chốt trước; dùng prompt v2 + hậu xử lý v3. Thử thật d01 (laptop): JSON 1,16 s; SSE khung đầu 0,66 s, tổng 1,32 s. Xem mục 6.3, DECISIONS 2026-11-02 — WSEA-140 (mục d–h). Đã commit trên nhánh, **chưa push/PR**
+- **Task trước:** Jira **WSEA-127** — Pipeline truy hồi (TASKS.md ghi WSEA-110): xong, `POST /assistant/rank` (hợp đồng v0.3.1)
+- **Task kế tiếp:** Jira **WSEA-141** — đánh giá chất lượng pipeline (bộ 60 câu; phần sinh: Phúc chấm 20 câu = số chính thức về độ trung thực). Sau deploy: đo lại độ trễ `/ask` trên Space CPU basic và khứ hồi từ backend
+- **Nhánh:** `ai/WSEA-140-prompt-llm`
 - **Việc dở dang cần làm tiếp:**
-  - Push + PR WSEA-127; báo Duy Anh hợp đồng v0.3.1 (`/assistant/rank` không bắt buộc gọi; `contexts` không cần sắp); minh chứng Jira WSEA-110, WSEA-111, WSEA-125, WSEA-126, WSEA-127
+  - Push + PR WSEA-140; báo Duy Anh hợp đồng v0.3.2 (câu cố định, `reason` trong 503, ngân sách 12 s / 40 s, SSE lỗi giữa luồng không có khung cuối); minh chứng Jira WSEA-140
+  - Đặt Secret `LLM_API_KEY` (+ Variables `LLM_*` nếu khác mặc định) trên Space TRƯỚC khi đẩy bản có `/ask`
+  - Quyết có commit `scripts/smoke_ask.py` (thử thật /ask JSON + SSE) hay không — hiện chưa commit
   - Release v1.1: kiểm production bằng SQL → `prisma migrate deploy` production → `load_vectors.py --env production --confirm-production` → RỒI MỚI deploy backend dùng `embedding_model`
   - Báo backend sửa `TRUE`/`FALSE` thành `true`/`false` trong `backend/prisma/data/vocab_7000.csv`
+  - Demo: tránh câu affect/effect cho tới khi có số WSEA-141
 - **Đang bị chặn bởi:** không
 - **Cập nhật lần cuối:** 2026-11-02
 
@@ -61,6 +64,8 @@ Ký hiệu: ⬜ chưa làm · 🟨 đang làm · ✅ xong · ⚠️ trễ/có v�
 
 | # | Vấn đề | Mức | Người xử lý | Hạn | Trạng thái |
 |---|---|---|---|---|---|
+| 21 | **Hạn mức Groq gói miễn phí ~8K token/phút cho MỖI model.** Một câu `/ask` tốn ~3k token (prompt ~2,9k) → chỉ ~2 câu/phút/model; model dự phòng có hạn mức riêng nên 429 ở model chính còn gọi lại được 1 lần. Nhiều người dùng cùng lúc (demo, chấm WSEA-141) sẽ chạm 429 → 503 `rate_limited` → backend fallback. | Cao | Hiếu | Trước demo | Mở — chạy đánh giá phải giãn nhịp (như `scripts/run_llm_cases.py`); cân nhắc giảm ngữ cảnh nếu cần |
+| 20 | **LLM bịa quy tắc và gán cho tài liệu.** d05 (affect/effect) sai ở vòng v1 và v3 cùng một kiểu ("effect đi với giới từ of" gắn [1] dù tài liệu không nói). Prompt v2 đang dùng không loại trừ được, chỉ chưa thấy ở lần chạy v2. Không vòng nào trong 3 vòng đạt tiêu chí (B). | Cao | Hiếu | WSEA-141 | Mở — số chính thức là WSEA-141 phần sinh (Phúc chấm 20 câu); demo tránh câu affect/effect tới khi có số |
 | 19 | **Chế độ `--db` của `scripts/eval_retrieval.py` chưa chạy** — chưa đối chiếu top-8 SQL thật với numpy trên 43 câu (31 dương + 12 âm). | TB | Hiếu | Trước v1.1 | ✅ Đóng 2026-10-31 18h58 — chạy trên staging: 43 câu, top-1 SQL khớp numpy 1,00, nguyên thứ tự top-8 khớp 1,00, \|Δdistance\| max 0,000000; SQL khứ hồi từ laptop qua Session pooler (gồm mạng VN→Singapore) p50 48,68 ms / max 140,82 ms, phía server < 1 ms (`docs/kb/vector_bench.json`) |
 | 18 | **SQL từ vựng phía backend chưa đổi sang truy vấn con** (lấy top-k trước rồi mới JOIN `words`) như hợp đồng v0.3; dạng JOIN rồi LIMIT có lúc chậm tới 80 ms. | TB | Duy Anh | Trước v1.1 | Mở |
 | 17 | **Backend `assistant.client.ts` dùng chung một hongLuc 30 s cho `/embed` và `/ask`** → `/ask` lỗi thì mất luôn nguồn (trái hợp đồng v0.3). | Cao | Duy Anh | Trước v1.1 | Mở — đã báo Duy Anh 2026-10-31 |
@@ -221,6 +226,7 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 
 | Ngày | Cấu hình (chunk size, top-k, rerank?, intent?) | Recall@k | Độ trung thực (30 câu) | Acc. phân loại ý định | Latency TB | Ghi chú |
 |---|---|---|---|---|---|---|
+| 2026-11-02 | Prompt + LLM (WSEA-140): Groq `openai/gpt-oss-120b`, temperature 0,2, `max_completion_tokens` 500, `reasoning_effort` low; pipeline WSEA-127 trước; 12 ca phát triển (5 dương, 5 từ chối, 1 chỉ-word, 1 nối tiếp), tiêu chí chốt trước; 3 vòng v1–v3, mỗi vòng chạy 1 lần | — | (B) đúng/một phần/sai: v1 3/2/1 · v2 4/2/0 · v3 4/0/2 (cần ≥ 5/6 đúng VÀ 0 sai) → **không vòng nào đạt**; (A) 12/12 và (C) 5/5 cả 3 vòng; d10: sai / một phần / đúng | — | LLM p50 ~0,9–1,1 s/câu (laptop → Groq); ~3k token/câu. Thử thật d01: JSON 1,16 s; SSE khung đầu 0,66 s, tổng 1,32 s | WSEA-140, `docs/eval/llm_rounds/v1–v3.json`. Chọn prompt v2 + hậu xử lý v3 (v2 là vòng duy nhất 0 sai; prompt v3 hồi quy d02, d05). Kiểm chéo Claude Code ↔ Claude ở chat, lệch Hiếu quyết. Đây là bộ phát triển, KHÔNG phải số chính thức (WSEA-141) |
 | 2026-11-02 | Pipeline WSEA-127 (luật `9011f9c`): top-8 e5 → luật 1–4 → top-5, không rerank, ý định e5 + LR τ 0,40, ngưỡng top-1 0,22 — 31 câu dương + 12 câu âm, chạy 1 lần | gold trong top-5 26/31 = 0,8387 (= hit@5 gốc) | — | — | bước ý định p50 11,7 ms · p95 13,9 ms (laptop); select < 0,02 ms | WSEA-127, `docs/eval/pipeline_check.json`. Câu dương bị chặn 0/31. Câu âm off chặn 5/7 (luật 2: n01 n02 n05 n06; luật 3: n07), lọt n03 n04; gap: n12 chặn nhầm (0,62). Smoke local 7/7 |
 | 2026-11-02 | Rerank top-8 e5 → top-3 bằng `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` @ `1427fd65`, max_length 512, 2 luồng — 31 câu dương + 12 câu âm; luật chốt trước ở `9813fa4`, chạy 1 lần 14h18 | hit@1 0,613 → 0,806 · @3 0,645 → 0,871 · @5 0,839 → 0,871 · @8 0,871 (không đổi) · MRR@8 0,678 → 0,839 | — | — | rerank 1 lượt 8 cặp (laptop): p50 1.011 ms · p95 1.149 ms; RAM +726 MiB; đĩa 470 MiB | WSEA-126, `docs/eval/rerank_report.json`. **TẮT** (p95 > 300 ms, RAM > 600 MiB). 8 câu lên hạng, 0 câu tụt. AUC câu âm: điểm rerank 0,892 so với distance e5 0,804. B `bge-reranker-v2-m3` không chạy (lớn ~5 lần, suy luận) |
 | 2026-11-01 | Phân loại ý định: e5-small + LogisticRegression C = 3, τ = 0,4 cho `ngoai_pham_vi` — train 376 câu LLM, test 75 câu người thật, chấm 1 lần | — | — | test accuracy 0,72 · macro-F1 0,7079 (CV 0,7812 ± 0,0453) · cơ sở 0,2 | — | WSEA-125, `docs/eval/intent_report.json`. TF-IDF CV 0,7396 → không chọn. Chặn sớm test 10 câu, precision 0,9, recall 0,4737; recall CV 0,2763. Yếu: `phan_biet` R 0,5, `cach_dung` R 0,5714 |
@@ -247,6 +253,7 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 
 | Ngày | Endpoint | Thay đổi | Đã báo Duy Anh? | Commit |
 |---|---|---|---|---|
+| 2026-11-02 | `POST /assistant/ask` | **v0.3.2** (bổ sung, không phá vỡ): JSON + SSE đã triển khai; `decision` ≠ answer → câu cố định, `source_ids` rỗng, không gọi LLM; `503` có `detail` ghi `reason` (no_key, rate_limited, timeout, upstream_error, empty_content, bad_response); 429 → model dự phòng 1 lần; ngân sách 12 s / 40 s; `delta` không chứa ký hiệu trích; SSE lỗi giữa luồng → không khung cuối | ⬜ | WSEA-140 |
 | 2026-10-31 | `POST /assistant/embed`, `GET /health` | `/assistant/embed` đã triển khai đúng v0.3. `/health`: `models` có thể gồm `"embedder"`; 503/`degraded` chỉ phụ thuộc `fsrs`. Không đổi giao diện | ⬜ | WSEA-111 |
 | 2026-10-31 | SQL từ vựng (tham khảo) | Lấy top-k trong truy vấn con rồi mới JOIN `words` (ổn định < 1,2 ms) | ✅ 2026-10-31 | WSEA-110 |
 | 2026-10-30 | `POST /chat` → `POST /assistant/embed` + `POST /assistant/ask` | **v0.3**: AI chỉ sinh vector và sinh câu trả lời; backend chạy pgvector, gửi `contexts`/`vocab`/`history`; trả `source_ids`; SSE `delta` → khung cuối `{answer, source_ids}` → `[DONE]`; fallback kèm 3 nguồn | ✅ chốt 2026-10-30 | WSEA-110 |
@@ -263,6 +270,13 @@ Lô vs lẻ (giữ kết nối, 50 thẻ, lặp 5 lần; trung vị [min; max]):
 ## 9. Nhật ký phiên làm việc
 
 > Mỗi phiên một mục, mới nhất ở trên. 3–6 dòng là đủ.
+
+### 2026-11-02 · Đợt 10 (theo lịch) · WSEA-140 — Prompt + LLM cho `/assistant/ask`
+
+- Chốt thiết kế + prompt v1 + 12 ca + tiêu chí TRƯỚC khi gọi LLM (`91b12c9`); sửa ngưỡng và người chấm trước v1 (`3c60658`, `1494a21`). Client `httpx` → Groq, `/ask` JSON, dự phòng 429 (`774e437`).
+- 3 vòng trên Groq thật (v1 `dd820ef`, v2 `fbac680`, v3 `a025e0c`), chấm Claude Code + Claude ở chat, lệch Hiếu quyết: **không vòng nào đạt**. Chọn prompt v2 + hậu xử lý v3 (`5e75981`); ghi kết quả âm.
+- SSE + ẩn ký hiệu trích trong `delta` (`b5abf4b`). Thử thật d01 trên laptop: JSON 1,16 s; SSE khung đầu 0,66 s, tổng 1,32 s; ~3,1k token/lần.
+- Hợp đồng v0.3.2. pytest 609 passed. Chưa push, chưa deploy.
 
 ### 2026-11-02 · Đợt 10 (theo lịch) · WSEA-127 — Pipeline truy hồi trong dịch vụ AI
 

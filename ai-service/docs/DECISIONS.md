@@ -653,3 +653,23 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
   - Bịa quy tắc và gán cho tài liệu: d05 sai ở v1 và v3, cùng một kiểu ("effect đi với of"). Prompt v2 không loại trừ được lỗi này, chỉ chưa thấy ở lần chạy v2.
   - **Số chính thức** cho phần sinh là WSEA-141 (Phúc chấm 20 câu), không phải 12 ca phát triển này.
   - **Demo tránh câu affect/effect** cho tới khi có số WSEA-141.
+
+#### h. SSE + kết quả thử thật B4
+
+- **Code** (`b5abf4b`, sau khi chọn prompt v2 + hậu xử lý v3 ở `5e75981`):
+  - `LLMClient.open_stream()` gửi `stream: true` và **đọc tới token đầu tiên rồi mới trả luồng** cho router. Mọi lỗi trước token đầu (429 hai lần, 5xx, hết giờ, thiếu khoá, luồng rỗng, chunk hỏng) → `LLMUnavailable` → HTTP 503 JSON, chưa mở SSE. 429 ở model chính trước token đầu → gọi lại 1 lần bằng model dự phòng.
+  - Ngân sách luồng `LLM_STREAM_TIMEOUT_S` = 40 s (< 45 s timeout SSE của backend), tính tổng cả lần dự phòng; mỗi lần đọc dòng bọc `asyncio.wait_for` theo thời gian còn lại.
+  - Lỗi **giữa** luồng (đứt mạng, sự kiện có `error`, hết luồng mà không có `[DONE]`, hết giờ) → `LLMStreamError`: router ghi log, đóng luồng, không gửi khung cuối — đúng hợp đồng (backend `degraded`).
+  - **Ẩn ký hiệu trích trong `delta`** (`StreamCleaner`): mỗi `delta` là phần mới của `clean_text(raw[:điểm an toàn])`. Điểm an toàn cắt trước: ngoặc `[`/`【` chưa đóng trong 24 ký tự cuối, dấu `*` có thể mở nhấn mạnh trên dòng đang viết, khoảng trắng cuối. Nhờ vậy ghép các `delta` = `answer` của khung cuối (trừ khi khung cuối là câu cố định). Đánh đổi: phần còn lại của một dòng có `*x*` đến muộn hơn tới khi xuống dòng.
+  - Tài liệu Groq (đọc 02/11) chỉ xác nhận sự kiện `data:` và kết thúc `data: [DONE]`; hình chunk đọc theo kiểu tương thích OpenAI (`choices[0].delta.content`), `usage` lấy ở `usage` hoặc `x_groq.usage`. Lần thử thật dưới cho thấy cách đọc này đúng và Groq có trả `usage` trong luồng.
+  - Test: 26 test SSE bằng `httpx.MockTransport` (ký hiệu `[` và `1]` nằm ở hai chunk khác nhau, `【3】`, `[Tài liệu 2]`, 429 → dự phòng, 500/429×2/luồng rỗng → 503, đứt giữa luồng → không có khung cuối) + test `StreamCleaner` cắt chunk 1/2/3/7 ký tự. pytest 609 passed.
+- **Thử thật B4** (02/11 khoảng 23h21, `scripts/smoke_ask.py`, câu d01, server uvicorn trên laptop 127.0.0.1:8000 với `.env` thật, Groq `openai/gpt-oss-120b`, 1 lần mỗi chế độ; contexts dựng qua `/assistant/embed` của chính server + top-8 trên `.npz`):
+
+| chế độ | mã | tới khung đầu | tổng | token prompt / completion / tổng | nguồn |
+|---|---|---|---|---|---|
+| JSON | 200 | — | 1.160 ms (`llm` 1.142 ms) | 2.929 / 213 / 3.142 | gram_015, gram_013 |
+| SSE | 200 | 655 ms (`llm_first` 640 ms) | 1.317 ms, 13 `delta` | 2.929 / 203 / 3.132 | gram_015, gram_013 |
+
+  - SSE: ghép `delta` = `answer` khung cuối, có `[DONE]`, header `Cache-Control: no-cache`, `X-Accel-Buffering: no` đúng. Log server không chứa `LLM_API_KEY` hay `INTERNAL_API_KEY`.
+  - Hai câu trả lời JSON và SSE khác chữ nhau (cùng nguồn, cùng ý) — temperature 0,2 vẫn dao động giữa các lần gọi.
+  - **Giới hạn**: đo từ laptop, 1 lần; chưa đo trên Space CPU basic, chưa đo khứ hồi backend → Space → Groq. Phải đo lại sau deploy.
