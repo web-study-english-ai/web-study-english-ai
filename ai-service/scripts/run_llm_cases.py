@@ -186,6 +186,51 @@ def apply_grades(report: dict, grades: dict[str, dict]) -> dict:
     return report
 
 
+B_MIN_DUNG = 5  # (B): >= 5/6 dung VA 0 sai (DECISIONS muc d)
+
+
+def apply_crosscheck(report: dict, cross: dict[str, dict]) -> dict:
+    """Ghi grade_claude (Claude o chat cham doc lap) va grade_final: khop -> diem chung; lech -> Hieu quyet."""
+    graded = [r for r in report["rows"] if r["expected"] in GRADED_EXPECTED]
+    if {r["id"] for r in graded} != set(cross):
+        raise ValueError(f"cần đúng các ca {sorted(r['id'] for r in graded)}, nhận {sorted(cross)}")
+    for r in graded:
+        if r.get("grade_cc") not in GRADES:
+            raise ValueError(f"{r['id']}: chưa có grade_cc — chạy --apply-grades trước")
+        gc, hieu = cross[r["id"]].get("grade_claude"), cross[r["id"]].get("hieu")
+        if gc not in GRADES:
+            raise ValueError(f"{r['id']}: grade_claude phải thuộc {GRADES}")
+        r["grade_claude"] = gc
+        if gc == r["grade_cc"]:
+            r["grade_final"], r["grade_source"], r["hieu_decision"] = gc, "khop", None
+        elif hieu in GRADES:
+            r["grade_final"], r["grade_source"], r["hieu_decision"] = hieu, "hieu_quyet", hieu
+        else:
+            raise ValueError(f"{r['id']}: cc={r['grade_cc']} lệch claude={gc}, cần 'hieu' thuộc {GRADES}")
+    report["verdict"] = verdict(report)
+    return report
+
+
+def verdict(report: dict) -> dict:
+    """Ket luan vong theo DECISIONS muc d tu (A), (C) may va grade_final."""
+    rows = report["rows"]
+    a_n = sum(r["a"]["pass"] for r in rows)
+    c_rows = [r for r in rows if r.get("c_machine")]
+    c_n = sum(r["c_machine"] == "dat" for r in c_rows)
+    b_rows = [r for r in rows if r["expected"] == "grounded"]
+    b_dung = sum(r.get("grade_final") == "dung" for r in b_rows)
+    b_sai = sum(r.get("grade_final") == "sai" for r in b_rows)
+    wo = [r for r in rows if r["expected"] == "word_only"]
+    out = {"A": {"pass_n": a_n, "n": len(rows), "pass": a_n == len(rows)},
+           "C": {"pass_n": c_n, "n": len(c_rows), "pass": c_n == len(c_rows)},
+           "B": {"dung": b_dung, "sai": b_sai, "n": len(b_rows), "min_dung": B_MIN_DUNG,
+                 "pass": b_dung >= B_MIN_DUNG and b_sai == 0},
+           "word_only": {r["id"]: r.get("grade_final") for r in wo},
+           "word_only_pass": all(r.get("grade_final") == "dung" for r in wo)}
+    out["pass"] = out["A"]["pass"] and out["C"]["pass"] and out["B"]["pass"] and out["word_only_pass"]
+    return out
+
+
 def observations(rows: list[dict]) -> dict:
     llm_rows = [r for r in rows if r.get("model_used")]
     totals = [r["usage"].get("total_tokens", 0) for r in llm_rows]
@@ -268,7 +313,11 @@ def case_markdown(r: dict) -> str:
     out.append(f"**(A)**: {mark(a['pass'])} — {detail}")
     if r.get("c_machine"):
         out.append(f"**(C) máy** (nguyên văn câu cố định): {C_LABEL[r['c_machine']]}")
-    out += ["", "Hiếu quyết (nếu lệch): ___", ""]
+    if r.get("grade_final"):
+        out.append(f"**Chấm (B)**: Claude Code `{r['grade_cc']}` · Claude ở chat `{r['grade_claude']}` · "
+                   f"cuối `{r['grade_final']}` ({'khớp' if r['grade_source'] == 'khop' else 'Hiếu quyết'})")
+        out.append(f"**Lý do (Claude Code)**: {r['reason_cc']}")
+    out += ["", f"Hiếu quyết (nếu lệch): {r.get('hieu_decision') or '___'}", ""]
     return "\n".join(out)
 
 
@@ -284,6 +333,15 @@ def report_markdown(report: dict) -> str:
             "ca lệch Hiếu quyết ở dòng \"Hiếu quyết (nếu lệch)\".",
             "- Dấu hiệu code/toán/thơ trong (A) là heuristic thô; đọc toàn văn để chấm.", "",
             "## Tóm tắt", "", summary_text(report), ""]
+    v = report.get("verdict")
+    if v:
+        head += ["## Kết luận (sau kiểm chéo)", "",
+                 f"- (A) {v['A']['pass_n']}/{v['A']['n']}: {mark(v['A']['pass'])}",
+                 f"- (C) {v['C']['pass_n']}/{v['C']['n']}: {mark(v['C']['pass'])}",
+                 f"- (B) đúng {v['B']['dung']}/{v['B']['n']}, sai {v['B']['sai']} (cần ≥ {v['B']['min_dung']} đúng "
+                 f"VÀ 0 sai): {mark(v['B']['pass'])}",
+                 f"- word_only {v['word_only']}: {mark(v['word_only_pass'])}",
+                 f"- **Vòng {report['prompt_version']}: {mark(v['pass'])}**", ""]
     return "\n".join(head + [case_markdown(r) for r in report["rows"]])
 
 
@@ -390,15 +448,21 @@ def parse_args(argv):
     ap.add_argument("--only", default=None, help="vd d01,d03 — chạy lại vài ca, KHÔNG chính thức")
     ap.add_argument("--apply-grades", type=Path, default=None,
                     help="JSON {id: {grade_cc, reason_cc}} -> ghi vào <vòng>.json có sẵn, không gọi LLM")
+    ap.add_argument("--apply-crosscheck", type=Path, default=None,
+                    help="JSON {id: {grade_claude, hieu?}} -> grade_final + kết luận, không gọi LLM")
+    ap.add_argument("--round", default=pr.PROMPT_VERSION, help="vòng có sẵn để ghi điểm (mặc định PROMPT_VERSION)")
     return ap.parse_args(argv)
 
 
 def apply_grades_main(args) -> int:
-    out = args.out_dir / f"{pr.PROMPT_VERSION}.json"
+    out = args.out_dir / f"{args.round}.json"
     report = json.loads(out.read_text(encoding="utf-8"))
-    apply_grades(report, json.loads(args.apply_grades.read_text(encoding="utf-8")))
+    if args.apply_grades:
+        apply_grades(report, json.loads(args.apply_grades.read_text(encoding="utf-8")))
+    if args.apply_crosscheck:
+        apply_crosscheck(report, json.loads(args.apply_crosscheck.read_text(encoding="utf-8")))
     out.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
-    out.with_suffix(".md").write_text(report_markdown(report), encoding="utf-8")  # .md khong chua diem
+    out.with_suffix(".md").write_text(report_markdown(report), encoding="utf-8")  # diem chi hien sau kiem cheo
     print(f"Đã ghi grade_cc vào {out.name} ({sum('grade_cc' in r for r in report['rows'])} ca); không in điểm.")
     return 0
 
@@ -408,7 +472,7 @@ def main(argv: list[str] | None = None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     logging.basicConfig(level=logging.WARNING, format="%(levelname)s %(name)s: %(message)s")
     args = parse_args(argv)
-    if args.apply_grades:
+    if args.apply_grades or args.apply_crosscheck:
         return apply_grades_main(args)
     from app.config import settings
     from app.services.intent import IntentClassifier

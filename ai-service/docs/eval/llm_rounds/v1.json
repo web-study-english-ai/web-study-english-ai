@@ -106,7 +106,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đúng ý. HTHT: không nêu thời điểm, nhấn mạnh kết quả/ảnh hưởng hiện tại, khoảng chưa kết thúc — gram_015 'hiện tại hoàn thành không nêu thời điểm cụ thể', 'khoảng chưa kết thúc (this week, so far, since)', gram_013 'today, this week'. QKĐ có mốc đã qua — gram_015 'yesterday, in 2018'. Cả hai ý đều có [1][2]. Ví dụ Da Lat sát ví dụ gram_015. Thiếu ý phụ When/Have you ever (không phải ý chính). Vi phạm hình thức: dùng in đậm (quy tắc 8), không tính vào thang."
+      "reason_cc": "Đúng ý. HTHT: không nêu thời điểm, nhấn mạnh kết quả/ảnh hưởng hiện tại, khoảng chưa kết thúc — gram_015 'hiện tại hoàn thành không nêu thời điểm cụ thể', 'khoảng chưa kết thúc (this week, so far, since)', gram_013 'today, this week'. QKĐ có mốc đã qua — gram_015 'yesterday, in 2018'. Cả hai ý đều có [1][2]. Ví dụ Da Lat sát ví dụ gram_015. Thiếu ý phụ When/Have you ever (không phải ý chính). Vi phạm hình thức: dùng in đậm (quy tắc 8), không tính vào thang.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d02",
@@ -175,7 +179,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Nội dung đúng: be going to cho dự định có từ trước, will cho quyết định ngay lúc nói / dự đoán theo cảm nghĩ — gram_020 'be going to cho dự định đã có từ trước', 'will cho quyết định đưa ra ngay lúc nói'. Nhưng trích nguồn thiếu: các khẳng định chính ở đoạn đầu và gạch đầu dòng không có [n], chỉ câu cuối có [1]. Câu 'kế hoạch ... thường có dấu hiệu hoặc bằng chứng rõ ràng' gộp ý dự đoán có dấu hiệu vào ý kế hoạch (gram_020 tách hai ý), chấp nhận vì Mẹo nhớ gộp tương tự. In đậm (quy tắc 8)."
+      "reason_cc": "Nội dung đúng: be going to cho dự định có từ trước, will cho quyết định ngay lúc nói / dự đoán theo cảm nghĩ — gram_020 'be going to cho dự định đã có từ trước', 'will cho quyết định đưa ra ngay lúc nói'. Nhưng trích nguồn thiếu: các khẳng định chính ở đoạn đầu và gạch đầu dòng không có [n], chỉ câu cuối có [1]. Câu 'kế hoạch ... thường có dấu hiệu hoặc bằng chứng rõ ràng' gộp ý dự đoán có dấu hiệu vào ý kế hoạch (gram_020 tách hai ý), chấp nhận vì Mẹo nhớ gộp tương tự. In đậm (quy tắc 8).",
+      "grade_claude": "mot_phan",
+      "grade_final": "mot_phan",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d03",
@@ -244,7 +252,11 @@
       },
       "c_machine": null,
       "grade_cc": "dung",
-      "reason_cc": "Đủ 5 điểm khác biệt của gram_033, mỗi điểm có [1]: 'nguồn gốc', 'mustn't nghĩa là cấm, không được; don't have to nghĩa là không cần', 'have to chia theo chủ ngữ', 'had to / will have to', 'Do I have to ...? phổ biến hơn Must I ...?'. Ví dụ 1–2 lấy từ tài liệu, ví dụ 3 tự đặt đúng quy tắc chia has to. Trả lời tiếng Việt cho câu hỏi tiếng Anh đúng quy tắc 8. In đậm (quy tắc 8)."
+      "reason_cc": "Đủ 5 điểm khác biệt của gram_033, mỗi điểm có [1]: 'nguồn gốc', 'mustn't nghĩa là cấm, không được; don't have to nghĩa là không cần', 'have to chia theo chủ ngữ', 'had to / will have to', 'Do I have to ...? phổ biến hơn Must I ...?'. Ví dụ 1–2 lấy từ tài liệu, ví dụ 3 tự đặt đúng quy tắc chia has to. Trả lời tiếng Việt cho câu hỏi tiếng Anh đúng quy tắc 8. In đậm (quy tắc 8).",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d04",
@@ -313,7 +325,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Đúng và có trích: do homework — gram_076 'Lỗi điển hình: make homework (đúng: do homework)'. Thiếu ý chính tài liệu có: vì sao (make = tạo ra cái mới, do = thực hiện việc/nhiệm vụ; 'do homework' là cụm cố định), nên người học không dùng lại được cho cụm khác. Hai gạch đầu dòng chỉ lặp lại kết luận. Phân vân dung/mot_phan → chọn mức thấp hơn theo luật chấm."
+      "reason_cc": "Đúng và có trích: do homework — gram_076 'Lỗi điển hình: make homework (đúng: do homework)'. Thiếu ý chính tài liệu có: vì sao (make = tạo ra cái mới, do = thực hiện việc/nhiệm vụ; 'do homework' là cụm cố định), nên người học không dùng lại được cho cụm khác. Hai gạch đầu dòng chỉ lặp lại kết luận. Phân vân dung/mot_phan → chọn mức thấp hơn theo luật chấm.",
+      "grade_claude": "dung",
+      "grade_final": "dung",
+      "grade_source": "hieu_quyet",
+      "hieu_decision": "dung"
     },
     {
       "id": "d05",
@@ -382,7 +398,11 @@
       },
       "c_machine": null,
       "grade_cc": "sai",
-      "reason_cc": "Kết luận 'the effect of the weather' đúng, ý affect là động từ, không giới từ có trong gram_089 'affect + tân ngữ, không có giới từ'. Nhưng khẳng định 'effect ... thường đi kèm giới từ of (the effect of …) [1]' KHÔNG có trong tài liệu: gram_089 chỉ nêu 'have an effect on + tân ngữ'. Đây là khẳng định không có trong tài liệu mà vẫn gắn [1] → theo thang là 'sai' (bịa căn cứ), dù tiếng Anh thực tế không sai. Phân vân mot_phan/sai → chọn mức thấp hơn."
+      "reason_cc": "Kết luận 'the effect of the weather' đúng, ý affect là động từ, không giới từ có trong gram_089 'affect + tân ngữ, không có giới từ'. Nhưng khẳng định 'effect ... thường đi kèm giới từ of (the effect of …) [1]' KHÔNG có trong tài liệu: gram_089 chỉ nêu 'have an effect on + tân ngữ'. Đây là khẳng định không có trong tài liệu mà vẫn gắn [1] → theo thang là 'sai' (bịa căn cứ), dù tiếng Anh thực tế không sai. Phân vân mot_phan/sai → chọn mức thấp hơn.",
+      "grade_claude": "sai",
+      "grade_final": "sai",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d06",
@@ -743,7 +763,11 @@
       },
       "c_machine": null,
       "grade_cc": "sai",
-      "reason_cc": "Trả nguyên văn TEXT_NO_CONTEXT, không đưa ví dụ nào, dù có TỪ ĐANG HỌC reluctant (adj) — miễn cưỡng và câu hỏi hỏi đúng về từ đó (quy tắc 4 cho phép trả lời từ word). Không đạt điều kiện d10 (ví dụ đúng nghĩa, từ loại, có bản dịch). Nghi do quy tắc 5 ('không đủ căn cứ') thắng quy tắc 4 khi TÀI LIỆU rỗng."
+      "reason_cc": "Trả nguyên văn TEXT_NO_CONTEXT, không đưa ví dụ nào, dù có TỪ ĐANG HỌC reluctant (adj) — miễn cưỡng và câu hỏi hỏi đúng về từ đó (quy tắc 4 cho phép trả lời từ word). Không đạt điều kiện d10 (ví dụ đúng nghĩa, từ loại, có bản dịch). Nghi do quy tắc 5 ('không đủ căn cứ') thắng quy tắc 4 khi TÀI LIỆU rỗng.",
+      "grade_claude": "sai",
+      "grade_final": "sai",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d11",
@@ -819,7 +843,11 @@
       },
       "c_machine": null,
       "grade_cc": "mot_phan",
-      "reason_cc": "Nội dung đúng và đúng ý câu nối tiếp: có yesterday thì dùng quá khứ đơn — gram_013 'khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn'; ví dụ tự đặt (lost my keys yesterday / have lost my keys) đúng với gram_013. Nhưng trích nguồn hỏng: LLM viết '[Tài liệu 1]' thay vì '[1]' nên source_ids rỗng và chuỗi '[Tài liệu 1]' còn sót trong answer."
+      "reason_cc": "Nội dung đúng và đúng ý câu nối tiếp: có yesterday thì dùng quá khứ đơn — gram_013 'khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn'; ví dụ tự đặt (lost my keys yesterday / have lost my keys) đúng với gram_013. Nhưng trích nguồn hỏng: LLM viết '[Tài liệu 1]' thay vì '[1]' nên source_ids rỗng và chuỗi '[Tài liệu 1]' còn sót trong answer.",
+      "grade_claude": "mot_phan",
+      "grade_final": "mot_phan",
+      "grade_source": "khop",
+      "hieu_decision": null
     },
     {
       "id": "d12",
@@ -905,5 +933,29 @@
     "cases": "kb/eval_llm_cases.jsonl",
     "cases_sha256": "67765c422b538afb967172a83416de3187a0d5b07587dd3e520226a84ea92dc0"
   },
-  "graded_by_cc": true
+  "graded_by_cc": true,
+  "verdict": {
+    "A": {
+      "pass_n": 12,
+      "n": 12,
+      "pass": true
+    },
+    "C": {
+      "pass_n": 5,
+      "n": 5,
+      "pass": true
+    },
+    "B": {
+      "dung": 3,
+      "sai": 1,
+      "n": 6,
+      "min_dung": 5,
+      "pass": false
+    },
+    "word_only": {
+      "d10": "sai"
+    },
+    "word_only_pass": false,
+    "pass": false
+  }
 }

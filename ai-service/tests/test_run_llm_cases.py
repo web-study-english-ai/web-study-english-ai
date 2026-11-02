@@ -201,3 +201,55 @@ def test_observations():
     assert obs["fallback_used"] == ["d02"] and obs["finish_length"] == ["d02"]
     assert obs["llm_calls"] == 2 and obs["tokens"]["total"] == 20
     assert obs["latency_ms"]["n"] == 2
+
+
+# --- Kiem cheo va ket luan -----------------------------------------------------------------------
+
+
+def graded_report(cc):
+    rows = [full_row(id=i) for i in ("d01", "d02", "d03", "d04", "d05", "d11")]
+    rows.append(full_row(id="d10", expected="word_only", source_ids=[]))
+    rows += [full_row(id=i, expected="refuse", answer=pr.TEXT_OUT_OF_SCOPE, source_ids=[])
+             for i in ("d06", "d07", "d09", "d12")]
+    rows.append(full_row(id="d08", expected="refuse", answer=pr.TEXT_NO_CONTEXT, source_ids=[]))
+    rep = report(rows)
+    rc.apply_grades(rep, {i: {"grade_cc": g, "reason_cc": "r"} for i, g in cc.items()})
+    return rep
+
+
+V1_CC = {"d01": "dung", "d02": "mot_phan", "d03": "dung", "d04": "mot_phan", "d05": "sai", "d10": "sai",
+         "d11": "mot_phan"}
+
+
+def test_crosscheck_v1_shape():
+    rep = graded_report(V1_CC)
+    cross = {i: {"grade_claude": g} for i, g in V1_CC.items()}
+    cross["d04"] = {"grade_claude": "dung", "hieu": "dung"}
+    rc.apply_crosscheck(rep, cross)
+    by = {r["id"]: r for r in rep["rows"]}
+    assert (by["d04"]["grade_final"], by["d04"]["grade_source"], by["d04"]["hieu_decision"]) == \
+        ("dung", "hieu_quyet", "dung")
+    assert (by["d05"]["grade_final"], by["d05"]["grade_source"]) == ("sai", "khop")
+    v = rep["verdict"]
+    assert v["A"]["pass"] and v["C"] == {"pass_n": 5, "n": 5, "pass": True}
+    assert (v["B"]["dung"], v["B"]["sai"], v["B"]["pass"]) == (3, 1, False)
+    assert v["word_only_pass"] is False and v["pass"] is False
+    md = rc.report_markdown(rep)
+    assert "Kết luận (sau kiểm chéo)" in md and "Hiếu quyết (nếu lệch): dung" in md
+
+
+def test_crosscheck_requires_hieu_on_mismatch_and_all_ids():
+    rep = graded_report(V1_CC)
+    cross = {i: {"grade_claude": g} for i, g in V1_CC.items()}
+    cross["d04"] = {"grade_claude": "dung"}
+    with pytest.raises(ValueError):
+        rc.apply_crosscheck(rep, cross)
+    with pytest.raises(ValueError):
+        rc.apply_crosscheck(rep, {"d01": {"grade_claude": "dung"}})
+
+
+def test_verdict_pass_when_5_of_6_and_no_sai():
+    cc = {i: "dung" for i in ("d01", "d02", "d03", "d04", "d05", "d10")} | {"d11": "mot_phan"}
+    rep = graded_report(cc)
+    rc.apply_crosscheck(rep, {i: {"grade_claude": g} for i, g in cc.items()})
+    assert rep["verdict"]["B"]["pass"] and rep["verdict"]["pass"]
