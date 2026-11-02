@@ -116,13 +116,13 @@ def test_health_ok_when_only_embedder_missing(client, monkeypatch):
     res = client.get("/health")
     assert res.status_code == 200
     assert res.json()["status"] == "ok"
-    assert res.json()["models"] == ["fsrs"]
+    assert res.json()["models"] == ["fsrs", "intent"]
 
 
 def test_health_lists_embedder_when_loaded(client):
     res = client.get("/health")
     assert res.status_code == 200
-    assert res.json()["models"] == ["fsrs", "embedder"]
+    assert res.json()["models"] == ["fsrs", "embedder", "intent"]
 
 
 def test_health_degraded_when_fsrs_missing_even_with_embedder(client, monkeypatch):
@@ -130,4 +130,4 @@ def test_health_degraded_when_fsrs_missing_even_with_embedder(client, monkeypatc
     res = client.get("/health")
     assert res.status_code == 503
     assert res.json()["status"] == "degraded"
-    assert res.json()["models"] == ["embedder"]
+    assert res.json()["models"] == ["embedder", "intent"]

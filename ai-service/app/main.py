@@ -13,6 +13,7 @@ from app.config import settings
 from app.models.weights import load_fsrs
 from app.routers import health, rag, retention, vision
 from app.services.embedder import Embedder
+from app.services.intent import IntentClassifier
 
 logging.basicConfig(
     level=logging.INFO,
@@ -38,6 +39,17 @@ def load_embedder() -> Embedder | None:
     return embedder
 
 
+def load_intent() -> IntentClassifier | None:
+    """Nap bo phan loai y dinh (file JSON, numpy). Loi thi None: pipeline bo luat 2, dich vu van len."""
+    try:
+        clf = IntentClassifier.load()
+    except Exception:
+        logger.exception("Nap bo phan loai y dinh that bai")
+        return None
+    logger.info("Da nap bo phan loai y dinh (tau=%.2f)", clf.tau)
+    return clf
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Nap model ML mot lan khi khoi dong, giai phong khi tat (quy tac 4).
@@ -47,7 +59,7 @@ async def lifespan(app: FastAPI):
     """
     model, meta = load_fsrs(settings)
     embedder = load_embedder() if settings.embedder_enabled else None
-    app.state.models = {"fsrs": model, "embedder": embedder}
+    app.state.models = {"fsrs": model, "embedder": embedder, "intent": load_intent()}
     app.state.model_meta = meta
     yield
     app.state.models.clear()

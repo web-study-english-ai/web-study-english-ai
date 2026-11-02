@@ -7,6 +7,8 @@ from typing import Literal
 from pydantic import Field, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
+from app.services import pipeline_rules as rules
+
 # ai-service/
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -51,6 +53,11 @@ class Settings(BaseSettings):
     # Dockerfile bat true vi mo hinh da nuong vao image -> khong goi Hub luc khoi dong.
     # KHONG dung HF_HUB_OFFLINE toan cuc: load_fsrs van can tai params.json tu Hub.
     embedder_local_files_only: bool = False
+
+    # --- Pipeline truy hoi (WSEA-127). Mac dinh = luat chot truoc trong pipeline_rules.py ---
+    pipeline_k_prompt: int = Field(default=rules.K_PROMPT, ge=1, le=20)
+    pipeline_k_vocab: int = Field(default=rules.K_VOCAB, ge=0, le=10)
+    pipeline_max_top1_distance: float = Field(default=rules.MAX_TOP1_DISTANCE, ge=0, le=2)
 
     # Token Hugging Face - repo trong so la private nen bat buoc khi source=hub
     hf_token: SecretStr | None = None

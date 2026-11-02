@@ -1,4 +1,4 @@
-"""Router /assistant - sinh vector cau hoi (/embed) va tro ly hoi dap (/ask, stub)."""
+"""Router /assistant - vector cau hoi (/embed), pipeline truy hoi (/rank), tro ly hoi dap (/ask, stub)."""
 
 import logging
 import time
@@ -6,9 +6,19 @@ import time
 from fastapi import APIRouter, Depends, HTTPException, Request, status
 from starlette.concurrency import run_in_threadpool
 
+from app.config import settings
 from app.deps import verify_internal_api_key
-from app.models.schemas import AskRequest, AskResponse, EmbedRequest, EmbedResponse
+from app.models.schemas import (
+    AskRequest,
+    AskResponse,
+    EmbedRequest,
+    EmbedResponse,
+    RankContext,
+    RankIntent,
+    RankResponse,
+)
 from app.services.embedder import DIM, MODEL_NAME, MODEL_REVISION
+from app.services.pipeline import run_pipeline
 
 logger = logging.getLogger(__name__)
 
@@ -53,6 +63,52 @@ async def embed(payload: EmbedRequest, request: Request) -> EmbedResponse:
         model=MODEL_NAME,
         revision=MODEL_REVISION,
         dim=DIM,
+    )
+
+
+@router.post("/rank", response_model=RankResponse)
+async def rank(payload: AskRequest, request: Request) -> RankResponse:
+    """Pipeline truy hoi truoc LLM: quyet dinh tra loi/chan + chon ngu canh (WSEA-127).
+
+    Cung body voi /ask. Luat o app/services/pipeline_rules.py.
+    """
+    models = request.app.state.models
+    embedder = models.get("embedder")
+    if embedder is None:
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Mo hinh embedding chua nap",
+        )
+
+    try:
+        result = await run_in_threadpool(
+            run_pipeline,
+            payload,
+            embedder,
+            models.get("intent"),
+            k_prompt=settings.pipeline_k_prompt,
+            k_vocab=settings.pipeline_k_vocab,
+            max_top1_distance=settings.pipeline_max_top1_distance,
+        )
+    except ValueError as exc:
+        # check_vectors / IntentClassifier bao vector hong.
+        logger.error("Pipeline loi vector/y dinh: %s", exc)
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail="Mo hinh embedding hoac y dinh tra ket qua khong hop le",
+        ) from exc
+
+    request.state.timings = result.timings
+    logger.info("rank: %s (%s), %d doan", result.decision, result.reason, len(result.contexts))
+
+    return RankResponse(
+        decision=result.decision,
+        reason=result.reason,
+        intent=None if result.intent is None else RankIntent(
+            label=result.intent.label, confidence=result.intent.confidence),
+        contexts=[RankContext(id=c.id, distance=c.distance, rank=i)
+                  for i, c in enumerate(result.contexts, 1)],
+        vocab=[v.term for v in result.vocab],
     )
 
 
