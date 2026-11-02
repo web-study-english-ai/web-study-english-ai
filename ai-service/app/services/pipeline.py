@@ -71,8 +71,8 @@ def _intent_blocks(req, intent_clf, intent: IntentResult) -> bool:
 
 
 def _top1_too_far(req, max_top1_distance: float) -> bool:
-    """Luat 3: contexts rong thi khong co top-1 -> khong ap."""
-    if not req.contexts or _has_exact(req.vocab):
+    """Luat 3: contexts rong thi khong co top-1 -> khong ap. Co word hoac vocab exact -> mien."""
+    if not req.contexts or _has_exact(req.vocab) or req.word is not None:
         return False
     return min(c.distance for c in req.contexts) > max_top1_distance
 
@@ -92,8 +92,8 @@ def run_pipeline(req, embedder, intent_clf, *, k_prompt: int = rules.K_PROMPT,
     timings: dict[str, float] = {}
     suffix = "" if intent_clf is not None else ";" + REASON_NO_INTENT
 
-    # Luat 1: khong embed gi ca.
-    if not req.contexts and not req.vocab:
+    # Luat 1: khong embed gi ca. Co word thi van tra loi duoc (LLM dung word).
+    if not req.contexts and not req.vocab and req.word is None:
         return PipelineResult(rules.NO_CONTEXT, REASON_EMPTY + suffix, None, timings=timings)
 
     intent = None

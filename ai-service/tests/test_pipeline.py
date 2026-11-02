@@ -140,6 +140,26 @@ def test_rule3_uses_min_distance_even_if_unsorted():
     assert res.decision == rules.ANSWER
 
 
+WORD = {"term": "since", "pos": "prep", "meaning_vi": "kể từ"}
+
+
+def test_rule1_with_word_answers_with_empty_lists():
+    res = run(req(contexts=[], word=WORD), FakeIntent())
+    assert (res.decision, res.reason) == (rules.ANSWER, "ok")
+    assert res.contexts == [] and res.vocab == []
+
+
+def test_rule3_with_word_answers():
+    res = run(req(contexts=[ctx("g", 0.9)], word=WORD), FakeIntent())
+    assert res.decision == rules.ANSWER
+    assert [c.id for c in res.contexts] == ["g"]
+
+
+def test_rule3_without_word_still_blocks():
+    res = run(req(contexts=[ctx("g", 0.9)], vocab=[voc("x", "vector", 0.1)]), FakeIntent())
+    assert (res.decision, res.reason) == (rules.NO_CONTEXT, "top1_too_far")
+
+
 def test_rule3_exempt_with_exact_vocab():
     res = run(req(contexts=[ctx("g", 0.9)], vocab=[voc("since", "exact", 0.0)]), FakeIntent())
     assert res.decision == rules.ANSWER

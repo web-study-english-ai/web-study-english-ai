@@ -5,12 +5,15 @@ Ly do tung hang so: docs/DECISIONS.md muc "2026-11-02 — WSEA-127".
 
 Pipeline chay SAU khi backend gui ung vien (contexts/vocab/history, hop dong v0.3)
 va TRUOC LLM. Luat ap theo thu tu, luat dau tien khop thi dung:
-  1) contexts rong VA vocab rong                                   -> NO_CONTEXT
+  1) contexts rong VA vocab rong VA word null                      -> NO_CONTEXT
   2) y dinh ngoai_pham_vi VA confidence >= tau (doc tu file trong so)
      VA word null VA khong co vocab match="exact" VA history rong  -> OUT_OF_SCOPE
-  3) distance top-1 > MAX_TOP1_DISTANCE VA khong co vocab exact    -> NO_CONTEXT
+  3) distance top-1 > MAX_TOP1_DISTANCE VA khong co vocab exact
+     VA word null                                                  -> NO_CONTEXT
      (contexts rong thi khong co top-1 -> bo qua luat nay)
   4) con lai                                                       -> ANSWER
+     (contexts + vocab rong nhung co word -> ANSWER voi danh sach rong, LLM dung word)
+Sua 02/11 sau de7b528, truoc kiem offline: luat 1 va 3 them "VA word null" (DECISIONS muc d).
 Buoc xep hang lai = identity (rerank TAT o WSEA-126).
 """
 

@@ -444,3 +444,13 @@ Bộ câu: 31 câu dương `kb/eval_questions.csv` + 12 câu âm `kb/eval_negati
     - Phạm vi: `intent_train.csv` + `intent_test.csv` (451 câu), quét thêm cột câu hỏi của các file nguồn `kb/intent/raw/*.txt` (475 câu).
     - Kết quả: **0 câu trùng** ở cả hai, không có qid nào. Bộ ý định không học thuộc câu kiểm. Không sửa luật vì kết quả này.
   - **Số chính thức** của pipeline là bộ 60 câu do Phúc soạn (WSEA-141), không phải bộ 43 câu này.
+
+#### d. Sửa luật 02/11 (sau commit `de7b528`, TRƯỚC khi chạy kiểm offline)
+
+- **Lỗ hổng**: luật 1 và luật 3 chưa miễn chặn khi có `word`. Người học đang ở thẻ từ hỏi "cho ví dụ với từ này" → backend gửi `word`. Lúc đó có thể không có đoạn ngữ pháp gần (top-1 > 0,22), và cũng không có `vocab` exact (câu hỏi không chứa term). Theo luật cũ, câu này bị `"no_context"`, dù riêng `word` đã đủ thông tin để trả lời.
+- **Sửa**:
+  - Luật 1: `contexts` rỗng VÀ `vocab` rỗng VÀ `word` null → `"no_context"`.
+  - Luật 3: distance top-1 > `MAX_TOP1_DISTANCE` VÀ không có `vocab` exact VÀ `word` null → `"no_context"`.
+  - Ca `contexts` rỗng + `vocab` rỗng + có `word` → `"answer"` với `contexts = []`, `vocab = []`; LLM dùng `word`.
+  - Luật 2 vốn đã miễn khi có `word`, không đổi. Hằng số trong `pipeline_rules.py` không đổi.
+- **Không ảnh hưởng số liệu B3**: cả 43 câu kiểm offline đều có `word` = null, nên quyết định của từng câu giống hệt dưới luật cũ và luật mới.
