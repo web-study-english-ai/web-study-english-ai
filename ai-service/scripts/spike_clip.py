@@ -65,6 +65,12 @@ def judge(label: str, top: list[dict], label_set: set[str]) -> dict:
             "top1": in_set and rank == 1, "top5": in_set and rank is not None and rank <= 5}
 
 
+def prediction_row(label: str, top: list[dict], label_set: set[str], latency_ms: float) -> dict:
+    """Ket qua mot anh. Danh sach du doan o 'predictions' (KHONG trung khoa bool 'top5' cua judge)."""
+    return {"predictions": [{"word": x["word"], "score": round(x["score"], 4)} for x in top],
+            "latency_ms": round(latency_ms, 1), **judge(label, top, label_set)}
+
+
 def accuracy(rows: list[dict]) -> dict:
     scored = [r for r in rows if r.get("in_label_set") and not r.get("error")]
     n = len(scored)
@@ -147,13 +153,12 @@ def run(args) -> dict:
         try:
             top = clf.predict(pp.load_image_file(p))
             ms.append((time.perf_counter() - t) * 1000)
-            row.update(top5=[{"word": x["word"], "score": round(x["score"], 4)} for x in top],
-                       latency_ms=round(ms[-1], 1), **judge(label, top, label_set))
+            row.update(prediction_row(label, top, label_set, ms[-1]))
         except pp.ImageError as exc:
             row.update(error=exc.code, message=exc.message, **judge(label, [], label_set))
         rows.append(row)
         mark = "—" if not row["in_label_set"] else ("TOP1" if row["top1"] else ("top5" if row["top5"] else "sai"))
-        tops = ", ".join(f"{x['word']} {x['score']:.3f}" for x in row.get("top5", [])) or row.get("error")
+        tops = ", ".join(f"{x['word']} {x['score']:.3f}" for x in row.get("predictions", [])) or row.get("error")
         print(f"{p.name:24s} [{label}] {mark:5s} | {tops}", flush=True)
     rss_end = rss_mib()
 

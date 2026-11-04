@@ -32,6 +32,16 @@ def test_judge():
     assert sc.judge("fan", top("fan"), s) == {"in_label_set": False, "rank": 1, "top1": False, "top5": False}
 
 
+def test_prediction_row_keeps_list_and_flags():  # bug lan chay 1: khoa 'top5' bi trung
+    row = sc.prediction_row("cup", [{"word": "cup", "score": 0.91234}, {"word": "mug", "score": 0.05}],
+                            {"cup"}, 123.456)
+    assert row["predictions"] == [{"word": "cup", "score": 0.9123}, {"word": "mug", "score": 0.05}]
+    assert (row["top1"], row["top5"], row["rank"], row["latency_ms"]) == (True, True, 1, 123.5)
+    base = {"file": "cup_09.jpg"}
+    base.update(row)  # dung nhu trong run(): khong loi trung khoa
+    assert base["file"] == "cup_09.jpg"
+
+
 def test_accuracy_excludes_out_of_set_and_errors():
     rows = [{"in_label_set": True, "top1": True, "top5": True},
             {"in_label_set": True, "top1": False, "top5": True},
