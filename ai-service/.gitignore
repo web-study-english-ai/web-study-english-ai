@@ -20,6 +20,8 @@ data/
 !kb/*.csv
 !kb/intent/*.csv
 !kb/intent/review/*.csv
+# WSEA-141: ket qua cham that (141_cham.csv sau khi Phuc cham) phai commit — docs/eval/WSEA-141_tieu_chi.md muc 4.3b
+!reports/141_*.csv
 kb/report.json
 kb/preview.md
 
