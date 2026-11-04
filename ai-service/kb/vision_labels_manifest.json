@@ -1,0 +1,53 @@
+{
+  "task": "WSEA-152",
+  "rule_version": "v1-2026-11-04",
+  "rule_doc": "docs/vision/WSEA-152_tap_nhan_va_tieu_chi.md",
+  "source": {
+    "path": "backend/prisma/data/vocab_7000.csv",
+    "last_commit": "8c95c1a3df3c1177c735a24bcf0026298e1270aa",
+    "blob_at_head": "d3f3b51f72c1a5a41217a5c70f08e37742c05662",
+    "sha256": "546776fd6defeb7c4fa2ff6a8a3c850d83d5caad743be6939fdfa515b03793d7",
+    "dirty": false
+  },
+  "output": {
+    "path": "ai-service/kb/vision_labels.csv",
+    "sha256": "1348787f1bd2774e95048d743daf756343b330041e8d00cf082934d371784f0c",
+    "n_labels": 449
+  },
+  "stats": {
+    "total": 7000,
+    "concrete_noun": 1609,
+    "cefr_le_b1": 952,
+    "dropped": {
+      "chu_de": 178,
+      "nguoi": 71,
+      "khong_chup_duoc": 70,
+      "da_nghia_hoac_chat_lieu": 96,
+      "tu_ghep": 2,
+      "noi_chon": 86
+    },
+    "kept": 449,
+    "cefr": {
+      "A1": 80,
+      "A2": 160,
+      "B1": 209
+    },
+    "topic": {
+      "NC": 148,
+      "AU": 82,
+      "TN": 68,
+      "DL": 35,
+      "GI": 32,
+      "NG": 28,
+      "KH": 17,
+      "GT": 12,
+      "SK": 8,
+      "HT": 7,
+      "XH": 3,
+      "KG": 3,
+      "TG": 2,
+      "KT": 2,
+      "CT": 2
+    }
+  }
+}
