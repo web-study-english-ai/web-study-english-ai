@@ -1,0 +1,404 @@
+{
+  "task": "WSEA-152",
+  "step": "spike",
+  "created_at": "2026-11-04T13:15:43+00:00",
+  "code_commit": "e35cf6dac349c1d6f84c0ce02dfc5fce474631a6",
+  "model": "openai/clip-vit-base-patch32",
+  "revision": "3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+  "templates": [
+    "a photo of a {w}.",
+    "a close-up photo of a {w}.",
+    "a photo of the {w}."
+  ],
+  "logit_scale": 100.0,
+  "labels": {
+    "n": 449,
+    "rule_version": "v1-2026-11-04",
+    "sha256": "1348787f1bd2774e95048d743daf756343b330041e8d00cf082934d371784f0c"
+  },
+  "env": {
+    "python": "3.13.12",
+    "torch": "2.14.0+cpu",
+    "transformers": "5.22.0",
+    "threads": 2,
+    "cpu": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "machine": "laptop (local)"
+  },
+  "n_images": 10,
+  "accuracy": {
+    "n_scored": 9,
+    "n_not_in_label_set": 1,
+    "n_error": 0,
+    "top1": 0.4444,
+    "top5": 0.7778,
+    "top1_hits": 4,
+    "top5_hits": 7
+  },
+  "latency_ms_per_image": {
+    "n": 9,
+    "first_ms": 1038.5,
+    "p50": 102.0,
+    "p95": 121.7,
+    "max": 124.8,
+    "mean": 107.9
+  },
+  "ram_mib": {
+    "before_load": 198.1,
+    "after_load": 368.8,
+    "after_predict": 881.5,
+    "delta": 683.4
+  },
+  "timing_s": {
+    "model_load": 5.63,
+    "label_vectors": 8.09
+  },
+  "disk_bytes": {
+    "model": {
+      "snapshot": "<hf_cache>/models--openai--clip-vit-base-patch32/snapshots/3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268",
+      "files": {
+        "config.json": 4186,
+        "merges.txt": 524657,
+        "preprocessor_config.json": 316,
+        "pytorch_model.bin": 605247071,
+        "special_tokens_map.json": 389,
+        "tokenizer.json": 2224041,
+        "tokenizer_config.json": 592,
+        "vocab.json": 862328
+      },
+      "total_bytes": 608863580
+    },
+    "label_vectors_npy": 919680
+  },
+  "rows": [
+    {
+      "file": "arm_01.jpg",
+      "bytes": 123506,
+      "sha256": "904adf6e89da05bf8bf2ca8264950a8a578befd562f5dfc01943eee85a57a517",
+      "label": "arm",
+      "predictions": [
+        {
+          "word": "arm",
+          "score": 0.4166
+        },
+        {
+          "word": "sleeve",
+          "score": 0.1192
+        },
+        {
+          "word": "bandage",
+          "score": 0.0705
+        },
+        {
+          "word": "elbow",
+          "score": 0.0394
+        },
+        {
+          "word": "wrist",
+          "score": 0.0376
+        }
+      ],
+      "latency_ms": 1038.5,
+      "in_label_set": true,
+      "rank": 1,
+      "top1": true,
+      "top5": true
+    },
+    {
+      "file": "book_03.jpg",
+      "bytes": 105560,
+      "sha256": "61ec2fd192e1bbe5160e9073bd3d89b5717a0df6bf87915d9b7cfb6441448701",
+      "label": "book",
+      "predictions": [
+        {
+          "word": "textbook",
+          "score": 0.6287
+        },
+        {
+          "word": "guidebook",
+          "score": 0.126
+        },
+        {
+          "word": "dictionary",
+          "score": 0.1032
+        },
+        {
+          "word": "book",
+          "score": 0.0609
+        },
+        {
+          "word": "folder",
+          "score": 0.0283
+        }
+      ],
+      "latency_ms": 108.1,
+      "in_label_set": true,
+      "rank": 4,
+      "top1": false,
+      "top5": true
+    },
+    {
+      "file": "computer_07.jpg",
+      "bytes": 205124,
+      "sha256": "3039b5803e684abb13131b39ffb95fedf147463a76443a02f0783f81871830c3",
+      "label": "computer",
+      "predictions": [
+        {
+          "word": "screen",
+          "score": 0.3377
+        },
+        {
+          "word": "computer",
+          "score": 0.2521
+        },
+        {
+          "word": "pc",
+          "score": 0.1359
+        },
+        {
+          "word": "desk",
+          "score": 0.1048
+        },
+        {
+          "word": "webcam",
+          "score": 0.0142
+        }
+      ],
+      "latency_ms": 117.0,
+      "in_label_set": true,
+      "rank": 2,
+      "top1": false,
+      "top5": true
+    },
+    {
+      "file": "cup_09.jpg",
+      "bytes": 164118,
+      "sha256": "bbbd4880a41a4f8ca9003192dd0d34d1a42bf2ebc2fd96f873c3025d6d4d2d26",
+      "label": "cup",
+      "predictions": [
+        {
+          "word": "mug",
+          "score": 0.7433
+        },
+        {
+          "word": "cup",
+          "score": 0.0909
+        },
+        {
+          "word": "tea",
+          "score": 0.0509
+        },
+        {
+          "word": "coffee",
+          "score": 0.0307
+        },
+        {
+          "word": "jug",
+          "score": 0.0134
+        }
+      ],
+      "latency_ms": 124.8,
+      "in_label_set": true,
+      "rank": 2,
+      "top1": false,
+      "top5": true
+    },
+    {
+      "file": "fan_10.jpg",
+      "bytes": 254629,
+      "sha256": "dfa0fd4f4bb4bf7e3c182015398c152be1ff7c5a716f69b262a0b62dce86f9fa",
+      "label": "fan",
+      "predictions": [
+        {
+          "word": "heater",
+          "score": 0.3897
+        },
+        {
+          "word": "pc",
+          "score": 0.1602
+        },
+        {
+          "word": "antique",
+          "score": 0.0274
+        },
+        {
+          "word": "motor",
+          "score": 0.0262
+        },
+        {
+          "word": "alarm",
+          "score": 0.0261
+        }
+      ],
+      "latency_ms": 113.3,
+      "in_label_set": false,
+      "rank": null,
+      "top1": false,
+      "top5": false
+    },
+    {
+      "file": "floor_04.jpg",
+      "bytes": 233218,
+      "sha256": "8af4a050ec8bceb81be0b0f71ef5149389a26c5356ec7bc1ed90a1418e88e858",
+      "label": "floor",
+      "predictions": [
+        {
+          "word": "floor",
+          "score": 0.7088
+        },
+        {
+          "word": "carpet",
+          "score": 0.0185
+        },
+        {
+          "word": "pants",
+          "score": 0.0084
+        },
+        {
+          "word": "shower",
+          "score": 0.0072
+        },
+        {
+          "word": "wheelchair",
+          "score": 0.0053
+        }
+      ],
+      "latency_ms": 101.8,
+      "in_label_set": true,
+      "rank": 1,
+      "top1": true,
+      "top5": true
+    },
+    {
+      "file": "hand_06.jpg",
+      "bytes": 110706,
+      "sha256": "174cb9328f1fbb5ed346aa407012e6867abc214b174613c9af875e94c77ec0fb",
+      "label": "hand",
+      "predictions": [
+        {
+          "word": "hand",
+          "score": 0.4113
+        },
+        {
+          "word": "finger",
+          "score": 0.2109
+        },
+        {
+          "word": "thumb",
+          "score": 0.0882
+        },
+        {
+          "word": "wrist",
+          "score": 0.0702
+        },
+        {
+          "word": "skin",
+          "score": 0.0242
+        }
+      ],
+      "latency_ms": 100.9,
+      "in_label_set": true,
+      "rank": 1,
+      "top1": true,
+      "top5": true
+    },
+    {
+      "file": "head_02.jpg",
+      "bytes": 108289,
+      "sha256": "9aa4956224d49b83ab034986adb4be51531dc6049160dead9106ca610d8b2e11",
+      "label": "head",
+      "predictions": [
+        {
+          "word": "chin",
+          "score": 0.0424
+        },
+        {
+          "word": "earring",
+          "score": 0.0326
+        },
+        {
+          "word": "webcam",
+          "score": 0.0316
+        },
+        {
+          "word": "cheek",
+          "score": 0.029
+        },
+        {
+          "word": "face",
+          "score": 0.0274
+        }
+      ],
+      "latency_ms": 101.7,
+      "in_label_set": true,
+      "rank": null,
+      "top1": false,
+      "top5": false
+    },
+    {
+      "file": "phone_08.jpg",
+      "bytes": 145953,
+      "sha256": "3ef5c82f666ec8a8271e5ee22f9e397c6f1dc019314917b735cf76e74fff9b0c",
+      "label": "phone",
+      "predictions": [
+        {
+          "word": "phone",
+          "score": 0.4814
+        },
+        {
+          "word": "filter",
+          "score": 0.0833
+        },
+        {
+          "word": "box",
+          "score": 0.028
+        },
+        {
+          "word": "screen",
+          "score": 0.025
+        },
+        {
+          "word": "calculator",
+          "score": 0.0195
+        }
+      ],
+      "latency_ms": 101.7,
+      "in_label_set": true,
+      "rank": 1,
+      "top1": true,
+      "top5": true
+    },
+    {
+      "file": "wall_05.jpg",
+      "bytes": 129344,
+      "sha256": "4f381d446e3194c1ddc8e4b89a6f4cf302add45447f4d03f34fdc378f7e00bc1",
+      "label": "wall",
+      "predictions": [
+        {
+          "word": "floor",
+          "score": 0.2653
+        },
+        {
+          "word": "shower",
+          "score": 0.0926
+        },
+        {
+          "word": "dishwasher",
+          "score": 0.0781
+        },
+        {
+          "word": "freezer",
+          "score": 0.0597
+        },
+        {
+          "word": "water",
+          "score": 0.025
+        }
+      ],
+      "latency_ms": 102.0,
+      "in_label_set": true,
+      "rank": null,
+      "top1": false,
+      "top5": false
+    }
+  ]
+}
