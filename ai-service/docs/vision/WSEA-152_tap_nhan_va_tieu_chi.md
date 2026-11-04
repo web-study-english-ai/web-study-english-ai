@@ -53,7 +53,8 @@ Thực tế bị loại ở bước 4 (71 — `baby` không nằm trong 952 từ
 
 - `transformers.CLIPModel` + `CLIPProcessor`, `openai/clip-vit-base-patch32`, **ghim revision `3d74acf9a28c67741b2f4f2ea7635f0aaf6f0268`** (đọc metadata HF Hub 2026-11-04). Dùng `transformers` đã có trong `requirements.txt`; không thêm `open_clip`. CPU, `torch.no_grad()`, `model.eval()`.
 - Ở revision này trọng số chỉ có `pytorch_model.bin` (605.247.071 byte, fp32, định dạng pickle), **không có `.safetensors`**. Ghi nhận rủi ro; spike đo dung lượng thực tế trên đĩa.
-- **Pillow** cần cho `preprocess.py`; hiện có trong `.venv` (12.3.0, cài kèm matplotlib của môi trường dev) nhưng **không có trong `requirements.txt`** → nếu đưa vào image phải hỏi Hiếu trước khi thêm (CLAUDE.md: không thêm thư viện khi chưa hỏi).
+  - **Quyết định 2026-11-04 (Hiếu, trước khi tải mô hình)**: giữ `pytorch_model.bin` ở `main` @ `3d74acf9…` của repo gốc. KHÔNG dùng các PR cộng đồng `refs/pr/40…59` có `model.safetensors` (chưa được repo gốc merge, ai cũng mở được → rủi ro chuỗi cung ứng). Nạp an toàn: transformers 5.22 gọi `torch.load(..., weights_only=True)` mặc định (đã kiểm mã nguồn `modeling_utils.py`), không chạy mã tuỳ ý trong pickle.
+- **Pillow** cần cho `preprocess.py`: thêm `Pillow==12.3.0` vào `requirements.txt` (Hiếu duyệt 2026-11-04; trước đó chỉ có trong `.venv` qua matplotlib).
 - Vector nhãn: ensemble 3 template `"a photo of a {w}."`, `"a close-up photo of a {w}."`, `"a photo of the {w}."` — mã hoá từng câu, chuẩn hoá L2, lấy trung bình 3 vector rồi chuẩn hoá lại. **Tính sẵn MỘT lần**, lưu `.npy` + manifest (model, revision, template, số nhãn, sha256 tập nhãn, `rule_version`); không encode lại text mỗi lần dự đoán (CLAUDE.md quy tắc 5). Template chốt ở đây, **không chỉnh theo ảnh mẫu**.
 - Dự đoán: vector ảnh chuẩn hoá L2 → logit = `logit_scale.exp()` × cosine → softmax trên 449 nhãn → top-5 `{word, score}`.
 

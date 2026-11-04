@@ -20,3 +20,6 @@ tokenizers==0.23.3
 
 # --- WSEA-140 gọi LLM (Groq, API tương thích OpenAI) qua HTTP, không dùng SDK ---
 httpx==0.28.1
+
+# --- WSEA-152 nhận diện ảnh (CLIP): mở/xoay EXIF/đổi RGB ảnh. Ghim đúng bản đang có trong .venv ---
+Pillow==12.3.0
