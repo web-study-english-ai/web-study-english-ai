@@ -50,7 +50,9 @@ Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần ch�
 - Server local `uvicorn app.main:app --host 127.0.0.1 --port 8000` với `.env` thật (prompt v2 + hậu xử lý v3 như trên nhánh).
 - Mỗi câu: top-8 như mục 3 → `POST /assistant/rank` (lấy `decision` của server) → `POST /assistant/ask` JSON. Ngủ 30 s sau mỗi câu có gọi LLM (Groq ~8K token/phút/model; mỗi câu ~3k token).
 - Chạy **đủ 20 câu một lần**; `--limit` chỉ để chạy thử (`official: false`). Không chạy lại để chọn lần tốt hơn.
-- **Câu `degraded` do lỗi hạ tầng** (429 / `rate_limited`, hết giờ, 5xx, mất kết nối): chạy lại **đúng 1 lần**, sau **≥ 60 s** kể từ lần lỗi, ghi rõ trong báo cáo (qid, lỗi lần đầu, thời điểm chạy lại, kết quả). Vẫn `degraded` → không chấm, báo số câu. Không chạy lại câu đã có câu trả lời, dù câu trả lời kém. (Script hiện chưa tự chạy lại; làm bằng tay hoặc bổ sung script trước khi chạy thật — mọi thay đổi script commit trước lần chạy.)
+- **Câu `degraded` do lỗi hạ tầng** (429 / `rate_limited`, hết giờ, 5xx, mất kết nối): chạy lại **đúng 1 lần**, sau **≥ 60 s** kể từ lần lỗi, ghi rõ trong báo cáo (qid, lỗi lần đầu, thời điểm chạy lại, kết quả). Vẫn `degraded` → không chấm, báo số câu. Không chạy lại câu đã có câu trả lời, dù câu trả lời kém.
+- **Phân loại `reason` của câu degraded** (script tự làm, sửa 2026-11-04 trước khi có dữ liệu): `rate_limited` / `timeout` / `upstream_error` = hạ tầng → chờ 60 s, chạy lại đúng 1 lần, ghi `retried` + `first_reason`; `empty_content` / `bad_response` = phía mô hình → KHÔNG chạy lại, báo riêng số câu; `no_key` = lỗi cấu hình → dừng cả lượt, không ghi kết quả nào. Cuối lượt in số câu chạy lại và số câu vẫn degraded theo `reason`.
+- **Lớp regex backend (WSEA-143) không nằm trong phép đo**: script gọi thẳng dịch vụ AI, không qua backend, nên mọi số ở đây là của dịch vụ AI (pipeline 127 + LLM).
 - Đầu ra: `reports/141_gen.json` (câu hỏi, `decision`, ngữ cảnh đã chọn kèm văn bản, `answer`, `source_ids`, `degraded`, độ trễ) và `reports/141_cham.csv` (`qid, question, nguon, answer, diem, ghi_chu`; `nguon` = toàn văn các đoạn được trích; hai cột cuối để trống cho Phúc).
 
 ### 4.3. Thang chấm (người chấm: Phúc, chấm tay)

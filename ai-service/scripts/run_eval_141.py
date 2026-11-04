@@ -15,6 +15,9 @@ Tieu chi va thang cham: docs/eval/WSEA-141_tieu_chi.md (chot truoc khi chay that
   Moi cau: top-8 nhu tren -> POST /assistant/rank (lay decision cua server) -> POST /assistant/ask JSON.
   Ngu --sleep giay sau moi cau co goi LLM (Groq ~8K token/phut). Ket qua: reports/141_gen.json +
   reports/141_cham.csv (2 cot diem, ghi_chu de trong cho Phuc cham).
+  Cau degraded (tieu chi muc 4.2), theo reason trong 503: rate_limited/timeout/upstream_error -> cho
+  --retry-wait (>= 60 s) roi chay lai DUNG 1 lan (retried, first_reason); empty_content/bad_response ->
+  khong chay lai, bao rieng; no_key -> dung ca luot, KHONG ghi file nao.
 Khoa x-api-key doc INTERNAL_API_KEY tu .env, KHONG in/ghi. Goi HTTP co User-Agent rieng.
 """
 
@@ -24,6 +27,7 @@ import argparse
 import csv
 import json
 import random
+import re
 import sys
 import time
 import urllib.error
@@ -242,11 +246,95 @@ def retrieval_part(args) -> tuple[dict, list[dict], list, dict]:
     return report, rows, by_qid, chunks_by_id
 
 
-def gen_part(args, report: dict, by_qid: dict, chunks_by_id: dict) -> list[dict]:
-    key = sa.read_env_key(args.env)
-    if not key:
-        raise SystemExit("Thiếu INTERNAL_API_KEY trong .env / biến môi trường")
-    sa.wait_health(args.base, key)
+# --- Cau degraded (tieu chi muc 4.2): phan loai theo reason cua 503 /assistant/ask ---------------
+RETRY_REASONS = ("rate_limited", "timeout", "upstream_error")  # ha tang: cho RETRY_WAIT_S, chay lai 1 lan
+MODEL_REASONS = ("empty_content", "bad_response")              # phia mo hinh: KHONG chay lai, bao rieng
+FATAL_REASONS = ("no_key",)                                    # cau hinh: dung ca luot, khong ghi ket qua
+RETRY_WAIT_S = 60.0
+_REASON_RE = re.compile(r"\(([a-z_]+)\)\s*$")
+
+
+class FatalRunError(Exception):
+    """Loi cau hinh (vd server thieu LLM_API_KEY): dung ca luot chay, khong ghi ket qua."""
+
+
+def parse_reason(error_body: str) -> str | None:
+    """Body loi cua dich vu ({"detail": "Khong goi duoc LLM (<reason>)"}) -> reason; khong doc duoc -> None."""
+    try:
+        detail = json.loads(error_body).get("detail")
+    except (ValueError, AttributeError):
+        return None
+    m = _REASON_RE.search(detail) if isinstance(detail, str) else None
+    return m.group(1) if m else None
+
+
+def run_with_retry(call, body: dict, sleep=time.sleep, wait_s: float = RETRY_WAIT_S) -> dict:
+    """Goi call(body) -> row. Degraded: no_key -> FatalRunError; reason ha tang -> cho wait_s, chay lai
+    DUNG 1 lan (retried=True, first_reason); reason phia mo hinh hoac khac -> giu nguyen, khong chay lai."""
+    row = call(body)
+    row["retried"], row["first_reason"] = False, None
+    if not row.get("degraded"):
+        return row
+    if row.get("error_reason") in FATAL_REASONS:
+        raise FatalRunError(row["error_reason"])
+    if row.get("error_reason") not in RETRY_REASONS:
+        return row
+    first = row["error_reason"]
+    sleep(wait_s)
+    row = call(body)
+    if row.get("degraded") and row.get("error_reason") in FATAL_REASONS:
+        raise FatalRunError(row["error_reason"])
+    row["retried"], row["first_reason"] = True, first
+    return row
+
+
+def degraded_summary(rows: list[dict]) -> dict:
+    """So cau chay lai; cau van degraded theo reason; cau loi phia mo hinh (khong chay lai)."""
+    still: dict[str, int] = {}
+    for r in rows:
+        if r.get("degraded"):
+            k = r.get("error_reason") or "khac"
+            still[k] = still.get(k, 0) + 1
+    return {"retried": sum(bool(r.get("retried")) for r in rows),
+            "retried_ok": [r["qid"] for r in rows if r.get("retried") and not r.get("degraded")],
+            "still_degraded": dict(sorted(still.items())),
+            "model_errors": [r["qid"] for r in rows if r.get("degraded") and r.get("error_reason") in MODEL_REASONS]}
+
+
+def make_call(base: str, key: str, chunks_by_id: dict):
+    """call(body) -> row: /assistant/rank (decision cua server) roi /assistant/ask JSON."""
+    def call(body: dict) -> dict:
+        row: dict = {}
+        try:
+            with sa.request(base, "/assistant/rank", key, body) as r:
+                rank = json.loads(r.read())
+            row["decision"], row["reason"], row["intent"] = rank["decision"], rank["reason"], rank["intent"]
+            row["contexts"] = [{"id": c["id"], "distance": c["distance"], "text": chunks_by_id[c["id"]]["content"]}
+                               for c in rank["contexts"]]
+            t0 = time.perf_counter()
+            with sa.request(base, "/assistant/ask", key, body) as r:
+                ask = json.loads(r.read())
+            row.update(answer=ask["answer"], source_ids=ask["source_ids"], degraded=False, error_reason=None,
+                       latency_ms=round((time.perf_counter() - t0) * 1000))
+        except urllib.error.HTTPError as exc:
+            text = exc.read().decode("utf-8", "replace")
+            row.update(answer=None, source_ids=[], degraded=True, status=exc.code, error=text[:300],
+                       error_reason=parse_reason(text))
+        except (urllib.error.URLError, TimeoutError) as exc:
+            # loi phia may chay script (khong toi duoc server / het gio doc) -> coi nhu loi ha tang
+            row.update(answer=None, source_ids=[], degraded=True, error=type(exc).__name__,
+                       error_reason="timeout" if isinstance(exc, TimeoutError) else "upstream_error")
+        return row
+    return call
+
+
+def gen_part(args, report: dict, by_qid: dict, chunks_by_id: dict, call=None, sleep=time.sleep) -> list[dict]:
+    if call is None:
+        key = sa.read_env_key(args.env)
+        if not key:
+            raise SystemExit("Thiếu INTERNAL_API_KEY trong .env / biến môi trường")
+        sa.wait_health(args.base, key)
+        call = make_call(args.base, key, chunks_by_id)
     qids = report["gen_selection"]["qids"][: args.limit] if args.limit else report["gen_selection"]["qids"]
     out = []
     for n, qid in enumerate(qids, 1):
@@ -254,26 +342,13 @@ def gen_part(args, report: dict, by_qid: dict, chunks_by_id: dict) -> list[dict]
         body = cp.build_request(q["question"], ranked, dists, chunks_by_id).model_dump(mode="json")
         row = {"qid": qid, "kind": q["kind"], "group": q.get("group"), "gold": q.get("gold"),
                "question": q["question"], "candidates": [c["id"] for c in body["contexts"]]}
-        try:
-            with sa.request(args.base, "/assistant/rank", key, body) as r:
-                rank = json.loads(r.read())
-            row["decision"], row["reason"], row["intent"] = rank["decision"], rank["reason"], rank["intent"]
-            row["contexts"] = [{"id": c["id"], "distance": c["distance"], "text": chunks_by_id[c["id"]]["content"]}
-                               for c in rank["contexts"]]
-            t0 = time.perf_counter()
-            with sa.request(args.base, "/assistant/ask", key, body) as r:
-                ask = json.loads(r.read())
-            row.update(answer=ask["answer"], source_ids=ask["source_ids"], degraded=False,
-                       latency_ms=round((time.perf_counter() - t0) * 1000))
-        except urllib.error.HTTPError as exc:
-            row.update(answer=None, source_ids=[], degraded=True, status=exc.code,
-                       error=exc.read().decode("utf-8", "replace")[:300])
-        except (urllib.error.URLError, TimeoutError) as exc:
-            row.update(answer=None, source_ids=[], degraded=True, error=type(exc).__name__)
+        row.update(run_with_retry(call, body, sleep=sleep, wait_s=args.retry_wait))
         out.append(row)
-        print(f"[{n}/{len(qids)}] {qid}: {row.get('decision')} · degraded={row['degraded']}", flush=True)
+        print(f"[{n}/{len(qids)}] {qid}: {row.get('decision')} · degraded={row['degraded']}"
+              + (f" ({row['error_reason']})" if row["degraded"] else "")
+              + (f" · chạy lại sau lỗi {row['first_reason']}" if row["retried"] else ""), flush=True)
         if row.get("decision") == rules.ANSWER and n < len(qids):
-            time.sleep(args.sleep)  # Groq ~8K token/phut/model
+            sleep(args.sleep)  # Groq ~8K token/phut/model
     return out
 
 
@@ -287,27 +362,47 @@ def parse_args(argv):
     ap.add_argument("--base", default="http://127.0.0.1:8000")
     ap.add_argument("--env", type=Path, default=ROOT / ".env")
     ap.add_argument("--sleep", type=float, default=SLEEP_S)
+    ap.add_argument("--retry-wait", type=float, default=RETRY_WAIT_S,
+                    help="chờ bao lâu (s) trước khi chạy lại câu degraded do hạ tầng; tiêu chí: ≥ 60")
     return ap.parse_args(argv)
+
+
+def degraded_text(s: dict) -> str:
+    still = ", ".join(f"{k} {v}" for k, v in s["still_degraded"].items()) or "0"
+    return (f"Câu chạy lại: {s['retried']} (thành công: {', '.join(s['retried_ok']) or '—'}) · "
+            f"vẫn degraded theo reason: {still} · lỗi phía mô hình (không chạy lại): "
+            f"{', '.join(s['model_errors']) or '—'}")
 
 
 def main(argv: list[str] | None = None) -> int:
     if hasattr(sys.stdout, "reconfigure"):
         sys.stdout.reconfigure(encoding="utf-8")
     args = parse_args(argv)
+    if args.retry_wait < RETRY_WAIT_S and not args.limit:
+        raise SystemExit(f"--retry-wait phải ≥ {RETRY_WAIT_S:.0f} s cho lượt chính thức (tiêu chí mục 4.2)")
     report, _, by_qid, chunks_by_id = retrieval_part(args)
+    print(summary_text(report))
+    gen = None
+    if args.gen:
+        try:
+            gen_rows = gen_part(args, report, by_qid, chunks_by_id)
+        except FatalRunError as exc:
+            print(f"\nDỪNG — lỗi cấu hình phía dịch vụ ({exc}): không ghi kết quả nào.")
+            return 2
+        summary = degraded_summary(gen_rows)
+        gen = {"task": "WSEA-141", "part": "gen", "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+               "base": args.base, "limit": args.limit, "official": not args.limit, "retry_wait_s": args.retry_wait,
+               "selection": report["gen_selection"], "files": report["files"], "degraded": summary, "rows": gen_rows}
+        print("\n" + degraded_text(summary))
+    # Ghi sau cung: loi cau hinh o tren thi khong co file nao duoc ghi.
     args.out_dir.mkdir(parents=True, exist_ok=True)
     (args.out_dir / "141_retrieval.json").write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n",
                                                      encoding="utf-8")
-    print(summary_text(report))
-    if args.gen:
-        gen_rows = gen_part(args, report, by_qid, chunks_by_id)
-        gen = {"task": "WSEA-141", "part": "gen", "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
-               "base": args.base, "limit": args.limit, "official": not args.limit,
-               "selection": report["gen_selection"], "files": report["files"], "rows": gen_rows}
+    if gen is not None:
         (args.out_dir / "141_gen.json").write_text(json.dumps(gen, ensure_ascii=False, indent=2) + "\n",
                                                    encoding="utf-8")
-        write_cham_csv(args.out_dir / "141_cham.csv", cham_rows(gen_rows, chunks_by_id))
-        print(f"\nĐã ghi {ev.rel(args.out_dir)}/141_gen.json, 141_cham.csv ({len(gen_rows)} câu)")
+        write_cham_csv(args.out_dir / "141_cham.csv", cham_rows(gen["rows"], chunks_by_id))
+        print(f"Đã ghi {ev.rel(args.out_dir)}/141_gen.json, 141_cham.csv ({len(gen['rows'])} câu)")
     print(f"Đã ghi {ev.rel(args.out_dir)}/141_retrieval.json")
     return 0
 

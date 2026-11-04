@@ -135,3 +135,160 @@ def test_parse_args_defaults():
 @pytest.mark.parametrize("k", ["hit@1", "hit@5", "hit@8", "mrr@20"])
 def test_baseline_has_report_keys(k):
     assert isinstance(r141.BASELINE_31[k], float)
+
+
+# --- Chay lai cau degraded (tieu chi muc 4.2) ----------------------------------------------------
+
+
+def ok_row():
+    return {"decision": "answer", "answer": "đáp", "source_ids": ["g1"], "degraded": False, "error_reason": None}
+
+
+def bad_row(reason):
+    return {"decision": "answer", "answer": None, "source_ids": [], "degraded": True, "error_reason": reason}
+
+
+class FakeCall:
+    def __init__(self, *rows):
+        self.rows, self.n = list(rows), 0
+
+    def __call__(self, body):
+        self.n += 1
+        return dict(self.rows.pop(0))
+
+
+class FakeSleep:
+    def __init__(self):
+        self.calls = []
+
+    def __call__(self, s):
+        self.calls.append(s)
+
+
+@pytest.mark.parametrize("body, reason", [
+    ('{"detail": "Khong goi duoc LLM (rate_limited)"}', "rate_limited"),
+    ('{"detail": "Khong goi duoc LLM (no_key)"}', "no_key"),
+    ('{"detail": "Mo hinh embedding chua nap"}', None),
+    ("khong phai json", None),
+    ('{"detail": [{"loc": ["body"]}]}', None),
+])
+def test_parse_reason(body, reason):
+    assert r141.parse_reason(body) == reason
+
+
+@pytest.mark.parametrize("reason", r141.RETRY_REASONS)
+def test_retry_once_after_wait_then_ok(reason):
+    call, sleep = FakeCall(bad_row(reason), ok_row()), FakeSleep()
+    row = r141.run_with_retry(call, {}, sleep=sleep)
+    assert call.n == 2 and sleep.calls == [60.0]
+    assert (row["degraded"], row["retried"], row["first_reason"]) == (False, True, reason)
+
+
+def test_retry_only_once_even_if_still_degraded():
+    call, sleep = FakeCall(bad_row("timeout"), bad_row("rate_limited")), FakeSleep()
+    row = r141.run_with_retry(call, {}, sleep=sleep)
+    assert call.n == 2 and len(sleep.calls) == 1
+    assert (row["degraded"], row["error_reason"], row["retried"], row["first_reason"]) == \
+        (True, "rate_limited", True, "timeout")
+
+
+@pytest.mark.parametrize("reason", r141.MODEL_REASONS + (None, "khac"))
+def test_model_or_unknown_reason_not_retried(reason):
+    call, sleep = FakeCall(bad_row(reason)), FakeSleep()
+    row = r141.run_with_retry(call, {}, sleep=sleep)
+    assert call.n == 1 and sleep.calls == []
+    assert (row["degraded"], row["retried"]) == (True, False)
+
+
+def test_no_key_is_fatal_first_or_after_retry():
+    with pytest.raises(r141.FatalRunError):
+        r141.run_with_retry(FakeCall(bad_row("no_key")), {}, sleep=FakeSleep())
+    with pytest.raises(r141.FatalRunError):
+        r141.run_with_retry(FakeCall(bad_row("timeout"), bad_row("no_key")), {}, sleep=FakeSleep())
+
+
+def test_ok_first_time_no_retry():
+    row = r141.run_with_retry(FakeCall(ok_row()), {}, sleep=FakeSleep())
+    assert (row["retried"], row["first_reason"], row["degraded"]) == (False, None, False)
+
+
+def test_degraded_summary():
+    rows = [{"qid": "a", **ok_row(), "retried": True}, {"qid": "b", **bad_row("timeout"), "retried": True},
+            {"qid": "c", **bad_row("empty_content"), "retried": False},
+            {"qid": "d", **bad_row("bad_response"), "retried": False}, {"qid": "e", **ok_row(), "retried": False}]
+    s = r141.degraded_summary(rows)
+    assert s == {"retried": 2, "retried_ok": ["a"], "still_degraded": {"bad_response": 1, "empty_content": 1,
+                                                                        "timeout": 1},
+                 "model_errors": ["c", "d"]}
+    assert "Câu chạy lại: 2" in r141.degraded_text(s)
+
+
+# --- gen_part va main voi call gia (khong mang) --------------------------------------------------
+
+CHUNKS = {f"g{i}": {"id": f"g{i}", "content": f"noi dung {i}", "source": "WSEA", "topic": "t", "cefr": "A1"}
+          for i in range(10)}
+RANKED = ([f"g{i}" for i in range(10)], [0.10 + 0.01 * i for i in range(10)])
+
+
+def gen_fixture(qids, tmp_path, **over):
+    report = {"gen_selection": {"seed": 141, "qids": qids}, "files": {}}
+    by_qid = {q: ({"qid": q, "question": f"câu {q}", "kind": "pos", "gold": ["g1"], "lang": "vi"}, RANKED)
+              for q in qids}
+    args = r141.parse_args(["--gen", "--out-dir", str(tmp_path / "out"), *over.get("argv", [])])
+    return args, report, by_qid
+
+
+def test_gen_part_three_branches(tmp_path):
+    args, report, by_qid = gen_fixture(["q1", "q2", "q3"], tmp_path)
+    call = FakeCall(bad_row("rate_limited"), ok_row(),  # q1: chay lai thanh cong
+                    bad_row("empty_content"),           # q2: loi mo hinh, khong chay lai
+                    ok_row())                           # q3: ok
+    sleep = FakeSleep()
+    rows = r141.gen_part(args, report, by_qid, CHUNKS, call=call, sleep=sleep)
+    assert call.n == 4
+    assert [(r["qid"], r["degraded"], r["retried"]) for r in rows] == \
+        [("q1", False, True), ("q2", True, False), ("q3", False, False)]
+    assert rows[0]["first_reason"] == "rate_limited" and rows[0]["candidates"] == RANKED[0][:8]
+    assert sleep.calls == [60.0, 30.0, 30.0]  # cho chay lai, roi nhip sau q1, q2 (khong sau cau cuoi)
+    s = r141.degraded_summary(rows)
+    assert s["retried"] == 1 and s["model_errors"] == ["q2"] and s["still_degraded"] == {"empty_content": 1}
+
+
+def test_gen_part_no_key_stops(tmp_path):
+    args, report, by_qid = gen_fixture(["q1", "q2"], tmp_path)
+    call = FakeCall(ok_row(), bad_row("no_key"))
+    with pytest.raises(r141.FatalRunError):
+        r141.gen_part(args, report, by_qid, CHUNKS, call=call, sleep=FakeSleep())
+
+
+def test_main_no_key_writes_nothing(tmp_path, monkeypatch, capsys):
+    args, report, by_qid = gen_fixture(["q1"], tmp_path)
+    report.update({"retrieval": {}, "n_positives": 1, "n_negatives": 0})
+    monkeypatch.setattr(r141, "retrieval_part", lambda a: (report, None, by_qid, CHUNKS))
+    monkeypatch.setattr(r141, "summary_text", lambda rep: "tom tat")
+
+    def fatal(*a, **k):
+        raise r141.FatalRunError("no_key")
+    monkeypatch.setattr(r141, "gen_part", fatal)
+    assert r141.main(["--gen", "--out-dir", str(tmp_path / "out")]) == 2
+    assert not (tmp_path / "out").exists()
+    assert "không ghi kết quả" in capsys.readouterr().out
+
+
+def test_main_writes_gen_with_degraded_summary(tmp_path, monkeypatch):
+    args, report, by_qid = gen_fixture(["q1"], tmp_path)
+    monkeypatch.setattr(r141, "retrieval_part", lambda a: (report, None, by_qid, CHUNKS))
+    monkeypatch.setattr(r141, "summary_text", lambda rep: "tom tat")
+    monkeypatch.setattr(r141, "gen_part", lambda *a, **k: [{"qid": "q1", "question": "câu", **bad_row("timeout"),
+                                                            "retried": True, "first_reason": "timeout"}])
+    assert r141.main(["--gen", "--out-dir", str(tmp_path / "out")]) == 0
+    import json
+    gen = json.loads((tmp_path / "out" / "141_gen.json").read_text(encoding="utf-8"))
+    assert gen["degraded"]["retried"] == 1 and gen["retry_wait_s"] == 60.0
+    assert gen["rows"][0]["retried"] is True and gen["rows"][0]["first_reason"] == "timeout"
+    assert (tmp_path / "out" / "141_cham.csv").exists() and (tmp_path / "out" / "141_retrieval.json").exists()
+
+
+def test_main_rejects_short_retry_wait_for_official_run():
+    with pytest.raises(SystemExit):
+        r141.main(["--gen", "--retry-wait", "5"])
