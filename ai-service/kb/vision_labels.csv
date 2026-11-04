@@ -1,0 +1,450 @@
+word,cefr,pos,meaning_vi,topic_code,rank
+book,A1,n,quyển sách,GI,92
+hand,A1,n,bàn tay,NG,113
+face,A1,n,khuôn mặt,NG,158
+head,A1,n,cái đầu; người đứng đầu,NG,166
+car,A1,n,"xe hơi, ô tô",DL,167
+train,A1,n,tàu hỏa,DL,191
+water,A1,n,nước,TN,221
+letter,A1,n,lá thư; chữ cái,GT,255
+eye,A1,n,con mắt,NG,283
+paper,A1,n,giấy; bài báo,NC,315
+computer,A1,n,máy tính,KH,318
+table,A1,n,cái bàn; bảng biểu,NC,337
+phone,A1,n,điện thoại,GT,365
+door,A1,n,cái cửa,NC,375
+foot,A1,n,bàn chân,NG,458
+fire,A1,n,lửa; hỏa hoạn,TN,494
+arm,A2,n,cánh tay,NG,502
+bed,A2,n,cái giường,NC,572
+wall,A2,n,bức tường,NC,600
+window,A2,n,cửa sổ,NC,612
+tree,A2,n,cái cây,TN,616
+floor,A2,n,sàn nhà; tầng,NC,629
+television,A2,n,"tivi, truyền hình",GI,670
+bus,A2,n,xe buýt,DL,684
+fish,A2,n,con cá,TN,700
+seat,A2,n,"chỗ ngồi, ghế",NC,723
+box,A2,n,cái hộp,NC,732
+dog,A2,n,con chó,TN,765
+dress,A2,n,"váy, đầm",NC,768
+hair,A2,n,tóc; lông,NG,782
+newspaper,A2,n,tờ báo,GT,798
+clock,A2,n,đồng hồ (treo/để bàn),TG,801
+clothes,A2,n,quần áo,NC,823
+screen,A2,n,màn hình,KH,824
+magazine,A2,n,tạp chí,GT,850
+telephone,A2,n,điện thoại,GT,898
+radio,A2,n,"đài, radio",GT,907
+chair,A2,n,cái ghế,NC,921
+ship,A2,n,con tàu (biển),DL,954
+leg,A2,n,"chân, cẳng chân",NG,958
+horse,A2,n,con ngựa,TN,999
+taxi,B1,n,xe taxi,DL,1008
+photograph,B1,n,bức ảnh,GI,1042
+ball,B1,n,quả bóng,GI,1061
+photo,B1,n,bức ảnh,GI,1068
+map,B1,n,bản đồ,DL,1072
+football,B1,n,bóng đá; bóng bầu dục,GI,1076
+ticket,B1,n,vé,DL,1108
+bag,B1,n,"cái túi, cặp",NC,1111
+plane,B1,n,máy bay,DL,1118
+bird,B1,n,con chim,TN,1130
+novel,B1,n,tiểu thuyết,GI,1137
+flower,B1,n,bông hoa,TN,1160
+boat,B1,n,con thuyền,DL,1163
+tire,B1,n,lốp xe,DL,1189
+cash,B1,n,tiền mặt,KT,1197
+sun,B1,n,mặt trời,TN,1219
+egg,B1,n,quả trứng,AU,1238
+wine,B1,n,rượu vang,AU,1246
+camera,B1,n,máy ảnh,KH,1247
+coffee,B1,n,cà phê,AU,1252
+branch,B1,n,cành cây; chi nhánh,TN,1262
+gift,B1,n,món quà,XH,1282
+mouth,B1,n,cái miệng,NG,1293
+gun,B1,n,khẩu súng,CT,1296
+skin,B1,n,da,NG,1315
+shoe,B1,n,giày,NC,1330
+cup,B1,n,"cái cốc, tách",NC,1344
+finger,B1,n,ngón tay,NG,1356
+root,B1,n,rễ (cây); gốc,TN,1382
+ice,B1,n,"nước đá, băng",TN,1406
+desk,B1,n,bàn làm việc,NC,1438
+tea,B1,n,trà,AU,1449
+shoulder,B1,n,vai,NG,1460
+bottle,B1,n,cái chai,NC,1464
+engine,B1,n,"động cơ, máy",KH,1466
+fruit,B1,n,"trái cây, quả",AU,1489
+tv,A1,n,"tivi, máy truyền hình; truyền hình",GT,2112
+album,A1,n,"tập ảnh, cuốn album ảnh; đĩa nhạc (tập hợp bài hát)",GI,2121
+leaf,A1,n,"lá cây, chiếc lá",TN,2135
+rose,A1,n,hoa hồng; cây hoa hồng,TN,2139
+apple,A1,n,quả táo,AU,2144
+bowl,A1,n,"cái bát, cái tô",NC,2146
+painting,A1,n,bức tranh (vẽ bằng màu); việc vẽ tranh,GI,2151
+flag,A1,n,lá cờ,XH,2153
+moon,A1,n,mặt trăng,TN,2154
+sugar,A1,n,đường (ăn),AU,2159
+chicken,A1,n,thịt gà; con gà,AU,2160
+bell,A1,n,cái chuông; tiếng chuông,NC,2164
+button,A1,n,"cái cúc, khuy áo; nút bấm",NC,2165
+shower,A1,n,"vòi hoa sen, buồng tắm vòi sen; cơn mưa rào",NC,2173
+cake,A1,n,"bánh ngọt, bánh kem",AU,2176
+pet,A1,n,"thú cưng, vật nuôi trong nhà",TN,2177
+cheese,A1,n,phô mai,AU,2181
+knee,A1,n,đầu gối,NG,2185
+rice,A1,n,gạo; cơm; cây lúa,AU,2192
+guitar,A1,n,đàn ghi-ta,GI,2197
+tiger,A1,n,con hổ,TN,2200
+chocolate,A1,n,sô-cô-la,AU,2202
+knife,A1,n,con dao,NC,2204
+lion,A1,n,con sư tử,TN,2206
+pen,A1,n,"cái bút, bút mực",HT,2207
+bread,A1,n,bánh mì,AU,2208
+pants,A1,n,quần dài,NC,2214
+pizza,A1,n,bánh pizza,AU,2219
+brush,A1,n,bàn chải; cây cọ (vẽ),NC,2224
+jacket,A1,n,áo khoác,NC,2225
+butter,A1,n,bơ (làm từ sữa),AU,2228
+juice,A1,n,"nước ép (trái cây, rau)",AU,2230
+rat,A1,n,"con chuột (cống, loại to)",TN,2231
+grass,A1,n,cỏ; bãi cỏ,TN,2232
+poster,A1,n,"áp phích, tranh dán tường",NC,2233
+potato,A1,n,khoai tây,AU,2234
+toilet,A1,n,bồn cầu; nhà vệ sinh,NC,2235
+cookie,A1,n,bánh quy,AU,2236
+snake,A1,n,con rắn,TN,2237
+pig,A1,n,"con lợn, con heo",TN,2241
+drum,A1,n,cái trống,GI,2242
+bean,A1,n,"hạt đậu, hạt đỗ; hạt (cà phê)",AU,2244
+cd,A1,n,"đĩa CD, đĩa nhạc",GI,2245
+vegetable,A1,n,"rau, rau củ",AU,2246
+cow,A1,n,"con bò cái, con bò",TN,2247
+glasses,A1,n,"kính đeo mắt, mắt kính",NC,2251
+bee,A1,n,con ong,TN,2252
+piano,A1,n,"đàn pi-a-nô, dương cầm",GI,2254
+candy,A1,n,kẹo,AU,2255
+beef,A1,n,thịt bò,AU,2257
+sandwich,A1,n,"bánh mì kẹp, bánh sandwich",AU,2258
+monkey,A1,n,con khỉ,TN,2262
+doll,A1,n,búp bê,GI,2267
+dvd,A1,n,"đĩa DVD, đĩa phim",GI,2271
+corn,A1,n,"ngô, bắp",AU,2274
+shelf,A1,n,"cái kệ, giá (để đồ)",NC,2277
+salad,A1,n,"món rau trộn, xa lát",AU,2279
+couch,A1,n,"ghế sofa, ghế dài (có đệm)",NC,2282
+rabbit,A1,n,con thỏ,TN,2285
+soup,A1,n,"súp, canh, món nước",AU,2288
+sheep,A1,n,con cừu,TN,2289
+garbage,A1,n,"rác, rác thải",NC,2293
+tomato,A1,n,quả cà chua,AU,2294
+banana,A1,n,quả chuối,AU,2295
+planet,A2,n,hành tinh,TN,2377
+drawing,A2,n,"bức vẽ, tranh vẽ; việc vẽ",GI,2396
+crown,A2,n,vương miện,NC,2412
+battery,A2,n,"pin, ắc quy",KH,2413
+salt,A2,n,muối,AU,2414
+mirror,A2,n,cái gương,NC,2427
+diamond,A2,n,kim cương; hình thoi,NC,2442
+lip,A2,n,môi,NG,2444
+coin,A2,n,"đồng xu, tiền kim loại",KT,2445
+screw,A2,n,"đinh vít, ốc vít",NC,2452
+chest,A2,n,"ngực; cái rương, hòm",NG,2458
+medal,A2,n,"huy chương, huân chương",GI,2461
+pc,A2,n,"máy tính cá nhân, máy vi tính",KH,2462
+belt,A2,n,"thắt lưng, dây lưng; dây an toàn",NC,2470
+alarm,A2,n,"chuông báo, còi báo động; đồng hồ báo thức",NC,2502
+pan,A2,n,cái chảo; cái xoong,NC,2504
+bench,A2,n,ghế dài,NC,2523
+stamp,A2,n,con tem; con dấu,GT,2530
+duck,A2,n,con vịt; thịt vịt,TN,2534
+fence,A2,n,hàng rào,NC,2543
+portrait,A2,n,"bức chân dung, ảnh chân dung",GI,2552
+cigarette,A2,n,điếu thuốc lá,SK,2553
+honey,A2,n,"mật ong; cưng, anh yêu, em yêu (cách gọi thân mật)",AU,2554
+ski,A2,n,ván trượt tuyết,GI,2568
+pill,A2,n,viên thuốc,SK,2571
+calendar,A2,n,"quyển lịch, tờ lịch; lịch (hệ thống tính ngày)",TG,2573
+jam,A2,n,mứt; sự tắc nghẽn (giao thông),AU,2576
+toe,A2,n,ngón chân,NG,2577
+sauce,A2,n,nước sốt,AU,2579
+globe,A2,n,"quả địa cầu; thế giới, toàn cầu",KG,2589
+brake,A2,n,"cái phanh, thắng (xe)",DL,2593
+oak,A2,n,cây sồi; gỗ sồi,TN,2601
+elephant,A2,n,con voi,TN,2611
+container,A2,n,"hộp đựng, thùng chứa; công-te-nơ",NC,2615
+rope,A2,n,dây thừng,NC,2624
+blanket,A2,n,"chăn, mền",NC,2626
+glove,A2,n,găng tay,NC,2627
+statue,A2,n,bức tượng,GI,2628
+soap,A2,n,"xà phòng, xà bông",NC,2629
+lamp,A2,n,"cây đèn, đèn",NC,2633
+wallet,A2,n,ví (đựng tiền),NC,2634
+diary,A2,n,nhật ký; sổ ghi lịch hẹn,GT,2635
+insect,A2,n,"côn trùng, sâu bọ",TN,2636
+cheek,A2,n,má,NG,2639
+snack,A2,n,"đồ ăn vặt, bữa ăn nhẹ",AU,2641
+stair,A2,n,bậc thang; cầu thang (thường dùng số nhiều),NC,2645
+sock,A2,n,"tất, vớ",NC,2653
+skate,A2,n,"giày trượt (băng, patin)",GI,2654
+fork,A2,n,cái nĩa; ngã ba (đường),NC,2658
+lemon,A2,n,quả chanh (vàng),AU,2661
+basket,A2,n,"cái giỏ, cái rổ",NC,2662
+ham,A2,n,"giăm bông, thịt nguội",AU,2669
+belly,A2,n,bụng,NG,2675
+skirt,A2,n,chân váy,NC,2676
+onion,A2,n,"củ hành, hành tây",AU,2679
+balloon,A2,n,quả bóng bay; khinh khí cầu,GI,2691
+oven,A2,n,lò nướng,NC,2696
+printer,A2,n,máy in,KH,2697
+bicycle,A2,n,xe đạp,DL,2700
+feather,A2,n,"lông vũ, lông chim",TN,2703
+ankle,A2,n,mắt cá chân,NG,2704
+jeans,A2,n,"quần bò, quần jean",NC,2711
+dictionary,A2,n,từ điển,HT,2716
+soda,A2,n,nước ngọt có ga; nước sô-đa,AU,2720
+pencil,A2,n,bút chì,HT,2721
+shorts,A2,n,"quần soóc, quần đùi",NC,2725
+steak,A2,n,"món bít tết; miếng thịt (bò, cá) dày",AU,2728
+elevator,A2,n,thang máy,NC,2729
+dinosaur,A2,n,khủng long,TN,2733
+chin,A2,n,cằm,NG,2739
+fridge,A2,n,tủ lạnh,NC,2741
+flour,A2,n,"bột mì, bột",AU,2742
+textbook,A2,n,sách giáo khoa,HT,2743
+spoon,A2,n,"cái thìa, cái muỗng",NC,2756
+curry,A2,n,món cà ri,AU,2760
+mushroom,A2,n,nấm,AU,2762
+headphone,A2,n,tai nghe (thường dùng số nhiều),KH,2763
+bra,A2,n,áo ngực,NC,2765
+envelope,A2,n,phong bì,NC,2767
+dessert,A2,n,món tráng miệng,AU,2774
+drawer,A2,n,ngăn kéo,NC,2777
+pasta,A2,n,"mì Ý, mì ống",AU,2778
+fog,A2,n,sương mù,TN,2779
+carrot,A2,n,củ cà rốt,AU,2780
+mug,A2,n,"cốc (có quai), ca",NC,2781
+garlic,A2,n,tỏi,AU,2782
+sausage,A2,n,"xúc xích, lạp xưởng",AU,2790
+wheelchair,A2,n,xe lăn,SK,2795
+champagne,A2,n,rượu sâm-panh,AU,2796
+pea,A2,n,đậu Hà Lan,AU,2798
+sweater,A2,n,áo len,NC,2799
+folder,A2,n,bìa kẹp hồ sơ; thư mục (máy tính),NC,2813
+perfume,A2,n,nước hoa,NC,2814
+cereal,A2,n,ngũ cốc (ăn sáng); cây ngũ cốc,AU,2816
+bookshelf,A2,n,"giá sách, kệ sách",NC,2817
+comb,A2,n,cái lược,NC,2823
+chili,A2,n,quả ớt; món ớt hầm thịt,AU,2825
+scarf,A2,n,khăn quàng cổ,NC,2828
+violin,A2,n,"đàn vĩ cầm, đàn vi-ô-lông",GI,2829
+stove,A2,n,bếp (nấu ăn); lò sưởi,NC,2834
+cola,A2,n,nước cô-la,AU,2841
+earring,A2,n,"bông tai, khuyên tai",NC,2850
+petrol,A2,n,xăng,DL,2854
+sunglasses,A2,n,"kính râm, kính mát",NC,2855
+refrigerator,A2,n,tủ lạnh,NC,2860
+suitcase,A2,n,va li,DL,2867
+seafood,A2,n,hải sản,AU,2868
+spaghetti,A2,n,mì Ý (sợi dài),AU,2871
+pear,A2,n,quả lê,AU,2874
+shampoo,A2,n,dầu gội đầu,NC,2875
+handbag,A2,n,túi xách tay,NC,2877
+tram,A2,n,xe điện (chạy trên đường ray trong phố),DL,2879
+flea,A2,n,bọ chét,TN,2881
+scissors,A2,n,cái kéo,NC,2885
+cupboard,A2,n,"tủ (đựng bát đĩa, quần áo)",NC,2894
+cassette,A2,n,băng cát-xét,KH,2900
+sunflower,A2,n,hoa hướng dương,TN,2904
+tablespoon,A2,n,"thìa canh, muỗng canh",AU,2905
+melon,A2,n,"quả dưa (dưa lưới, dưa vàng)",AU,2906
+spaceship,A2,n,tàu vũ trụ,KH,2907
+toothbrush,A2,n,bàn chải đánh răng,NC,2908
+lemonade,A2,n,nước chanh,AU,2911
+racket,A2,n,"cái vợt (quần vợt, cầu lông); tiếng ồn ào",GI,2912
+napkin,A2,n,"khăn ăn, giấy ăn",NC,2914
+cooker,A2,n,bếp (nấu ăn); nồi nấu,NC,2915
+swimsuit,A2,n,"đồ bơi, áo tắm",NC,2918
+tights,A2,n,quần tất,NC,2924
+armchair,A2,n,ghế bành,NC,2926
+chimpanzee,A2,n,con tinh tinh,TN,2927
+escalator,A2,n,thang cuốn,NC,2931
+guidebook,A2,n,sách hướng dẫn du lịch,DL,2939
+blackboard,A2,n,bảng đen,HT,2940
+raincoat,A2,n,áo mưa,NC,2943
+bookcase,A2,n,"tủ sách, kệ sách",NC,2945
+omelet,A2,n,"trứng tráng, trứng ốp lết",AU,2946
+van,B1,n,"xe tải nhỏ, xe thùng",DL,3012
+motor,B1,n,"động cơ, mô-tơ",KH,3047
+boot,B1,n,"giày ống, ủng; cốp xe (Anh-Anh)",NC,3081
+hip,B1,n,hông,NG,3111
+sand,B1,n,cát,TN,3116
+filter,B1,n,"bộ lọc, cái lọc",NC,3130
+bull,B1,n,bò đực,TN,3159
+sword,B1,n,"thanh kiếm, gươm",CT,3190
+trash,B1,n,"rác, đồ bỏ đi",NC,3193
+tissue,B1,n,khăn giấy; mô (cơ thể),NC,3210
+satellite,B1,n,vệ tinh,KH,3215
+robot,B1,n,"người máy, rô-bốt",KH,3216
+tongue,B1,n,"cái lưỡi; tiếng, ngôn ngữ",NG,3220
+pole,B1,n,"cột, sào; cực (Trái Đất)",NC,3261
+brick,B1,n,"gạch, viên gạch",NC,3264
+makeup,B1,n,"đồ trang điểm, sự trang điểm",NC,3265
+beast,B1,n,"con thú, quái vật; kẻ hung bạo",TN,3268
+spider,B1,n,con nhện,TN,3298
+bubble,B1,n,"bong bóng, bọt",TN,3307
+barrel,B1,n,"thùng tròn (gỗ, kim loại); thùng (đơn vị dầu)",NC,3313
+shark,B1,n,cá mập,TN,3329
+hammer,B1,n,cái búa,NC,3359
+arrow,B1,n,mũi tên,KG,3382
+bin,B1,n,thùng rác; thùng chứa,NC,3385
+pie,B1,n,bánh nướng có nhân,AU,3403
+heel,B1,n,gót chân; gót giày,NG,3404
+carpet,B1,n,thảm (trải sàn),NC,3436
+nest,B1,n,"cái tổ (chim, côn trùng)",TN,3447
+cage,B1,n,"cái lồng, chuồng",NC,3460
+beard,B1,n,"râu (cằm, quai nón)",NG,3526
+tobacco,B1,n,"thuốc lá (sợi), cây thuốc lá",SK,3537
+thumb,B1,n,ngón tay cái,NG,3546
+tent,B1,n,cái lều,DL,3548
+whale,B1,n,cá voi,TN,3549
+metro,B1,n,tàu điện ngầm,DL,3550
+keyboard,B1,n,bàn phím,KH,3552
+closet,B1,n,"tủ quần áo, tủ âm tường",NC,3564
+motorcycle,B1,n,"xe máy, xe mô tô",DL,3566
+bucket,B1,n,"cái xô, thùng",NC,3569
+needle,B1,n,"cây kim (khâu, tiêm); kim (đồng hồ, la bàn)",NC,3572
+puppy,B1,n,"chó con, cún con",TN,3579
+passport,B1,n,hộ chiếu,DL,3586
+helmet,B1,n,mũ bảo hiểm,DL,3594
+grill,B1,n,"vỉ nướng, lò nướng",AU,3599
+candle,B1,n,cây nến,NC,3600
+bacon,B1,n,thịt xông khói,AU,3605
+cattle,B1,n,"gia súc, trâu bò",TN,3606
+basin,B1,n,"chậu, bồn rửa; lưu vực (sông)",NC,3616
+sleeve,B1,n,tay áo,NC,3634
+mud,B1,n,bùn,TN,3638
+spice,B1,n,"gia vị; sự thú vị, hứng thú",AU,3640
+turtle,B1,n,con rùa,TN,3643
+collar,B1,n,"cổ áo; vòng cổ (chó, mèo)",NC,3649
+jewelry,B1,n,đồ trang sức,NC,3651
+cart,B1,n,"xe đẩy; xe kéo (ngựa, bò)",NC,3655
+lighter,B1,n,bật lửa,NC,3658
+jar,B1,n,"lọ, hũ",NC,3668
+wrist,B1,n,cổ tay,NG,3670
+ferry,B1,n,phà,DL,3671
+ambulance,B1,n,xe cứu thương,SK,3674
+ant,B1,n,con kiến,TN,3689
+ladder,B1,n,cái thang,NC,3691
+lamb,B1,n,cừu non; thịt cừu non,TN,3695
+sculpture,B1,n,"tác phẩm điêu khắc, bức tượng; nghệ thuật điêu khắc",GI,3696
+pillow,B1,n,cái gối,NC,3698
+dolphin,B1,n,cá heo,TN,3702
+subway,B1,n,tàu điện ngầm; đường hầm cho người đi bộ,DL,3722
+fur,B1,n,bộ lông (thú),TN,3727
+curtain,B1,n,"rèm cửa, màn; màn sân khấu",NC,3728
+whistle,B1,n,"cái còi; tiếng huýt sáo, tiếng còi",GI,3730
+frost,B1,n,"sương giá, băng giá",TN,3758
+peanut,B1,n,"hạt lạc, đậu phộng",AU,3764
+wagon,B1,n,xe ngựa chở hàng; toa chở hàng (tàu hỏa),DL,3785
+pork,B1,n,"thịt lợn, thịt heo",AU,3787
+purse,B1,n,ví tiền (của phụ nữ); túi xách tay (Anh-Mỹ),NC,3800
+salmon,B1,n,cá hồi,AU,3803
+antique,B1,n,đồ cổ,NC,3804
+fountain,B1,n,đài phun nước; vòi nước uống công cộng,KG,3819
+locker,B1,n,tủ có khóa (cá nhân),NC,3820
+sticker,B1,n,"nhãn dán, hình dán",NC,3822
+elbow,B1,n,khuỷu tay,NG,3836
+carriage,B1,n,xe ngựa; toa hành khách (tàu hỏa),DL,3859
+submarine,B1,n,tàu ngầm,DL,3870
+ginger,B1,n,gừng,AU,3893
+strawberry,B1,n,quả dâu tây,AU,3897
+jewel,B1,n,"đá quý, ngọc; đồ trang sức",NC,3902
+necklace,B1,n,"vòng cổ, dây chuyền",NC,3909
+moss,B1,n,rêu,TN,3918
+forehead,B1,n,trán,NG,3939
+cod,B1,n,cá tuyết,AU,3940
+maple,B1,n,cây phong,TN,3954
+firework,B1,n,pháo hoa,GI,3955
+gown,B1,n,"váy dạ hội, áo dài trang trọng; áo choàng (tốt nghiệp, bệnh viện)",NC,3963
+coffin,B1,n,quan tài,XH,3965
+rubbish,B1,n,"rác, rác rưởi; điều vớ vẩn, nhảm nhí",NC,3968
+bracelet,B1,n,"vòng tay, lắc tay",NC,3972
+mosquito,B1,n,con muỗi,TN,3974
+kitten,B1,n,mèo con,TN,3975
+backpack,B1,n,ba lô,NC,3980
+capsule,B1,n,viên con nhộng (thuốc); khoang (tàu vũ trụ),SK,3982
+parcel,B1,n,"bưu kiện, gói hàng",GT,3985
+harness,B1,n,bộ yên cương (ngựa); dây đai an toàn,NC,4012
+daisy,B1,n,"hoa cúc (cúc dại, cúc trắng nhỏ)",TN,4016
+wardrobe,B1,n,"tủ quần áo; tủ đồ, bộ sưu tập quần áo (của một người)",NC,4026
+shrimp,B1,n,con tôm (nhỏ),AU,4027
+camel,B1,n,con lạc đà,TN,4046
+luggage,B1,n,hành lý,DL,4050
+cushion,B1,n,"cái đệm, gối tựa",NC,4068
+ape,B1,n,"vượn, khỉ không đuôi (tinh tinh, khỉ đột...)",TN,4073
+razor,B1,n,dao cạo,NC,4075
+comet,B1,n,sao chổi,KH,4077
+diaper,B1,n,"tã, bỉm (cho em bé)",NC,4082
+trumpet,B1,n,kèn trôm-pét,GI,4095
+baggage,B1,n,hành lý,DL,4104
+popcorn,B1,n,"bỏng ngô, bắp rang",AU,4112
+gorilla,B1,n,khỉ đột,TN,4113
+sponge,B1,n,miếng bọt biển; bánh bông lan,NC,4117
+beaver,B1,n,con hải ly,TN,4120
+pottery,B1,n,đồ gốm; nghề làm gốm,GI,4122
+paddle,B1,n,mái chèo (ngắn); vợt bóng bàn,GI,4135
+heater,B1,n,"lò sưởi, máy sưởi; bình nóng lạnh",NC,4136
+freezer,B1,n,"tủ đông, ngăn đá",NC,4143
+mustard,B1,n,mù tạt,AU,4147
+postcard,B1,n,bưu thiếp,GT,4161
+calculator,B1,n,"máy tính bỏ túi, máy tính cầm tay",HT,4164
+parachute,B1,n,"cái dù, dù nhảy",DL,4170
+tuna,B1,n,cá ngừ,AU,4173
+flute,B1,n,"sáo (nhạc cụ), sáo tây",GI,4177
+pineapple,B1,n,"quả dứa, quả thơm",AU,4178
+parrot,B1,n,con vẹt,TN,4183
+loaf,B1,n,ổ bánh mì,AU,4192
+raspberry,B1,n,quả mâm xôi,AU,4197
+mule,B1,n,con la,TN,4204
+cabbage,B1,n,bắp cải,AU,4214
+kettle,B1,n,ấm đun nước,NC,4219
+souvenir,B1,n,"quà lưu niệm, đồ kỷ niệm",DL,4225
+lettuce,B1,n,"rau xà lách, rau diếp",AU,4227
+encyclopedia,B1,n,bộ bách khoa toàn thư,HT,4232
+sandal,B1,n,"dép xăng-đan, dép quai hậu",NC,4233
+cucumber,B1,n,"quả dưa chuột, dưa leo",AU,4235
+bandage,B1,n,"băng (y tế), băng gạc",SK,4246
+broccoli,B1,n,"súp lơ xanh, bông cải xanh",AU,4264
+webcam,B1,n,camera trực tuyến (gắn với máy tính),KH,4267
+gravy,B1,n,nước sốt thịt (làm từ nước thịt nấu chín),AU,4270
+modem,B1,n,"bộ điều giải, mô-đem (thiết bị kết nối mạng)",KH,4272
+spinach,B1,n,"rau chân vịt, cải bó xôi",AU,4275
+giraffe,B1,n,con hươu cao cổ,TN,4285
+jug,B1,n,"cái bình, cái ca (có quai, để rót nước)",NC,4288
+chariot,B1,n,xe ngựa chiến (thời cổ đại),DL,4294
+snowboard,B1,n,ván trượt tuyết,GI,4302
+toothpaste,B1,n,kem đánh răng,NC,4313
+mailbox,B1,n,"hộp thư (trước nhà, bưu điện); hộp thư điện tử",GT,4314
+carton,B1,n,"hộp các-tông, hộp giấy (đựng sữa, nước ép)",NC,4319
+lorry,B1,n,xe tải (Anh-Anh),DL,4320
+dishwasher,B1,n,máy rửa bát,NC,4330
+aspirin,B1,n,"thuốc aspirin (giảm đau, hạ sốt)",SK,4331
+sweatshirt,B1,n,áo nỉ dài tay,NC,4332
+handkerchief,B1,n,"khăn tay, khăn mùi soa",NC,4346
+seaweed,B1,n,"rong biển, tảo biển",TN,4349
+saucer,B1,n,đĩa lót tách,NC,4359
+loudspeaker,B1,n,"loa phóng thanh, loa",NC,4368
+saucepan,B1,n,"cái xoong, nồi có cán",NC,4395
+duvet,B1,n,"chăn bông, chăn lông vũ",NC,4403
+windscreen,B1,n,kính chắn gió (ô tô),DL,4409
+underpants,B1,n,quần lót,NC,4414
+signpost,B1,n,"biển chỉ đường, cột chỉ đường",DL,4424
+wristwatch,B1,n,đồng hồ đeo tay,NC,4431
+tracksuit,B1,n,bộ quần áo thể thao,NC,4439
+pullover,B1,n,áo len chui đầu,NC,4441
+dustbin,B1,n,thùng rác,NC,4445
+hairdryer,B1,n,máy sấy tóc,NC,4451
+courgette,B1,n,quả bí ngòi,AU,4458
+noticeboard,B1,n,"bảng thông báo, bảng tin",NC,4460
