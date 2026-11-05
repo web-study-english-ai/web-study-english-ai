@@ -36,7 +36,7 @@ Các dấu hiệu nhận biết: có từ chỉ tần suất (always, usually, o
 Ví dụ:
 - I usually go to bed at eleven.
 - Water boils at 100 degrees Celsius.
-- The train leaves at 7:30 tomorrow morning.",,
+- The train leaves at 7:30 tomorrow morning.",dung,"Đủ 4 cách dùng + dấu hiệu, đều có trong gram_002/003."
 q002,"What is the affirmative form of the present simple for he, she, or it?","[gram_001] Thì hiện tại đơn (Present Simple) — Cấu trúc
 Thì hiện tại đơn (Present Simple) có hai nhóm cấu trúc: với động từ thường và với động từ to be. Trong công thức, S là chủ ngữ, V là động từ nguyên mẫu (dạng gốc, chưa thêm gì).
 Công thức:
@@ -66,7 +66,7 @@ Công thức: he/she/it + V‑s / V‑es.
 Ví dụ:
 - He works at a bank. → Cô ấy works at a bank.
 - She watches TV every evening. → Cô ấy watches TV mỗi tối.
-- It rains often in this city. → Trời rains often in this city.",,
+- It rains often in this city. → Trời rains often in this city.",sai,"Công thức V-s/es đúng, nhưng 'has cho động từ to be' trái nguồn (he/she/it đi với is; has là của have); ví dụ dịch hỏng ('He works' → 'Cô ấy works', 'Trời rains often')."
 q005,Công thức cơ bản của thì hiện tại tiếp diễn (Present Continuous) là gì?,"[gram_005] Thì hiện tại tiếp diễn (Present Continuous) — Cách dùng
 Thì hiện tại tiếp diễn (Present Continuous) dùng cho những việc đang diễn ra, chưa kết thúc, hoặc đã được sắp xếp sẵn.
 1. Việc đang xảy ra ngay lúc nói: người nói đang làm hoặc đang nhìn thấy việc đó. Câu hay có now, right now, at the moment.
@@ -96,7 +96,7 @@ Ví dụ:
 - She is watching TV.
 - They are playing football.
 
-Công thức này dùng để nói về việc đang diễn ra ngay lúc nói hoặc trong thời gian hiện tại tạm thời.",,
+Công thức này dùng để nói về việc đang diễn ra ngay lúc nói hoặc trong thời gian hiện tại tạm thời.",mot_phan,Công thức đúng nhưng trích gram_005 (cách dùng) — đoạn này không chứa công thức; trích nguồn sai.
 q009,Cách tạo câu phủ định ở thì quá khứ đơn như thế nào?,"[gram_009] Thì quá khứ đơn (Past Simple) — Cách dùng
 Thì quá khứ đơn (Past Simple) dùng cho những việc đã xảy ra và đã kết thúc trong quá khứ.
 1. Hành động đã xong tại một thời điểm xác định: người nghe biết hoặc đoán được lúc nào. Câu thường có mốc như yesterday, last week, in 2020, two days ago.
@@ -119,7 +119,7 @@ Ví dụ
 - I didn’t finish my homework yesterday. → Tôi đã không hoàn thành bài tập hôm qua.
 - She didn’t go to the party last weekend. → Cô ấy đã không đi dự tiệc cuối tuần trước.
 
-(Thông tin dựa trên cách dùng thì quá khứ đơn trong tài liệu)",,
+(Thông tin dựa trên cách dùng thì quá khứ đơn trong tài liệu)",mot_phan,Did not + V nguyên mẫu đúng nhưng trích gram_009 (cách dùng) không chứa dạng phủ định; câu 'dựa trên tài liệu' không đúng với nguồn trích.
 q015,"Với danh từ đếm được số nhiều, “many”, “few” và “a few” khác nhau thế nào?","[gram_027] Much, many và a lot of — Phân biệt
 Much, many và a lot of (nhiều) đều chỉ số lượng lớn nhưng khác nhau về danh từ đi kèm và loại câu.
 - Loại danh từ: many + danh từ đếm được số nhiều (many books); much + danh từ không đếm được (much time); a lot of hoặc lots of dùng được với cả hai.
@@ -159,7 +159,7 @@ Ví dụ:
 Ví dụ
 - Many students passed the exam. – Nhiều học sinh đã đậu kỳ thi.
 - Few students passed the exam. – Rất ít học sinh (gần như không) đậu kỳ thi.
-- A few students passed the exam. – Một vài học sinh đã đậu kỳ thi.",,
+- A few students passed the exam. – Một vài học sinh đã đậu kỳ thi.",dung,"many/few/a few đúng và có trong gram_027, gram_097."
 q016,Which quantifiers are commonly used with uncountable nouns?,"[gram_030] Lượng từ all, both, each, every, either, neither — Cách dùng
 Lượng từ (quantifiers) all, both, each, every, either, neither cho biết nói về cả nhóm hay từng thành viên.
 1. All (tất cả): đi với danh từ số nhiều (nhóm từ ba trở lên) hoặc danh từ không đếm được. Có thể dùng all of the/my.
@@ -176,7 +176,7 @@ Ví dụ:
 
 [word:which] which (pron): cái nào, nào; cái mà — Ví dụ: Which color do you like?
 
-[word:used] used (adj): cũ, đã qua sử dụng — Ví dụ: He bought a used car.","Trong tài liệu có nói rằng all có thể đi với danh từ không đếm được (cũng như danh từ số nhiều). Vì các lượng từ khác như both, each, every, either, neither chỉ dùng với danh từ đếm được nên chúng không phù hợp với danh từ không đếm được. Vì vậy, quantifier thường dùng với danh từ không đếm được là all.",,
+[word:used] used (adj): cũ, đã qua sử dụng — Ví dụ: He bought a used car.","Trong tài liệu có nói rằng all có thể đi với danh từ không đếm được (cũng như danh từ số nhiều). Vì các lượng từ khác như both, each, every, either, neither chỉ dùng với danh từ đếm được nên chúng không phù hợp với danh từ không đếm được. Vì vậy, quantifier thường dùng với danh từ không đếm được là all.",sai,"Kết luận 'lượng từ thường dùng với danh từ không đếm được là all' sai so với câu hỏi (much, little, a little, some, a lot of); chỉ truy được gram_030, không dùng gold gram_027/023."
 q018,How do you usually form a comparative with a long adjective?,"[gram_044] So sánh hơn (Comparatives) — Cấu trúc
 So sánh hơn (comparatives) dùng để so sánh hai người hoặc hai vật, cho biết bên nào hơn về một đặc điểm.
 Công thức:
@@ -200,7 +200,7 @@ Ví dụ:
 [word:long] long (adj): dài; lâu — Ví dụ: It was a long journey.","Đối với tính từ dài (hai âm tiết trở lên), dạng so sánh hơn được tạo bằng cách đặt more trước tính từ, rồi thêm than sau nó.
 Công thức: more + adj + than
 
-Ví dụ: This book is more interesting than the one I read yesterday. (Quyển sách này thú vị hơn quyển tôi đọc hôm qua.)",,
+Ví dụ: This book is more interesting than the one I read yesterday. (Quyển sách này thú vị hơn quyển tôi đọc hôm qua.)",dung,"more + adj + than, có trong gram_044. Ví dụ tự đặt nhưng đúng."
 q019,Cách tạo dạng so sánh nhất với tính từ ngắn là gì?,"[gram_045] So sánh nhất (Superlatives) — Cấu trúc
 So sánh nhất (superlatives) so một người hoặc vật với cả nhóm (thường từ ba trở lên).
 Công thức:
@@ -223,7 +223,7 @@ Ví dụ:
 
 [word:superlative] superlative (n): dạng so sánh nhất (ngữ pháp) — Ví dụ: The superlative of good is best.","Công thức tạo dạng so sánh nhất cho tính từ ngắn (một âm tiết) là: the + adj + ‑est (ví dụ: tall → the tallest). Ví dụ:
 - This mountain is the highest in the region. (Ngọn núi này là ngọn núi cao nhất trong khu vực.)
-- She is the smartest student in the class. (Cô ấy là học sinh thông minh nhất trong lớp.)",,
+- She is the smartest student in the class. (Cô ấy là học sinh thông minh nhất trong lớp.)",dung,"the + adj-est, có trong gram_045. Ví dụ tự đặt nhưng đúng."
 q020,What does the modal verb “should” usually express?,"[gram_034] Should và ought to để khuyên — Cách dùng
 Should và ought to (nên) là động từ khuyết thiếu (modal verbs) dùng để khuyên, nói điều đúng đắn hoặc điều người nói mong đợi.
 1. Lời khuyên: S + should + V nguyên mẫu. Ought to có nghĩa gần giống nhưng ít dùng hơn, nhất là trong câu hỏi và câu phủ định.
@@ -259,7 +259,7 @@ Ví dụ:
 - diễn tả một việc được mong đợi sẽ xảy ra (suy đoán dựa trên dự tính) – ví dụ: The bus should arrive in five minutes.
 - bày tỏ tiếc nuối hoặc phê bình về việc đã không làm (khi dùng “should have”) – ví dụ: You should have told me earlier. (cũng là cách dùng “should” trong quá khứ)
 
-Như vậy, “should” chủ yếu biểu thị lời khuyên, nghĩa vụ nhẹ, hoặc dự đoán về một việc sẽ (hoặc lẽ ra) xảy ra.",,
+Như vậy, “should” chủ yếu biểu thị lời khuyên, nghĩa vụ nhẹ, hoặc dự đoán về một việc sẽ (hoặc lẽ ra) xảy ra.",dung,"Khuyên, bổn phận, điều mong đợi (gram_034) + should have (gram_036)."
 q026,Từ “colleague” có nghĩa là gì?,"[word:colleague] colleague (n): đồng nghiệp — Ví dụ: My colleagues are friendly.
 
 [word:college] college (n): trường cao đẳng, đại học — Ví dụ: My sister is in college.
@@ -267,7 +267,7 @@ q026,Từ “colleague” có nghĩa là gì?,"[word:colleague] colleague (n): �
 [word:colonial] colonial (adj): thuộc địa, thuộc thời kỳ thuộc địa — Ví dụ: The city has many colonial buildings.","“colleague” (danh từ) có nghĩa là đồng nghiệp, người làm việc cùng trong một công ty hoặc tổ chức.
 
 - My colleagues are friendly. → Các đồng nghiệp của tôi rất thân thiện.
-- I often have lunch with my colleagues. → Tôi thường ăn trưa với các đồng nghiệp.",,
+- I often have lunch with my colleagues. → Tôi thường ăn trưa với các đồng nghiệp.",dung,"colleague = đồng nghiệp, đúng."
 q030,Từ “participant” dùng để chỉ ai?,"[word:participant] participant (n): người tham gia — Ví dụ: Each participant got a prize.
 
 [word:partisan] partisan (n): người ủng hộ nhiệt thành (một đảng phái); du kích — Ví dụ: Partisans on both sides argued loudly.
@@ -276,48 +276,48 @@ q030,Từ “participant” dùng để chỉ ai?,"[word:participant] participan
 
 - Each participant got a prize. → Mỗi người tham gia đều nhận được một phần thưởng.
 - The participants were asked to fill out a questionnaire. → Những người tham gia được yêu cầu điền vào bảng câu hỏi.
-- As a participant in the workshop, you will learn new skills. → Là người tham gia hội thảo, bạn sẽ học được những kỹ năng mới.",,
+- As a participant in the workshop, you will learn new skills. → Là người tham gia hội thảo, bạn sẽ học được những kỹ năng mới.",dung,"participant = người tham gia, đúng."
 q035,"In the vocabulary list, what part of speech is “device”, and what does it mean?","[word:mean] mean (v): có nghĩa là; định — Ví dụ: What does this word mean?
 
 [word:part] part (n): phần; bộ phận — Ví dụ: This is the hardest part.
 
-[word:list] list (n): danh sách — Ví dụ: Make a list of what you need.","Kho tài liệu của mình hiện chưa có nội dung cho câu hỏi này, nên mình chưa trả lời để tránh nói sai. Bạn có thể hỏi về ngữ pháp, nghĩa và cách dùng từ, hoặc phân biệt những từ dễ nhầm.",,
+[word:list] list (n): danh sách — Ví dụ: Make a list of what you need.","Kho tài liệu của mình hiện chưa có nội dung cho câu hỏi này, nên mình chưa trả lời để tránh nói sai. Bạn có thể hỏi về ngữ pháp, nghĩa và cách dùng từ, hoặc phân biệt những từ dễ nhầm.",sai,"Câu dương nhưng trả 'kho chưa có' do vocab trượt (top-3: mean, part, list). Không bịa, nhưng không trả lời."
 q036,Từ “comfortable” có nghĩa gì và thuộc từ loại nào?,"[word:comfortable] comfortable (adj): thoải mái, dễ chịu — Ví dụ: This chair is very comfortable.
 
 [word:comfortably] comfortably (adv): thoải mái, dễ chịu; dư dả — Ví dụ: She was sitting comfortably in an armchair.
 
 [word:uncomfortable] uncomfortable (adj): không thoải mái, khó chịu — Ví dụ: These shoes are very uncomfortable.","- “comfortable” là tính từ, nghĩa là thoải mái, dễ chịu.
-- Ví dụ: This chair is very comfortable. → Cái ghế này rất thoải mái.",,
+- Ví dụ: This chair is very comfortable. → Cái ghế này rất thoải mái.",dung,"Tính từ, thoải mái/dễ chịu, đúng."
 q037,What does “employment” mean in Vietnamese?,"[word:mean] mean (v): có nghĩa là; định — Ví dụ: What does this word mean?
 
 [word:employment] employment (n): việc làm, sự tuyển dụng — Ví dụ: She is looking for employment.
 
 [word:in] in (prep): trong, ở trong; vào (lúc) — Ví dụ: The keys are in my bag.","employment (n): việc làm, sự tuyển dụng.
 - She is looking for employment. → Cô ấy đang tìm việc làm.
-- The company offers employment to many graduates. → Công ty cung cấp việc làm cho nhiều sinh viên tốt nghiệp.",,
+- The company offers employment to many graduates. → Công ty cung cấp việc làm cho nhiều sinh viên tốt nghiệp.",dung,"việc làm, sự tuyển dụng, đúng."
 q044,Explain the licensing conditions of negative polarity items under downward-entailing contexts.,"[word:explain] explain (v): giải thích — Ví dụ: Can you explain this rule?
 
 [word:negative] negative (adj): tiêu cực; âm — Ví dụ: He has a negative attitude.
 
-[word:of] of (prep): của; thuộc về — Ví dụ: This is a picture of my family.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",,
+[word:of] of (prep): của; thuộc về — Ví dụ: This is a picture of my family.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",dung,"Từ chối, không bịa. Dùng câu 'ngoài phạm vi' thay vì 'kho chưa có'."
 q045,So sánh tần suất sử dụng “shall” và “will” qua các giai đoạn lịch sử bằng dữ liệu ngữ liệu.,"[word:so] so (conj): vì vậy, nên — Ví dụ: It was raining, so we stayed home.
 
 [word:will] will (n): ý chí; di chúc — Ví dụ: She has a strong will to succeed.
 
-[word:historically] historically (adv): về mặt lịch sử, trong lịch sử — Ví dụ: The town is historically important.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",,
+[word:historically] historically (adv): về mặt lịch sử, trong lịch sử — Ví dụ: The town is historically important.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",dung,"Từ chối, không bịa. Dùng câu 'ngoài phạm vi' thay vì 'kho chưa có'."
 q047,Giải thích nguồn gốc lịch sử của nhóm động từ bất quy tắc strong verbs trong tiếng Anh cổ.,"[word:strong] strong (adj): mạnh, khỏe — Ví dụ: He is very strong.
 
 [word:verb] verb (n): động từ — Ví dụ: Every sentence needs a verb.
 
-[word:prehistoric] prehistoric (adj): thuộc thời tiền sử — Ví dụ: Dinosaurs were prehistoric animals.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",,
+[word:prehistoric] prehistoric (adj): thuộc thời tiền sử — Ví dụ: Dinosaurs were prehistoric animals.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",dung,"Từ chối, không bịa. Dùng câu 'ngoài phạm vi' thay vì 'kho chưa có'."
 q056,Explain how to configure a PostgreSQL replication cluster.,"[word:how] how (adv): như thế nào; bao nhiêu — Ví dụ: How do you make this dish?
 
 [word:explain] explain (v): giải thích — Ví dụ: Can you explain this rule?
 
-[word:to] to (prep): đến, tới; cho (ai) — Ví dụ: We walk to school every day.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",,
+[word:to] to (prep): đến, tới; cho (ai) — Ví dụ: We walk to school every day.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",dung,Từ chối đúng (LLM).
 q058,Create a weekly workout plan for a beginner.,"[word:plan] plan (n): kế hoạch — Ví dụ: Do you have any plans tonight?
 
 [word:create] create (v): tạo ra, sáng tạo — Ví dụ: The artist created a beautiful work.
 
-[word:for] for (prep): cho, dành cho; trong (khoảng thời gian) — Ví dụ: This gift is for you.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",,
-q059,Lập lịch trình du lịch Đà Nẵng trong 3 ngày.,,"Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",,
+[word:for] for (prep): cho, dành cho; trong (khoảng thời gian) — Ví dụ: This gift is for you.","Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",dung,Từ chối đúng (LLM).
+q059,Lập lịch trình du lịch Đà Nẵng trong 3 ngày.,,"Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",dung,Từ chối đúng (pipeline chặn).
