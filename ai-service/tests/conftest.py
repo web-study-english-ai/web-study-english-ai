@@ -14,6 +14,7 @@ os.environ["INTERNAL_API_KEY"] = TEST_API_KEY
 os.environ["FSRS_WEIGHTS_SOURCE"] = "default"
 os.environ["ENVIRONMENT"] = "test"
 os.environ["EMBEDDER_ENABLED"] = "false"
+os.environ["VISION_ENABLED"] = "false"  # khong tai CLIP that trong test
 # .env co the chua LLM_API_KEY that: de bang khoa gia + host .invalid -> test khong bao gio goi Groq.
 TEST_LLM_KEY = "gsk_test_khoa_gia_chi_dung_trong_pytest_0123456789"
 os.environ["LLM_API_KEY"] = TEST_LLM_KEY

@@ -3,7 +3,7 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.3.2 · Cập nhật lần cuối: 2026-11-02 (WSEA-140, v0.3.2 — bổ sung, **không phá vỡ**): `POST /assistant/ask` đã triển khai JSON + SSE; `decision` ≠ `"answer"` trả câu cố định, `source_ids` rỗng, không gọi LLM; `503` có `detail` ghi mã lý do; gọi lại 1 lần bằng model dự phòng khi `429`; ngân sách 12 s (JSON) / 40 s (SSE); `delta` không chứa ký hiệu trích; thêm bảng biến môi trường LLM của dịch vụ AI · Bản 0.3.1: 2026-11-02 (WSEA-127, bổ sung, không phá vỡ): thêm `POST /assistant/rank` (backend không bắt buộc gọi); `/assistant/ask` ghi rõ `contexts` không bắt buộc đã sắp; `/health` có thể liệt kê `"intent"` · Bản 0.3: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
+Phiên bản: **0.4 (NHÁP — chưa chốt với Duy Anh)** · 2026-11-05 (WSEA-153): thay mục `POST /vision/detect` (chưa từng triển khai) bằng `POST /recognize/image` (trường multipart `image`, trả top-10 `{word, score}` + `low_confidence`); `/health` có thể liệt kê `"vision"` · Bản 0.3.2: 2026-11-02 (WSEA-140, v0.3.2 — bổ sung, **không phá vỡ**): `POST /assistant/ask` đã triển khai JSON + SSE; `decision` ≠ `"answer"` trả câu cố định, `source_ids` rỗng, không gọi LLM; `503` có `detail` ghi mã lý do; gọi lại 1 lần bằng model dự phòng khi `429`; ngân sách 12 s (JSON) / 40 s (SSE); `delta` không chứa ký hiệu trích; thêm bảng biến môi trường LLM của dịch vụ AI · Bản 0.3.1: 2026-11-02 (WSEA-127, bổ sung, không phá vỡ): thêm `POST /assistant/rank` (backend không bắt buộc gọi); `/assistant/ask` ghi rõ `contexts` không bắt buộc đã sắp; `/health` có thể liệt kê `"intent"` · Bản 0.3: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
 
 ## Quy ước chung
 
@@ -49,7 +49,7 @@ Nạp mô hình thành công → **200**:
 }
 ```
 
-- `models` liệt kê mọi mô hình đã nạp: `"fsrs"`; từ WSEA-111, `"embedder"` (mô hình vector của `/assistant/embed`); từ WSEA-127 (v0.3.1), `"intent"` (bộ phân loại ý định của pipeline trợ lý). Thứ tự: `["fsrs", "embedder", "intent"]`.
+- `models` liệt kê mọi mô hình đã nạp: `"fsrs"`; từ WSEA-111, `"embedder"` (mô hình vector của `/assistant/embed`); từ WSEA-127 (v0.3.1), `"intent"` (bộ phân loại ý định của pipeline trợ lý). Thứ tự: `["fsrs", "embedder", "intent"]`; từ WSEA-153 (nháp v0.4) có thể thêm `"vision"` (CLIP của `/recognize/image`) ở cuối. `vision` nạp thất bại không làm `/health` `degraded`.
 - Bộ ý định nạp thất bại cũng không làm `degraded`: pipeline bỏ luật chặn theo ý định, `reason` gắn thêm `;intent_unavailable`.
 - Trạng thái `503` / `degraded` **chỉ phụ thuộc `fsrs`**. Embedder nạp thất bại thì `/health` vẫn `200` với `models: ["fsrs"]`; riêng `/assistant/embed` trả `503` và backend fallback.
 
@@ -175,29 +175,42 @@ quyết định nghiệp vụ. Body JSON không đổi. Response `401`/`422`/`50
 
 **Fallback backend**: `simple-scheduler.ts` (TypeScript), trả `interval_days` tương đương. Không phải SM-2 — xem `docs/DECISIONS.md` mục 2026-10-11.
 
-## POST /vision/detect
+## POST /recognize/image
 
-Nhận diện vật thể trong ảnh rồi tra sang từ vựng. Không phải OCR.
+> **Nháp v0.4 (WSEA-153, 2026-11-05) — chưa chốt với Duy Anh.** Thay mục `POST /vision/detect` của v0.3 (chưa từng triển khai). Đường dẫn `/recognize/image` đã có từ bản đầu (trước đây trả `501`).
 
-**Request**: `multipart/form-data`
-- `image`: file ảnh, tối đa 5 MB, JPEG/PNG
-- `user_cefr`: string, một trong `A1 A2 B1 B2 C1 C2`, mặc định `A2`
-- `top_k`: int, 1–10, mặc định 8
+Nhận diện **vật thể** trong ảnh bằng CLIP zero-shot trên 449 nhãn từ vựng (`kb/vision_labels.csv`, danh từ cụ thể CEFR ≤ B1 lọc từ bảng `words`). Không phải OCR. Mỗi `word` trả về là một `term` có trong bảng `words`; backend tự JOIN để lấy IPA, nghĩa, CEFR.
 
-**Response**
+**Request**: `multipart/form-data`, header `x-api-key`.
+
+| Trường | Kiểu | Bắt buộc | Ràng buộc |
+|---|---|---|---|
+| `image` | file | có | ≤ 10 MB; JPEG, PNG, WEBP, BMP, GIF (cả JPEG nhiều khung MPO); ≤ 60 triệu điểm ảnh. Ảnh được xoay theo EXIF |
+
+**Response 200**
 
 ```json
 {
-  "results": [
-    { "word": "keyboard", "ipa": "/ˈkiːbɔːd/", "meaning": "ban phim", "cefr": "A2", "confidence": 0.042 }
+  "labels": [
+    { "word": "mug", "score": 0.743 },
+    { "word": "cup", "score": 0.091 }
   ],
-  "latency_ms": 380
+  "low_confidence": false,
+  "tau": 0.10
 }
 ```
 
-Trả mảng rỗng khi không có nhãn nào vượt ngưỡng tin cậy — đây là hành vi đúng, không phải lỗi.
+| Trường | Kiểu | Ý nghĩa |
+|---|---|---|
+| `labels` | mảng `{word, score}` | **top-10**, `score` giảm dần. `score` = xác suất softmax trên toàn bộ 449 nhãn (tổng mọi nhãn = 1), nên giá trị thường nhỏ |
+| `low_confidence` | bool | `true` khi `score` của nhãn đầu < `tau` — backend nên hiển thị "không chắc chắn" / gợi ý chọn tay thay vì khẳng định |
+| `tau` | float | ngưỡng đang dùng (biến `VISION_TAU` của dịch vụ AI), trả về để backend log |
 
-**Fallback backend**: báo người dùng chức năng tạm không khả dụng, gợi ý tra từ thủ công.
+- Header `Server-Timing` có `vision` (ms suy luận) và `app` — chỉ để chẩn đoán.
+
+**Lỗi**: `401` (thiếu/sai khoá) · `413` (ảnh > 10 MB hoặc quá nhiều điểm ảnh) · `422` (thiếu trường `image`, file rỗng, không phải ảnh, ảnh hỏng, định dạng không hỗ trợ; `detail` bắt đầu bằng mã `empty` / `not_image` / `unsupported_format`) · `503` (mô hình chưa nạp) · `500` (mô hình trả kết quả không hợp lệ).
+
+**Fallback backend**: báo người dùng chức năng tạm không khả dụng, gợi ý tra từ thủ công. Không có fallback TypeScript cho chức năng này.
 
 ## Trợ lý hỏi đáp — kiến trúc (v0.3, chốt với Thạc Duy Anh 2026-10-30, Jira WSEA-110)
 

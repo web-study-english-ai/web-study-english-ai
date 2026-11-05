@@ -1,0 +1,319 @@
+{
+  "task": "WSEA-153",
+  "part": "tau_dev",
+  "created_at": "2026-11-05T13:59:51+00:00",
+  "dev_dirs": [
+    "data/vision_samples"
+  ],
+  "rule": {
+    "grid": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6
+    ],
+    "min_coverage": 0.7,
+    "fallback": 0.05
+  },
+  "n_scored": 9,
+  "n_out_of_label_set": 1,
+  "table": [
+    {
+      "tau": 0.05,
+      "answered": 8,
+      "n": 9,
+      "coverage": 0.8889,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.875
+    },
+    {
+      "tau": 0.1,
+      "answered": 8,
+      "n": 9,
+      "coverage": 0.8889,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.875
+    },
+    {
+      "tau": 0.15,
+      "answered": 8,
+      "n": 9,
+      "coverage": 0.8889,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.875
+    },
+    {
+      "tau": 0.2,
+      "answered": 8,
+      "n": 9,
+      "coverage": 0.8889,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.875
+    },
+    {
+      "tau": 0.25,
+      "answered": 8,
+      "n": 9,
+      "coverage": 0.8889,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.875
+    },
+    {
+      "tau": 0.3,
+      "answered": 7,
+      "n": 9,
+      "coverage": 0.7778,
+      "acc_strict": 0.5714,
+      "acc_relaxed": 1.0
+    },
+    {
+      "tau": 0.35,
+      "answered": 6,
+      "n": 9,
+      "coverage": 0.6667,
+      "acc_strict": 0.6667,
+      "acc_relaxed": 1.0
+    },
+    {
+      "tau": 0.4,
+      "answered": 6,
+      "n": 9,
+      "coverage": 0.6667,
+      "acc_strict": 0.6667,
+      "acc_relaxed": 1.0
+    },
+    {
+      "tau": 0.45,
+      "answered": 4,
+      "n": 9,
+      "coverage": 0.4444,
+      "acc_strict": 0.5,
+      "acc_relaxed": 1.0
+    },
+    {
+      "tau": 0.5,
+      "answered": 3,
+      "n": 9,
+      "coverage": 0.3333,
+      "acc_strict": 0.3333,
+      "acc_relaxed": 1.0
+    },
+    {
+      "tau": 0.55,
+      "answered": 3,
+      "n": 9,
+      "coverage": 0.3333,
+      "acc_strict": 0.3333,
+      "acc_relaxed": 1.0
+    },
+    {
+      "tau": 0.6,
+      "answered": 3,
+      "n": 9,
+      "coverage": 0.3333,
+      "acc_strict": 0.3333,
+      "acc_relaxed": 1.0
+    }
+  ],
+  "tau_by_rule": 0.3,
+  "latency_ms": {
+    "n": 9,
+    "first_ms": 1284.6,
+    "p50": 224.8,
+    "p95": 231.0,
+    "max": 231.4,
+    "mean": 217.7
+  },
+  "rows": [
+    {
+      "file": "data/vision_samples/arm_01.jpg",
+      "sha256": "904adf6e89da05bf8bf2ca8264950a8a578befd562f5dfc01943eee85a57a517",
+      "label": "arm",
+      "top1": "arm",
+      "top1_score": 0.4166,
+      "top5": [
+        "arm",
+        "sleeve",
+        "bandage",
+        "elbow",
+        "wrist"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/book_03.jpg",
+      "sha256": "61ec2fd192e1bbe5160e9073bd3d89b5717a0df6bf87915d9b7cfb6441448701",
+      "label": "book",
+      "top1": "textbook",
+      "top1_score": 0.6287,
+      "top5": [
+        "textbook",
+        "guidebook",
+        "dictionary",
+        "book",
+        "folder"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/computer_07.jpg",
+      "sha256": "3039b5803e684abb13131b39ffb95fedf147463a76443a02f0783f81871830c3",
+      "label": "computer",
+      "top1": "screen",
+      "top1_score": 0.3377,
+      "top5": [
+        "screen",
+        "computer",
+        "pc",
+        "desk",
+        "webcam"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/cup_09.jpg",
+      "sha256": "bbbd4880a41a4f8ca9003192dd0d34d1a42bf2ebc2fd96f873c3025d6d4d2d26",
+      "label": "cup",
+      "top1": "mug",
+      "top1_score": 0.7433,
+      "top5": [
+        "mug",
+        "cup",
+        "tea",
+        "coffee",
+        "jug"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/floor_04.jpg",
+      "sha256": "8af4a050ec8bceb81be0b0f71ef5149389a26c5356ec7bc1ed90a1418e88e858",
+      "label": "floor",
+      "top1": "floor",
+      "top1_score": 0.7088,
+      "top5": [
+        "floor",
+        "carpet",
+        "pants",
+        "shower",
+        "wheelchair"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/hand_06.jpg",
+      "sha256": "174cb9328f1fbb5ed346aa407012e6867abc214b174613c9af875e94c77ec0fb",
+      "label": "hand",
+      "top1": "hand",
+      "top1_score": 0.4113,
+      "top5": [
+        "hand",
+        "finger",
+        "thumb",
+        "wrist",
+        "skin"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/head_02.jpg",
+      "sha256": "9aa4956224d49b83ab034986adb4be51531dc6049160dead9106ca610d8b2e11",
+      "label": "head",
+      "top1": "chin",
+      "top1_score": 0.0424,
+      "top5": [
+        "chin",
+        "earring",
+        "webcam",
+        "cheek",
+        "face"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": false
+    },
+    {
+      "file": "data/vision_samples/phone_08.jpg",
+      "sha256": "3ef5c82f666ec8a8271e5ee22f9e397c6f1dc019314917b735cf76e74fff9b0c",
+      "label": "phone",
+      "top1": "phone",
+      "top1_score": 0.4814,
+      "top5": [
+        "phone",
+        "filter",
+        "box",
+        "screen",
+        "calculator"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/wall_05.jpg",
+      "sha256": "4f381d446e3194c1ddc8e4b89a6f4cf302add45447f4d03f34fdc378f7e00bc1",
+      "label": "wall",
+      "top1": "floor",
+      "top1_score": 0.2653,
+      "top5": [
+        "floor",
+        "shower",
+        "dishwasher",
+        "freezer",
+        "water"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": false
+    }
+  ],
+  "out_of_label_set": [
+    {
+      "file": "data/vision_samples/fan_10.jpg",
+      "sha256": "dfa0fd4f4bb4bf7e3c182015398c152be1ff7c5a716f69b262a0b62dce86f9fa",
+      "label": "fan",
+      "top1": "heater",
+      "top1_score": 0.3897,
+      "top5": [
+        "heater",
+        "pc",
+        "antique",
+        "motor",
+        "alarm"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": false
+    }
+  ]
+}
