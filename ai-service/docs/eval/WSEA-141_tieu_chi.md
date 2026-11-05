@@ -100,7 +100,12 @@ Ghi vào cột `diem` một trong `dung` / `mot_phan` / `sai`, lý do ngắn ở
 
 ### 4.4. Danh sách 20 qid
 
-(chưa có — điền từ `gen_selection.qids` khi có `kb/eval_set_141*.csv`, commit trước khi chạy `--gen`)
+Điền 2026-11-05 từ `select_gen` (seed 141) trên `kb/eval_set_141.csv` + `kb/eval_set_141_neg.csv` ở commit `6b134d6`, **trước** khi chạy `--gen`. Dữ liệu: 40 câu dương (25 `kb` + 15 `vocab`; vi 21, en 19), 20 câu âm (10 `off` + 10 `gap`; vi 10, en 10).
+
+- **14 câu dương** — `kb` (9): `q001`, `q002`, `q005`, `q009`, `q015`, `q016`, `q018`, `q019`, `q020`; `vocab` (5): `q026`, `q030`, `q035`, `q036`, `q037`.
+- **6 câu âm** — `gap` (3): `q044`, `q045`, `q047`; `off` (3): `q056`, `q058`, `q059`.
+
+Lượt `--gen` chính thức phải ra đúng danh sách này (`gen_selection.qids` trong `141_retrieval.json`); lệch là bug, dừng lại.
 
 ## 5. Hạn chế đã biết
 
