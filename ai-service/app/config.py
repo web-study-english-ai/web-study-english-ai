@@ -60,8 +60,9 @@ class Settings(BaseSettings):
     vision_local_files_only: bool = False
     # Nguong tin cay: top-1 score < tau -> low_confidence. Chon tren tap dev (docs/eval/WSEA-153_tieu_chi.md
     # muc 4, scripts/tune_vision_tau.py), KHONG chinh theo tap test.
-    # 0,30 = tau theo luat tren dev 9 anh (2026-11-05, reports/153_tau_dev.json); them anh dev thi chay lai.
-    vision_tau: float = Field(default=0.30, gt=0, lt=1)
+    # KHOA 2026-11-05: 0,40 = tau theo luat tren dev 18 anh (9 spike + 9 vision_dev), reports/153_tau_dev.json.
+    # Khong chinh lai sau khi chay tap test.
+    vision_tau: float = Field(default=0.40, gt=0, lt=1)
 
     # --- Pipeline truy hoi (WSEA-127). Mac dinh = luat chot truoc trong pipeline_rules.py ---
     pipeline_k_prompt: int = Field(default=rules.K_PROMPT, ge=1, le=20)

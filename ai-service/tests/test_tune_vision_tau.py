@@ -52,3 +52,19 @@ def test_rejects_test_dir(tmp_path):
 
 def test_grid():
     assert tv.GRID[0] == 0.05 and tv.GRID[-1] == 0.6 and len(tv.GRID) == 12
+
+
+@pytest.mark.parametrize("name, obj", [("computer_mouse_09.jpg", "computer_mouse"), ("tablet_04.jpg", "tablet"),
+                                       ("phone_charge_10.jpg", "phone_charge"), ("notebook.jpg", "notebook")])
+def test_ngoai_nhan_name(name, obj):
+    from pathlib import Path
+    assert tv.ngoai_nhan_name(Path(name)) == obj
+
+
+def test_ngoai_nhan_rows_use_given_tau():
+    from pathlib import Path
+    preds = [(Path("tablet_04.jpg"), [{"word": "phone", "score": 0.5}]),
+             (Path("screwdriver_15.jpg"), [{"word": "screw", "score": 0.1}])]
+    rows = tv.ngoai_nhan_rows(preds, 0.3)
+    assert [(r["object"], r["top1"], r["low_confidence"]) for r in rows] == \
+        [("tablet", "phone", False), ("screwdriver", "screw", True)]

@@ -1,9 +1,10 @@
 {
   "task": "WSEA-153",
   "part": "tau_dev",
-  "created_at": "2026-11-05T13:59:51+00:00",
+  "created_at": "2026-11-05T16:02:20+00:00",
   "dev_dirs": [
-    "data/vision_samples"
+    "data/vision_samples",
+    "data/vision_dev"
   ],
   "rule": {
     "grid": [
@@ -23,114 +24,114 @@
     "min_coverage": 0.7,
     "fallback": 0.05
   },
-  "n_scored": 9,
+  "n_scored": 18,
   "n_out_of_label_set": 1,
   "table": [
     {
       "tau": 0.05,
-      "answered": 8,
-      "n": 9,
-      "coverage": 0.8889,
-      "acc_strict": 0.5,
-      "acc_relaxed": 0.875
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
     },
     {
       "tau": 0.1,
-      "answered": 8,
-      "n": 9,
-      "coverage": 0.8889,
-      "acc_strict": 0.5,
-      "acc_relaxed": 0.875
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
     },
     {
       "tau": 0.15,
-      "answered": 8,
-      "n": 9,
-      "coverage": 0.8889,
-      "acc_strict": 0.5,
-      "acc_relaxed": 0.875
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
     },
     {
       "tau": 0.2,
-      "answered": 8,
-      "n": 9,
-      "coverage": 0.8889,
-      "acc_strict": 0.5,
-      "acc_relaxed": 0.875
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
     },
     {
       "tau": 0.25,
-      "answered": 8,
-      "n": 9,
-      "coverage": 0.8889,
-      "acc_strict": 0.5,
-      "acc_relaxed": 0.875
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
     },
     {
       "tau": 0.3,
-      "answered": 7,
-      "n": 9,
-      "coverage": 0.7778,
-      "acc_strict": 0.5714,
-      "acc_relaxed": 1.0
+      "answered": 16,
+      "n": 18,
+      "coverage": 0.8889,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.8125
     },
     {
       "tau": 0.35,
-      "answered": 6,
-      "n": 9,
-      "coverage": 0.6667,
-      "acc_strict": 0.6667,
-      "acc_relaxed": 1.0
+      "answered": 15,
+      "n": 18,
+      "coverage": 0.8333,
+      "acc_strict": 0.5333,
+      "acc_relaxed": 0.8
     },
     {
       "tau": 0.4,
-      "answered": 6,
-      "n": 9,
-      "coverage": 0.6667,
-      "acc_strict": 0.6667,
-      "acc_relaxed": 1.0
+      "answered": 14,
+      "n": 18,
+      "coverage": 0.7778,
+      "acc_strict": 0.5714,
+      "acc_relaxed": 0.8571
     },
     {
       "tau": 0.45,
-      "answered": 4,
-      "n": 9,
-      "coverage": 0.4444,
+      "answered": 12,
+      "n": 18,
+      "coverage": 0.6667,
       "acc_strict": 0.5,
-      "acc_relaxed": 1.0
+      "acc_relaxed": 0.8333
     },
     {
       "tau": 0.5,
-      "answered": 3,
-      "n": 9,
-      "coverage": 0.3333,
-      "acc_strict": 0.3333,
-      "acc_relaxed": 1.0
+      "answered": 11,
+      "n": 18,
+      "coverage": 0.6111,
+      "acc_strict": 0.4545,
+      "acc_relaxed": 0.8182
     },
     {
       "tau": 0.55,
-      "answered": 3,
-      "n": 9,
-      "coverage": 0.3333,
-      "acc_strict": 0.3333,
-      "acc_relaxed": 1.0
+      "answered": 10,
+      "n": 18,
+      "coverage": 0.5556,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.8
     },
     {
       "tau": 0.6,
-      "answered": 3,
-      "n": 9,
-      "coverage": 0.3333,
-      "acc_strict": 0.3333,
-      "acc_relaxed": 1.0
+      "answered": 9,
+      "n": 18,
+      "coverage": 0.5,
+      "acc_strict": 0.5556,
+      "acc_relaxed": 0.8889
     }
   ],
-  "tau_by_rule": 0.3,
+  "tau_by_rule": 0.4,
   "latency_ms": {
-    "n": 9,
-    "first_ms": 1284.6,
-    "p50": 224.8,
-    "p95": 231.0,
-    "max": 231.4,
-    "mean": 217.7
+    "n": 18,
+    "first_ms": 1225.4,
+    "p50": 179.0,
+    "p95": 194.6,
+    "max": 201.1,
+    "mean": 179.9
   },
   "rows": [
     {
@@ -294,6 +295,168 @@
       "top1_relaxed": false,
       "top5_strict": false,
       "top5_relaxed": false
+    },
+    {
+      "file": "data/vision_dev/bag_05.jpg",
+      "sha256": "b8559cbf6aaaddc9bef4971d18189dafa21755669190db014d4fc863b9863742",
+      "label": "bag",
+      "top1": "backpack",
+      "top1_score": 0.8888,
+      "top5": [
+        "backpack",
+        "bag",
+        "luggage",
+        "baggage",
+        "jacket"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/bottle_01.jpg",
+      "sha256": "e0bffa85f0021cf1d0ea51183692d5201baa249ce65136786a5af98a921bafdc",
+      "label": "bottle",
+      "top1": "bottle",
+      "top1_score": 0.8031,
+      "top5": [
+        "bottle",
+        "water",
+        "soda",
+        "container",
+        "juice"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/chair_14.jpg",
+      "sha256": "bffe57120621aefd10932fe1f2065c857eecfe649f5d549aaedc80e9179f045d",
+      "label": "chair",
+      "top1": "chair",
+      "top1_score": 0.8361,
+      "top5": [
+        "chair",
+        "seat",
+        "armchair",
+        "wheelchair",
+        "desk"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/computer_13.jpg",
+      "sha256": "477fe85729fa4c910a3484ddae11efdd146dc4f6b9ff821da15979e3d554ce51",
+      "label": "computer",
+      "top1": "pc",
+      "top1_score": 0.5051,
+      "top5": [
+        "pc",
+        "computer",
+        "screen",
+        "antique",
+        "webcam"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/cooker_06.jpg",
+      "sha256": "5a8172d337f3a855da29fdeacab60550bae4ec549c7d1b9494f6be41a6a92c8e",
+      "label": "cooker",
+      "top1": "kettle",
+      "top1_score": 0.5744,
+      "top5": [
+        "kettle",
+        "robot",
+        "cooker",
+        "antique",
+        "pc"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/fridge_08.jpg",
+      "sha256": "a0ec3259199de25ba659e9d4660939fe467bfd5670a0b3386e67daf584c7bf40",
+      "label": "fridge",
+      "top1": "locker",
+      "top1_score": 0.3893,
+      "top5": [
+        "locker",
+        "refrigerator",
+        "elevator",
+        "fridge",
+        "freezer"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/keyboard_11.jpg",
+      "sha256": "facb9124ef7974007871d07fd53377124a0f41dde73c58d4f67f256cd3601eb3",
+      "label": "keyboard",
+      "top1": "keyboard",
+      "top1_score": 0.8005,
+      "top5": [
+        "keyboard",
+        "computer",
+        "pc",
+        "desk",
+        "fridge"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/mirror_03.jpg",
+      "sha256": "3a858f0fcd08e3bdc30fa78ee3b4840df66ccdf1d17080dc320c216a7fe9da29",
+      "label": "mirror",
+      "top1": "mirror",
+      "top1_score": 0.7519,
+      "top5": [
+        "mirror",
+        "filter",
+        "album",
+        "phone",
+        "glasses"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/suitcase_07.jpg",
+      "sha256": "44d46b7629f0742260566a952f6fb79e1bee4b56fe4bdf7ade814ae5893b9d1d",
+      "label": "suitcase",
+      "top1": "luggage",
+      "top1_score": 0.6077,
+      "top5": [
+        "luggage",
+        "suitcase",
+        "baggage",
+        "refrigerator",
+        "fridge"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
     }
   ],
   "out_of_label_set": [
@@ -315,5 +478,49 @@
       "top5_strict": false,
       "top5_relaxed": false
     }
-  ]
+  ],
+  "ngoai_nhan": {
+    "dir": "data/vision_dev_ngoai_nhan",
+    "tau": 0.4,
+    "used_for_tau": false,
+    "n": 5,
+    "low_confidence": 4,
+    "rows": [
+      {
+        "file": "computer_mouse_09.jpg",
+        "object": "computer_mouse",
+        "top1": "helmet",
+        "top1_score": 0.2568,
+        "low_confidence": true
+      },
+      {
+        "file": "notebook_12.jpg",
+        "object": "notebook",
+        "top1": "diary",
+        "top1_score": 0.4832,
+        "low_confidence": false
+      },
+      {
+        "file": "phone_charge_10.jpg",
+        "object": "phone_charge",
+        "top1": "modem",
+        "top1_score": 0.1315,
+        "low_confidence": true
+      },
+      {
+        "file": "screwdriver_15.jpg",
+        "object": "screwdriver",
+        "top1": "razor",
+        "top1_score": 0.1397,
+        "low_confidence": true
+      },
+      {
+        "file": "tablet_04.jpg",
+        "object": "tablet",
+        "top1": "phone",
+        "top1_score": 0.0699,
+        "low_confidence": true
+      }
+    ]
+  }
 }

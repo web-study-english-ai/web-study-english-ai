@@ -82,6 +82,19 @@ def choose_tau(table: list[dict], min_coverage: float = MIN_COVERAGE, fallback: 
     return max(ok) if ok else fallback
 
 
+def ngoai_nhan_name(path: Path) -> str:
+    """Ten vat ngoai nhan = ten file bo hau to so: computer_mouse_09.jpg -> computer_mouse (khong cat o '_' dau)."""
+    stem = path.stem
+    head, _, tail = stem.rpartition("_")
+    return head if head and tail.isdigit() else stem
+
+
+def ngoai_nhan_rows(preds: list[tuple[Path, list[dict]]], tau: float) -> list[dict]:
+    """Anh vat ngoai 449 nhan: chi ghi top-1 va low_confidence theo tau da chon. KHONG dung de chon tau."""
+    return [{"file": p.name, "object": ngoai_nhan_name(p), "top1": top[0]["word"],
+             "top1_score": round(top[0]["score"], 4), "low_confidence": top[0]["score"] < tau} for p, top in preds]
+
+
 def check_not_test(dirs: list[Path], test_dir: Path = TEST_DIR) -> None:
     t = test_dir.resolve()
     for d in dirs:
@@ -115,8 +128,13 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--dev", type=Path, nargs="*", default=list(DEV_DIRS))
     ap.add_argument("--out", type=Path, default=DEFAULT_OUT)
+    ap.add_argument("--ngoai-nhan", type=Path, default=None,
+                    help="thư mục ảnh vật ngoài 449 nhãn: chỉ ghi top-1 + low_confidence, không dùng chọn τ")
     args = ap.parse_args(argv)
-    check_not_test(args.dev)
+    args.dev = [d.resolve() for d in args.dev]  # duong dan tuong doi -> tuyet doi (relative_to ROOT khi ghi)
+    args.ngoai_nhan = args.ngoai_nhan.resolve() if args.ngoai_nhan else None
+    args.out = args.out.resolve()
+    check_not_test(args.dev + ([args.ngoai_nhan] if args.ngoai_nhan else []))
     images = [p for d in args.dev if d.exists() for p in sc.list_images(d)]
     if not images:
         raise SystemExit("Không có ảnh dev")
@@ -141,17 +159,29 @@ def main(argv: list[str] | None = None) -> int:
                "top5": pred[:5], **judge(truth, pred, groups)}
         (rows if truth in label_set else out_of_set).append(row)
     table = tau_table(rows)
-    tau = choose_tau(table)
+    tau = choose_tau(table)  # CHI tu anh dev co nhan thuoc tap
+    extra = []
+    if args.ngoai_nhan:
+        imgs = sc.list_images(args.ngoai_nhan)
+        extra = ngoai_nhan_rows([(p, clf.predict(pp.load_image_file(p), k=TOP_K)) for p in imgs], tau)
     rep = {"task": "WSEA-153", "part": "tau_dev", "created_at": datetime.now(timezone.utc).isoformat(timespec="seconds"),
            "dev_dirs": [d.relative_to(ROOT).as_posix() for d in args.dev if d.exists()],
            "rule": {"grid": list(GRID), "min_coverage": MIN_COVERAGE, "fallback": FALLBACK_TAU},
            "n_scored": len(rows), "n_out_of_label_set": len(out_of_set), "table": table, "tau_by_rule": tau,
-           "latency_ms": sc.latency_stats(ms), "rows": rows, "out_of_label_set": out_of_set}
+           "latency_ms": sc.latency_stats(ms), "rows": rows, "out_of_label_set": out_of_set,
+           "ngoai_nhan": None if not args.ngoai_nhan else {
+               "dir": args.ngoai_nhan.relative_to(ROOT).as_posix(), "tau": tau, "used_for_tau": False,
+               "n": len(extra), "low_confidence": sum(r["low_confidence"] for r in extra), "rows": extra}}
     args.out.parent.mkdir(parents=True, exist_ok=True)
     args.out.write_text(json.dumps(rep, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     print(summary(rows, table, tau, len(out_of_set)))
     lat = rep["latency_ms"]
     print(f"độ trễ/ảnh (bỏ lần đầu): p50 {lat.get('p50')} · p95 {lat.get('p95')} ms (n={lat['n']})")
+    if extra:
+        print(f"\nẢnh ngoài 449 nhãn (không dùng chọn τ), τ = {tau:.2f}: low_confidence "
+              f"{sum(r['low_confidence'] for r in extra)}/{len(extra)}")
+        for r in extra:
+            print(f"- {r['file']}: top-1 {r['top1']} {r['top1_score']:.3f} · low_confidence={r['low_confidence']}")
     print(f"Đã ghi {args.out.relative_to(ROOT).as_posix()}")
     return 0
 
