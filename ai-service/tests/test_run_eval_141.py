@@ -29,7 +29,8 @@ def test_load_sets_reads_csv(tmp_path):
     n.write_text("qid,question,group,lang\nn1,thời tiết,off,vi\n", encoding="utf-8")
     p, ng = r141.load_sets(q, n)
     assert p == [{"qid": "q1", "question": "câu một", "gold_ids": "gram_001|gram_002", "lang": "vi",
-                  "gold": ["gram_001", "gram_002"], "kind": "pos"}]
+                  "gold": ["gram_001", "gram_002"], "kind": "pos", "qgroup": "kb",
+                  "gold_kb": ["gram_001", "gram_002"], "gold_words": []}]
     assert ng[0]["group"] == "off" and ng[0]["kind"] == "neg"
 
 
@@ -97,7 +98,7 @@ def test_retrieval_metrics_and_distributions():
     assert set(m["by_lang"]) == {"en", "vi"}
     negs = [ranked_row("n", ["g3"], [0.2], kind="neg", group="off")]
     d = r141.top1_distributions(rows, negs)
-    assert d["pos"]["min"] == 0.1 and d["neg_off"]["n"] == 1 and "neg_all" in d
+    assert d["pos_kb"]["min"] == 0.1 and d["neg_off"]["n"] == 1 and "neg_all" in d and "pos_vocab" not in d
 
 
 def test_pipeline_summary():
@@ -232,8 +233,8 @@ RANKED = ([f"g{i}" for i in range(10)], [0.10 + 0.01 * i for i in range(10)])
 
 def gen_fixture(qids, tmp_path, **over):
     report = {"gen_selection": {"seed": 141, "qids": qids}, "files": {}}
-    by_qid = {q: ({"qid": q, "question": f"câu {q}", "kind": "pos", "gold": ["g1"], "lang": "vi"}, RANKED)
-              for q in qids}
+    by_qid = {q: ({"qid": q, "question": f"câu {q}", "kind": "pos", "gold": ["g1"], "lang": "vi", "qgroup": "kb"},
+                  RANKED, []) for q in qids}
     args = r141.parse_args(["--gen", "--out-dir", str(tmp_path / "out"), *over.get("argv", [])])
     return args, report, by_qid
 
@@ -264,7 +265,7 @@ def test_gen_part_no_key_stops(tmp_path):
 def test_main_no_key_writes_nothing(tmp_path, monkeypatch, capsys):
     args, report, by_qid = gen_fixture(["q1"], tmp_path)
     report.update({"retrieval": {}, "n_positives": 1, "n_negatives": 0})
-    monkeypatch.setattr(r141, "retrieval_part", lambda a: (report, None, by_qid, CHUNKS))
+    monkeypatch.setattr(r141, "retrieval_part", lambda a: (report, None, by_qid, CHUNKS, {}))
     monkeypatch.setattr(r141, "summary_text", lambda rep: "tom tat")
 
     def fatal(*a, **k):
@@ -277,7 +278,7 @@ def test_main_no_key_writes_nothing(tmp_path, monkeypatch, capsys):
 
 def test_main_writes_gen_with_degraded_summary(tmp_path, monkeypatch):
     args, report, by_qid = gen_fixture(["q1"], tmp_path)
-    monkeypatch.setattr(r141, "retrieval_part", lambda a: (report, None, by_qid, CHUNKS))
+    monkeypatch.setattr(r141, "retrieval_part", lambda a: (report, None, by_qid, CHUNKS, {}))
     monkeypatch.setattr(r141, "summary_text", lambda rep: "tom tat")
     monkeypatch.setattr(r141, "gen_part", lambda *a, **k: [{"qid": "q1", "question": "câu", **bad_row("timeout"),
                                                             "retried": True, "first_reason": "timeout"}])
@@ -292,3 +293,155 @@ def test_main_writes_gen_with_degraded_summary(tmp_path, monkeypatch):
 def test_main_rejects_short_retry_wait_for_official_run():
     with pytest.raises(SystemExit):
         r141.main(["--gen", "--retry-wait", "5"])
+
+
+# --- Nhom cau hoi nghia tu (vocab) — sua 2026-11-05 truoc khi co du lieu --------------------------
+
+META = {w: {"pos": "n", "meaning_vi": f"nghĩa {w}", "example_en": f"An example with {w}.", "rank": i}
+        for i, w in enumerate(("reluctant", "eager", "apple", "since", "for", "an", "hi", "hay"), 1)}
+
+
+@pytest.mark.parametrize("gold, kb, words, group", [
+    (["gram_001"], ["gram_001"], [], "kb"),
+    (["word:reluctant"], [], ["reluctant"], "vocab"),
+    (["word: Eager ", "word:apple"], [], ["eager", "apple"], "vocab"),
+    (["gram_001", "word:apple"], ["gram_001"], ["apple"], None),
+    ([], [], [], None),
+])
+def test_split_gold_and_group(gold, kb, words, group):
+    assert r141.split_gold(gold) == (kb, words)
+    assert r141.question_group({"gold": gold}) == group
+
+
+def test_validate_sets_vocab_rules():
+    ids, terms = {"g1"}, frozenset(META)
+    ok = [{**pos("q1"), "gold": ["word:reluctant"]}, pos("q2")]
+    assert r141.validate_sets(ok, [neg("n1", "off")], ids, terms) == []
+    bad = [{**pos("q1"), "gold": ["word:khongco"]}, {**pos("q2"), "gold": ["g1", "word:apple"]}]
+    text = " | ".join(r141.validate_sets(bad, [], ids, terms))
+    assert "word:khongco" in text and "trộn" in text
+    assert "word:reluctant" in " ".join(r141.validate_sets([{**pos("q1"), "gold": ["word:reluctant"]}], [], ids))
+
+
+@pytest.mark.parametrize("question, tokens", [
+    # \b ASCII nhu JS: chu co dau cat manh; manh 1 ky tu bi bo ({2,30})
+    ("khi nào dùng hiện tại", ["khi", "ng", "hi"]),  # "dùng" -> "ng", "hiện" -> "hi"
+    ("thời tiết", ["th", "ti"]),
+    ("Since hay FOR, since", ["since", "hay", "for"]),
+    ("I am", ["am"]),
+])
+def test_exact_tokens_like_backend_regex(question, tokens):
+    assert r141.exact_tokens(question) == tokens
+
+
+def test_exact_tokens_cap_15():
+    q = " ".join(chr(97 + i) * 2 for i in range(20))
+    assert len(r141.exact_tokens(q)) == 15 and r141.exact_tokens(q)[0] == "aa"
+
+
+def test_exact_terms_take_5_by_rank():
+    q = "nghĩa của từ Reluctant là gì, reluctant khác eager thế nào (since 2020)"
+    assert r141.exact_terms(q, META) == ["reluctant", "eager", "since"]
+    assert r141.exact_terms("khi nào dùng hiện tại", META) == ["hi"]  # manh "hi" khop tu tieng Anh — nhu backend
+    many = "hay hi an for since apple eager reluctant"
+    assert r141.exact_terms(many, META) == ["reluctant", "eager", "apple", "since", "for"]  # take 5, xap xi theo rank
+
+
+def test_backend_vocab_exact_then_vector_dedupe_and_valid():
+    v = r141.backend_vocab("eager hoặc reluctant", ["reluctant", "apple", "for", "since"], [0.10, 0.12, 0.13, 0.2], META)
+    assert [(x["term"], x["match"]) for x in v] == [("reluctant", "exact"), ("eager", "exact"),
+                                                   ("apple", "vector"), ("for", "vector")]
+    assert v[0]["distance"] == 0.0 and v[2]["distance"] == 0.12 and v[2]["meaning_vi"] == "nghĩa apple"
+    from app.models.schemas import AskRequest
+    AskRequest.model_validate({"question": "q", "contexts": [], "vocab": v})  # dung schema /rank
+
+
+def test_backend_vocab_max_5_exact_plus_3_vector():
+    letters = {chr(97 + i) * 3: {"pos": "n", "meaning_vi": "x", "example_en": "", "rank": i} for i in range(15)}
+    vec = {t: {"pos": "n", "meaning_vi": "x", "example_en": "", "rank": 100} for t in ("vecone", "vectwo", "vecthree")}
+    v = r141.backend_vocab(" ".join(letters), ["vecone", "vectwo", "vecthree"], [0.1, 0.2, 0.3], letters | vec)
+    assert [x["match"] for x in v] == ["exact"] * 5 + ["vector"] * 3
+    assert v[0]["example_en"] is None  # example rong -> None nhu backend (null)
+
+
+def test_three_exact_push_vector_gold_out_of_top3():
+    """Nhu backend + select_vocab: >= 3 tu exact (ke ca manh "hi", "hay") thi tu tim bang vector khong vao top-3."""
+    v = r141.backend_vocab("khi hiện tại dùng for hay since", ["eager"], [0.05], META)
+    sel = r141.selected_vocab_terms(v)
+    assert sel == ["since", "for", "hi"] and r141.vocab_found_by(["eager"], v, sel) == "none"
+
+
+def test_selected_vocab_terms_and_found_by():
+    v = r141.backend_vocab("eager", ["reluctant", "apple", "eager"], [0.15, 0.11, 0.2], META)
+    sel = r141.selected_vocab_terms(v)
+    assert sel == ["eager", "apple", "reluctant"]  # exact truoc, roi vector theo distance
+    assert r141.vocab_found_by(["eager"], v, sel) == "exact"
+    assert r141.vocab_found_by(["reluctant"], v, sel) == "vector"
+    assert r141.vocab_found_by(["since"], v, sel) == "none"
+
+
+def test_vocab_metrics():
+    rows = [{"qid": "a", "lang": "vi", "vocab_hit": True, "vocab_found_by": "exact"},
+            {"qid": "b", "lang": "vi", "vocab_hit": True, "vocab_found_by": "vector"},
+            {"qid": "c", "lang": "en", "vocab_hit": False, "vocab_found_by": "none"}]
+    m = r141.vocab_metrics(rows)
+    assert m["overall"] == {"n": 3, "hit@3": 0.6667, "hits": 2, "found_exact": 1, "found_vector": 1}
+    assert m["by_lang"]["en"]["hit@3"] == 0.0 and m["missed_qids"] == ["c"]
+
+
+def test_evaluate_items_two_groups():
+    from tests.test_pipeline import FakeEmbedder, FakeIntent
+    items = [{**pos("q1"), "gold": ["g1"], "gold_kb": ["g1"], "gold_words": [], "qgroup": "kb"},
+             {**pos("q2"), "question": "reluctant nghĩa là gì", "gold": ["word:reluctant"], "gold_kb": [],
+              "gold_words": ["reluctant"], "qgroup": "vocab"},
+             {**pos("q3"), "question": "từ chỉ sự háo hức", "gold": ["word:eager"], "gold_kb": [],
+              "gold_words": ["eager"], "qgroup": "vocab"},
+             neg("n1", "off")]
+    ranking = [RANKED] * 4
+    word_ranking = [(["apple", "for", "since"], [0.1, 0.2, 0.3])] * 3 + [(["eager"], [0.1])]
+    rows = r141.evaluate_items(items, ranking, word_ranking, CHUNKS, META, FakeEmbedder(), FakeIntent())
+    by = {r["qid"]: r for r in rows}
+    assert by["q1"]["gold_in_top5"] is True and "vocab_hit" not in by["q1"]
+    assert by["q2"]["vocab_hit"] is True and by["q2"]["vocab_found_by"] == "exact"
+    assert by["q3"]["vocab_hit"] is False and by["q3"]["gold_word_vector_rank"] == {"eager": None}
+    assert by["q2"]["vocab_selected"][0] == "reluctant" and by["q2"]["vocab_sent"][0]["match"] == "exact"
+    assert all(r["decision"] == "answer" for r in rows)
+    s = r141.pipeline_summary(rows)
+    assert s["pos_kb"]["n"] == 1 and s["pos_vocab"]["n"] == 2
+
+
+def test_select_gen_strata_by_group_and_lang():
+    positives = [{**pos(f"k{i:02d}"), "qgroup": "kb"} for i in range(30)] + \
+                [{**pos(f"v{i:02d}"), "qgroup": "vocab"} for i in range(10)]
+    chosen = r141.select_gen(positives, NEG)
+    assert sum(c.startswith("k") for c in chosen) == 11 and sum(c.startswith("v") for c in chosen) == 3  # 14*30/40, 14*10/40
+    no_group = [{k: v for k, v in q.items() if k != "qgroup"} for q in POS]
+    assert r141.select_gen(no_group, NEG) == r141.select_gen(POS, NEG)  # thieu qgroup = kb, giong ban cu
+
+
+def test_cham_rows_includes_vocab_entries():
+    rows = r141.cham_rows([{"qid": "q2", "question": "reluctant?", "answer": "đáp", "source_ids": [],
+                            "vocab": ["reluctant"]}], CHUNKS, META)
+    assert rows[0]["nguon"] == "[word:reluctant] reluctant (n): nghĩa reluctant — Ví dụ: An example with reluctant."
+
+
+def test_summary_text_reports_groups_separately():
+    rep = {"n_positives": 3, "n_kb": 2, "n_vocab": 1, "n_negatives": 1,
+           "retrieval": {"kb": {"overall": {"hit@1": 0.5, "hit@5": 1.0, "hit@8": 1.0, "mrr@20": 0.75}},
+                         "vocab": {"overall": {"n": 1, "hit@3": 1.0, "hits": 1, "found_exact": 1, "found_vector": 0},
+                                   "missed_qids": []}},
+           "baseline_31": r141.BASELINE_31, "top1_distance": {},
+           "pipeline": {g: {"n": 1, "blocked": 0, "blocked_qids": []} for g in ("pos_kb", "pos_vocab", "off", "gap")},
+           "gen_selection": {"seed": 141, "qids": ["q1"]}}
+    t = r141.summary_text(rep)
+    assert "Nhóm kb" in t and "Nhóm vocab" in t and "hit@3 1/1" in t and "pos_vocab: 0/1" in t
+    rep["retrieval"]["vocab"], rep["n_vocab"] = None, 0
+    assert "(không có câu vocab)" in r141.summary_text(rep)
+
+
+def test_real_vocab_source_and_word_vectors_consistent():
+    if not r141.VOCAB_SOURCE.exists() or not r141.lv.DEFAULT_WORDS_NPZ.exists():
+        pytest.skip("thiếu vocab_7000.csv hoặc words .npz (data/ không có trong git)")
+    meta = r141.load_vocab_meta()
+    terms, vecs, errors = r141.load_word_vectors(r141.lv.DEFAULT_WORDS_NPZ, meta)
+    assert errors == [] and len(terms) == vecs.shape[0] == 7000

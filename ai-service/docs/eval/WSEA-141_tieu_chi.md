@@ -1,6 +1,6 @@
 # WSEA-141 — Tiêu chí đánh giá pipeline trợ lý (chốt trước khi chạy thật)
 
-Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần chạy thật (bản đầu `dc4f402`; sửa cùng ngày, vẫn trước khi có dữ liệu: mục 4.2 chạy lại câu degraded, 4.3 câu dương bị chặn = sai, 4.3a cách báo, 4.3b lưu kết quả). Không sửa sau khi đã thấy kết quả; nếu buộc phải sửa thì ghi rõ ngày, lý do và commit cũ ở cuối file.
+Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần chạy thật (bản đầu `dc4f402`; sửa cùng ngày, vẫn trước khi có dữ liệu: mục 4.2 chạy lại câu degraded, 4.3 câu dương bị chặn = sai, 4.3a cách báo, 4.3b lưu kết quả; sửa 2026-11-05, vẫn trước khi có dữ liệu: tách nhóm câu hỏi nghĩa từ `vocab` — mục 1, 2, 3, 4.1, 4.3). Không sửa sau khi đã thấy kết quả; nếu buộc phải sửa thì ghi rõ ngày, lý do và commit cũ ở cuối file.
 
 - **Không đổi** code `app/`, prompt (v2, WSEA-140) hay luật pipeline (WSEA-127) trong task này. Đây là đo, không phải chỉnh.
 - Script: `scripts/run_eval_141.py` (test: `tests/test_run_eval_141.py`). Kết quả ghi vào `reports/`.
@@ -9,16 +9,25 @@ Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần ch�
 ## 1. Dữ liệu
 
 - `kb/eval_set_141.csv` — câu dương: `qid,question,gold_ids,lang` (`gold_ids` nhiều id cách nhau `|`).
+  - **Hai nhóm câu dương** (sửa 2026-11-05): `gold_ids` toàn dạng `word:<term>` → nhóm **`vocab`** (câu hỏi nghĩa từ, gold là từ vựng); toàn id đoạn (`gram_…`) → nhóm **`kb`**. Một câu trộn hai loại = lỗi dữ liệu. `<term>` so khớp không phân biệt hoa thường, phải có trong từ vựng (`backend/prisma/data/vocab_7000.csv`, cũng là các term trong `data/embeddings/words_e5-small.npz`).
 - `kb/eval_set_141_neg.csv` — câu âm: `qid,question,group,lang`, `group` ∈ {`off`, `gap`} (`off` = lạc đề; `gap` = trong lĩnh vực nhưng kho chưa có).
 - Người soạn: Phúc (60 câu). Claude/Hiếu **không sửa** file của Phúc; dữ liệu sai thì dừng và báo.
-- Kiểm trước khi chạy (script tự kiểm, sai thì DỪNG): mọi `gold_id` có trong `kb/grammar_chunks.jsonl` (cùng nguồn `eval_retrieval.py` dùng); `qid` không trùng trong từng file và giữa hai file; câu không rỗng; `group`, `lang` đúng miền. Script in số câu mỗi file.
+- Kiểm trước khi chạy (script tự kiểm, sai thì DỪNG): mọi `gold_id` đoạn có trong `kb/grammar_chunks.jsonl` (cùng nguồn `eval_retrieval.py` dùng); mọi `word:<term>` có trong từ vựng; mỗi câu đúng một nhóm; `qid` không trùng trong từng file và giữa hai file; câu không rỗng; `group`, `lang` đúng miền. Script in số câu mỗi file.
 - **Trạng thái 2026-11-04**: hai file chưa có. Script đã chạy thử trên `kb/eval_questions.csv` + `kb/eval_negatives.csv` (bộ 31 + 12 cũ) — chỉ để kiểm script, **không phải kết quả**, không commit.
 
 ## 2. Truy hồi (0 lời gọi LLM)
 
 - Cách đo giữ nguyên WSEA-111: vector đoạn đọc từ `.npz` đã nạp DB (kiểm manifest), câu hỏi mã hoá bằng `app/services/embedder.py` (`query: `), xếp hạng bằng `rank_all` của `scripts/eval_retrieval.py`. Câu hỏi gốc, không nối từ.
-- Báo trên câu dương, tổng và theo `lang`: **hit@1, hit@5, hit@8, MRR@20** (hit@k = có ít nhất một gold trong top-k).
-- Báo phân bố **distance top-1** (min / p50 / p90 / max) của câu dương, câu âm `off`, câu âm `gap`.
+- **Báo hai nhóm riêng, không gộp.**
+- **Nhóm `kb`**: tổng và theo `lang`, **hit@1, hit@5, hit@8, MRR@20** trên đoạn (hit@k = có ít nhất một gold trong top-k). Chỉ nhóm này đặt cạnh bộ 31 câu cũ.
+- **Nhóm `vocab`**: **hit@3** = term gold nằm trong **top-3 `vocab` mà `/assistant/rank` chọn** (`select_vocab`: `exact` trước, rồi `vector` theo distance; K_VOCAB = 3), đo cho mọi câu, không phụ thuộc quyết định chặn (giống cách đo `kb` ở WSEA-127 mục c). Báo kèm số câu tìm thấy qua `exact` / qua `vector`, hạng của gold trong xếp hạng vector, và qid trượt.
+  - `vocab` gửi đi dựng **đúng như backend** (đọc `backend/src/modules/assistant/assistant.service.ts`, 2026-11-05), `word` = null:
+    - **exact**: `cauHoi.toLowerCase().match(/\b[a-z]{2,30}\b/g)` — `\b` của JS chỉ hiểu ASCII, nên chữ có dấu bị cắt mảnh ("hiện" → "hi", "dùng" → "ng"), mảnh 1 ký tự bị bỏ; tối đa 15 chuỗi khác nhau; `findMany({ where: term in …, take: 5 })` **không có ORDER BY** → thứ tự thật do Postgres; script **xấp xỉ** bằng thứ tự `rank` (thứ tự nạp seed). `match = "exact"`, `distance = 0`;
+    - **vector**: top-3 trên `words_e5-small.npz` (vector đã nạp DB, câu hỏi gốc), `match = "vector"`;
+    - trùng term → giữ `exact`; tối đa 10.
+  - Hệ quả cần biết khi đọc số: câu có ≥ 3 từ `exact` (kể cả mảnh như "hi", "hay") thì từ tìm bằng vector không vào top-3.
+  - Không có bộ cũ để so cho nhóm này.
+- Báo phân bố **distance top-1** (đoạn; min / p50 / p90 / max) của câu dương `kb`, câu dương `vocab`, câu âm `off`, câu âm `gap`.
 - **Không đặt ngưỡng đạt/trượt.** Đặt cạnh bộ 31 câu cũ để so (khác người soạn, khác câu, nên chỉ để tham khảo):
 
 | chỉ số | 31 câu cũ (`docs/eval/retrieval_k_sweep.json`) |
@@ -32,8 +41,9 @@ Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần ch�
 
 ## 3. Pipeline — luật WSEA-127 (0 lời gọi LLM)
 
-- Mỗi câu → `AskRequest` với top-8 e5 (như backend, `AI_ASSISTANT_TOP_K` = 8), `word` null, `vocab` [], `history` [] → `run_pipeline` thật (Embedder + IntentClassifier thật), cùng logic `scripts/check_pipeline.py`.
-- Báo (chỉ ghi nhận, **không ngưỡng**): tỉ lệ câu dương bị chặn (`decision` ≠ `answer`); tỉ lệ câu `off` bị chặn; số câu `gap` bị chặn; bảng `decision` theo nhóm câu âm; danh sách qid bị chặn.
+- Mỗi câu → `AskRequest` với top-8 e5 (như backend, `AI_ASSISTANT_TOP_K` = 8), **`vocab` dựng như backend (mục 2)**, `word` null, `history` [] → `run_pipeline` thật (Embedder + IntentClassifier thật).
+  - **Sửa 2026-11-05** (trước: `vocab` []): backend thật gửi `vocab` cho mọi câu; có từ `exact` thì luật 2 (ý định) và luật 3 (top-1 xa) được miễn. Chạy thử trên bộ 43 câu cũ (không phải kết quả): câu `off` bị chặn 3/7 (WSEA-127 đo với `vocab` [] là 5/7) — n05 "world cup", n07 "how do … apply for … student" có từ `exact` nên không bị chặn. Số mới phản ánh hệ thống thật, không so trực tiếp với WSEA-127.
+- Báo (chỉ ghi nhận, **không ngưỡng**): tỉ lệ câu dương bị chặn (`decision` ≠ `answer`), riêng nhóm `kb` và nhóm `vocab`; tỉ lệ câu `off` bị chặn; số câu `gap` bị chặn; bảng `decision` theo nhóm câu âm; danh sách qid bị chặn.
 - `scripts/eval_default.py` là của bài dự báo quên, không dùng ở đây.
 
 ## 4. Phần sinh — 20 câu, Phúc chấm tay
@@ -41,7 +51,7 @@ Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần ch�
 ### 4.1. Chọn câu (tất định, chốt trước)
 
 - `random.Random(141)`, một bộ sinh duy nhất, gọi theo thứ tự cố định:
-  1. **14 câu dương**, phân tầng theo `lang`: chia 14 theo tỉ lệ số câu của từng `lang` (phần dư lớn nhất; hoà thì tên `lang` tăng dần). Duyệt `lang` theo tên tăng dần; trong mỗi tầng sắp `qid` tăng dần rồi `rng.sample`.
+  1. **14 câu dương**, phân tầng theo **(nhóm `kb`/`vocab`, `lang`)** — khoá tầng `"<nhóm>|<lang>"` (sửa 2026-11-05; bộ không có nhóm `vocab` cho kết quả y như bản cũ): chia 14 theo tỉ lệ số câu của từng tầng (phần dư lớn nhất; hoà thì tên tầng tăng dần). Duyệt tầng theo tên tăng dần; trong mỗi tầng sắp `qid` tăng dần rồi `rng.sample`.
   2. **6 câu âm**, ưu tiên đủ cả `off` và `gap`: 3 `off` + 3 `gap`; nhóm nào thiếu câu thì bù từ nhóm kia. Duyệt `gap` rồi `off`; trong mỗi nhóm sắp `qid` rồi `rng.sample`.
 - Danh sách qid do script tính và ghi vào `reports/141_retrieval.json` → `gen_selection.qids`. **Khi có dữ liệu, chép danh sách đó vào mục 4.4 dưới đây và commit TRƯỚC khi chạy `--gen`.**
 
@@ -63,6 +73,7 @@ Ghi vào cột `diem` một trong `dung` / `mot_phan` / `sai`, lý do ngắn ở
   - `dung` — mọi khẳng định có trong đoạn nguồn, và trả lời đúng câu hỏi.
   - `mot_phan` — đúng nhưng thiếu ý chính; hoặc có ý không có trong nguồn nhưng không sai.
   - `sai` — có khẳng định trái với nguồn hoặc sai ngữ pháp; hoặc trả lời một câu lẽ ra phải từ chối.
+- **Câu dương nhóm `vocab`**: "đoạn nguồn" = các **mục từ vựng** `/rank` đưa vào prompt (term, từ loại, nghĩa, ví dụ — cột `nguon` của `141_cham.csv` ghi dạng `[word:<term>] …`) cùng các đoạn được trích; thang `dung` / `mot_phan` / `sai` như câu dương.
 - **Câu dương bị pipeline chặn** (`decision` ≠ `answer`, không có câu trả lời của LLM) → `sai`, ghi chú "chặn nhầm".
 - **Câu âm**: `dung` = từ chối đúng (trả câu "ngoài phạm vi" cho `off`, câu "kho chưa có" cho `gap`, hoặc bị chặn trước LLM); trả lời nội dung thay vì từ chối = `sai`.
 - **Phân vân giữa hai mức → chọn mức thấp hơn.**
