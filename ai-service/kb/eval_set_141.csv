@@ -1,0 +1,41 @@
+qid,question,gold_ids,lang
+q001,Khi nào dùng thì hiện tại đơn (Present Simple)?,gram_002,vi
+q002,"What is the affirmative form of the present simple for he, she, or it?",gram_001,en
+q003,Cách tạo câu phủ định thì hiện tại đơn với chủ ngữ I/you/we/they?,gram_001,vi
+q004,How do you form a yes/no question in the present simple?,gram_001|gram_068,en
+q005,Công thức cơ bản của thì hiện tại tiếp diễn (Present Continuous) là gì?,gram_004,vi
+q006,Which time expressions commonly signal the present continuous?,gram_005,en
+q007,Khi nào thường dùng thì quá khứ đơn (Past Simple)?,gram_009,vi
+q008,How do regular verbs usually form the past simple?,gram_008,en
+q009,Cách tạo câu phủ định ở thì quá khứ đơn như thế nào?,gram_008,vi
+q010,What is the basic structure of the present perfect?,gram_012,en
+q011,Nêu hai cách dùng phổ biến của thì hiện tại hoàn thành (Present Perfect).,gram_013,vi
+q012,How is the past simple different from the present perfect?,gram_015,en
+q013,Khi nào dùng mạo từ “a” và khi nào dùng “an”?,gram_025|gram_026,vi
+q014,When do we use the definite article “the”?,gram_025,en
+q015,"Với danh từ đếm được số nhiều, “many”, “few” và “a few” khác nhau thế nào?",gram_027|gram_097,vi
+q016,Which quantifiers are commonly used with uncountable nouns?,gram_027|gram_023,en
+q017,Cách tạo dạng so sánh hơn với tính từ ngắn trong tiếng Anh?,gram_044,vi
+q018,How do you usually form a comparative with a long adjective?,gram_044,en
+q019,Cách tạo dạng so sánh nhất với tính từ ngắn là gì?,gram_045,vi
+q020,What does the modal verb “should” usually express?,gram_034,en
+q021,Động từ khuyết thiếu “must” thường diễn đạt ý nghĩa gì?,gram_033|gram_035,vi
+q022,What is the usual form of the first conditional?,gram_038,en
+q023,Công thức cơ bản của câu bị động ở thì hiện tại đơn là gì?,gram_052,vi
+q024,Which verb form normally follows “enjoy”?,gram_064,en
+q025,"Sau động từ “want”, động từ tiếp theo thường có dạng nào?",gram_064,vi
+q026,Từ “colleague” có nghĩa là gì?,word:colleague,vi
+q027,What does “resident” mean?,word:resident,en
+q028,"Trong dữ liệu từ vựng, “improvement” thuộc từ loại nào và có nghĩa gì?",word:improvement,vi
+q029,What is the Vietnamese meaning of “recommendation”?,word:recommendation,en
+q030,Từ “participant” dùng để chỉ ai?,word:participant,vi
+q031,What is the Vietnamese meaning of “mountain”?,word:mountain,en
+q032,"Trong danh sách từ vựng, “waste” được ghi là từ loại gì và có nghĩa gì?",word:waste,vi
+q033,What does “repeat” mean in the sentence “Please repeat the question”?,word:repeat,en
+q034,Tính từ “equal” có nghĩa là gì?,word:equal,vi
+q035,"In the vocabulary list, what part of speech is “device”, and what does it mean?",word:device,en
+q036,Từ “comfortable” có nghĩa gì và thuộc từ loại nào?,word:comfortable,vi
+q037,What does “employment” mean in Vietnamese?,word:employment,en
+q038,Từ “taste” có nghĩa là gì?,word:taste,vi
+q039,What does “freedom” mean?,word:freedom,en
+q040,"Trong danh sách từ vựng, “suggestion” thuộc từ loại gì và có nghĩa gì?",word:suggestion,vi
