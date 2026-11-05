@@ -53,6 +53,13 @@ Báo cả **chặt** và **nới** cho mỗi chỉ số; tổng và kèm danh s�
 - τ chọn xong ghi vào `VISION_TAU` (mặc định trong `app/config.py`) và commit **trước** khi chạy tập test. Tập test chạy với τ đó, không chỉnh lại.
 - Hạn chế: dev hiện chỉ 9 ảnh tính được — một ảnh = 11 điểm %; τ chọn từ 9 ảnh rất thô. Thêm ảnh dev mới trước khi chốt τ sẽ tốt hơn.
 
+## 4b. Điều chỉnh trước khi chạy test (2026-11-06, TRƯỚC lượt chạy duy nhất)
+
+- **Tập test là 48 ảnh thu thập từ web**, không phải ảnh tự chụp như mục 1 dự kiến — không đủ thời gian chụp. Mỗi vật 1 ảnh, tên `<word>_01.*` trong `data/vision_test/`.
+- **Thiếu 2 vật**: `beef`, `chicken` (không có ảnh) → ghi thiếu, **không thay vật khác** (đúng mục 1). Mẫu số top-k = 48.
+- **Hệ quả**: ảnh web có thể đã nằm trong dữ liệu huấn luyện CLIP (ảnh + chú thích lấy từ internet) → kết quả **lạc quan** so với ảnh người học tự chụp. Ảnh web còn thường rõ nét, chính diện, nền sạch, đôi khi có chữ. Số của tập này không đại diện cho ảnh thật của người dùng.
+- Không đổi gì khác: τ = 0,40 (đã khoá ở `a7d6a7c`), nhãn, template, nhóm đồng nghĩa, chỉ số giữ nguyên. Ảnh thu nhỏ về cạnh dài 1024 px như tập dev; sha256 từng ảnh ghi vào `reports/153_test_manifest.json` trước khi chạy.
+
 ## 5. Hạn chế đã biết
 
 - Tập test 50 ảnh, 1 người chụp, 1 lần chạy.
