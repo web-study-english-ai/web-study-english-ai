@@ -6,10 +6,24 @@ export const updateProfileSchema = z
     fullName: z
       .string()
       .trim()
-      .min(2, { error: 'Họ và tên phải có ít nhất 2 ký tự' })
+      .min(1, { error: 'Họ và tên không được để trống' })
       .max(100, { error: 'Họ và tên không được quá 100 ký tự' })
       .optional(),
 
+    name: z
+      .string()
+      .trim()
+      .min(1, { error: 'Họ và tên không được để trống' })
+      .max(100, { error: 'Họ và tên không được quá 100 ký tự' })
+      .optional(),
+
+    newPassword: z
+      .string()
+      .min(8, { error: 'Mật khẩu phải có ít nhất 8 ký tự' })
+      .max(72, { error: 'Mật khẩu không được quá 72 ký tự' })
+      .optional(),
+
+    language: z.enum(['vi', 'en']).optional(),
     avatarUrl: z.url({ error: 'Đường dẫn ảnh không hợp lệ' }).nullable().optional(),
 
     level: z
