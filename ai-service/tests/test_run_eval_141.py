@@ -406,6 +406,7 @@ def test_evaluate_items_two_groups():
     assert by["q3"]["vocab_hit"] is False and by["q3"]["gold_word_vector_rank"] == {"eager": None}
     assert by["q2"]["vocab_selected"][0] == "reluctant" and by["q2"]["vocab_sent"][0]["match"] == "exact"
     assert all(r["decision"] == "answer" for r in rows)
+    assert all("decision_ref" in r and "reason_ref" in r for r in rows)
     s = r141.pipeline_summary(rows)
     assert s["pos_kb"]["n"] == 1 and s["pos_vocab"]["n"] == 2
 
@@ -434,7 +435,8 @@ def test_summary_text_reports_groups_separately():
            "pipeline": {g: {"n": 1, "blocked": 0, "blocked_qids": []} for g in ("pos_kb", "pos_vocab", "off", "gap")},
            "gen_selection": {"seed": 141, "qids": ["q1"]}}
     t = r141.summary_text(rep)
-    assert "Nhóm kb" in t and "Nhóm vocab" in t and "hit@3 1/1" in t and "pos_vocab: 0/1" in t
+    assert "Nhóm kb" in t and "Nhóm vocab" in t and "hit@3 1/1" in t and "| pos_vocab | 0/1 | — |" in t
+    assert "tham chiếu (vocab [], như WSEA-127)" in t
     rep["retrieval"]["vocab"], rep["n_vocab"] = None, 0
     assert "(không có câu vocab)" in r141.summary_text(rep)
 
@@ -445,3 +447,30 @@ def test_real_vocab_source_and_word_vectors_consistent():
     meta = r141.load_vocab_meta()
     terms, vecs, errors = r141.load_word_vectors(r141.lv.DEFAULT_WORDS_NPZ, meta)
     assert errors == [] and len(terms) == vecs.shape[0] == 7000
+
+
+# --- Luat 127 theo 2 cau hinh: chinh (vocab nhu backend) va tham chieu (vocab []) -----------------
+
+
+def test_pipeline_summary_main_vs_reference():
+    rows = [ranked_row("a", [], [], decision="answer") | {"decision_ref": "answer", "qgroup": "kb"},
+            ranked_row("n5", [], [], kind="neg", group="off", decision="answer") | {"decision_ref": "out_of_scope"},
+            ranked_row("n7", [], [], kind="neg", group="off", decision="answer") | {"decision_ref": "no_context"},
+            ranked_row("n1", [], [], kind="neg", group="off", decision="out_of_scope")
+            | {"decision_ref": "out_of_scope"}]
+    main, ref = r141.pipeline_summary(rows), r141.pipeline_summary(rows, "decision_ref")
+    assert (main["off"]["blocked"], ref["off"]["blocked"]) == (1, 3)
+    assert ref["off"]["blocked_qids"] == ["n5", "n7", "n1"]
+    assert ref["by_decision"]["off"]["no_context"] == 1 and main["by_decision"]["off"]["answer"] == 2
+
+
+def test_reference_config_ignores_exact_vocab():
+    """Cau hinh tham chieu bo vocab: tu exact khong con mien luat 2 (y dinh) — nhu WSEA-127."""
+    from tests.test_pipeline import FakeEmbedder, FakeIntent
+    items = [{**neg("n5", "off"), "question": "đội nào vô địch world cup"}]
+    meta = {"world": {"pos": "n", "meaning_vi": "thế giới", "example_en": "", "rank": 1},
+            "cup": {"pos": "n", "meaning_vi": "cốc", "example_en": "", "rank": 2}}
+    rows = r141.evaluate_items(items, [RANKED], [(["cup"], [0.1])], CHUNKS, meta, FakeEmbedder(),
+                               FakeIntent("ngoai_pham_vi", 0.9))
+    assert rows[0]["decision"] == "answer"            # chinh: co vocab exact -> mien luat 2
+    assert rows[0]["decision_ref"] == "out_of_scope"  # tham chieu: vocab [] -> bi chan

@@ -17,7 +17,9 @@ Tieu chi va thang cham: docs/eval/WSEA-141_tieu_chi.md (chot truoc khi chay that
   data/embeddings/words_e5-small.npz; trung term -> giu exact; toi da 10.
   Nghia tu (pos, meaning_vi, example_en) doc tu backend/prisma/data/vocab_7000.csv (CHI DOC).
 - Luat 127: moi cau -> AskRequest top-8 + vocab nhu tren (word null, history []) -> run_pipeline that
-  (Embedder + IntentClassifier that).
+  (Embedder + IntentClassifier that). Bao 2 cau hinh: CHINH (vocab nhu backend) va THAM CHIEU (vocab [],
+  nhu WSEA-127, chi de so). hit@k va 20 cau sinh dung cau hinh chinh.
+- Loi regex backend cat chu Viet co dau thanh manh ("hiện" -> "hi") duoc do NGUYEN TRANG, khong sua trong 141.
 - Phan sinh (--gen): 20 cau chon bang random.Random(141), phan tang (mac dinh 14 duong + 6 am).
   Moi cau: top-8 nhu tren -> POST /assistant/rank (lay decision cua server) -> POST /assistant/ask JSON.
   Ngu --sleep giay sau moi cau co goi LLM (Groq ~8K token/phut). Ket qua: reports/141_gen.json +
@@ -217,10 +219,14 @@ def top1_distributions(pos_rows: list[dict], neg_rows: list[dict]) -> dict:
     return out
 
 
-def pipeline_summary(rows: list[dict]) -> dict:
-    """Ti le bi chan (decision != answer): cau duong, cau off, cau gap. Chi ghi nhan."""
+def pipeline_summary(rows: list[dict], key: str = "decision") -> dict:
+    """Ti le bi chan (r[key] != answer): cau duong (tong, kb, vocab), cau off, cau gap. Chi ghi nhan.
+
+    key="decision": cau hinh CHINH (vocab nhu backend); key="decision_ref": cau hinh THAM CHIEU (vocab [],
+    nhu WSEA-127) — chi de so voi WSEA-127.
+    """
     def rate(rs):
-        blocked = [r["qid"] for r in rs if r["decision"] != rules.ANSWER]
+        blocked = [r["qid"] for r in rs if r[key] != rules.ANSWER]
         return {"n": len(rs), "blocked": len(blocked), "rate": round(len(blocked) / len(rs), 4) if rs else None,
                 "blocked_qids": blocked}
     pos = [r for r in rows if r["kind"] == "pos"]
@@ -229,7 +235,7 @@ def pipeline_summary(rows: list[dict]) -> dict:
            "pos_vocab": rate([r for r in pos if r.get("qgroup") == VOCAB])}
     for g in ("off", "gap"):
         out[g] = rate([r for r in neg if r["group"] == g])
-    out["by_decision"] = cp.table_c(neg) if neg else {}
+    out["by_decision"] = cp.table_c([{**r, "decision": r[key]} for r in neg]) if neg else {}
     return out
 
 
@@ -327,10 +333,15 @@ def summary_text(report: dict) -> str:
         lines.append("- (không có câu vocab)")
     lines += ["", "distance top-1: " + " · ".join(f"{g} p50 {v['p50']} (min {v['min']}, max {v['max']}, n={v['n']})"
                                                 for g, v in d.items()),
-              "", "Luật 127 — bị chặn (decision ≠ answer), chỉ ghi nhận:"]
+              "", "Luật 127 — bị chặn (decision ≠ answer), chỉ ghi nhận:",
+              "| nhóm | chính (vocab như backend) | tham chiếu (vocab [], như WSEA-127) |", "|---|---|---|"]
+    pr = report.get("pipeline_ref") or {}
     for g in ("pos_kb", "pos_vocab", "off", "gap"):
-        r = p[g]
-        lines.append(f"- {g}: {r['blocked']}/{r['n']}" + (f" — {', '.join(r['blocked_qids'])}" if r["blocked_qids"] else ""))
+        r, rr = p[g], pr.get(g)
+        main = f"{r['blocked']}/{r['n']}" + (f" ({', '.join(r['blocked_qids'])})" if r["blocked_qids"] else "")
+        ref = "—" if rr is None else f"{rr['blocked']}/{rr['n']}" + (
+            f" ({', '.join(rr['blocked_qids'])})" if rr["blocked_qids"] else "")
+        lines.append(f"| {g} | {main} | {ref} |")
     lines += ["", f"Câu cho phần sinh (seed {report['gen_selection']['seed']}): {', '.join(report['gen_selection']['qids'])}"]
     return "\n".join(lines)
 
@@ -378,10 +389,12 @@ def evaluate_items(items, ranking, word_ranking, chunks_by_id, meta, embedder, c
     for q, (ranked, dists), (w_ranked, w_dists) in zip(items, ranking, word_ranking):
         vocab = backend_vocab(q["question"], w_ranked, w_dists, meta)
         req = build_eval_request(q, ranked, dists, chunks_by_id, vocab)
-        res = pl.run_pipeline(req, embedder, clf)
+        res = pl.run_pipeline(req, embedder, clf)                         # cau hinh CHINH
+        res_ref = pl.run_pipeline(req.model_copy(update={"vocab": []}), embedder, clf)  # THAM CHIEU (WSEA-127)
         selected = selected_vocab_terms(vocab)
         row = {"qid": q["qid"], "kind": q["kind"], "lang": q["lang"], "group": q.get("group"),
                "qgroup": q.get("qgroup"), "question": q["question"], "decision": res.decision, "reason": res.reason,
+               "decision_ref": res_ref.decision, "reason_ref": res_ref.reason,
                "intent": None if res.intent is None else
                {"label": res.intent.label, "confidence": round(res.intent.confidence, 4)},
                "top1_id": ranked[0], "top1_distance": round(dists[0], 4),
@@ -449,7 +462,8 @@ def retrieval_part(args) -> tuple[dict, list[dict], list, dict]:
                       "vocab": vocab_metrics(vocab_rows) if vocab_rows else None},
         "baseline_31": BASELINE_31,
         "top1_distance": top1_distributions(pos_rows, neg_rows),
-        "pipeline": pipeline_summary(rows),
+        "pipeline": pipeline_summary(rows),                       # chinh: vocab nhu backend
+        "pipeline_ref": pipeline_summary(rows, "decision_ref"),   # tham chieu: vocab [] — chi de so voi WSEA-127
         "gen_selection": {"seed": SEED, "n_pos": N_POS, "n_neg": N_NEG,
                           "qids": select_gen(positives, negatives)},
         "rows": [{k: v for k, v in r.items() if k not in ("ranked", "dists")}

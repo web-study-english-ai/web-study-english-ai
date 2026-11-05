@@ -1,6 +1,6 @@
 # WSEA-141 — Tiêu chí đánh giá pipeline trợ lý (chốt trước khi chạy thật)
 
-Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần chạy thật (bản đầu `dc4f402`; sửa cùng ngày, vẫn trước khi có dữ liệu: mục 4.2 chạy lại câu degraded, 4.3 câu dương bị chặn = sai, 4.3a cách báo, 4.3b lưu kết quả; sửa 2026-11-05, vẫn trước khi có dữ liệu: tách nhóm câu hỏi nghĩa từ `vocab` — mục 1, 2, 3, 4.1, 4.3). Không sửa sau khi đã thấy kết quả; nếu buộc phải sửa thì ghi rõ ngày, lý do và commit cũ ở cuối file.
+Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần chạy thật (bản đầu `dc4f402`; sửa cùng ngày, vẫn trước khi có dữ liệu: mục 4.2 chạy lại câu degraded, 4.3 câu dương bị chặn = sai, 4.3a cách báo, 4.3b lưu kết quả; sửa 2026-11-05, vẫn trước khi có dữ liệu: tách nhóm câu hỏi nghĩa từ `vocab` — mục 1, 2, 3, 4.1, 4.3; luật 127 theo 2 cấu hình — mục 3, hạn chế mục 5). Không sửa sau khi đã thấy kết quả; nếu buộc phải sửa thì ghi rõ ngày, lý do và commit cũ ở cuối file.
 
 - **Không đổi** code `app/`, prompt (v2, WSEA-140) hay luật pipeline (WSEA-127) trong task này. Đây là đo, không phải chỉnh.
 - Script: `scripts/run_eval_141.py` (test: `tests/test_run_eval_141.py`). Kết quả ghi vào `reports/`.
@@ -43,6 +43,11 @@ Chốt 2026-11-04, **trước** khi có dữ liệu và trước mọi lần ch�
 
 - Mỗi câu → `AskRequest` với top-8 e5 (như backend, `AI_ASSISTANT_TOP_K` = 8), **`vocab` dựng như backend (mục 2)**, `word` null, `history` [] → `run_pipeline` thật (Embedder + IntentClassifier thật).
   - **Sửa 2026-11-05** (trước: `vocab` []): backend thật gửi `vocab` cho mọi câu; có từ `exact` thì luật 2 (ý định) và luật 3 (top-1 xa) được miễn. Chạy thử trên bộ 43 câu cũ (không phải kết quả): câu `off` bị chặn 3/7 (WSEA-127 đo với `vocab` [] là 5/7) — n05 "world cup", n07 "how do … apply for … student" có từ `exact` nên không bị chặn. Số mới phản ánh hệ thống thật, không so trực tiếp với WSEA-127.
+- **Báo luật 127 theo 2 cấu hình** (sửa 2026-11-05, trước khi có dữ liệu):
+  - **Chính** — `vocab` dựng như backend (mục 2). Đây là số chính thức của pipeline; **hit@k của cả hai nhóm và 20 câu sinh (mục 4) đều dùng cấu hình này**.
+  - **Tham chiếu** — cùng câu, cùng top-8 đoạn, `vocab` [] (đúng cách đo WSEA-127). **Chỉ để so với WSEA-127**, không dùng cho phần nào khác. Mỗi câu chạy `run_pipeline` thêm một lần, không gọi LLM.
+  - Báo hai cột cạnh nhau cho câu dương `kb`, câu dương `vocab`, câu `off`, câu `gap` (số bị chặn + qid), và bảng `decision` theo nhóm câu âm cho từng cấu hình (`pipeline` / `pipeline_ref` trong `141_retrieval.json`).
+  - Kiểm script trên bộ 43 câu cũ (không phải kết quả): cấu hình tham chiếu ra đúng số WSEA-127 (dương 0/31, `off` 5/7, `gap` 1/5); cấu hình chính: dương 0/31, `off` 3/7, `gap` 1/5.
 - Báo (chỉ ghi nhận, **không ngưỡng**): tỉ lệ câu dương bị chặn (`decision` ≠ `answer`), riêng nhóm `kb` và nhóm `vocab`; tỉ lệ câu `off` bị chặn; số câu `gap` bị chặn; bảng `decision` theo nhóm câu âm; danh sách qid bị chặn.
 - `scripts/eval_default.py` là của bài dự báo quên, không dùng ở đây.
 
@@ -98,6 +103,9 @@ Ghi vào cột `diem` một trong `dung` / `mot_phan` / `sai`, lý do ngắn ở
 (chưa có — điền từ `gen_selection.qids` khi có `kb/eval_set_141*.csv`, commit trước khi chạy `--gen`)
 
 ## 5. Hạn chế đã biết
+
+- **Lỗi regex của backend cắt chữ tiếng Việt có dấu** (đo NGUYÊN TRẠNG, không sửa trong WSEA-141): `/\b[a-z]{2,30}\b/g` của JS coi chữ có dấu là ranh giới từ, nên "hiện" → `hi`, "dùng" → `ng`, "thời" → `th`; mảnh nào trùng từ tiếng Anh trong bảng `words` thành `vocab` `exact`. Hệ quả: (1) câu có từ `exact` được miễn luật 2 và 3 của WSEA-127, nên cấu hình chính chặn ít câu lạc đề hơn cấu hình tham chiếu; (2) câu có ≥ 3 từ `exact` đẩy từ tìm bằng vector ra khỏi top-3, làm giảm hit@3 nhóm `vocab`. Sửa là việc của backend (báo Duy Anh), ngoài phạm vi task này; số của 141 phản ánh hệ thống đang chạy.
+- Thứ tự 5 từ `exact` của backend không xác định (`findMany` không có ORDER BY); script xấp xỉ theo `rank`.
 
 - n nhỏ (60 câu truy hồi, 20 câu sinh): một câu ≈ 1,7–5 điểm phần trăm.
 - Một lần chạy sinh, temperature 0,2: câu trả lời còn dao động giữa các lần gọi (thấy ở WSEA-140 B4).
