@@ -1,0 +1,1183 @@
+{
+  "task": "WSEA-110",
+  "created_at": "2026-10-30T14:57:42+00:00",
+  "chunks_file": "kb\\grammar_chunks.jsonl",
+  "questions_file": "kb\\eval_questions.csv",
+  "n_chunks": 100,
+  "n_questions": 31,
+  "questions_by_lang": {
+    "en": 6,
+    "mixed": 13,
+    "vi": 12
+  },
+  "scoring": "encode(normalize_embeddings=True); điểm = tích vô hướng; trúng@k nếu có ≥ 1 gold trong top-k",
+  "latency_method": "batch 1, CPU, warm-up 3 lần, 30 mẫu",
+  "environment": {
+    "python": "3.13.12",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 154 Stepping 3, GenuineIntel",
+    "torch": "2.14.0+cpu",
+    "torch_threads": 10,
+    "sentence_transformers": "6.2.0",
+    "transformers": "5.22.0",
+    "device": "cpu"
+  },
+  "models": [
+    {
+      "name": "intfloat/multilingual-e5-small",
+      "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+      "query_prefix": "query: ",
+      "passage_prefix": "passage: ",
+      "dim": 384,
+      "params": 117653760,
+      "max_seq_length": 512,
+      "passage_tokens_max": 391,
+      "passages_over_max_seq_length": {},
+      "encode_100_passages_s": 7.913,
+      "query_latency_ms": {
+        "p50": 15.11,
+        "p95": 17.06,
+        "samples": 30,
+        "distinct_questions": 30
+      },
+      "metrics": {
+        "overall": {
+          "n": 31,
+          "recall@1": 0.6129032258064516,
+          "recall@3": 0.6451612903225806,
+          "recall@5": 0.8387096774193549,
+          "mrr@10": 0.6782258064516129
+        },
+        "by_lang": {
+          "en": {
+            "n": 6,
+            "recall@1": 0.3333333333333333,
+            "recall@3": 0.3333333333333333,
+            "recall@5": 0.6666666666666666,
+            "mrr@10": 0.39999999999999997
+          },
+          "mixed": {
+            "n": 13,
+            "recall@1": 0.7692307692307693,
+            "recall@3": 0.8461538461538461,
+            "recall@5": 0.9230769230769231,
+            "mrr@10": 0.8365384615384616
+          },
+          "vi": {
+            "n": 12,
+            "recall@1": 0.5833333333333334,
+            "recall@3": 0.5833333333333334,
+            "recall@5": 0.8333333333333334,
+            "mrr@10": 0.6458333333333334
+          }
+        }
+      },
+      "misses_at_1": [
+        {
+          "qid": "q02",
+          "lang": "vi",
+          "question": "khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",
+          "gold": [
+            "gram_006"
+          ],
+          "first_gold_rank": 31,
+          "top3": [
+            {
+              "id": "gram_064",
+              "score": 0.8664
+            },
+            {
+              "id": "gram_070",
+              "score": 0.8587
+            },
+            {
+              "id": "gram_003",
+              "score": 0.8566
+            }
+          ]
+        },
+        {
+          "qid": "q07",
+          "lang": "vi",
+          "question": "muốn nói hồi nhỏ tôi hay đi câu cá nhưng giờ không còn nữa thì dùng cấu trúc gì",
+          "gold": [
+            "gram_021"
+          ],
+          "first_gold_rank": 4,
+          "top3": [
+            {
+              "id": "gram_001",
+              "score": 0.8821
+            },
+            {
+              "id": "gram_008",
+              "score": 0.8764
+            },
+            {
+              "id": "gram_057",
+              "score": 0.872
+            }
+          ]
+        },
+        {
+          "qid": "q08",
+          "lang": "en",
+          "question": "Why is 'I have seen him yesterday' wrong?",
+          "gold": [
+            "gram_015"
+          ],
+          "first_gold_rank": 31,
+          "top3": [
+            {
+              "id": "gram_036",
+              "score": 0.8104
+            },
+            {
+              "id": "gram_017",
+              "score": 0.8085
+            },
+            {
+              "id": "gram_012",
+              "score": 0.8067
+            }
+          ]
+        },
+        {
+          "qid": "q09",
+          "lang": "vi",
+          "question": "vì sao có những danh từ không thêm s và không đi với a được",
+          "gold": [
+            "gram_023"
+          ],
+          "first_gold_rank": 4,
+          "top3": [
+            {
+              "id": "gram_026",
+              "score": 0.8763
+            },
+            {
+              "id": "gram_025",
+              "score": 0.8698
+            },
+            {
+              "id": "gram_029",
+              "score": 0.867
+            }
+          ]
+        },
+        {
+          "qid": "q14",
+          "lang": "vi",
+          "question": "nói đáng lẽ ra hôm qua tôi nên học bài thì viết thế nào",
+          "gold": [
+            "gram_036"
+          ],
+          "first_gold_rank": 13,
+          "top3": [
+            {
+              "id": "gram_026",
+              "score": 0.8572
+            },
+            {
+              "id": "gram_039",
+              "score": 0.8533
+            },
+            {
+              "id": "gram_056",
+              "score": 0.851
+            }
+          ]
+        },
+        {
+          "qid": "q17",
+          "lang": "mixed",
+          "question": "more better có đúng không",
+          "gold": [
+            "gram_046"
+          ],
+          "first_gold_rank": 2,
+          "top3": [
+            {
+              "id": "gram_044",
+              "score": 0.8776
+            },
+            {
+              "id": "gram_046",
+              "score": 0.8636
+            },
+            {
+              "id": "gram_045",
+              "score": 0.8555
+            }
+          ]
+        },
+        {
+          "qid": "q19",
+          "lang": "en",
+          "question": "Where do I put enough, before or after an adjective?",
+          "gold": [
+            "gram_049"
+          ],
+          "first_gold_rank": 5,
+          "top3": [
+            {
+              "id": "gram_021",
+              "score": 0.8292
+            },
+            {
+              "id": "gram_017",
+              "score": 0.829
+            },
+            {
+              "id": "gram_014",
+              "score": 0.8234
+            }
+          ]
+        },
+        {
+          "qid": "q22",
+          "lang": "en",
+          "question": "When do I need commas around a which clause?",
+          "gold": [
+            "gram_061"
+          ],
+          "first_gold_rank": 28,
+          "top3": [
+            {
+              "id": "gram_057",
+              "score": 0.819
+            },
+            {
+              "id": "gram_094",
+              "score": 0.8178
+            },
+            {
+              "id": "gram_069",
+              "score": 0.8176
+            }
+          ]
+        },
+        {
+          "qid": "q23",
+          "lang": "mixed",
+          "question": "stop smoking với stop to smoke khác nhau chỗ nào",
+          "gold": [
+            "gram_065"
+          ],
+          "first_gold_rank": 8,
+          "top3": [
+            {
+              "id": "gram_033",
+              "score": 0.8594
+            },
+            {
+              "id": "gram_064",
+              "score": 0.8522
+            },
+            {
+              "id": "gram_037",
+              "score": 0.852
+            }
+          ]
+        },
+        {
+          "qid": "q24",
+          "lang": "mixed",
+          "question": "look forward to meet hay look forward to meeting mới đúng",
+          "gold": [
+            "gram_066"
+          ],
+          "first_gold_rank": 4,
+          "top3": [
+            {
+              "id": "gram_014",
+              "score": 0.8728
+            },
+            {
+              "id": "gram_017",
+              "score": 0.8685
+            },
+            {
+              "id": "gram_005",
+              "score": 0.8677
+            }
+          ]
+        },
+        {
+          "qid": "q25",
+          "lang": "vi",
+          "question": "câu hỏi ngắn ở cuối câu để xác nhận, kiểu phải không, thì đặt thế nào",
+          "gold": [
+            "gram_070"
+          ],
+          "first_gold_rank": 4,
+          "top3": [
+            {
+              "id": "gram_069",
+              "score": 0.8772
+            },
+            {
+              "id": "gram_057",
+              "score": 0.8733
+            },
+            {
+              "id": "gram_068",
+              "score": 0.8711
+            }
+          ]
+        },
+        {
+          "qid": "q27",
+          "lang": "en",
+          "question": "Can I say 'He said me the truth'?",
+          "gold": [
+            "gram_077"
+          ],
+          "first_gold_rank": 5,
+          "top3": [
+            {
+              "id": "gram_059",
+              "score": 0.801
+            },
+            {
+              "id": "gram_056",
+              "score": 0.7938
+            },
+            {
+              "id": "gram_058",
+              "score": 0.7903
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "intfloat/multilingual-e5-base",
+      "revision": "d128750597153bb5987e10b1c3493a34e5a4502a",
+      "query_prefix": "query: ",
+      "passage_prefix": "passage: ",
+      "dim": 768,
+      "params": 278043648,
+      "max_seq_length": 512,
+      "passage_tokens_max": 391,
+      "passages_over_max_seq_length": {},
+      "encode_100_passages_s": 27.078,
+      "query_latency_ms": {
+        "p50": 39.13,
+        "p95": 50.48,
+        "samples": 30,
+        "distinct_questions": 30
+      },
+      "metrics": {
+        "overall": {
+          "n": 31,
+          "recall@1": 0.5483870967741935,
+          "recall@3": 0.7741935483870968,
+          "recall@5": 0.8387096774193549,
+          "mrr@10": 0.6710957501280082
+        },
+        "by_lang": {
+          "en": {
+            "n": 6,
+            "recall@1": 0.3333333333333333,
+            "recall@3": 0.6666666666666666,
+            "recall@5": 0.6666666666666666,
+            "mrr@10": 0.49074074074074076
+          },
+          "mixed": {
+            "n": 13,
+            "recall@1": 0.6923076923076923,
+            "recall@3": 0.8461538461538461,
+            "recall@5": 0.8461538461538461,
+            "mrr@10": 0.7673992673992674
+          },
+          "vi": {
+            "n": 12,
+            "recall@1": 0.5,
+            "recall@3": 0.75,
+            "recall@5": 0.9166666666666666,
+            "mrr@10": 0.6569444444444444
+          }
+        }
+      },
+      "misses_at_1": [
+        {
+          "qid": "q02",
+          "lang": "vi",
+          "question": "khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",
+          "gold": [
+            "gram_006"
+          ],
+          "first_gold_rank": 10,
+          "top3": [
+            {
+              "id": "gram_064",
+              "score": 0.842
+            },
+            {
+              "id": "gram_070",
+              "score": 0.8354
+            },
+            {
+              "id": "gram_085",
+              "score": 0.8317
+            }
+          ]
+        },
+        {
+          "qid": "q03",
+          "lang": "mixed",
+          "question": "sao người ta nói I am knowing him là sai ngữ pháp",
+          "gold": [
+            "gram_007"
+          ],
+          "first_gold_rank": 11,
+          "top3": [
+            {
+              "id": "gram_026",
+              "score": 0.8264
+            },
+            {
+              "id": "gram_063",
+              "score": 0.8236
+            },
+            {
+              "id": "gram_046",
+              "score": 0.8219
+            }
+          ]
+        },
+        {
+          "qid": "q05",
+          "lang": "vi",
+          "question": "kể chuyện có hai việc trong quá khứ thì việc xảy ra trước chia thế nào",
+          "gold": [
+            "gram_018"
+          ],
+          "first_gold_rank": 4,
+          "top3": [
+            {
+              "id": "gram_011",
+              "score": 0.8436
+            },
+            {
+              "id": "gram_009",
+              "score": 0.8431
+            },
+            {
+              "id": "gram_093",
+              "score": 0.8411
+            }
+          ]
+        },
+        {
+          "qid": "q08",
+          "lang": "en",
+          "question": "Why is 'I have seen him yesterday' wrong?",
+          "gold": [
+            "gram_015"
+          ],
+          "first_gold_rank": 9,
+          "top3": [
+            {
+              "id": "gram_063",
+              "score": 0.7958
+            },
+            {
+              "id": "gram_012",
+              "score": 0.7942
+            },
+            {
+              "id": "gram_062",
+              "score": 0.7941
+            }
+          ]
+        },
+        {
+          "qid": "q09",
+          "lang": "vi",
+          "question": "vì sao có những danh từ không thêm s và không đi với a được",
+          "gold": [
+            "gram_023"
+          ],
+          "first_gold_rank": 2,
+          "top3": [
+            {
+              "id": "gram_026",
+              "score": 0.8567
+            },
+            {
+              "id": "gram_023",
+              "score": 0.8434
+            },
+            {
+              "id": "gram_029",
+              "score": 0.842
+            }
+          ]
+        },
+        {
+          "qid": "q13",
+          "lang": "vi",
+          "question": "muốn đoán chắc chắn về hiện tại, kiểu anh ấy chắc hẳn đang mệt, thì dùng động từ nào",
+          "gold": [
+            "gram_035"
+          ],
+          "first_gold_rank": 2,
+          "top3": [
+            {
+              "id": "gram_017",
+              "score": 0.8568
+            },
+            {
+              "id": "gram_035",
+              "score": 0.8529
+            },
+            {
+              "id": "gram_092",
+              "score": 0.8515
+            }
+          ]
+        },
+        {
+          "qid": "q14",
+          "lang": "vi",
+          "question": "nói đáng lẽ ra hôm qua tôi nên học bài thì viết thế nào",
+          "gold": [
+            "gram_036"
+          ],
+          "first_gold_rank": 3,
+          "top3": [
+            {
+              "id": "gram_002",
+              "score": 0.8373
+            },
+            {
+              "id": "gram_020",
+              "score": 0.8314
+            },
+            {
+              "id": "gram_036",
+              "score": 0.8298
+            }
+          ]
+        },
+        {
+          "qid": "q17",
+          "lang": "mixed",
+          "question": "more better có đúng không",
+          "gold": [
+            "gram_046"
+          ],
+          "first_gold_rank": 2,
+          "top3": [
+            {
+              "id": "gram_044",
+              "score": 0.8263
+            },
+            {
+              "id": "gram_046",
+              "score": 0.8241
+            },
+            {
+              "id": "gram_045",
+              "score": 0.813
+            }
+          ]
+        },
+        {
+          "qid": "q19",
+          "lang": "en",
+          "question": "Where do I put enough, before or after an adjective?",
+          "gold": [
+            "gram_049"
+          ],
+          "first_gold_rank": 3,
+          "top3": [
+            {
+              "id": "gram_042",
+              "score": 0.8206
+            },
+            {
+              "id": "gram_062",
+              "score": 0.8129
+            },
+            {
+              "id": "gram_049",
+              "score": 0.8057
+            }
+          ]
+        },
+        {
+          "qid": "q21",
+          "lang": "mixed",
+          "question": "chuyển câu Where do you live sang câu gián tiếp có cần đảo trợ động từ không",
+          "gold": [
+            "gram_057"
+          ],
+          "first_gold_rank": 7,
+          "top3": [
+            {
+              "id": "gram_068",
+              "score": 0.8517
+            },
+            {
+              "id": "gram_062",
+              "score": 0.8465
+            },
+            {
+              "id": "gram_071",
+              "score": 0.8446
+            }
+          ]
+        },
+        {
+          "qid": "q22",
+          "lang": "en",
+          "question": "When do I need commas around a which clause?",
+          "gold": [
+            "gram_061"
+          ],
+          "first_gold_rank": 16,
+          "top3": [
+            {
+              "id": "gram_063",
+              "score": 0.8052
+            },
+            {
+              "id": "gram_062",
+              "score": 0.8026
+            },
+            {
+              "id": "gram_028",
+              "score": 0.7978
+            }
+          ]
+        },
+        {
+          "qid": "q23",
+          "lang": "mixed",
+          "question": "stop smoking với stop to smoke khác nhau chỗ nào",
+          "gold": [
+            "gram_065"
+          ],
+          "first_gold_rank": 3,
+          "top3": [
+            {
+              "id": "gram_033",
+              "score": 0.8286
+            },
+            {
+              "id": "gram_048",
+              "score": 0.8238
+            },
+            {
+              "id": "gram_065",
+              "score": 0.8208
+            }
+          ]
+        },
+        {
+          "qid": "q25",
+          "lang": "vi",
+          "question": "câu hỏi ngắn ở cuối câu để xác nhận, kiểu phải không, thì đặt thế nào",
+          "gold": [
+            "gram_070"
+          ],
+          "first_gold_rank": 5,
+          "top3": [
+            {
+              "id": "gram_014",
+              "score": 0.8545
+            },
+            {
+              "id": "gram_068",
+              "score": 0.8537
+            },
+            {
+              "id": "gram_069",
+              "score": 0.8499
+            }
+          ]
+        },
+        {
+          "qid": "q27",
+          "lang": "en",
+          "question": "Can I say 'He said me the truth'?",
+          "gold": [
+            "gram_077"
+          ],
+          "first_gold_rank": 2,
+          "top3": [
+            {
+              "id": "gram_056",
+              "score": 0.7899
+            },
+            {
+              "id": "gram_077",
+              "score": 0.7892
+            },
+            {
+              "id": "gram_063",
+              "score": 0.782
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+      "revision": "e8f8c211226b894fcb81acc59f3b34ba3efd5f42",
+      "query_prefix": "",
+      "passage_prefix": "",
+      "dim": 384,
+      "params": 117653760,
+      "max_seq_length": 128,
+      "passage_tokens_max": 389,
+      "passages_over_max_seq_length": {
+        "gram_001": 384,
+        "gram_002": 250,
+        "gram_003": 335,
+        "gram_004": 377,
+        "gram_005": 267,
+        "gram_006": 306,
+        "gram_007": 352,
+        "gram_008": 358,
+        "gram_009": 248,
+        "gram_010": 389,
+        "gram_011": 305,
+        "gram_012": 358,
+        "gram_013": 300,
+        "gram_014": 343,
+        "gram_015": 312,
+        "gram_016": 315,
+        "gram_017": 272,
+        "gram_018": 305,
+        "gram_019": 245,
+        "gram_020": 301,
+        "gram_021": 293,
+        "gram_022": 375,
+        "gram_023": 323,
+        "gram_024": 349,
+        "gram_025": 301,
+        "gram_026": 311,
+        "gram_027": 303,
+        "gram_028": 288,
+        "gram_029": 328,
+        "gram_030": 317,
+        "gram_031": 323,
+        "gram_032": 269,
+        "gram_033": 282,
+        "gram_034": 271,
+        "gram_035": 308,
+        "gram_036": 327,
+        "gram_037": 298,
+        "gram_038": 311,
+        "gram_039": 296,
+        "gram_040": 299,
+        "gram_041": 297,
+        "gram_042": 305,
+        "gram_043": 301,
+        "gram_044": 319,
+        "gram_045": 318,
+        "gram_046": 304,
+        "gram_047": 309,
+        "gram_048": 304,
+        "gram_049": 320,
+        "gram_050": 297,
+        "gram_051": 286,
+        "gram_052": 304,
+        "gram_053": 317,
+        "gram_054": 306,
+        "gram_055": 282,
+        "gram_056": 289,
+        "gram_057": 294,
+        "gram_058": 302,
+        "gram_059": 318,
+        "gram_060": 292,
+        "gram_061": 290,
+        "gram_062": 292,
+        "gram_063": 306,
+        "gram_064": 284,
+        "gram_065": 305,
+        "gram_066": 316,
+        "gram_067": 290,
+        "gram_068": 332,
+        "gram_069": 335,
+        "gram_070": 352,
+        "gram_071": 294,
+        "gram_072": 294,
+        "gram_073": 322,
+        "gram_074": 327,
+        "gram_075": 318,
+        "gram_076": 325,
+        "gram_077": 301,
+        "gram_078": 320,
+        "gram_079": 325,
+        "gram_080": 317,
+        "gram_081": 327,
+        "gram_082": 308,
+        "gram_083": 341,
+        "gram_084": 317,
+        "gram_085": 337,
+        "gram_086": 345,
+        "gram_087": 321,
+        "gram_088": 355,
+        "gram_089": 296,
+        "gram_090": 302,
+        "gram_091": 323,
+        "gram_092": 317,
+        "gram_093": 291,
+        "gram_094": 301,
+        "gram_095": 305,
+        "gram_096": 303,
+        "gram_097": 295,
+        "gram_098": 316,
+        "gram_099": 324,
+        "gram_100": 303
+      },
+      "encode_100_passages_s": 3.066,
+      "query_latency_ms": {
+        "p50": 19.32,
+        "p95": 24.95,
+        "samples": 30,
+        "distinct_questions": 30
+      },
+      "metrics": {
+        "overall": {
+          "n": 31,
+          "recall@1": 0.5806451612903226,
+          "recall@3": 0.6774193548387096,
+          "recall@5": 0.7741935483870968,
+          "mrr@10": 0.6374551971326166
+        },
+        "by_lang": {
+          "en": {
+            "n": 6,
+            "recall@1": 1.0,
+            "recall@3": 1.0,
+            "recall@5": 1.0,
+            "mrr@10": 1.0
+          },
+          "mixed": {
+            "n": 13,
+            "recall@1": 0.46153846153846156,
+            "recall@3": 0.5384615384615384,
+            "recall@5": 0.7692307692307693,
+            "mrr@10": 0.5371794871794872
+          },
+          "vi": {
+            "n": 12,
+            "recall@1": 0.5,
+            "recall@3": 0.6666666666666666,
+            "recall@5": 0.6666666666666666,
+            "mrr@10": 0.5648148148148148
+          }
+        }
+      },
+      "misses_at_1": [
+        {
+          "qid": "q02",
+          "lang": "vi",
+          "question": "khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",
+          "gold": [
+            "gram_006"
+          ],
+          "first_gold_rank": 18,
+          "top3": [
+            {
+              "id": "gram_002",
+              "score": 0.5929
+            },
+            {
+              "id": "gram_021",
+              "score": 0.5523
+            },
+            {
+              "id": "gram_055",
+              "score": 0.5396
+            }
+          ]
+        },
+        {
+          "qid": "q03",
+          "lang": "mixed",
+          "question": "sao người ta nói I am knowing him là sai ngữ pháp",
+          "gold": [
+            "gram_007"
+          ],
+          "first_gold_rank": 27,
+          "top3": [
+            {
+              "id": "gram_061",
+              "score": 0.4364
+            },
+            {
+              "id": "gram_072",
+              "score": 0.3903
+            },
+            {
+              "id": "gram_063",
+              "score": 0.3866
+            }
+          ]
+        },
+        {
+          "qid": "q04",
+          "lang": "mixed",
+          "question": "tôi học tiếng Anh từ năm 2020 đến giờ thì dùng since hay for",
+          "gold": [
+            "gram_016"
+          ],
+          "first_gold_rank": 5,
+          "top3": [
+            {
+              "id": "gram_006",
+              "score": 0.3483
+            },
+            {
+              "id": "gram_063",
+              "score": 0.3239
+            },
+            {
+              "id": "gram_071",
+              "score": 0.3106
+            }
+          ]
+        },
+        {
+          "qid": "q05",
+          "lang": "vi",
+          "question": "kể chuyện có hai việc trong quá khứ thì việc xảy ra trước chia thế nào",
+          "gold": [
+            "gram_018"
+          ],
+          "first_gold_rank": 3,
+          "top3": [
+            {
+              "id": "gram_009",
+              "score": 0.6715
+            },
+            {
+              "id": "gram_011",
+              "score": 0.637
+            },
+            {
+              "id": "gram_018",
+              "score": 0.6148
+            }
+          ]
+        },
+        {
+          "qid": "q10",
+          "lang": "mixed",
+          "question": "khi nào dùng a, khi nào dùng the",
+          "gold": [
+            "gram_025",
+            "gram_026"
+          ],
+          "first_gold_rank": 3,
+          "top3": [
+            {
+              "id": "gram_074",
+              "score": 0.554
+            },
+            {
+              "id": "gram_071",
+              "score": 0.5207
+            },
+            {
+              "id": "gram_025",
+              "score": 0.5118
+            }
+          ]
+        },
+        {
+          "qid": "q13",
+          "lang": "vi",
+          "question": "muốn đoán chắc chắn về hiện tại, kiểu anh ấy chắc hẳn đang mệt, thì dùng động từ nào",
+          "gold": [
+            "gram_035"
+          ],
+          "first_gold_rank": 9,
+          "top3": [
+            {
+              "id": "gram_092",
+              "score": 0.4293
+            },
+            {
+              "id": "gram_075",
+              "score": 0.4224
+            },
+            {
+              "id": "gram_005",
+              "score": 0.4046
+            }
+          ]
+        },
+        {
+          "qid": "q14",
+          "lang": "vi",
+          "question": "nói đáng lẽ ra hôm qua tôi nên học bài thì viết thế nào",
+          "gold": [
+            "gram_036"
+          ],
+          "first_gold_rank": 11,
+          "top3": [
+            {
+              "id": "gram_092",
+              "score": 0.4544
+            },
+            {
+              "id": "gram_015",
+              "score": 0.4243
+            },
+            {
+              "id": "gram_009",
+              "score": 0.4182
+            }
+          ]
+        },
+        {
+          "qid": "q15",
+          "lang": "mixed",
+          "question": "If I were you hay If I was you, cái nào đúng",
+          "gold": [
+            "gram_039"
+          ],
+          "first_gold_rank": 57,
+          "top3": [
+            {
+              "id": "gram_022",
+              "score": 0.4645
+            },
+            {
+              "id": "gram_065",
+              "score": 0.4359
+            },
+            {
+              "id": "gram_072",
+              "score": 0.433
+            }
+          ]
+        },
+        {
+          "qid": "q16",
+          "lang": "vi",
+          "question": "muốn diễn tả tiếc nuối về chuyện đã không xảy ra, kiểu giá mà hôm đó tôi đã đi, thì dùng cấu trúc gì",
+          "gold": [
+            "gram_041",
+            "gram_040"
+          ],
+          "first_gold_rank": 13,
+          "top3": [
+            {
+              "id": "gram_009",
+              "score": 0.4662
+            },
+            {
+              "id": "gram_018",
+              "score": 0.4556
+            },
+            {
+              "id": "gram_093",
+              "score": 0.445
+            }
+          ]
+        },
+        {
+          "qid": "q17",
+          "lang": "mixed",
+          "question": "more better có đúng không",
+          "gold": [
+            "gram_046"
+          ],
+          "first_gold_rank": 4,
+          "top3": [
+            {
+              "id": "gram_049",
+              "score": 0.4751
+            },
+            {
+              "id": "gram_075",
+              "score": 0.474
+            },
+            {
+              "id": "gram_044",
+              "score": 0.4736
+            }
+          ]
+        },
+        {
+          "qid": "q21",
+          "lang": "mixed",
+          "question": "chuyển câu Where do you live sang câu gián tiếp có cần đảo trợ động từ không",
+          "gold": [
+            "gram_057"
+          ],
+          "first_gold_rank": 14,
+          "top3": [
+            {
+              "id": "gram_062",
+              "score": 0.4996
+            },
+            {
+              "id": "gram_092",
+              "score": 0.4558
+            },
+            {
+              "id": "gram_048",
+              "score": 0.4551
+            }
+          ]
+        },
+        {
+          "qid": "q25",
+          "lang": "vi",
+          "question": "câu hỏi ngắn ở cuối câu để xác nhận, kiểu phải không, thì đặt thế nào",
+          "gold": [
+            "gram_070"
+          ],
+          "first_gold_rank": 3,
+          "top3": [
+            {
+              "id": "gram_014",
+              "score": 0.6402
+            },
+            {
+              "id": "gram_068",
+              "score": 0.6251
+            },
+            {
+              "id": "gram_070",
+              "score": 0.5897
+            }
+          ]
+        },
+        {
+          "qid": "q26",
+          "lang": "mixed",
+          "question": "làm bài tập về nhà là make homework hay do homework",
+          "gold": [
+            "gram_076"
+          ],
+          "first_gold_rank": 5,
+          "top3": [
+            {
+              "id": "gram_025",
+              "score": 0.452
+            },
+            {
+              "id": "gram_050",
+              "score": 0.4112
+            },
+            {
+              "id": "gram_100",
+              "score": 0.4047
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

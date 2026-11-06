@@ -22,8 +22,16 @@
 > | WSEA-66 | **WSEA-83** | Phối hợp kiểm thử tích hợp dịch vụ AI |
 > | WSEA-67 | **WSEA-84** | Đệm xử lý sự cố kỹ thuật |
 > | WSEA-80 | **WSEA-97** | Tối ưu hiệu năng dịch vụ AI |
+> | WSEA-93 | **WSEA-110** | Sinh vector ngữ nghĩa và nạp vào cơ sở dữ liệu |
+> | WSEA-94 | **WSEA-111** | Xây dựng chức năng truy hồi ngữ nghĩa |
+> | WSEA-95 | **WSEA-112** | Hoàn thiện gán nhãn dữ liệu phân loại ý định |
+> | WSEA-108 | **WSEA-125** | Huấn luyện bộ phân loại ý định câu hỏi |
+> | WSEA-109 | **WSEA-126** | Tích hợp mô hình xếp hạng lại kết quả truy hồi |
+> | WSEA-110 | **WSEA-127** | Hoàn thiện pipeline truy hồi trong dịch vụ AI |
+> | WSEA-123 | **WSEA-140** | Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh — ✅ code xong 2026-11-02 (`91b12c9`…`b5abf4b`, cuối nhánh là commit tài liệu B5), chưa push, chờ deploy |
+> | WSEA-124 | **WSEA-141** | Đánh giá chất lượng pipeline truy hồi |
 >
-> Các mã khác (WSEA-81 trở đi) chưa đối chiếu. **WSEA-81, 82, 83 trong file này là task khác** với Jira WSEA-81, 82, 83.
+> Các mã khác (WSEA-81 trở đi) chưa đối chiếu. **WSEA-110 và WSEA-125 trong file này cũng là task khác** với Jira cùng số (WSEA-110 trong file = pipeline = Jira WSEA-127; "WSEA-125 · Viết chương 4 báo cáo" trong file ≠ Jira WSEA-125). **WSEA-81, 82, 83 trong file này là task khác** với Jira WSEA-81, 82, 83.
 
 
 ---
@@ -419,8 +427,10 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-82 · Chuẩn bị dữ liệu cho bộ phân loại ý định
+### [→] WSEA-82 · Chuẩn bị dữ liệu cho bộ phân loại ý định
 5h · Ưu tiên: High · `ai/WSEA-82-...`
+
+> Gộp vào WSEA-112 (xem mục WSEA-95 ở đợt 7).
 
 - [ ] 1. Xác định các nhóm ý định: hỏi nghĩa, cách dùng, ngữ pháp, phân biệt từ
 - [ ] 2. Viết 200 câu hỏi mẫu đầu tiên và gán nhãn
@@ -439,13 +449,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-83 · Chuẩn bị và chia đoạn kho tri thức ngữ pháp
-5h · Ưu tiên: High · `ai/WSEA-83-...`
+### [x] WSEA-100 · Chuẩn bị và chia đoạn kho tri thức ngữ pháp
+5h · Ưu tiên: High · `ai/WSEA-100-kho-tri-thuc-ngu-phap`
 
-- [ ] 1. Thu thập tài liệu ngữ pháp từ nguồn mở
-- [ ] 2. Chia thành các đoạn có ngữ nghĩa trọn vẹn
-- [ ] 3. Gán siêu dữ liệu: chủ đề, bậc trình độ, nguồn
-- [ ] 4. Kiểm tra chất lượng và loại đoạn trùng lặp
+- [x] 1. Thu thập tài liệu ngữ pháp từ nguồn mở — `kb/sources.md` (Wikipedia, Wiktionary, Wikibooks CC BY-SA 4.0; British Council, Cambridge chỉ tra cứu); 73 URL nguồn khác nhau đã kiểm trả HTTP 200
+- [x] 2. Chia thành các đoạn có ngữ nghĩa trọn vẹn — 100 đoạn (chủ đề × khía cạnh), 75 ngữ pháp + 25 phân biệt từ, 189–249 từ, ≤ 391 token e5; đặc tả `kb/README.md`, dàn ý `kb/outline.csv`
+- [x] 3. Gán siêu dữ liệu: chủ đề, bậc trình độ, nguồn — 9 trường JSONL (`kb/grammar_chunks.jsonl`); CEFR A1 22 · A2 29 · B1 36 · B2 13; 100/100 có `reviewed_by`
+- [x] 4. Kiểm tra chất lượng và loại đoạn trùng lặp — `scripts/validate_kb.py --final`: 0 lỗi, 0 id thiếu; trùng nội dung = lỗi, 10 cặp giống nhất ≤ 0,543 (TF-IDF ký tự); `tests/test_validate_kb.py` 35 test
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -457,7 +467,7 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 </details>
 
-**Minh chứng Jira:** 
+**Minh chứng Jira:** WSEA-100 — nhánh `ai/WSEA-100-kho-tri-thuc-ngu-phap`; commit `98005d8` (đặc tả, dàn ý), `d9c39fb` (script kiểm tra), `64477a1` (lô 1), `649a037` (lô 2), commit bước 5 (lô 3–5, duyệt, minh chứng — điền mã sau khi commit). Minh chứng: `docs/kb/report.json` (100 đoạn, 0 lỗi, token max 391), `docs/kb/preview.md`; quyết định ở `docs/DECISIONS.md` mục 2026-10-29.
 
 
 ---
@@ -491,7 +501,7 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-93 · Sinh vector ngữ nghĩa và nạp vào cơ sở dữ liệu
+### [x] WSEA-93 (Jira **WSEA-110**) · Sinh vector ngữ nghĩa và nạp vào cơ sở dữ liệu
 6h · Ưu tiên: Highest · `ai/WSEA-93-...`
 
 - [ ] 1. Chọn và tải mô hình sinh vector phù hợp tiếng Anh và tiếng Việt
@@ -512,13 +522,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-94 · Xây dựng chức năng truy hồi ngữ nghĩa
-6h · Ưu tiên: Highest · `ai/WSEA-94-...`
+### [x] WSEA-94 (Jira **WSEA-111**) · Xây dựng chức năng truy hồi ngữ nghĩa
+6h · Ưu tiên: Highest · `ai/WSEA-111-truy-hoi-ngu-nghia`
 
-- [ ] 1. Viết hàm chuyển câu hỏi thành vector
-- [ ] 2. Viết truy vấn tìm k đoạn gần nhất theo khoảng cách cosine
-- [ ] 3. Thử nghiệm với các giá trị k khác nhau
-- [ ] 4. Đánh giá sơ bộ chất lượng truy hồi trên tập câu hỏi mẫu
+- [x] 1. Viết hàm chuyển câu hỏi thành vector
+- [x] 2. Viết truy vấn tìm k đoạn gần nhất theo khoảng cách cosine
+- [x] 3. Thử nghiệm với các giá trị k khác nhau
+- [x] 4. Đánh giá sơ bộ chất lượng truy hồi trên tập câu hỏi mẫu
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -533,13 +543,15 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-95 · Hoàn thiện gán nhãn dữ liệu phân loại ý định
-5h · Ưu tiên: High · `ai/WSEA-95-...`
+### [x] WSEA-95 · Hoàn thiện gán nhãn dữ liệu phân loại ý định
+5h · Ưu tiên: High · `ai/WSEA-112-gan-nhan-y-dinh`
 
-- [ ] 1. Viết thêm 300 câu hỏi mẫu cho đủ 500 câu
-- [ ] 2. Gán nhãn và kiểm tra tính nhất quán
-- [ ] 3. Chia tập huấn luyện và tập kiểm tra
-- [ ] 4. Xuất dữ liệu ra định dạng phù hợp để huấn luyện
+> Jira: WSEA-112. Gộp luôn WSEA-82 (chuẩn bị dữ liệu ý định).
+
+- [x] 1. Viết thêm 300 câu hỏi mẫu cho đủ 500 câu — 376 câu train (LLM soạn, Hiếu duyệt) + 75 câu test (Tâm, Duy Anh, Bình)
+- [x] 2. Gán nhãn và kiểm tra tính nhất quán — kappa nhãn tác giả 0,9495 (48/50 câu), `kb/intent/review/author_agreement.json`
+- [x] 3. Chia tập huấn luyện và tập kiểm tra — chia theo người viết; lọc gần trùng e5 cosine ≥ 0,92 loại 24 câu train
+- [x] 4. Xuất dữ liệu ra định dạng phù hợp để huấn luyện — `kb/intent/intent_{train,test}.csv` + `label_map.json` + `stats.json` (`scripts/build_intent_dataset.py`)
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -558,13 +570,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 ## Đợt 8 · D22–D24 — Trợ lý phần 2
 
-### [ ] WSEA-108 · Huấn luyện bộ phân loại ý định câu hỏi
-7h · Ưu tiên: Highest · `ai/WSEA-108-...`
+### [x] WSEA-108 (Jira **WSEA-125**) · Huấn luyện bộ phân loại ý định câu hỏi
+7h · Ưu tiên: Highest · `ai/WSEA-125-phan-loai-y-dinh`
 
-- [ ] 1. Xây dựng đặc trưng đầu vào từ văn bản câu hỏi
-- [ ] 2. Huấn luyện mô hình phân loại trên tập đã gán nhãn
-- [ ] 3. Đánh giá độ chính xác và ma trận nhầm lẫn
-- [ ] 4. Tinh chỉnh và lưu mô hình cuối cùng
+- [x] 1. Xây dựng đặc trưng đầu vào từ văn bản câu hỏi — vector e5-small (cache `data/intent_vectors.npz`) và TF-IDF char_wb 2–5; `scripts/train_intent.py`
+- [x] 2. Huấn luyện mô hình phân loại trên tập đã gán nhãn — LogisticRegression, CV 5 gập seed 125 chỉ trên train; chọn e5, C = 3 (macro-F1 CV 0,7812); τ = 0,4
+- [x] 3. Đánh giá độ chính xác và ma trận nhầm lẫn — test 75 câu, 1 lần: accuracy 0,72, macro-F1 0,7079; `docs/eval/intent_report.json`
+- [x] 4. Tinh chỉnh và lưu mô hình cuối cùng — `app/resources/intent_e5_lr_v1.json` + `app/services/intent.py` (numpy), 75/75 khớp report; `tests/test_intent.py`, `tests/test_train_intent.py`
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -579,13 +591,15 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-109 · Tích hợp mô hình xếp hạng lại kết quả truy hồi
-6h · Ưu tiên: High · `ai/WSEA-109-...`
+### [x] WSEA-109 (Jira **WSEA-126**) · Tích hợp mô hình xếp hạng lại kết quả truy hồi — đóng 02/11, **quyết định TẮT**
+6h · Ưu tiên: High · `ai/WSEA-126-xep-hang-lai`
 
-- [ ] 1. Tải và tích hợp mô hình cross-encoder
-- [ ] 2. Viết bước xếp hạng lại sau khi truy hồi thô
-- [ ] 3. So sánh chất lượng truy hồi trước và sau khi xếp hạng lại
-- [ ] 4. Tối ưu số lượng đoạn đưa vào bước xếp hạng
+> Đo xong và quyết định **không** đưa rerank vào dịch vụ: chất lượng đạt luật nhưng p95 1.149 ms > 300 ms, RAM +726 MiB > 600 MiB (luật chốt trước ở `9813fa4`). Chi tiết: `docs/DECISIONS.md` mục 2026-11-02 WSEA-126.
+
+- [x] 1. Tải và tích hợp mô hình cross-encoder — đã tải A `cross-encoder/mmarco-mMiniLMv2-L12-H384-v1` @ `1427fd65` và chạy offline; **không tích hợp vào `app/`** vì TẮT. B `BAAI/bge-reranker-v2-m3` không chạy (lớn ~5 lần A, suy luận, không đo)
+- [x] 2. Viết bước xếp hạng lại sau khi truy hồi thô — `rerank_rows` trong `scripts/eval_rerank.py` (chỉ offline), test `tests/test_eval_rerank.py` dùng bộ chấm giả
+- [x] 3. So sánh chất lượng truy hồi trước và sau khi xếp hạng lại — hit@3 0,645 → 0,871, hit@1 0,613 → 0,806, MRR@8 0,678 → 0,839; 8 câu lên hạng, 0 câu tụt; `docs/eval/rerank_report.json`
+- [ ] 4. Tối ưu số lượng đoạn đưa vào bước xếp hạng — không làm: rerank TẮT. Prompt dùng top-5 theo e5 (DECISIONS WSEA-111 mục c)
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -599,13 +613,15 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-110 · Hoàn thiện pipeline truy hồi trong dịch vụ AI
-5h · Ưu tiên: Highest · `ai/WSEA-110-...`
+### [x] WSEA-110 (Jira **WSEA-127**) · Hoàn thiện pipeline truy hồi trong dịch vụ AI
+5h · Ưu tiên: Highest · `ai/WSEA-127-pipeline-truy-hoi`
 
-- [ ] 1. Ghép các bước: phân loại ý định, truy hồi, xếp hạng lại
-- [ ] 2. Viết endpoint trả về danh sách đoạn tri thức liên quan
-- [ ] 3. Xử lý trường hợp không tìm thấy đoạn phù hợp
-- [ ] 4. Viết kiểm thử bằng Pytest
+> Commit: `de7b528` (luật chốt trước) · `cd1c440` (pipeline + `/assistant/rank`) · `9011f9c` (luật 1, 3 miễn khi có `word`, sửa trước kiểm) · `c755bb7` (kiểm offline B3) · commit docs v0.3.1. Chi tiết: `docs/DECISIONS.md` mục 2026-11-02 — WSEA-127.
+
+- [x] 1. Ghép các bước: phân loại ý định, truy hồi, xếp hạng lại — bỏ bước xếp hạng lại (WSEA-126 TẮT): top-5 theo e5 vào prompt. `app/services/pipeline.py` (luật 1–4), bộ ý định nạp trong lifespan
+- [x] 2. Viết endpoint trả về danh sách đoạn tri thức liên quan — `POST /assistant/rank` (hợp đồng v0.3.1); `/ask` vẫn 501 tới WSEA-140
+- [x] 3. Xử lý trường hợp không tìm thấy đoạn phù hợp — `no_context` (`empty_candidates`, `top1_too_far`), `out_of_scope`; câu "trong lĩnh vực nhưng kho chưa có" để LLM từ chối (WSEA-140)
+- [x] 4. Viết kiểm thử bằng Pytest — `tests/test_pipeline.py`, `tests/test_assistant_rank.py`, `tests/test_check_pipeline.py`; kiểm offline `scripts/check_pipeline.py`: (a) 0/31 chặn nhầm, (b) 26/31 = hit@5 gốc; smoke local 7/7
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -624,13 +640,13 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 ## Đợt 9 · D25–D27 — Hoàn thiện trợ lý · v1.1
 
-### [ ] WSEA-123 · Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh
-7h · Ưu tiên: Highest · `ai/WSEA-123-...`
+### [x] WSEA-123 (Jira **WSEA-140**) · Xây dựng khuôn mẫu câu lệnh và tích hợp mô hình sinh
+7h · Ưu tiên: Highest · `ai/WSEA-140-prompt-llm`
 
-- [ ] 1. Viết khuôn mẫu riêng cho từng nhóm ý định
-- [ ] 2. Ràng buộc mô hình chỉ trả lời dựa trên ngữ cảnh cung cấp
-- [ ] 3. Tích hợp gọi dịch vụ mô hình ngôn ngữ, xử lý phản hồi theo luồng
-- [ ] 4. Cài đặt phương án dự phòng khi dịch vụ lỗi
+- [x] 1. Viết khuôn mẫu riêng cho từng nhóm ý định — 1 system prompt chung + 1 dòng gợi ý MỀM theo nhãn (bộ ý định chỉ đúng 72%), `app/services/prompts.py`
+- [x] 2. Ràng buộc mô hình chỉ trả lời dựa trên ngữ cảnh cung cấp — quy tắc bám tài liệu + trích [n] → `source_ids`; 3 vòng chỉnh trên 12 ca phát triển, **không vòng nào đạt**, chọn prompt v2 + hậu xử lý v3 (DECISIONS WSEA-140 mục g)
+- [x] 3. Tích hợp gọi dịch vụ mô hình ngôn ngữ, xử lý phản hồi theo luồng — `httpx` → Groq, `/assistant/ask` JSON + SSE (hợp đồng v0.3.2)
+- [x] 4. Cài đặt phương án dự phòng khi dịch vụ lỗi — 429 → model dự phòng 1 lần; lỗi khác → 503 + `reason`; SSE đứt giữa chừng → không khung cuối (backend degraded)
 
 <details><summary>Chi tiết kỹ thuật (ENG-AI-001)</summary>
 
@@ -645,8 +661,8 @@ Xem mục đầu Đợt 7. Nền tảng: 15/10 đổi sang Render, 19/10 quay l�
 
 **Minh chứng Jira:** 
 
-### [ ] WSEA-124 · Đánh giá chất lượng pipeline truy hồi
-6h · Ưu tiên: High · `ai/WSEA-124-...`
+### [ ] WSEA-124 (Jira **WSEA-141**) · Đánh giá chất lượng pipeline truy hồi
+6h · Ưu tiên: High · `ai/WSEA-141-...`
 
 - [ ] 1. Chạy bộ 60 câu hỏi qua toàn bộ pipeline
 - [ ] 2. Tính chỉ số Recall@k và MRR của bước truy hồi
@@ -854,7 +870,7 @@ trong sheet Nhập Jira của file 11. Hoặc là tạo task mới trên Jira, h
 
 ## Đối chiếu đợt giữa hai kế hoạch
 
-- *Biên soạn và chia đoạn kho tri thức ngữ pháp*: kế hoạch AI xếp **đợt 2**, Jira xếp **đợt 6** (WSEA-83).
+- *Biên soạn và chia đoạn kho tri thức ngữ pháp*: kế hoạch AI xếp **đợt 2**, Jira xếp **đợt 6** (WSEA-100).
   Đợt 6 là mốc v1.0, nên để ở đợt 6 là hợp lý hơn — nhưng phải xong trước đợt 7 vì đợt 7 cần đoạn để sinh vector.
 - *Cài đặt SM-2* và *Đánh giá chất lượng mô hình* là hai việc riêng trong kế hoạch AI nhưng
   gộp thành một task Jira (WSEA-50). Khi làm nhớ tick đủ cả hai phần.

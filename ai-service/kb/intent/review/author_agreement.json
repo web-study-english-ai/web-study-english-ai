@@ -1,0 +1,68 @@
+{
+  "what": "Nhãn tác giả (Tâm, Duy Anh tự gán khi viết câu test) so với nhãn chốt theo LABELING.md",
+  "n": 50,
+  "agree": 48,
+  "accuracy": 0.96,
+  "cohen_kappa": 0.9495,
+  "labels": [
+    "nghia_tu",
+    "cach_dung",
+    "ngu_phap",
+    "phan_biet",
+    "ngoai_pham_vi"
+  ],
+  "confusion_matrix_rows_final_cols_author": [
+    [
+      11,
+      1,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      8,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      8,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      8,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      13
+    ]
+  ],
+  "disagreements": [
+    {
+      "id": "ie_0035",
+      "text": "Khi kết thư cho 1 người bạn, dùng cụm từ hoặc từ gì?",
+      "author": "duyanh",
+      "author_label": "cach_dung",
+      "final_label": "nghia_tu"
+    },
+    {
+      "id": "ie_0043",
+      "text": "Forget to V và Forget V_ing, cụm nào dùng cho Đã Quên làm j",
+      "author": "duyanh",
+      "author_label": "phan_biet",
+      "final_label": "cach_dung"
+    }
+  ],
+  "note": "Tâm ghi 'ngoai_pahm_vi' (lỗi gõ) được tính là ngoai_pham_vi. Bình không gán nhãn nên không tính."
+}

@@ -1,0 +1,400 @@
+{
+  "task": "WSEA-112",
+  "labels": [
+    "nghia_tu",
+    "cach_dung",
+    "ngu_phap",
+    "phan_biet",
+    "ngoai_pham_vi"
+  ],
+  "langs": [
+    "vi",
+    "vi_nodau",
+    "mixed",
+    "en"
+  ],
+  "seed": 112,
+  "embedder": {
+    "model": "intfloat/multilingual-e5-small",
+    "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+    "dim": 384,
+    "query_prefix": "query: ",
+    "passage_prefix": "passage: ",
+    "used": true
+  },
+  "near_dup": {
+    "threshold": 0.92,
+    "enabled": true,
+    "reason": null,
+    "removed_from_train": [
+      {
+        "id": "it_0018",
+        "text": "under the weather là gì",
+        "src": "train_llm.txt:25",
+        "cosine": 0.9624,
+        "test_id": "ie_0070",
+        "test_text": "thành ngữ \"under the weather\" có nghĩa là gì vậy"
+      },
+      {
+        "id": "it_0045",
+        "text": "sincere nghia la gi",
+        "src": "train_llm.txt:53",
+        "cosine": 0.9226,
+        "test_id": "ie_0056",
+        "test_text": "have nghia la gi"
+      },
+      {
+        "id": "it_0059",
+        "text": "cho mình xin synonym của important",
+        "src": "train_llm.txt:68",
+        "cosine": 0.9284,
+        "test_id": "ie_0063",
+        "test_text": "tìm giúp mình 3 từ đồng nghĩa với từ important"
+      },
+      {
+        "id": "it_0083",
+        "text": "đặt giúp mình một câu với từ although",
+        "src": "train_llm.txt:97",
+        "cosine": 0.9367,
+        "test_id": "ie_0019",
+        "test_text": "So sánh cách dùng giữa although và because"
+      },
+      {
+        "id": "it_0091",
+        "text": "apologize thì xin lỗi ai về việc gì nói sao",
+        "src": "train_llm.txt:105",
+        "cosine": 0.9362,
+        "test_id": "ie_0006",
+        "test_text": "Apologize đi với giới từ nào nhỉ"
+      },
+      {
+        "id": "it_0100",
+        "text": "cách dùng từ afford",
+        "src": "train_llm.txt:114",
+        "cosine": 0.9409,
+        "test_id": "ie_0008",
+        "test_text": "Từ afford đặt câu thế nào cho tự nhiên nhỉ"
+      },
+      {
+        "id": "it_0114",
+        "text": "danh từ của decide là gì",
+        "src": "train_llm.txt:128",
+        "cosine": 0.9245,
+        "test_id": "ie_0007",
+        "test_text": "Cho tôi 2 câu ví dụ với từ decide"
+      },
+      {
+        "id": "it_0117",
+        "text": "congratulate ai về việc gì thì dùng giới từ nào",
+        "src": "train_llm.txt:131",
+        "cosine": 0.9571,
+        "test_id": "ie_0062",
+        "test_text": "từ congratulate đi kèm với giới từ gì"
+      },
+      {
+        "id": "it_0162",
+        "text": "khi nào dùng thì quá khứ tiếp diễn",
+        "src": "train_llm.txt:182",
+        "cosine": 0.9769,
+        "test_id": "ie_0011",
+        "test_text": "Khi nào thì dùng quá khứ tiếp diễn"
+      },
+      {
+        "id": "it_0167",
+        "text": "dịch giúp: tôi đã học tiếng Anh được 3 năm",
+        "src": "train_llm.txt:187",
+        "cosine": 0.9476,
+        "test_id": "ie_0064",
+        "test_text": "dịch câu tôi đã học tiếng anh được 5 năm rồi sang tiếng anh"
+      },
+      {
+        "id": "it_0168",
+        "text": "thì hiện tại hoàn thành tiếp diễn dùng trong trường hợp nào",
+        "src": "train_llm.txt:188",
+        "cosine": 0.9373,
+        "test_id": "ie_0037",
+        "test_text": "Quy tắc của thì hiện tại hoàn thành là gì"
+      },
+      {
+        "id": "it_0192",
+        "text": "thì quá khứ hoàn thành dùng khi nào",
+        "src": "train_llm.txt:212",
+        "cosine": 0.952,
+        "test_id": "ie_0038",
+        "test_text": "Thì quá khứ tiếp diễn dùng khi nào"
+      },
+      {
+        "id": "it_0216",
+        "text": "thi tuong lai gan cau truc ra sao",
+        "src": "train_llm.txt:237",
+        "cosine": 0.9309,
+        "test_id": "ie_0039",
+        "test_text": "Cau truc cua thi hien tai hoan thanh tiep dien la gi"
+      },
+      {
+        "id": "it_0243",
+        "text": "khi nào dùng will, khi nào dùng be going to",
+        "src": "train_llm.txt:270",
+        "cosine": 0.9815,
+        "test_id": "ie_0018",
+        "test_text": "Khi nào thì dùng will khi nào thì dùng be going to thế"
+      },
+      {
+        "id": "it_0245",
+        "text": "borrow và lend khác nhau chỗ nào",
+        "src": "train_llm.txt:272",
+        "cosine": 0.9595,
+        "test_id": "ie_0016",
+        "test_text": "Borrow khác lend chỗ nào"
+      },
+      {
+        "id": "it_0246",
+        "text": "see, look, watch phân biệt giúp mình",
+        "src": "train_llm.txt:273",
+        "cosine": 0.9724,
+        "test_id": "ie_0045",
+        "test_text": "See, Watch và Look cách dùng khác nhau ra sao"
+      },
+      {
+        "id": "it_0258",
+        "text": "quá khứ đơn với hiện tại hoàn thành, mình hay nhầm",
+        "src": "train_llm.txt:285",
+        "cosine": 0.9278,
+        "test_id": "ie_0013",
+        "test_text": "Câu hỏi thì quá khứ đơn có dạng như nào"
+      },
+      {
+        "id": "it_0259",
+        "text": "in the end và at the end",
+        "src": "train_llm.txt:286",
+        "cosine": 0.9562,
+        "test_id": "ie_0066",
+        "test_text": "phân biệt in the end và at the end"
+      },
+      {
+        "id": "it_0262",
+        "text": "listen và hear khác nhau sao",
+        "src": "train_llm.txt:289",
+        "cosine": 0.9353,
+        "test_id": "ie_0017",
+        "test_text": "Phân biệt giúp tôi listen và hear"
+      },
+      {
+        "id": "it_0283",
+        "text": "câu điều kiện loại 1 với loại 2 khác nhau chỗ nào",
+        "src": "train_llm.txt:310",
+        "cosine": 0.9481,
+        "test_id": "ie_0014",
+        "test_text": "Câu điều kiện loại 1 và loại 2 có cấu trúc như nào"
+      },
+      {
+        "id": "it_0324",
+        "text": "hôm nay có mưa không",
+        "src": "train_llm.txt:358",
+        "cosine": 0.9396,
+        "test_id": "ie_0024",
+        "test_text": "Ngày mai có mưa không nhỉ"
+      },
+      {
+        "id": "it_0329",
+        "text": "từ schedule phát âm thế nào",
+        "src": "train_llm.txt:363",
+        "cosine": 0.9402,
+        "test_id": "ie_0022",
+        "test_text": "Từ schedule phát âm như nào thì chuẩn giọng Mỹ nhất"
+      },
+      {
+        "id": "it_0359",
+        "text": "lập kế hoạch học tiếng Anh 3 tháng cho mình",
+        "src": "train_llm.txt:393",
+        "cosine": 0.9201,
+        "test_id": "ie_0067",
+        "test_text": "gợi ý cho mình lộ trình tự học tiếng anh cho người mới bắt đầu"
+      },
+      {
+        "id": "it_0392",
+        "text": "who are you",
+        "src": "train_llm.txt:429",
+        "cosine": 0.9285,
+        "test_id": "ie_0059",
+        "test_text": "how are you"
+      }
+    ]
+  },
+  "inputs": {
+    "kb/intent/raw/test_binh.txt": {
+      "sha256": "96d7271a24fa1b8572dad866337d2c9eee9de2f8b3a6ebe28ab556d8116aeaef",
+      "rows": 25
+    },
+    "kb/intent/raw/test_duyanh.txt": {
+      "sha256": "b993711ff1f9ed4425efb97d394a18368ab4f63d747b88bdad143868c1d7c428",
+      "rows": 25
+    },
+    "kb/intent/raw/test_tam.txt": {
+      "sha256": "2699f63d9b774f4c77a7a7468ac6e6cf59ef84ea5e90632b565db8de3e41a1c0",
+      "rows": 25
+    },
+    "kb/intent/raw/train_llm.txt": {
+      "sha256": "48f43923f7b1b01f6c0e3394eff55efe58169c635df514f1b4aff15de8e9aaf3",
+      "rows": 400
+    }
+  },
+  "excluded_sources": [
+    "kb/eval_questions.csv",
+    "kb/eval_negatives.csv"
+  ],
+  "train": {
+    "n": 376,
+    "by_label": {
+      "nghia_tu": 77,
+      "cach_dung": 75,
+      "ngu_phap": 75,
+      "phan_biet": 73,
+      "ngoai_pham_vi": 76
+    },
+    "by_label_lang": {
+      "nghia_tu": {
+        "vi": 43,
+        "vi_nodau": 11,
+        "mixed": 11,
+        "en": 12
+      },
+      "cach_dung": {
+        "vi": 39,
+        "vi_nodau": 12,
+        "mixed": 12,
+        "en": 12
+      },
+      "ngu_phap": {
+        "vi": 40,
+        "vi_nodau": 11,
+        "mixed": 12,
+        "en": 12
+      },
+      "phan_biet": {
+        "vi": 37,
+        "vi_nodau": 12,
+        "mixed": 12,
+        "en": 12
+      },
+      "ngoai_pham_vi": {
+        "vi": 41,
+        "vi_nodau": 12,
+        "mixed": 12,
+        "en": 11
+      }
+    },
+    "by_label_author": {
+      "nghia_tu": {
+        "llm": 77
+      },
+      "cach_dung": {
+        "llm": 75
+      },
+      "ngu_phap": {
+        "llm": 75
+      },
+      "phan_biet": {
+        "llm": 73
+      },
+      "ngoai_pham_vi": {
+        "llm": 76
+      }
+    },
+    "by_lang": {
+      "en": 59,
+      "mixed": 59,
+      "vi": 200,
+      "vi_nodau": 58
+    },
+    "by_author": {
+      "llm": 376
+    },
+    "with_note": 0
+  },
+  "test": {
+    "n": 75,
+    "by_label": {
+      "nghia_tu": 15,
+      "cach_dung": 14,
+      "ngu_phap": 13,
+      "phan_biet": 14,
+      "ngoai_pham_vi": 19
+    },
+    "by_label_lang": {
+      "nghia_tu": {
+        "vi": 12,
+        "vi_nodau": 2,
+        "mixed": 0,
+        "en": 1
+      },
+      "cach_dung": {
+        "vi": 11,
+        "vi_nodau": 1,
+        "mixed": 1,
+        "en": 1
+      },
+      "ngu_phap": {
+        "vi": 10,
+        "vi_nodau": 1,
+        "mixed": 1,
+        "en": 1
+      },
+      "phan_biet": {
+        "vi": 12,
+        "vi_nodau": 2,
+        "mixed": 0,
+        "en": 0
+      },
+      "ngoai_pham_vi": {
+        "vi": 12,
+        "vi_nodau": 0,
+        "mixed": 1,
+        "en": 6
+      }
+    },
+    "by_label_author": {
+      "nghia_tu": {
+        "binh": 3,
+        "duyanh": 6,
+        "tam": 6
+      },
+      "cach_dung": {
+        "binh": 5,
+        "duyanh": 5,
+        "tam": 4
+      },
+      "ngu_phap": {
+        "binh": 5,
+        "duyanh": 5,
+        "tam": 3
+      },
+      "phan_biet": {
+        "binh": 6,
+        "duyanh": 4,
+        "tam": 4
+      },
+      "ngoai_pham_vi": {
+        "binh": 6,
+        "duyanh": 5,
+        "tam": 8
+      }
+    },
+    "by_lang": {
+      "en": 9,
+      "mixed": 3,
+      "vi": 57,
+      "vi_nodau": 6
+    },
+    "by_author": {
+      "binh": 25,
+      "duyanh": 25,
+      "tam": 25
+    },
+    "with_note": 4
+  },
+  "outputs": {
+    "intent_train.csv": "e0f98a7977ab25547f0a8cf1ab978afe1fa7772c4b19fb4081cf3223ed59d4b2",
+    "intent_test.csv": "d0c242dc51df926f32ee643f1ee66bcb55c98d0442bedace78090d76fbf83ab4"
+  }
+}

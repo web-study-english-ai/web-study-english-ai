@@ -22,7 +22,7 @@ export function VocabularyDetailPanel({ wordId, onClose }: Props) {
 
   if (isLoading || !item) {
     return (
-      <div className="rounded-xl border border-border bg-white p-5 text-sm text-muted-foreground">
+      <div className="rounded-xl border border-border bg-card p-5 text-sm text-muted-foreground">
         Đang tải chi tiết…
       </div>
     );
@@ -41,7 +41,7 @@ export function VocabularyDetailPanel({ wordId, onClose }: Props) {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-white p-5">
+    <div className="rounded-xl border border-border bg-card p-5">
       <div className="mb-3 flex items-start justify-between">
         <p className="text-sm font-semibold uppercase tracking-wide text-primary">
           Chi tiết từ vựng

@@ -58,9 +58,9 @@ const features = [
 
 export default function Home() {
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-card">
       {/* Header */}
-      <header className="sticky top-0 z-40 border-b border-black/5 bg-white/90 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-black/5 bg-card/90 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-orange-500 text-white">
@@ -195,7 +195,7 @@ export default function Home() {
               return (
                 <div
                   key={feature.title}
-                  className="rounded-2xl bg-white p-6 shadow-[0_20px_40px_-24px_rgba(15,23,42,0.35)]"
+                  className="rounded-2xl bg-card p-6 shadow-[0_20px_40px_-24px_rgba(15,23,42,0.35)]"
                 >
                   <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-orange-50 text-orange-500">
                     <Icon size={20} strokeWidth={1.8} />

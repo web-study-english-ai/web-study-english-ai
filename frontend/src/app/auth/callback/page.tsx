@@ -8,7 +8,13 @@ export default function OAuthCallbackPage() {
   const router = useRouter();
 
   useEffect(() => {
-    void restoreSessionApi().then((res) => {
+    const params = new URLSearchParams(window.location.search);
+    const token = params.get("token") ?? undefined;
+    if (token) {
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+
+    void restoreSessionApi(token).then((res) => {
       if (!res) {
         router.replace("/login?oauth_error=Kh%C3%B4ng%20t%E1%BA%A1o%20%C4%91%C6%B0%E1%BB%A3c%20phi%C3%AAn");
         return;

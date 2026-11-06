@@ -136,9 +136,10 @@ model Word {
   createdAt      DateTime     @default(now()) @map("created_at")
   updatedAt      DateTime     @updatedAt @map("updated_at")
 
-  topic   Topic?     @relation(fields: [topicId], references: [id], onDelete: SetNull)
-  cards   UserCard[]
-  reviews Review[]
+  topic     Topic?         @relation(fields: [topicId], references: [id], onDelete: SetNull)
+  cards     UserCard[]
+  reviews   Review[]
+  embedding WordEmbedding?
 
   @@index([cefr])
   @@index([topicId])
@@ -235,18 +236,31 @@ model Review {
 
 /// Đoạn tri thức ngữ pháp dùng cho trợ lý, tìm kiếm theo vector ngữ nghĩa
 model KbChunk {
-  id        String                      @id @default(uuid())
-  content   String
-  source    String
-  topic     String?
-  cefr      CefrLevel?
+  id             String                      @id @default(uuid())
+  content        String
+  source         String
+  topic          String?
+  cefr           CefrLevel?
   /// Prisma chưa hỗ trợ kiểu vector, phải khai Unsupported và truy vấn bằng $queryRaw
-  embedding Unsupported("vector(768)")?
-  createdAt DateTime                    @default(now()) @map("created_at")
+  embedding      Unsupported("vector(384)")?
+  embeddingModel String?                     @map("embedding_model")
+  createdAt      DateTime                    @default(now()) @map("created_at")
 
   @@index([topic])
   @@index([cefr])
   @@map("kb_chunks")
+}
+
+/// Vector ngữ nghĩa của từ vựng phục vụ tra cứu từ theo ngữ cảnh
+model WordEmbedding {
+  wordId    String                     @id @map("word_id")
+  embedding Unsupported("vector(384)")
+  model     String
+  updatedAt DateTime                   @default(now()) @updatedAt @map("updated_at")
+
+  word Word @relation(fields: [wordId], references: [id], onDelete: Cascade)
+
+  @@map("word_embeddings")
 }
 
 /// Nhật ký câu hỏi gửi trợ lý, phục vụ phân tích chất lượng trả lời về sau

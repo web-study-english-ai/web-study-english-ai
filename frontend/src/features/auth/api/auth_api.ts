@@ -1,4 +1,11 @@
-import { apiFetch, setAccessToken, ApiError, lamMoiPhien } from "@/lib/api/client";
+import {
+  apiFetch,
+  setAccessToken,
+  setRefreshToken,
+  getRefreshToken,
+  ApiError,
+  lamMoiPhien,
+} from "@/lib/api/client";
 import {
   AuthError,
   AuthResponse,
@@ -18,6 +25,7 @@ interface BackendUser {
 interface BackendAuth {
   user: BackendUser;
   accessToken: string;
+  refreshToken?: string;
 }
 
 /** Nơi duy nhất quy đổi tên trường giữa backend và giao diện */
@@ -48,6 +56,9 @@ export async function loginApi(payload: LoginPayload): Promise<AuthResponse> {
     body: JSON.stringify(payload),
   });
   setAccessToken(res.accessToken);
+  if (res.refreshToken) {
+    setRefreshToken(res.refreshToken);
+  }
   return { user: mapUser(res.user), token: res.accessToken };
 }
 
@@ -64,13 +75,21 @@ export async function registerApi(payload: RegisterPayload): Promise<void> {
 }
 
 export async function logoutApi(): Promise<void> {
-  await apiFetch("/auth/logout", { method: "POST" });
-  setAccessToken(null);
+  const refreshToken = getRefreshToken();
+  try {
+    await apiFetch("/auth/logout", {
+      method: "POST",
+      body: JSON.stringify(refreshToken ? { refreshToken } : {}),
+    });
+  } finally {
+    setAccessToken(null);
+    setRefreshToken(null);
+  }
 }
 
-/** Khôi phục phiên sau khi tải lại trang, dựa vào refresh cookie */
-export async function restoreSessionApi(): Promise<AuthResponse | null> {
-  const res = await lamMoiPhien();
+/** Khôi phục phiên sau khi tải lại trang, dựa vào refresh cookie hoặc refresh token */
+export async function restoreSessionApi(tokenTuUrl?: string): Promise<AuthResponse | null> {
+  const res = await lamMoiPhien(tokenTuUrl);
   if (!res) return null;
   return { user: mapUser(res.user), token: res.accessToken };
 }

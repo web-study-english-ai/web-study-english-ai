@@ -35,7 +35,7 @@ export function DayDetailCard() {
   const hasActivity = data && (data.newWords > 0 || data.reviews > 0);
 
   return (
-    <div className="rounded-2xl border border-border bg-white p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         <div>
           <h2 className="font-heading text-base font-semibold text-foreground">
@@ -54,7 +54,7 @@ export function DayDetailCard() {
             value={date}
             max={today}
             onChange={(e) => e.target.value && setDate(e.target.value)}
-            className="rounded-lg border border-border bg-white px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
+            className="rounded-lg border border-border bg-card px-3 py-1.5 text-sm outline-none focus:ring-2 focus:ring-primary/30"
           />
           <Button
             variant="outline"
@@ -99,7 +99,7 @@ export function DayDetailCard() {
               <p className="text-xs text-muted-foreground">Từ mới</p>
               <p className="font-heading text-2xl font-bold text-teal-600">{data.newWords}</p>
             </div>
-            <div className="rounded-xl bg-orange-50 p-4">
+            <div className="rounded-xl bg-orange-50 dark:bg-orange-950/40 p-4">
               <p className="text-xs text-muted-foreground">Lượt ôn tập</p>
               <p className="font-heading text-2xl font-bold text-primary">{data.reviews}</p>
             </div>
@@ -113,7 +113,7 @@ export function DayDetailCard() {
                     <span
                       className={cn(
                         "h-2 w-2 shrink-0 rounded-sm",
-                        w.kind === "new" ? "bg-teal-500" : "bg-primary"
+                        w.kind === "new" ? "bg-teal-50 dark:bg-teal-950/40" : "bg-primary"
                       )}
                     />
                     <span className="font-medium text-foreground">{w.word}</span>

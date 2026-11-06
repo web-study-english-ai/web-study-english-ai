@@ -1,0 +1,1482 @@
+{
+  "task": "WSEA-141",
+  "part": "gen",
+  "created_at": "2026-11-05T04:56:25+00:00",
+  "base": "http://127.0.0.1:8000",
+  "limit": null,
+  "official": true,
+  "retry_wait_s": 60.0,
+  "selection": {
+    "seed": 141,
+    "n_pos": 14,
+    "n_neg": 6,
+    "qids": [
+      "q001",
+      "q002",
+      "q005",
+      "q009",
+      "q015",
+      "q016",
+      "q018",
+      "q019",
+      "q020",
+      "q026",
+      "q030",
+      "q035",
+      "q036",
+      "q037",
+      "q044",
+      "q045",
+      "q047",
+      "q056",
+      "q058",
+      "q059"
+    ]
+  },
+  "files": {
+    "kb/eval_set_141.csv": "c20b5d6569c82a7a25bd92ec53f11f7d27077009ff27daeb883047ffad6d42d2",
+    "kb/eval_set_141_neg.csv": "92dc961aa71329a84cac58b050d7650df6f19a72b44257b52fed9f2a62e52dd4",
+    "kb/grammar_chunks.jsonl": "6369a86a46a310e3058f72d281e903ade9164ce240184dfbe5a587e0c3556ee4",
+    "data/embeddings/words_e5-small.npz": "637f287327bdc36660343f4f2ac6d6c24b19f3baa8f3580eb48a79591ac03cc4",
+    "backend/prisma/data/vocab_7000.csv": "546776fd6defeb7c4fa2ff6a8a3c850d83d5caad743be6939fdfa515b03793d7"
+  },
+  "degraded": {
+    "retried": 0,
+    "retried_ok": [],
+    "still_degraded": {},
+    "model_errors": []
+  },
+  "rows": [
+    {
+      "qid": "q001",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_002"
+      ],
+      "question": "Khi nào dùng thì hiện tại đơn (Present Simple)?",
+      "candidates": [
+        "gram_002",
+        "gram_009",
+        "gram_003",
+        "gram_015",
+        "gram_001",
+        "gram_013",
+        "gram_014",
+        "gram_006"
+      ],
+      "vocab_sent": [
+        "present",
+        "simple",
+        "hi",
+        "current",
+        "once",
+        "meanwhile"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.6272428936697598
+      },
+      "vocab": [
+        "present",
+        "simple",
+        "hi"
+      ],
+      "contexts": [
+        {
+          "id": "gram_002",
+          "distance": 0.08483505249023438,
+          "text": "Thì hiện tại đơn (Present Simple) — Cách dùng\nThì hiện tại đơn (Present Simple) dùng cho những điều lặp lại, cố định hoặc luôn đúng, không phải việc đang diễn ra ngay lúc nói.\n1. Thói quen, việc lặp đi lặp lại: những việc ta làm hằng ngày, hằng tuần. Câu thường có từ chỉ mức độ thường xuyên như always, usually, often.\n2. Sự thật hiển nhiên: điều đúng ở mọi lúc, chẳng hạn quy luật tự nhiên hay kiến thức khoa học.\n3. Tình trạng lâu dài, ổn định: nơi ở, nghề nghiệp, sở thích, những điều không thay đổi trong thời gian ngắn.\n4. Lịch trình cố định: giờ tàu, giờ chiếu phim, thời khoá biểu. Dù nói về tương lai, ta vẫn dùng hiện tại đơn vì lịch đã được định sẵn, không phụ thuộc vào ý muốn của người nói.\nVí dụ:\n- I usually go to bed at eleven. (Tôi thường đi ngủ lúc mười một giờ.)\n- Water boils at 100 degrees Celsius. (Nước sôi ở 100 độ C.)\n- The train leaves at 7:30 tomorrow morning. (Tàu khởi hành lúc 7 giờ 30 sáng mai.)"
+        },
+        {
+          "id": "gram_009",
+          "distance": 0.09837925434112549,
+          "text": "Thì quá khứ đơn (Past Simple) — Cách dùng\nThì quá khứ đơn (Past Simple) dùng cho những việc đã xảy ra và đã kết thúc trong quá khứ.\n1. Hành động đã xong tại một thời điểm xác định: người nghe biết hoặc đoán được lúc nào. Câu thường có mốc như yesterday, last week, in 2020, two days ago.\n2. Chuỗi hành động nối tiếp nhau: khi kể chuyện, các việc xảy ra lần lượt, việc này xong rồi mới tới việc kia.\n3. Thói quen hoặc tình trạng trong quá khứ nay không còn: điều từng đúng trong một khoảng thời gian đã qua, chẳng hạn hồi còn nhỏ hay khi còn đi học.\n4. Hỏi về thời điểm của việc đã qua: khi hỏi bằng When hoặc What time về một việc đã xảy ra, ta dùng quá khứ đơn.\nVí dụ:\n- She called me two hours ago. (Cô ấy gọi cho tôi cách đây hai tiếng.)\n- He opened the door, turned on the light and sat down. (Anh ấy mở cửa, bật đèn rồi ngồi xuống.)\n- When did you start learning English? (Bạn bắt đầu học tiếng Anh từ khi nào?)"
+        },
+        {
+          "id": "gram_003",
+          "distance": 0.10275620222091675,
+          "text": "Thì hiện tại đơn (Present Simple) — Dấu hiệu nhận biết\nThì hiện tại đơn (Present Simple) thường đi kèm các từ chỉ tần suất, tức là từ cho biết một việc xảy ra thường xuyên đến mức nào.\nNhóm 1 — trạng từ tần suất (adverbs of frequency): always (luôn luôn), usually (thường xuyên), often (hay), sometimes (thỉnh thoảng), rarely (hiếm khi), never (không bao giờ).\nVị trí: đứng trước động từ thường nhưng đứng sau động từ to be. Chẳng hạn: She always walks to school, nhưng She is always late. Riêng sometimes còn có thể đứng đầu hoặc cuối câu.\nNhóm 2 — cụm chỉ sự lặp lại: every day, every week, every morning, once a week (mỗi tuần một lần), twice a month (mỗi tháng hai lần), on Mondays (vào các ngày thứ Hai).\nVị trí: thường ở cuối câu; cũng có thể đặt ở đầu câu, khi đó nên có dấu phẩy phía sau.\nLưu ý: dấu hiệu chỉ giúp đoán nhanh. Hãy xem cả nghĩa của câu: nếu câu nói về thói quen hoặc sự thật thì dùng hiện tại đơn.\nVí dụ:\n- He often plays football after school. (Cậu ấy hay chơi bóng đá sau giờ học.)\n- We visit our grandparents twice a month. (Chúng tôi về thăm ông bà mỗi tháng hai lần.)\n- My sister is never late for work. (Chị tôi không bao giờ đi làm muộn.)"
+        },
+        {
+          "id": "gram_015",
+          "distance": 0.1034005880355835,
+          "text": "Hiện tại hoàn thành và quá khứ đơn — Phân biệt\nThì hiện tại hoàn thành (Present Perfect) và thì quá khứ đơn (Past Simple) đều có thể nói về việc đã xảy ra, nhưng khác nhau ở cách nhìn thời gian.\n- Thời điểm: quá khứ đơn nêu hoặc ngụ ý rõ lúc nào (yesterday, in 2018); hiện tại hoàn thành không nêu thời điểm cụ thể.\n- Liên hệ với hiện tại: quá khứ đơn chỉ việc đã kết thúc, tách khỏi hiện tại; hiện tại hoàn thành nhấn mạnh kết quả hoặc ảnh hưởng tới bây giờ.\n- Khoảng thời gian: quá khứ đơn đi với khoảng đã kết thúc (last week, when I was a child); hiện tại hoàn thành đi với khoảng chưa kết thúc (this week, so far, since).\n- Câu hỏi: hỏi When ...? thì dùng quá khứ đơn; hỏi Have you ever ...? thì dùng hiện tại hoàn thành.\nMẹo nhớ: có mốc thời gian đã qua thì dùng quá khứ đơn; không có mốc, hoặc việc còn liên quan tới bây giờ, thì dùng hiện tại hoàn thành.\nVí dụ:\n- I have been to Da Lat twice. The last time was in 2022. (Tôi đã đến Đà Lạt hai lần. Lần gần nhất là năm 2022.)\n- He has worked here for five years. (Anh ấy làm ở đây được năm năm rồi.)\n- He worked there for five years. (Anh ấy từng làm ở đó năm năm.)"
+        },
+        {
+          "id": "gram_001",
+          "distance": 0.10626190900802612,
+          "text": "Thì hiện tại đơn (Present Simple) — Cấu trúc\nThì hiện tại đơn (Present Simple) có hai nhóm cấu trúc: với động từ thường và với động từ to be. Trong công thức, S là chủ ngữ, V là động từ nguyên mẫu (dạng gốc, chưa thêm gì).\nCông thức:\n- Khẳng định: S + V/V-s/V-es\n- Phủ định: S + do/does + not + V\n- Nghi vấn: Do/Does + S + V?\nI, you, we, they và danh từ số nhiều đi với do; he, she, it và danh từ số ít đi với does. Dạng rút gọn: don't, doesn't.\nQuy tắc thêm -s/-es khi chủ ngữ là he, she, it:\n- Thông thường thêm -s: work → works, play → plays.\n- Tận cùng bằng -o, -s, -sh, -ch, -x thì thêm -es: go → goes, watch → watches.\n- Tận cùng bằng phụ âm + y thì đổi y thành i rồi thêm -es: study → studies.\n- Have đổi thành has.\nKhi câu đã có does hoặc doesn't, động từ chính trở về dạng gốc, không thêm -s.\nVới to be: I am; he/she/it is; you/we/they are. Phủ định thêm not sau to be (isn't, aren't); nghi vấn đưa am/is/are lên đầu câu.\nVí dụ:\n- She works at a bank. (Cô ấy làm việc ở ngân hàng.)\n- My brother doesn't eat fish. (Em trai tôi không ăn cá.)\n- Do you live near here? (Bạn có sống gần đây không?)"
+        }
+      ],
+      "answer": "- Dùng cho thói quen, việc lặp đi lặp lại (những việc ta làm hằng ngày, hằng tuần) và thường đi kèm các trạng từ tần suất như always, usually, often…\n- Dùng cho sự thật hiển nhiên, quy luật tự nhiên hoặc kiến thức luôn đúng.\n- Dùng cho tình trạng lâu dài, ổn định (nơi ở, nghề nghiệp, sở thích) mà không thay đổi trong thời gian ngắn.\n- Dùng cho lịch trình cố định (giờ tàu, giờ chiếu phim, thời khoá biểu) ngay cả khi nói về tương lai vì lịch đã được định sẵn.\n\nCác dấu hiệu nhận biết: có từ chỉ tần suất (always, usually, often, …) hoặc cụm chỉ sự lặp lại (every day, once a week, on Mondays…) thường xuất hiện trong câu.\n\nVí dụ:\n- I usually go to bed at eleven.\n- Water boils at 100 degrees Celsius.\n- The train leaves at 7:30 tomorrow morning.",
+      "source_ids": [
+        "gram_002",
+        "gram_003"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1295,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q002",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_001"
+      ],
+      "question": "What is the affirmative form of the present simple for he, she, or it?",
+      "candidates": [
+        "gram_001",
+        "gram_072",
+        "gram_008",
+        "gram_012",
+        "gram_003",
+        "gram_022",
+        "gram_068",
+        "gram_015"
+      ],
+      "vocab_sent": [
+        "form",
+        "present",
+        "simple",
+        "of",
+        "for",
+        "she",
+        "simply",
+        "currently"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.5008230447746334
+      },
+      "vocab": [
+        "form",
+        "present",
+        "simple"
+      ],
+      "contexts": [
+        {
+          "id": "gram_001",
+          "distance": 0.18004369735717773,
+          "text": "Thì hiện tại đơn (Present Simple) — Cấu trúc\nThì hiện tại đơn (Present Simple) có hai nhóm cấu trúc: với động từ thường và với động từ to be. Trong công thức, S là chủ ngữ, V là động từ nguyên mẫu (dạng gốc, chưa thêm gì).\nCông thức:\n- Khẳng định: S + V/V-s/V-es\n- Phủ định: S + do/does + not + V\n- Nghi vấn: Do/Does + S + V?\nI, you, we, they và danh từ số nhiều đi với do; he, she, it và danh từ số ít đi với does. Dạng rút gọn: don't, doesn't.\nQuy tắc thêm -s/-es khi chủ ngữ là he, she, it:\n- Thông thường thêm -s: work → works, play → plays.\n- Tận cùng bằng -o, -s, -sh, -ch, -x thì thêm -es: go → goes, watch → watches.\n- Tận cùng bằng phụ âm + y thì đổi y thành i rồi thêm -es: study → studies.\n- Have đổi thành has.\nKhi câu đã có does hoặc doesn't, động từ chính trở về dạng gốc, không thêm -s.\nVới to be: I am; he/she/it is; you/we/they are. Phủ định thêm not sau to be (isn't, aren't); nghi vấn đưa am/is/are lên đầu câu.\nVí dụ:\n- She works at a bank. (Cô ấy làm việc ở ngân hàng.)\n- My brother doesn't eat fish. (Em trai tôi không ăn cá.)\n- Do you live near here? (Bạn có sống gần đây không?)"
+        },
+        {
+          "id": "gram_072",
+          "distance": 0.19646650552749634,
+          "text": "Đại từ nhân xưng và tính từ sở hữu — Cấu trúc\nĐại từ nhân xưng và tính từ sở hữu (personal pronouns and possessive adjectives) đổi dạng theo vị trí trong câu.\nCông thức: chủ ngữ – tân ngữ – tính từ sở hữu – đại từ sở hữu\n- I – me – my – mine\n- you – you – your – yours\n- he – him – his – his\n- she – her – her – hers\n- it – it – its – (hầu như không dùng)\n- we – us – our – ours\n- they – them – their – theirs\nCách dùng từng dạng:\n- Chủ ngữ đứng trước động từ (She works here); tân ngữ đứng sau động từ hoặc giới từ (I know her).\n- Tính từ sở hữu luôn đi kèm danh từ (my book); đại từ sở hữu đứng một mình (This book is mine).\n- Its (của nó), yours, hers không có dấu nháy; it's là dạng rút gọn của it is hoặc it has.\nVí dụ:\n- This is my bike, and that one is hers. (Đây là xe đạp của tôi, còn chiếc kia là của cô ấy.)\n- Can you help me? (Bạn giúp tôi được không?)\n- The dog wagged its tail. (Con chó vẫy đuôi.)"
+        },
+        {
+          "id": "gram_008",
+          "distance": 0.19713306427001953,
+          "text": "Thì quá khứ đơn (Past Simple) — Cấu trúc\nThì quá khứ đơn (Past Simple) có cấu trúc riêng cho động từ thường và động từ to be. V2 là dạng quá khứ, V là động từ nguyên mẫu.\nCông thức:\n- Khẳng định: S + V2 (V-ed hoặc dạng bất quy tắc)\n- Phủ định: S + did not (didn't) + V\n- Nghi vấn: Did + S + V?\nVới to be: I, he, she, it dùng was; you, we, they dùng were. Phủ định: wasn't, weren't; nghi vấn: đưa was/were lên đầu.\nThêm -ed cho động từ có quy tắc:\n- Thông thường thêm -ed: work → worked.\n- Tận cùng bằng -e: chỉ thêm -d (live → lived).\n- Phụ âm + y: đổi y thành i (study → studied); nguyên âm + y giữ nguyên (play → played).\n- Từ một âm tiết kết thúc bằng phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối: stop → stopped (trừ khi phụ âm cuối là w, x, y: fix → fixed, snow → snowed).\nĐộng từ bất quy tắc phải học thuộc: go → went, see → saw. Sau did/didn't, động từ chính ở dạng gốc.\nVí dụ:\n- We visited Hue last summer. (Mùa hè năm ngoái chúng tôi đi Huế.)\n- I didn't see him at the party. (Tôi không thấy anh ấy ở bữa tiệc.)\n- Did you buy any milk? (Bạn có mua sữa không?)"
+        },
+        {
+          "id": "gram_012",
+          "distance": 0.2022082805633545,
+          "text": "Thì hiện tại hoàn thành (Present Perfect) — Cấu trúc\nThì hiện tại hoàn thành (Present Perfect) gồm have/has và V3, tức là quá khứ phân từ (dạng thứ ba trong bảng động từ bất quy tắc).\nCông thức:\n- Khẳng định: S + have/has + V3\n- Phủ định: S + have/has + not + V3\n- Nghi vấn: Have/Has + S + V3?\nChọn have hay has: I, you, we, they và danh từ số nhiều dùng have; he, she, it và danh từ số ít dùng has. Dạng rút gọn: I've, she's, haven't, hasn't. Chú ý she's có thể là she is hoặc she has; she's + been/V3 thường là she has (She's finished).\nCách tạo V3:\n- Động từ có quy tắc: V3 giống V2, thêm -ed (work → worked, live → lived, stop → stopped).\n- Động từ bất quy tắc: học thuộc cột thứ ba. Có từ V2 và V3 giống nhau (buy – bought – bought), có từ khác nhau (go – went – gone, see – saw – seen, eat – ate – eaten).\nTrả lời ngắn: Yes, I have. / No, she hasn't.\nVí dụ:\n- I have finished my homework. (Tôi làm xong bài tập rồi.)\n- She hasn't seen that film. (Cô ấy chưa xem bộ phim đó.)\n- Have you ever eaten durian? (Bạn đã bao giờ ăn sầu riêng chưa?)"
+        },
+        {
+          "id": "gram_003",
+          "distance": 0.20264893770217896,
+          "text": "Thì hiện tại đơn (Present Simple) — Dấu hiệu nhận biết\nThì hiện tại đơn (Present Simple) thường đi kèm các từ chỉ tần suất, tức là từ cho biết một việc xảy ra thường xuyên đến mức nào.\nNhóm 1 — trạng từ tần suất (adverbs of frequency): always (luôn luôn), usually (thường xuyên), often (hay), sometimes (thỉnh thoảng), rarely (hiếm khi), never (không bao giờ).\nVị trí: đứng trước động từ thường nhưng đứng sau động từ to be. Chẳng hạn: She always walks to school, nhưng She is always late. Riêng sometimes còn có thể đứng đầu hoặc cuối câu.\nNhóm 2 — cụm chỉ sự lặp lại: every day, every week, every morning, once a week (mỗi tuần một lần), twice a month (mỗi tháng hai lần), on Mondays (vào các ngày thứ Hai).\nVị trí: thường ở cuối câu; cũng có thể đặt ở đầu câu, khi đó nên có dấu phẩy phía sau.\nLưu ý: dấu hiệu chỉ giúp đoán nhanh. Hãy xem cả nghĩa của câu: nếu câu nói về thói quen hoặc sự thật thì dùng hiện tại đơn.\nVí dụ:\n- He often plays football after school. (Cậu ấy hay chơi bóng đá sau giờ học.)\n- We visit our grandparents twice a month. (Chúng tôi về thăm ông bà mỗi tháng hai lần.)\n- My sister is never late for work. (Chị tôi không bao giờ đi làm muộn.)"
+        }
+      ],
+      "answer": "Câu khẳng định của thì hiện tại đơn với chủ ngữ he / she / it dùng dạng động từ thêm ‑s / ‑es (hoặc has cho động từ to be).\nCông thức: he/she/it + V‑s / V‑es.\n\nVí dụ:\n- He works at a bank. → Cô ấy works at a bank.\n- She watches TV every evening. → Cô ấy watches TV mỗi tối.\n- It rains often in this city. → Trời rains often in this city.",
+      "source_ids": [
+        "gram_001"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1137,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q005",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_004"
+      ],
+      "question": "Công thức cơ bản của thì hiện tại tiếp diễn (Present Continuous) là gì?",
+      "candidates": [
+        "gram_005",
+        "gram_017",
+        "gram_006",
+        "gram_011",
+        "gram_013",
+        "gram_002",
+        "gram_004",
+        "gram_010"
+      ],
+      "vocab_sent": [
+        "present",
+        "hi",
+        "continuous",
+        "precede",
+        "ongoing",
+        "current"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.5584025903252385
+      },
+      "vocab": [
+        "present",
+        "hi",
+        "continuous"
+      ],
+      "contexts": [
+        {
+          "id": "gram_005",
+          "distance": 0.08587133884429932,
+          "text": "Thì hiện tại tiếp diễn (Present Continuous) — Cách dùng\nThì hiện tại tiếp diễn (Present Continuous) dùng cho những việc đang diễn ra, chưa kết thúc, hoặc đã được sắp xếp sẵn.\n1. Việc đang xảy ra ngay lúc nói: người nói đang làm hoặc đang nhìn thấy việc đó. Câu hay có now, right now, at the moment.\n2. Việc tạm thời trong giai đoạn hiện nay: có thể không diễn ra đúng lúc nói, nhưng đang xảy ra trong mấy ngày, mấy tuần này và sẽ sớm kết thúc.\n3. Kế hoạch đã sắp xếp cho tương lai gần: đã hẹn giờ, đã đặt vé hoặc đã thống nhất với người khác. Câu thường có mốc tương lai như tonight, tomorrow, next week.\n4. Sự thay đổi đang dần diễn ra: hay dùng với get, become, change, grow để nói một tình hình đang tăng lên, giảm đi hoặc biến đổi.\nVí dụ:\n- Please be quiet. The baby is sleeping. (Làm ơn giữ yên lặng. Em bé đang ngủ.)\n- I'm meeting my teacher at three o'clock tomorrow. (Ba giờ ngày mai tôi có hẹn gặp cô giáo.)\n- The weather is getting colder. (Trời đang lạnh dần.)"
+        },
+        {
+          "id": "gram_017",
+          "distance": 0.09422659873962402,
+          "text": "Thì hiện tại hoàn thành tiếp diễn (Present Perfect Continuous) — Cách dùng\nThì hiện tại hoàn thành tiếp diễn (Present Perfect Continuous) nhấn mạnh quá trình kéo dài của một hành động, tính từ quá khứ đến hiện tại.\n1. Hành động bắt đầu trong quá khứ, kéo dài liên tục và vẫn đang tiếp diễn: câu thường trả lời How long ...? và đi với for, since. Người nói muốn nhấn mạnh thời gian dài, không nhấn mạnh kết quả.\n2. Hành động vừa mới dừng nhưng còn để lại dấu vết thấy được: chẳng hạn mắt đỏ vì vừa khóc, quần áo bẩn vì vừa làm vườn, người ướt vì vừa đi dưới mưa.\n3. Hành động lặp đi lặp lại gần đây: dùng với lately, recently (gần đây) để nói một việc được làm nhiều lần trong thời gian gần đây, thường kèm cảm giác mệt mỏi hoặc phàn nàn.\nVí dụ:\n- I have been learning English for three years. (Tôi học tiếng Anh được ba năm rồi.)\n- Why are you so wet? Have you been running in the rain? (Sao bạn ướt thế? Bạn vừa chạy dưới mưa à?)\n- He has been working late a lot recently. (Dạo gần đây anh ấy hay phải làm việc muộn.)"
+        },
+        {
+          "id": "gram_006",
+          "distance": 0.11315315961837769,
+          "text": "Hiện tại đơn và hiện tại tiếp diễn — Phân biệt\nThì hiện tại đơn (Present Simple) và thì hiện tại tiếp diễn (Present Continuous) đều nói về hiện tại, nhưng nhìn sự việc theo hai cách khác nhau.\n- Tính chất sự việc: hiện tại đơn nói về việc lặp lại hoặc luôn đúng; hiện tại tiếp diễn nói về việc đang diễn ra lúc nói hoặc trong giai đoạn này.\n- Lâu dài hay tạm thời: hiện tại đơn cho tình trạng lâu dài (I live in Hanoi); hiện tại tiếp diễn cho tình trạng tạm thời (I'm staying with my aunt this month).\n- Nói về tương lai: hiện tại đơn cho lịch trình cố định như giờ tàu, giờ học; hiện tại tiếp diễn cho kế hoạch cá nhân đã sắp xếp.\n- Từ đi kèm: hiện tại đơn hay có always, every day; hiện tại tiếp diễn hay có now, at the moment.\nMẹo nhớ: tự hỏi \"việc này lặp lại hay đang diễn ra?\" — lặp lại thì dùng hiện tại đơn, đang diễn ra thì dùng hiện tại tiếp diễn.\nVí dụ:\n- My dad usually drives to work, but today he is taking the bus. (Bố tôi thường lái xe đi làm, nhưng hôm nay bố đi xe buýt.)\n- The film starts at eight, and we are meeting at seven. (Phim chiếu lúc tám giờ, còn chúng tôi hẹn nhau lúc bảy giờ.)"
+        },
+        {
+          "id": "gram_011",
+          "distance": 0.11527270078659058,
+          "text": "Thì quá khứ tiếp diễn (Past Continuous) với when và while — Cách dùng\nThì quá khứ tiếp diễn (Past Continuous) diễn tả một việc đang diễn ra tại một lúc trong quá khứ, và thường đi cùng when (khi) hoặc while (trong khi).\n1. Việc đang diễn ra tại một thời điểm cụ thể trong quá khứ: lúc đó việc ấy đã bắt đầu nhưng chưa xong, chẳng hạn lúc 8 giờ tối qua.\n2. Một việc đang diễn ra thì việc khác xen vào: việc kéo dài dùng quá khứ tiếp diễn, việc xen vào (ngắn, xảy ra một lần) dùng quá khứ đơn. When thường đứng trước vế chỉ việc xen vào.\n3. Hai việc cùng diễn ra song song: cả hai vế đều dùng quá khứ tiếp diễn và nối với nhau bằng while.\n4. Tả bối cảnh khi kể chuyện: câu mở đầu cho biết lúc đó mọi thứ đang diễn ra thế nào.\nMẹo: when + quá khứ đơn cho việc ngắn; while + quá khứ tiếp diễn cho việc kéo dài.\nVí dụ:\n- I was having a shower when the phone rang. (Tôi đang tắm thì điện thoại reo.)\n- While my mother was cooking, my father was reading the newspaper. (Trong lúc mẹ tôi nấu ăn thì bố tôi đọc báo.)\n- It was raining, and people were hurrying home. (Trời đang mưa và mọi người vội vã về nhà.)"
+        },
+        {
+          "id": "gram_013",
+          "distance": 0.11828988790512085,
+          "text": "Thì hiện tại hoàn thành (Present Perfect) — Cách dùng\nThì hiện tại hoàn thành (Present Perfect) nối quá khứ với hiện tại: việc đã xảy ra, nhưng người nói quan tâm tới kết quả hoặc ý nghĩa của nó lúc này, không quan tâm chính xác là khi nào.\n1. Trải nghiệm trong đời: đã từng hoặc chưa từng làm gì, không nêu thời điểm. Câu hay có ever, never.\n2. Việc bắt đầu trong quá khứ và vẫn còn tiếp tục: thường đi với since (kể từ một mốc) hoặc for (trong một khoảng thời gian).\n3. Việc vừa xảy ra, kết quả còn thấy ở hiện tại: chẳng hạn làm mất chìa khoá nên giờ không vào nhà được. Câu hay có just, already, yet.\n4. Việc xảy ra trong khoảng thời gian chưa kết thúc: today, this week, this year — khoảng thời gian đó vẫn đang tiếp diễn.\nLưu ý: khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn.\nVí dụ:\n- I have never been to Japan. (Tôi chưa từng đến Nhật Bản.)\n- We have lived in this town since 2015. (Chúng tôi sống ở thị trấn này từ năm 2015.)\n- Oh no, I've lost my keys! (Ôi không, tôi làm mất chìa khoá rồi!)"
+        }
+      ],
+      "answer": "Công thức cơ bản của thì hiện tại tiếp diễn:\n\nS + am/is/are + V‑ing\n\nTrong đó:\n- S là chủ ngữ.\n- am / is / are là dạng “to be” hiện tại, tùy theo chủ ngữ.\n- V‑ing là động từ ở dạng hiện tại phân từ (động từ thêm “‑ing”).\n\nVí dụ:\n- I am reading a book.\n- She is watching TV.\n- They are playing football.\n\nCông thức này dùng để nói về việc đang diễn ra ngay lúc nói hoặc trong thời gian hiện tại tạm thời.",
+      "source_ids": [
+        "gram_005"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1111,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q009",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_008"
+      ],
+      "question": "Cách tạo câu phủ định ở thì quá khứ đơn như thế nào?",
+      "candidates": [
+        "gram_009",
+        "gram_015",
+        "gram_014",
+        "gram_018",
+        "gram_013",
+        "gram_008",
+        "gram_002",
+        "gram_001"
+      ],
+      "vocab_sent": [
+        "yet",
+        "either",
+        "old-fashioned"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.686719038934615
+      },
+      "vocab": [
+        "yet",
+        "either",
+        "old-fashioned"
+      ],
+      "contexts": [
+        {
+          "id": "gram_009",
+          "distance": 0.11388194561004639,
+          "text": "Thì quá khứ đơn (Past Simple) — Cách dùng\nThì quá khứ đơn (Past Simple) dùng cho những việc đã xảy ra và đã kết thúc trong quá khứ.\n1. Hành động đã xong tại một thời điểm xác định: người nghe biết hoặc đoán được lúc nào. Câu thường có mốc như yesterday, last week, in 2020, two days ago.\n2. Chuỗi hành động nối tiếp nhau: khi kể chuyện, các việc xảy ra lần lượt, việc này xong rồi mới tới việc kia.\n3. Thói quen hoặc tình trạng trong quá khứ nay không còn: điều từng đúng trong một khoảng thời gian đã qua, chẳng hạn hồi còn nhỏ hay khi còn đi học.\n4. Hỏi về thời điểm của việc đã qua: khi hỏi bằng When hoặc What time về một việc đã xảy ra, ta dùng quá khứ đơn.\nVí dụ:\n- She called me two hours ago. (Cô ấy gọi cho tôi cách đây hai tiếng.)\n- He opened the door, turned on the light and sat down. (Anh ấy mở cửa, bật đèn rồi ngồi xuống.)\n- When did you start learning English? (Bạn bắt đầu học tiếng Anh từ khi nào?)"
+        },
+        {
+          "id": "gram_015",
+          "distance": 0.11977791786193848,
+          "text": "Hiện tại hoàn thành và quá khứ đơn — Phân biệt\nThì hiện tại hoàn thành (Present Perfect) và thì quá khứ đơn (Past Simple) đều có thể nói về việc đã xảy ra, nhưng khác nhau ở cách nhìn thời gian.\n- Thời điểm: quá khứ đơn nêu hoặc ngụ ý rõ lúc nào (yesterday, in 2018); hiện tại hoàn thành không nêu thời điểm cụ thể.\n- Liên hệ với hiện tại: quá khứ đơn chỉ việc đã kết thúc, tách khỏi hiện tại; hiện tại hoàn thành nhấn mạnh kết quả hoặc ảnh hưởng tới bây giờ.\n- Khoảng thời gian: quá khứ đơn đi với khoảng đã kết thúc (last week, when I was a child); hiện tại hoàn thành đi với khoảng chưa kết thúc (this week, so far, since).\n- Câu hỏi: hỏi When ...? thì dùng quá khứ đơn; hỏi Have you ever ...? thì dùng hiện tại hoàn thành.\nMẹo nhớ: có mốc thời gian đã qua thì dùng quá khứ đơn; không có mốc, hoặc việc còn liên quan tới bây giờ, thì dùng hiện tại hoàn thành.\nVí dụ:\n- I have been to Da Lat twice. The last time was in 2022. (Tôi đã đến Đà Lạt hai lần. Lần gần nhất là năm 2022.)\n- He has worked here for five years. (Anh ấy làm ở đây được năm năm rồi.)\n- He worked there for five years. (Anh ấy từng làm ở đó năm năm.)"
+        },
+        {
+          "id": "gram_014",
+          "distance": 0.1198698878288269,
+          "text": "Thì hiện tại hoàn thành (Present Perfect) — Dấu hiệu nhận biết\nThì hiện tại hoàn thành (Present Perfect) thường đi kèm các từ dưới đây; mỗi từ có vị trí riêng trong câu.\n- just (vừa mới), already (đã ... rồi), ever (đã từng), never (chưa bao giờ): đứng giữa have/has và V3. Ever chủ yếu dùng trong câu hỏi.\n- yet (chưa, đã ... chưa): đứng ở cuối câu, chỉ dùng trong câu phủ định và câu hỏi.\n- since + mốc thời gian (since 2010, since Monday) và for + khoảng thời gian (for two years, for a long time): thường ở cuối câu.\n- so far, until now (cho đến nay), recently, lately (gần đây): thường ở cuối câu; so far cũng có thể đứng đầu câu.\n- today, this week, this month: chỉ khoảng thời gian chưa kết thúc, thường đặt ở cuối câu.\n- How long ...? (bao lâu rồi) và It's the first time ... (đây là lần đầu): hai mẫu câu hay đi với thì này.\nLưu ý: từ dấu hiệu chỉ để gợi ý; nếu câu có mốc quá khứ đã kết thúc như yesterday, last year thì dùng quá khứ đơn.\nVí dụ:\n- She has just left the office. (Cô ấy vừa mới rời văn phòng.)\n- Have you finished your report yet? (Bạn viết xong báo cáo chưa?)\n- It's the first time I have tried sushi. (Đây là lần đầu tôi ăn thử sushi.)"
+        },
+        {
+          "id": "gram_018",
+          "distance": 0.12299036979675293,
+          "text": "Thì quá khứ hoàn thành (Past Perfect) — Cách dùng\nThì quá khứ hoàn thành (Past Perfect) dùng để nói việc đã xảy ra trước một thời điểm hoặc trước một việc khác trong quá khứ.\n1. Việc xảy ra trước một việc khác trong quá khứ: việc xảy ra trước dùng quá khứ hoàn thành, việc xảy ra sau dùng quá khứ đơn. Nhờ vậy người nghe hiểu đúng thứ tự, kể cả khi câu chuyện không kể theo trình tự.\n2. Việc đã xong trước một mốc thời gian trong quá khứ: thường đi với by + mốc (by 2010, by the time ...).\n3. Giải thích nguyên nhân cho một tình huống trong quá khứ: lý do đã có từ trước tình huống đó.\n4. Kinh nghiệm tính đến một thời điểm trong quá khứ: thường đi với never, ever, before, chẳng hạn trước chuyến đi ấy tôi chưa từng đi máy bay.\nLưu ý: nếu các việc được kể đúng trình tự và đã có từ nối rõ ràng như before, after thì có thể chỉ dùng quá khứ đơn.\nVí dụ:\n- When we arrived at the cinema, the film had already started. (Khi chúng tôi tới rạp thì phim đã bắt đầu rồi.)\n- She was tired because she hadn't slept well. (Cô ấy mệt vì trước đó ngủ không ngon.)\n- I had never flown before that trip. (Trước chuyến đi ấy, tôi chưa từng đi máy bay.)"
+        },
+        {
+          "id": "gram_013",
+          "distance": 0.12749075889587402,
+          "text": "Thì hiện tại hoàn thành (Present Perfect) — Cách dùng\nThì hiện tại hoàn thành (Present Perfect) nối quá khứ với hiện tại: việc đã xảy ra, nhưng người nói quan tâm tới kết quả hoặc ý nghĩa của nó lúc này, không quan tâm chính xác là khi nào.\n1. Trải nghiệm trong đời: đã từng hoặc chưa từng làm gì, không nêu thời điểm. Câu hay có ever, never.\n2. Việc bắt đầu trong quá khứ và vẫn còn tiếp tục: thường đi với since (kể từ một mốc) hoặc for (trong một khoảng thời gian).\n3. Việc vừa xảy ra, kết quả còn thấy ở hiện tại: chẳng hạn làm mất chìa khoá nên giờ không vào nhà được. Câu hay có just, already, yet.\n4. Việc xảy ra trong khoảng thời gian chưa kết thúc: today, this week, this year — khoảng thời gian đó vẫn đang tiếp diễn.\nLưu ý: khi câu có mốc thời gian đã qua và xác định (yesterday, last year, in 2019) thì không dùng hiện tại hoàn thành mà dùng quá khứ đơn.\nVí dụ:\n- I have never been to Japan. (Tôi chưa từng đến Nhật Bản.)\n- We have lived in this town since 2015. (Chúng tôi sống ở thị trấn này từ năm 2015.)\n- Oh no, I've lost my keys! (Ôi không, tôi làm mất chìa khoá rồi!)"
+        }
+      ],
+      "answer": "- Đối với thì quá khứ đơn, để tạo câu phủ định ta đặt did + not (hoặc viết tắt didn’t) trước động từ nguyên mẫu (V‑base).\n- Cấu trúc: Subject + did not + V‑base (+ bổ ngữ).\n\nVí dụ\n- I didn’t finish my homework yesterday. → Tôi đã không hoàn thành bài tập hôm qua.\n- She didn’t go to the party last weekend. → Cô ấy đã không đi dự tiệc cuối tuần trước.\n\n(Thông tin dựa trên cách dùng thì quá khứ đơn trong tài liệu)",
+      "source_ids": [
+        "gram_009"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1170,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q015",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_027",
+        "gram_097"
+      ],
+      "question": "Với danh từ đếm được số nhiều, “many”, “few” và “a few” khác nhau thế nào?",
+      "candidates": [
+        "gram_097",
+        "gram_027",
+        "gram_023",
+        "gram_028",
+        "gram_024",
+        "gram_025",
+        "gram_030",
+        "gram_096"
+      ],
+      "vocab_sent": [
+        "many",
+        "few",
+        "varied",
+        "rocky"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "phan_biet",
+        "confidence": 0.262845578081535
+      },
+      "vocab": [
+        "many",
+        "few",
+        "varied"
+      ],
+      "contexts": [
+        {
+          "id": "gram_097",
+          "distance": 0.1054803729057312,
+          "text": "Few và a few — Phân biệt\nFew (rất ít, hầu như không) và a few (một vài) đều đi với danh từ đếm được số nhiều, nhưng mang sắc thái ngược nhau.\n- Nghĩa: few nhấn mạnh sự thiếu, mang ý tiêu cực (ít đến mức không đủ); a few nói có một số lượng nhỏ, mang ý tích cực (có một vài).\n- Little / a little theo cùng quy tắc nhưng đi với danh từ không đếm được (little time là hầu như không có thời gian; a little time là có chút thời gian).\n- Few, little nghe khá trang trọng; khi nói hay dùng not many, not much.\n- Cụm hay gặp: quite a few (khá nhiều), only a few (chỉ vài).\n- Lỗi điển hình: a few money (đúng: a little money); I have few time (đúng: I have little time hoặc I don't have much time).\nMẹo nhớ: có a thì \"có một chút\"; không có a thì \"gần như không có\".\nVí dụ:\n- Few people know about this place. (Rất ít người biết nơi này.)\n- I have a few questions for you. (Tôi có vài câu hỏi cho bạn.)\n- There's a little milk left. (Vẫn còn một ít sữa.)"
+        },
+        {
+          "id": "gram_027",
+          "distance": 0.11577391624450684,
+          "text": "Much, many và a lot of — Phân biệt\nMuch, many và a lot of (nhiều) đều chỉ số lượng lớn nhưng khác nhau về danh từ đi kèm và loại câu.\n- Loại danh từ: many + danh từ đếm được số nhiều (many books); much + danh từ không đếm được (much time); a lot of hoặc lots of dùng được với cả hai.\n- Loại câu: much, many thường dùng trong câu phủ định và câu hỏi; câu khẳng định dùng a lot of tự nhiên hơn. A lot of dùng được trong mọi loại câu.\n- Ngoại lệ hay gặp: câu khẳng định vẫn dùng much, many sau so, too, as (too much sugar, so many people) và trong văn viết trang trọng.\n- Hỏi số lượng: How many + đếm được; How much + không đếm được (cũng dùng để hỏi giá).\n- Không có danh từ theo sau: dùng much, many hoặc a lot, bỏ of (I eat a lot).\nMẹo nhớ: đếm được thì many, không đếm được thì much, a lot of dùng cho cả hai.\nVí dụ:\n- How many students are there in your class? (Lớp bạn có bao nhiêu học sinh?)\n- I don't have much money this month. (Tháng này tôi không có nhiều tiền.)\n- She drinks a lot of coffee. (Cô ấy uống rất nhiều cà phê.)"
+        },
+        {
+          "id": "gram_023",
+          "distance": 0.1317560076713562,
+          "text": "Danh từ đếm được và không đếm được — Cách dùng\nDanh từ đếm được (countable nouns) và danh từ không đếm được (uncountable nouns) khác nhau ở chỗ có đếm được bằng số hay không.\n1. Danh từ đếm được: người, vật đếm được từng cái (book, apple, student). Có số ít và số nhiều; số ít thường cần a/an, the hoặc my, this phía trước.\n2. Danh từ không đếm được: chất lỏng, chất liệu, khái niệm chung (water, rice, money, advice). Thường không có số nhiều, không đi với a/an, động từ chia số ít.\n3. Muốn đếm thì dùng đơn vị đo: a glass of water, a piece of advice.\n4. Một số danh từ dùng được cả hai cách, nghĩa khác nhau: coffee (cà phê nói chung) và two coffees (hai cốc cà phê); paper (giấy) và a paper (tờ báo).\nLưu ý: information, advice, furniture, homework, news không đếm được trong tiếng Anh, dù người Việt hay coi là đếm được. News có chữ s nhưng vẫn đi với động từ số ít.\nVí dụ:\n- I need some information about the course. (Tôi cần một số thông tin về khoá học.)\n- Can I have a glass of water, please? (Cho tôi xin một cốc nước nhé.)\n- There are three apples on the table. (Trên bàn có ba quả táo.)"
+        },
+        {
+          "id": "gram_028",
+          "distance": 0.13524633646011353,
+          "text": "Some và any — Phân biệt\nSome và any (một vài, một ít, nào) đều đi với danh từ đếm được số nhiều và danh từ không đếm được, nhưng khác nhau ở loại câu.\n- Câu khẳng định: thường dùng some (I have some friends here).\n- Câu phủ định: thường dùng any (I don't have any money); not ... any nghĩa là \"không ... nào\".\n- Câu hỏi thông thường: thường dùng any (Do you have any questions?).\n- Ngoại lệ trong lời mời, lời đề nghị, lời nhờ: dùng some trong câu hỏi khi người nói mong câu trả lời \"có\" (Would you like some tea? Can I have some water?).\n- Ngoại lệ với any trong câu khẳng định: any mang nghĩa \"bất kỳ\" (You can come any day).\n- Từ ghép theo cùng quy tắc: something, somebody, somewhere; anything, anybody, anywhere.\nMẹo nhớ: khẳng định và lời mời thì dùng some; phủ định và câu hỏi thông thường thì dùng any.\nVí dụ:\n- Would you like some cake? (Bạn ăn chút bánh nhé?)\n- There aren't any eggs in the fridge. (Trong tủ lạnh không có quả trứng nào.)\n- Is there anything I can do for you? (Tôi có thể giúp gì cho bạn không?)"
+        },
+        {
+          "id": "gram_024",
+          "distance": 0.13902366161346436,
+          "text": "Danh từ số nhiều (Plural Nouns) — Cấu trúc\nDanh từ số nhiều (plural nouns) là dạng của danh từ đếm được khi nói về từ hai người, hai vật trở lên.\nCông thức:\n- Thông thường: danh từ + -s (book → books, car → cars)\n- Tận cùng bằng -s, -ss, -sh, -ch, -x, -z: + -es (bus → buses, box → boxes, watch → watches)\n- Phụ âm + y: đổi y thành i rồi + -es (city → cities); nguyên âm + y chỉ + -s (day → days)\n- Nhiều từ tận cùng bằng -f/-fe: đổi thành -ves (leaf → leaves, knife → knives); một số từ chỉ + -s (roof → roofs)\n- Phụ âm + o: thường + -es (potato → potatoes); một số từ chỉ + -s (photo → photos, piano → pianos)\nDanh từ bất quy tắc phải học thuộc: man → men, woman → women, child → children, foot → feet, tooth → teeth, mouse → mice, person → people.\nMột số danh từ thường giữ nguyên ở số nhiều: sheep, fish, deer.\nVí dụ:\n- There are two buses outside the school. (Bên ngoài trường có hai chiếc xe buýt.)\n- The children are playing in the garden. (Bọn trẻ đang chơi trong vườn.)\n- I bought three kilos of tomatoes. (Tôi đã mua ba cân cà chua.)"
+        }
+      ],
+      "answer": "- many: dùng với danh từ đếm được số nhiều để nói “nhiều”. Thường xuất hiện trong câu phủ định, câu hỏi hoặc sau các từ như so, too; trong câu khẳng định thường dùng a lot of hơn.\n\n- few: cũng đi với danh từ đếm được số nhiều, nhưng nhấn mạnh sự thiếu, mang ý “rất ít, gần như không đủ” (có sắc thái tiêu cực).\n\n- a few: đi với danh từ đếm được số nhiều, mang nghĩa “một vài, một số ít” nhưng có cảm giác tích cực, tức là có một chút đủ để dùng.\n\nVí dụ\n- Many students passed the exam. – Nhiều học sinh đã đậu kỳ thi.\n- Few students passed the exam. – Rất ít học sinh (gần như không) đậu kỳ thi.\n- A few students passed the exam. – Một vài học sinh đã đậu kỳ thi.",
+      "source_ids": [
+        "gram_027",
+        "gram_097"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1224,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q016",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_027",
+        "gram_023"
+      ],
+      "question": "Which quantifiers are commonly used with uncountable nouns?",
+      "candidates": [
+        "gram_023",
+        "gram_030",
+        "gram_061",
+        "gram_062",
+        "gram_036",
+        "gram_063",
+        "gram_035",
+        "gram_024"
+      ],
+      "vocab_sent": [
+        "with",
+        "which",
+        "used",
+        "commonly",
+        "uncommon",
+        "quantify",
+        "means"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3533476911347261
+      },
+      "vocab": [
+        "with",
+        "which",
+        "used"
+      ],
+      "contexts": [
+        {
+          "id": "gram_023",
+          "distance": 0.2029319405555725,
+          "text": "Danh từ đếm được và không đếm được — Cách dùng\nDanh từ đếm được (countable nouns) và danh từ không đếm được (uncountable nouns) khác nhau ở chỗ có đếm được bằng số hay không.\n1. Danh từ đếm được: người, vật đếm được từng cái (book, apple, student). Có số ít và số nhiều; số ít thường cần a/an, the hoặc my, this phía trước.\n2. Danh từ không đếm được: chất lỏng, chất liệu, khái niệm chung (water, rice, money, advice). Thường không có số nhiều, không đi với a/an, động từ chia số ít.\n3. Muốn đếm thì dùng đơn vị đo: a glass of water, a piece of advice.\n4. Một số danh từ dùng được cả hai cách, nghĩa khác nhau: coffee (cà phê nói chung) và two coffees (hai cốc cà phê); paper (giấy) và a paper (tờ báo).\nLưu ý: information, advice, furniture, homework, news không đếm được trong tiếng Anh, dù người Việt hay coi là đếm được. News có chữ s nhưng vẫn đi với động từ số ít.\nVí dụ:\n- I need some information about the course. (Tôi cần một số thông tin về khoá học.)\n- Can I have a glass of water, please? (Cho tôi xin một cốc nước nhé.)\n- There are three apples on the table. (Trên bàn có ba quả táo.)"
+        },
+        {
+          "id": "gram_030",
+          "distance": 0.20968985557556152,
+          "text": "Lượng từ all, both, each, every, either, neither — Cách dùng\nLượng từ (quantifiers) all, both, each, every, either, neither cho biết nói về cả nhóm hay từng thành viên.\n1. All (tất cả): đi với danh từ số nhiều (nhóm từ ba trở lên) hoặc danh từ không đếm được. Có thể dùng all of the/my.\n2. Both (cả hai): chỉ cho hai người, hai vật; đi với danh từ và động từ số nhiều.\n3. Each và every (mỗi, mọi): đi với danh từ số ít và động từ số ít. Each nhấn mạnh từng cái riêng lẻ (nhóm từ hai trở lên); every nhìn cả nhóm (thường từ ba trở lên). Chỉ each đi được với of (each of the students).\n4. Either (một trong hai, cái nào cũng được) và neither (không cái nào trong hai): đi với danh từ số ít. Neither đã mang nghĩa phủ định nên không thêm not.\nLưu ý: either of/neither of + danh từ số nhiều; động từ sau đó thường chia số ít, khi nói đôi khi gặp số nhiều.\nVí dụ:\n- Both my brothers live in Da Nang. (Cả hai anh trai tôi đều sống ở Đà Nẵng.)\n- Every student has a laptop. (Học sinh nào cũng có máy tính xách tay.)\n- Neither answer is correct. (Cả hai đáp án đều không đúng.)"
+        },
+        {
+          "id": "gram_061",
+          "distance": 0.22126555442810059,
+          "text": "Mệnh đề quan hệ xác định và không xác định — Phân biệt\nMệnh đề quan hệ xác định (defining relative clauses) và không xác định (non-defining relative clauses) khác nhau ở chỗ thông tin có cần để xác định người, vật hay không.\n- Vai trò: mệnh đề xác định chỉ rõ người, vật nào, bỏ đi câu thiếu nghĩa; mệnh đề không xác định chỉ thêm thông tin phụ.\n- Dấu phẩy: mệnh đề không xác định được ngăn bằng dấu phẩy; mệnh đề xác định thì không.\n- That: dùng được trong mệnh đề xác định; không dùng trong mệnh đề không xác định, khi đó chỉ dùng who, which, whose.\n- Lược bỏ đại từ: mệnh đề xác định có thể bỏ đại từ làm tân ngữ; mệnh đề không xác định thì không lược bỏ.\n- Danh từ đứng trước: tên riêng hoặc người, vật duy nhất (my mother, Hanoi) thường đi với mệnh đề không xác định.\nMẹo nhớ: có dấu phẩy thì không dùng that và không lược bỏ đại từ.\nVí dụ:\n- The students who passed the test will get a certificate. (Những học sinh qua bài kiểm tra sẽ được nhận chứng chỉ.)\n- My mother, who is a teacher, loves reading. (Mẹ tôi, một giáo viên, rất thích đọc sách.)"
+        },
+        {
+          "id": "gram_062",
+          "distance": 0.2283233404159546,
+          "text": "Mệnh đề quan hệ với where, when và lược bỏ đại từ — Cách dùng\nMệnh đề quan hệ với where, when và lược bỏ đại từ (omitting relative pronouns) giúp câu ngắn gọn và tự nhiên hơn.\n1. Where (nơi mà) đứng sau danh từ chỉ nơi chốn. Where tương đương in which hoặc at which.\n2. When (khi mà) đứng sau danh từ chỉ thời gian như day, year, time.\n3. Lược bỏ đại từ: trong mệnh đề xác định, có thể bỏ who, which, that khi đại từ làm tân ngữ. Cách nhận biết: ngay sau đại từ là một chủ ngữ khác (I, she, my friend ...).\n4. Không lược bỏ khi đại từ làm chủ ngữ (ngay sau là động từ), và không lược bỏ trong mệnh đề không xác định (có dấu phẩy).\nLưu ý: nếu động từ trong mệnh đề cần tân ngữ thì dùng which/that, không dùng where (the city which I visited).\nVí dụ:\n- This is the village where my father was born. (Đây là ngôi làng nơi bố tôi sinh ra.)\n- I'll never forget the day when we first met. (Tôi sẽ không bao giờ quên ngày chúng ta gặp nhau lần đầu.)\n- The film we watched last night was boring. (Bộ phim chúng tôi xem tối qua chán lắm.)"
+        },
+        {
+          "id": "gram_036",
+          "distance": 0.22845447063446045,
+          "text": "Động từ khuyết thiếu + have + V3 (Modal Perfect) — Cách dùng\nĐộng từ khuyết thiếu + have + V3 (modal perfect) dùng để nói về quá khứ: suy đoán, tiếc nuối hoặc phê bình một việc đã xảy ra hay không.\n1. Must have + V3 (chắc hẳn đã): suy đoán gần như chắc chắn.\n2. Might/may/could have + V3 (có lẽ đã): suy đoán không chắc chắn về quá khứ. Could have + V3 còn có nghĩa \"lẽ ra đã có thể\": việc có thể xảy ra nhưng thực tế không xảy ra.\n3. Can't/couldn't have + V3 (không thể nào đã): chắc chắn việc đó đã không xảy ra.\n4. Should have + V3 (lẽ ra nên): tiếc nuối hoặc trách vì việc nên làm mà đã không làm; shouldn't have + V3 là việc không nên làm mà đã làm.\nKhi nói, should have thường rút gọn thành should've, nghe gần giống \"of\", nhưng không viết \"should of\".\nVí dụ:\n- The streets are wet. It must have rained last night. (Đường ướt hết. Chắc hẳn tối qua trời đã mưa.)\n- You should have told me earlier. (Lẽ ra bạn nên nói với tôi sớm hơn.)\n- She can't have seen us; she didn't say hello. (Chắc chắn cô ấy đã không thấy chúng ta, vì cô ấy chẳng chào gì cả.)"
+        }
+      ],
+      "answer": "Trong tài liệu có nói rằng all có thể đi với danh từ không đếm được (cũng như danh từ số nhiều). Vì các lượng từ khác như both, each, every, either, neither chỉ dùng với danh từ đếm được nên chúng không phù hợp với danh từ không đếm được. Vì vậy, quantifier thường dùng với danh từ không đếm được là all.",
+      "source_ids": [
+        "gram_030"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1013,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q018",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_044"
+      ],
+      "question": "How do you usually form a comparative with a long adjective?",
+      "candidates": [
+        "gram_044",
+        "gram_017",
+        "gram_045",
+        "gram_062",
+        "gram_046",
+        "gram_094",
+        "gram_057",
+        "gram_027"
+      ],
+      "vocab_sent": [
+        "do",
+        "how",
+        "long",
+        "form",
+        "usually",
+        "comparable",
+        "long-term",
+        "long-distance"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.5055059092120175
+      },
+      "vocab": [
+        "do",
+        "how",
+        "long"
+      ],
+      "contexts": [
+        {
+          "id": "gram_044",
+          "distance": 0.16911911964416504,
+          "text": "So sánh hơn (Comparatives) — Cấu trúc\nSo sánh hơn (comparatives) dùng để so sánh hai người hoặc hai vật, cho biết bên nào hơn về một đặc điểm.\nCông thức:\n- Tính từ ngắn (một âm tiết): adj + -er + than (tall → taller than)\n- Tính từ dài (từ hai âm tiết trở lên): more + adj + than (more expensive than)\n- Tính từ hai âm tiết tận cùng -y: đổi y thành i + -er (happy → happier, easy → easier)\nChính tả: tận cùng -e chỉ thêm -r (nice → nicer); phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối (big → bigger, hot → hotter).\nBất quy tắc: good → better, bad → worse, far → farther/further.\nMột số tính từ hai âm tiết khác dùng được cả hai cách (quiet → quieter / more quiet, clever → cleverer / more clever).\nSo sánh kém hơn: less + adj + than (less expensive than).\nNhấn mạnh mức chênh lệch: much, far, a bit + dạng so sánh (much bigger).\nVí dụ:\n- My brother is taller than me. (Anh trai tôi cao hơn tôi.)\n- This phone is more expensive than that one. (Chiếc điện thoại này đắt hơn chiếc kia.)\n- I feel much better today. (Hôm nay tôi thấy đỡ hơn nhiều.)"
+        },
+        {
+          "id": "gram_017",
+          "distance": 0.18052637577056885,
+          "text": "Thì hiện tại hoàn thành tiếp diễn (Present Perfect Continuous) — Cách dùng\nThì hiện tại hoàn thành tiếp diễn (Present Perfect Continuous) nhấn mạnh quá trình kéo dài của một hành động, tính từ quá khứ đến hiện tại.\n1. Hành động bắt đầu trong quá khứ, kéo dài liên tục và vẫn đang tiếp diễn: câu thường trả lời How long ...? và đi với for, since. Người nói muốn nhấn mạnh thời gian dài, không nhấn mạnh kết quả.\n2. Hành động vừa mới dừng nhưng còn để lại dấu vết thấy được: chẳng hạn mắt đỏ vì vừa khóc, quần áo bẩn vì vừa làm vườn, người ướt vì vừa đi dưới mưa.\n3. Hành động lặp đi lặp lại gần đây: dùng với lately, recently (gần đây) để nói một việc được làm nhiều lần trong thời gian gần đây, thường kèm cảm giác mệt mỏi hoặc phàn nàn.\nVí dụ:\n- I have been learning English for three years. (Tôi học tiếng Anh được ba năm rồi.)\n- Why are you so wet? Have you been running in the rain? (Sao bạn ướt thế? Bạn vừa chạy dưới mưa à?)\n- He has been working late a lot recently. (Dạo gần đây anh ấy hay phải làm việc muộn.)"
+        },
+        {
+          "id": "gram_045",
+          "distance": 0.1809861660003662,
+          "text": "So sánh nhất (Superlatives) — Cấu trúc\nSo sánh nhất (superlatives) so một người hoặc vật với cả nhóm (thường từ ba trở lên).\nCông thức:\n- Tính từ ngắn (một âm tiết): the + adj + -est (tall → the tallest)\n- Tính từ dài (từ hai âm tiết trở lên): the most + adj (the most beautiful)\n- Tính từ hai âm tiết tận cùng -y: đổi y thành i + -est (busy → the busiest)\nChính tả: tận cùng -e chỉ thêm -st (large → the largest); phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối (big → the biggest).\nBất quy tắc: good → the best, bad → the worst, far → the farthest/furthest.\nSo sánh kém nhất: the least + adj (the least expensive).\nThường có the đứng trước; nếu đã có tính từ sở hữu thì bỏ the (my best friend).\nPhạm vi: in + nơi chốn, nhóm (in my class); of + thời gian, số lượng (of the year, of all).\nVí dụ:\n- Mount Everest is the highest mountain in the world. (Everest là ngọn núi cao nhất thế giới.)\n- This is the most interesting book I have ever read. (Đây là cuốn sách thú vị nhất mà tôi từng đọc.)\n- She is my best friend. (Cô ấy là bạn thân nhất của tôi.)"
+        },
+        {
+          "id": "gram_062",
+          "distance": 0.1845514178276062,
+          "text": "Mệnh đề quan hệ với where, when và lược bỏ đại từ — Cách dùng\nMệnh đề quan hệ với where, when và lược bỏ đại từ (omitting relative pronouns) giúp câu ngắn gọn và tự nhiên hơn.\n1. Where (nơi mà) đứng sau danh từ chỉ nơi chốn. Where tương đương in which hoặc at which.\n2. When (khi mà) đứng sau danh từ chỉ thời gian như day, year, time.\n3. Lược bỏ đại từ: trong mệnh đề xác định, có thể bỏ who, which, that khi đại từ làm tân ngữ. Cách nhận biết: ngay sau đại từ là một chủ ngữ khác (I, she, my friend ...).\n4. Không lược bỏ khi đại từ làm chủ ngữ (ngay sau là động từ), và không lược bỏ trong mệnh đề không xác định (có dấu phẩy).\nLưu ý: nếu động từ trong mệnh đề cần tân ngữ thì dùng which/that, không dùng where (the city which I visited).\nVí dụ:\n- This is the village where my father was born. (Đây là ngôi làng nơi bố tôi sinh ra.)\n- I'll never forget the day when we first met. (Tôi sẽ không bao giờ quên ngày chúng ta gặp nhau lần đầu.)\n- The film we watched last night was boring. (Bộ phim chúng tôi xem tối qua chán lắm.)"
+        },
+        {
+          "id": "gram_046",
+          "distance": 0.1873387098312378,
+          "text": "So sánh hơn và so sánh nhất — Lỗi thường gặp\nSo sánh hơn (comparatives) và so sánh nhất (superlatives) hay bị dùng sai khi người học trộn hai cách tạo dạng so sánh.\n1. Sai: This one is more better. → Đúng: This one is better. Lý do: better đã là dạng so sánh, không thêm more.\n2. Sai: She is the most biggest. → Đúng: She is the biggest. Lý do: chỉ dùng một cách, -est hoặc most, không dùng cả hai.\n3. Sai: My bag is heavier than you. → Đúng: My bag is heavier than yours. Lý do: phải so cùng loại (túi với túi). So người với người: khi nói thường dùng than me; trang trọng hơn thì dùng than I am, than I do.\n4. Sai: He is tallest student in the class. → Đúng: He is the tallest student in the class. Lý do: so sánh nhất thường có the đứng trước, trừ khi đã có tính từ sở hữu (my best friend).\nVí dụ:\n- My new laptop is much faster than my old one. (Máy tính mới của tôi nhanh hơn máy cũ nhiều.)\n- He swims better than I do. (Anh ấy bơi giỏi hơn tôi.)\n- She is the best singer in our school. (Cô ấy là người hát hay nhất trường tôi.)"
+        }
+      ],
+      "answer": "Đối với tính từ dài (hai âm tiết trở lên), dạng so sánh hơn được tạo bằng cách đặt more trước tính từ, rồi thêm than sau nó.\nCông thức: more + adj + than\n\nVí dụ: This book is more interesting than the one I read yesterday. (Quyển sách này thú vị hơn quyển tôi đọc hôm qua.)",
+      "source_ids": [
+        "gram_044"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 2045,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q019",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_045"
+      ],
+      "question": "Cách tạo dạng so sánh nhất với tính từ ngắn là gì?",
+      "candidates": [
+        "gram_044",
+        "gram_045",
+        "gram_046",
+        "gram_043",
+        "gram_012",
+        "gram_042",
+        "gram_017",
+        "gram_097"
+      ],
+      "vocab_sent": [
+        "so",
+        "comparative",
+        "superlative",
+        "comparable"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.47228296383162677
+      },
+      "vocab": [
+        "so",
+        "comparative",
+        "superlative"
+      ],
+      "contexts": [
+        {
+          "id": "gram_044",
+          "distance": 0.1158146858215332,
+          "text": "So sánh hơn (Comparatives) — Cấu trúc\nSo sánh hơn (comparatives) dùng để so sánh hai người hoặc hai vật, cho biết bên nào hơn về một đặc điểm.\nCông thức:\n- Tính từ ngắn (một âm tiết): adj + -er + than (tall → taller than)\n- Tính từ dài (từ hai âm tiết trở lên): more + adj + than (more expensive than)\n- Tính từ hai âm tiết tận cùng -y: đổi y thành i + -er (happy → happier, easy → easier)\nChính tả: tận cùng -e chỉ thêm -r (nice → nicer); phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối (big → bigger, hot → hotter).\nBất quy tắc: good → better, bad → worse, far → farther/further.\nMột số tính từ hai âm tiết khác dùng được cả hai cách (quiet → quieter / more quiet, clever → cleverer / more clever).\nSo sánh kém hơn: less + adj + than (less expensive than).\nNhấn mạnh mức chênh lệch: much, far, a bit + dạng so sánh (much bigger).\nVí dụ:\n- My brother is taller than me. (Anh trai tôi cao hơn tôi.)\n- This phone is more expensive than that one. (Chiếc điện thoại này đắt hơn chiếc kia.)\n- I feel much better today. (Hôm nay tôi thấy đỡ hơn nhiều.)"
+        },
+        {
+          "id": "gram_045",
+          "distance": 0.12222665548324585,
+          "text": "So sánh nhất (Superlatives) — Cấu trúc\nSo sánh nhất (superlatives) so một người hoặc vật với cả nhóm (thường từ ba trở lên).\nCông thức:\n- Tính từ ngắn (một âm tiết): the + adj + -est (tall → the tallest)\n- Tính từ dài (từ hai âm tiết trở lên): the most + adj (the most beautiful)\n- Tính từ hai âm tiết tận cùng -y: đổi y thành i + -est (busy → the busiest)\nChính tả: tận cùng -e chỉ thêm -st (large → the largest); phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối (big → the biggest).\nBất quy tắc: good → the best, bad → the worst, far → the farthest/furthest.\nSo sánh kém nhất: the least + adj (the least expensive).\nThường có the đứng trước; nếu đã có tính từ sở hữu thì bỏ the (my best friend).\nPhạm vi: in + nơi chốn, nhóm (in my class); of + thời gian, số lượng (of the year, of all).\nVí dụ:\n- Mount Everest is the highest mountain in the world. (Everest là ngọn núi cao nhất thế giới.)\n- This is the most interesting book I have ever read. (Đây là cuốn sách thú vị nhất mà tôi từng đọc.)\n- She is my best friend. (Cô ấy là bạn thân nhất của tôi.)"
+        },
+        {
+          "id": "gram_046",
+          "distance": 0.12352263927459717,
+          "text": "So sánh hơn và so sánh nhất — Lỗi thường gặp\nSo sánh hơn (comparatives) và so sánh nhất (superlatives) hay bị dùng sai khi người học trộn hai cách tạo dạng so sánh.\n1. Sai: This one is more better. → Đúng: This one is better. Lý do: better đã là dạng so sánh, không thêm more.\n2. Sai: She is the most biggest. → Đúng: She is the biggest. Lý do: chỉ dùng một cách, -est hoặc most, không dùng cả hai.\n3. Sai: My bag is heavier than you. → Đúng: My bag is heavier than yours. Lý do: phải so cùng loại (túi với túi). So người với người: khi nói thường dùng than me; trang trọng hơn thì dùng than I am, than I do.\n4. Sai: He is tallest student in the class. → Đúng: He is the tallest student in the class. Lý do: so sánh nhất thường có the đứng trước, trừ khi đã có tính từ sở hữu (my best friend).\nVí dụ:\n- My new laptop is much faster than my old one. (Máy tính mới của tôi nhanh hơn máy cũ nhiều.)\n- He swims better than I do. (Anh ấy bơi giỏi hơn tôi.)\n- She is the best singer in our school. (Cô ấy là người hát hay nhất trường tôi.)"
+        },
+        {
+          "id": "gram_043",
+          "distance": 0.15271717309951782,
+          "text": "Trạng từ chỉ cách thức (Adverbs of Manner) — Cấu trúc\nTrạng từ chỉ cách thức (adverbs of manner) cho biết hành động được làm như thế nào; phần lớn được tạo từ tính từ.\nCông thức:\n- Thông thường: tính từ + -ly (slow → slowly, careful → carefully)\n- Phụ âm + y: đổi y thành i rồi + -ly (easy → easily, happy → happily)\n- Tận cùng bằng -le: bỏ e, thêm -y (gentle → gently, simple → simply)\n- Tận cùng bằng -ic: thường + -ally (basic → basically); ngoại lệ public → publicly\nBất quy tắc: good → well.\nKhông thêm -ly: fast, hard, late, early giữ nguyên khi làm trạng từ (He works hard).\nChú ý nghĩa khác: hardly nghĩa là \"hầu như không\", lately nghĩa là \"gần đây\"; đây không phải trạng từ cách thức của hard, late.\nMột số từ tận cùng -ly là tính từ chứ không phải trạng từ: friendly, lovely, lonely.\nVí dụ:\n- Please drive carefully. (Hãy lái xe cẩn thận.)\n- She sings very well. (Cô ấy hát rất hay.)\n- I could hardly hear him. (Tôi gần như không nghe được anh ấy nói gì.)"
+        },
+        {
+          "id": "gram_012",
+          "distance": 0.1671276092529297,
+          "text": "Thì hiện tại hoàn thành (Present Perfect) — Cấu trúc\nThì hiện tại hoàn thành (Present Perfect) gồm have/has và V3, tức là quá khứ phân từ (dạng thứ ba trong bảng động từ bất quy tắc).\nCông thức:\n- Khẳng định: S + have/has + V3\n- Phủ định: S + have/has + not + V3\n- Nghi vấn: Have/Has + S + V3?\nChọn have hay has: I, you, we, they và danh từ số nhiều dùng have; he, she, it và danh từ số ít dùng has. Dạng rút gọn: I've, she's, haven't, hasn't. Chú ý she's có thể là she is hoặc she has; she's + been/V3 thường là she has (She's finished).\nCách tạo V3:\n- Động từ có quy tắc: V3 giống V2, thêm -ed (work → worked, live → lived, stop → stopped).\n- Động từ bất quy tắc: học thuộc cột thứ ba. Có từ V2 và V3 giống nhau (buy – bought – bought), có từ khác nhau (go – went – gone, see – saw – seen, eat – ate – eaten).\nTrả lời ngắn: Yes, I have. / No, she hasn't.\nVí dụ:\n- I have finished my homework. (Tôi làm xong bài tập rồi.)\n- She hasn't seen that film. (Cô ấy chưa xem bộ phim đó.)\n- Have you ever eaten durian? (Bạn đã bao giờ ăn sầu riêng chưa?)"
+        }
+      ],
+      "answer": "Công thức tạo dạng so sánh nhất cho tính từ ngắn (một âm tiết) là: the + adj + ‑est (ví dụ: tall → the tallest). Ví dụ:\n- This mountain is the highest in the region. (Ngọn núi này là ngọn núi cao nhất trong khu vực.)\n- She is the smartest student in the class. (Cô ấy là học sinh thông minh nhất trong lớp.)",
+      "source_ids": [
+        "gram_045"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1011,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q020",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "kb",
+      "gold": [
+        "gram_034"
+      ],
+      "question": "What does the modal verb “should” usually express?",
+      "candidates": [
+        "gram_031",
+        "gram_034",
+        "gram_036",
+        "gram_035",
+        "gram_069",
+        "gram_033",
+        "gram_007",
+        "gram_059"
+      ],
+      "vocab_sent": [
+        "usually",
+        "express",
+        "what",
+        "verb",
+        "modal",
+        "require",
+        "modest"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "cach_dung",
+        "confidence": 0.34189308489225095
+      },
+      "vocab": [
+        "usually",
+        "express",
+        "what"
+      ],
+      "contexts": [
+        {
+          "id": "gram_031",
+          "distance": 0.1678006649017334,
+          "text": "Động từ khuyết thiếu (Modal Verbs) — Cấu trúc\nĐộng từ khuyết thiếu (modal verbs) là các từ như can, could, may, might, must, should, will, would, đứng trước động từ chính để thêm nghĩa khả năng, cho phép, bắt buộc, lời khuyên.\nCông thức:\n- Khẳng định: S + modal + V nguyên mẫu\n- Phủ định: S + modal + not + V nguyên mẫu\n- Nghi vấn: Modal + S + V nguyên mẫu?\nQuy tắc chung:\n- Động từ sau modal ở dạng nguyên mẫu, không có to: She can swim (không nói can to swim hay can swims).\n- Modal không thêm -s với he, she, it: He must go.\n- Không dùng do/does/did để tạo câu hỏi hay câu phủ định.\n- Hai modal không đứng cạnh nhau: không nói will can, mà nói will be able to.\nDạng phủ định rút gọn: can't (cannot), couldn't, mustn't, shouldn't, won't (will not), wouldn't.\nNgoại lệ: ought to có to phía sau; have to (phải) chia theo chủ ngữ (she has to) và dùng do/does khi phủ định.\nVí dụ:\n- You should drink more water. (Bạn nên uống nhiều nước hơn.)\n- He can't come to the meeting. (Anh ấy không đến cuộc họp được.)\n- May I sit here? (Tôi ngồi đây được không?)"
+        },
+        {
+          "id": "gram_034",
+          "distance": 0.16849982738494873,
+          "text": "Should và ought to để khuyên — Cách dùng\nShould và ought to (nên) là động từ khuyết thiếu (modal verbs) dùng để khuyên, nói điều đúng đắn hoặc điều người nói mong đợi.\n1. Lời khuyên: S + should + V nguyên mẫu. Ought to có nghĩa gần giống nhưng ít dùng hơn, nhất là trong câu hỏi và câu phủ định.\n2. Hỏi xin lời khuyên: Should I ...? hoặc What should I ...? Hầu như không dùng ought to trong câu hỏi.\n3. Điều đúng đắn, bổn phận: việc nên làm theo lẽ phải; nghĩa nhẹ hơn must.\n4. Điều được mong đợi sẽ xảy ra: should còn dùng để nói một việc nhiều khả năng sẽ xảy ra theo dự tính.\nPhủ định: shouldn't (không nên); ought not to rất ít gặp. Để lời khuyên nhẹ nhàng hơn, người ta hay thêm I think (I think you should ...); khi phủ định thường nói I don't think you should ...\nVí dụ:\n- You should see a doctor. (Bạn nên đi khám bác sĩ.)\n- What should I wear to the party? (Tôi nên mặc gì đi dự tiệc?)\n- The bus should arrive in five minutes. (Chắc năm phút nữa xe buýt sẽ tới.)"
+        },
+        {
+          "id": "gram_036",
+          "distance": 0.1744227409362793,
+          "text": "Động từ khuyết thiếu + have + V3 (Modal Perfect) — Cách dùng\nĐộng từ khuyết thiếu + have + V3 (modal perfect) dùng để nói về quá khứ: suy đoán, tiếc nuối hoặc phê bình một việc đã xảy ra hay không.\n1. Must have + V3 (chắc hẳn đã): suy đoán gần như chắc chắn.\n2. Might/may/could have + V3 (có lẽ đã): suy đoán không chắc chắn về quá khứ. Could have + V3 còn có nghĩa \"lẽ ra đã có thể\": việc có thể xảy ra nhưng thực tế không xảy ra.\n3. Can't/couldn't have + V3 (không thể nào đã): chắc chắn việc đó đã không xảy ra.\n4. Should have + V3 (lẽ ra nên): tiếc nuối hoặc trách vì việc nên làm mà đã không làm; shouldn't have + V3 là việc không nên làm mà đã làm.\nKhi nói, should have thường rút gọn thành should've, nghe gần giống \"of\", nhưng không viết \"should of\".\nVí dụ:\n- The streets are wet. It must have rained last night. (Đường ướt hết. Chắc hẳn tối qua trời đã mưa.)\n- You should have told me earlier. (Lẽ ra bạn nên nói với tôi sớm hơn.)\n- She can't have seen us; she didn't say hello. (Chắc chắn cô ấy đã không thấy chúng ta, vì cô ấy chẳng chào gì cả.)"
+        },
+        {
+          "id": "gram_035",
+          "distance": 0.21278178691864014,
+          "text": "Must, might, can't để suy đoán — Cách dùng\nMust, might và can't là các động từ khuyết thiếu dùng để suy đoán (deduction), tức là đoán một điều có đúng hay không dựa trên thông tin đang có.\n1. Must + V (chắc hẳn là): người nói gần như chắc chắn điều đó đúng, vì có lý do rõ ràng.\n2. Might, may, could + V (có lẽ, có thể): người nói không chắc chắn. May thường trang trọng hơn might một chút.\n3. Can't + V (không thể nào): người nói gần như chắc chắn điều đó không đúng. Khi suy đoán, phủ định của must thường là can't, không phải mustn't.\n4. Suy đoán về việc đang diễn ra: must/might/can't + be + V-ing.\nLưu ý: might not và may not nghĩa là \"có thể không\"; couldn't cũng dùng được thay cho can't.\nVí dụ:\n- She has three jobs. She must be very busy. (Cô ấy làm ba việc. Chắc hẳn cô ấy bận lắm.)\n- Take an umbrella. It might rain later. (Mang ô theo đi. Lát nữa có thể trời sẽ mưa đấy.)\n- He can't be at home. I saw him at the office five minutes ago. (Anh ấy không thể đang ở nhà được. Năm phút trước tôi vừa thấy anh ấy ở văn phòng.)"
+        },
+        {
+          "id": "gram_069",
+          "distance": 0.21401947736740112,
+          "text": "Câu hỏi với từ để hỏi (Wh- Questions) — Cấu trúc\nCâu hỏi với từ để hỏi (Wh- questions) bắt đầu bằng what, where, when, who, why, which, whose, how; dùng để hỏi thông tin cụ thể, không trả lời bằng yes/no.\nCông thức:\n- Động từ thường: Wh- + do/does/did + S + V nguyên mẫu?\n- To be và động từ khuyết thiếu: Wh- + be/modal + S + ...?\n- Câu hỏi chủ ngữ: Wh- + V (chia theo thì) ...?\nCâu hỏi chủ ngữ: khi từ để hỏi chính là chủ ngữ (người hoặc vật làm hành động), giữ trật tự câu kể và không dùng do/does/did. Who called you? (Ai gọi cho bạn?) khác Who did you call? (Bạn gọi cho ai?). Tương tự: What happened?\nGiới từ: trong câu hỏi thường ngày, giới từ hay đứng cuối câu (Who are you talking to? Where are you from?). Đưa giới từ lên đầu (To whom ...?) mang tính trang trọng.\nTừ để hỏi ghép: how much, how many, how long, how often, what time, which + danh từ.\nCâu hỏi Wh- thường xuống giọng ở cuối.\nVí dụ:\n- Where do your parents live? (Bố mẹ bạn sống ở đâu?)\n- Who told you the news? (Ai báo tin đó cho bạn?)\n- What are you looking for? (Bạn đang tìm gì vậy?)"
+        }
+      ],
+      "answer": "“Should” thường được dùng để:\n\n- đưa ra lời khuyên (điều nên làm) – ví dụ: You should see a doctor.\n- nói về điều đúng đắn, bổn phận (nhẹ hơn “must”) – ví dụ: You should finish your homework before playing.\n- diễn tả một việc được mong đợi sẽ xảy ra (suy đoán dựa trên dự tính) – ví dụ: The bus should arrive in five minutes.\n- bày tỏ tiếc nuối hoặc phê bình về việc đã không làm (khi dùng “should have”) – ví dụ: You should have told me earlier. (cũng là cách dùng “should” trong quá khứ)\n\nNhư vậy, “should” chủ yếu biểu thị lời khuyên, nghĩa vụ nhẹ, hoặc dự đoán về một việc sẽ (hoặc lẽ ra) xảy ra.",
+      "source_ids": [
+        "gram_034",
+        "gram_036"
+      ],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1287,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q026",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "vocab",
+      "gold": [
+        "word:colleague"
+      ],
+      "question": "Từ “colleague” có nghĩa là gì?",
+      "candidates": [
+        "gram_063",
+        "gram_065",
+        "gram_061",
+        "gram_060",
+        "gram_099",
+        "gram_036",
+        "gram_100",
+        "gram_010"
+      ],
+      "vocab_sent": [
+        "colleague",
+        "college",
+        "colonial"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "nghia_tu",
+        "confidence": 0.524744951280255
+      },
+      "vocab": [
+        "colleague",
+        "college",
+        "colonial"
+      ],
+      "contexts": [
+        {
+          "id": "gram_063",
+          "distance": 0.18160712718963623,
+          "text": "Mệnh đề quan hệ (Relative Clauses) — Lỗi thường gặp\nMệnh đề quan hệ (relative clauses) hay bị dùng sai khi người học dịch từng chữ từ tiếng Việt.\n1. Sai: The man who he lives next door is a doctor. → Đúng: The man who lives next door is a doctor. Lý do: who đã làm chủ ngữ, không thêm he.\n2. Sai: The teacher which taught me English is very kind. → Đúng: The teacher who taught me English is very kind. Lý do: which dùng cho vật; với người dùng who hoặc that.\n3. Sai: Everything what she said was true. → Đúng: Everything that she said was true. Lý do: what đã mang nghĩa \"điều mà\", không đứng sau danh từ hay sau everything, something; khi đó dùng that.\n4. Sai: The girl is sitting there is my sister. → Đúng: The girl who is sitting there is my sister. Lý do: đại từ làm chủ ngữ không được lược bỏ. Có thể rút gọn thành The girl sitting there, nhưng phải bỏ cả is.\nVí dụ:\n- The woman who called you is my boss. (Người phụ nữ gọi cho bạn là sếp tôi.)\n- I liked the book that you lent me. (Tôi thích cuốn sách bạn cho tôi mượn.)\n- What she said surprised me. (Điều cô ấy nói làm tôi ngạc nhiên.)"
+        },
+        {
+          "id": "gram_065",
+          "distance": 0.18909424543380737,
+          "text": "Remember, stop, try + V-ing và + to V — Phân biệt\nRemember, forget, stop, try, regret đi được với cả V-ing và to V nhưng đổi nghĩa.\n- Remember: + V-ing là nhớ việc đã làm (I remember meeting her); + to V là nhớ phải làm (Remember to call her).\n- Forget: + V-ing là quên việc đã làm (I'll never forget seeing the sea); + to V là quên phải làm (I forgot to lock the door).\n- Stop: + V-ing là thôi hẳn việc đang làm (He stopped smoking); + to V là dừng lại để làm việc khác (He stopped to buy water).\n- Try: + V-ing là thử làm xem có được không (Try restarting the computer); + to V là cố gắng làm việc khó (I tried to lift the box).\n- Regret: + V-ing là hối tiếc vì đã làm (I regret saying that); + to V là lấy làm tiếc phải báo tin, dùng trang trọng (We regret to inform you ...).\nMẹo nhớ: V-ing thường nhìn về việc đã xảy ra hoặc đang diễn ra; to V thường nhìn về việc sắp làm.\nVí dụ:\n- I remember meeting her at a party. (Tôi nhớ là đã gặp cô ấy ở một bữa tiệc.)\n- Please remember to call her tonight. (Tối nay nhớ gọi cho cô ấy nhé.)"
+        },
+        {
+          "id": "gram_061",
+          "distance": 0.18956607580184937,
+          "text": "Mệnh đề quan hệ xác định và không xác định — Phân biệt\nMệnh đề quan hệ xác định (defining relative clauses) và không xác định (non-defining relative clauses) khác nhau ở chỗ thông tin có cần để xác định người, vật hay không.\n- Vai trò: mệnh đề xác định chỉ rõ người, vật nào, bỏ đi câu thiếu nghĩa; mệnh đề không xác định chỉ thêm thông tin phụ.\n- Dấu phẩy: mệnh đề không xác định được ngăn bằng dấu phẩy; mệnh đề xác định thì không.\n- That: dùng được trong mệnh đề xác định; không dùng trong mệnh đề không xác định, khi đó chỉ dùng who, which, whose.\n- Lược bỏ đại từ: mệnh đề xác định có thể bỏ đại từ làm tân ngữ; mệnh đề không xác định thì không lược bỏ.\n- Danh từ đứng trước: tên riêng hoặc người, vật duy nhất (my mother, Hanoi) thường đi với mệnh đề không xác định.\nMẹo nhớ: có dấu phẩy thì không dùng that và không lược bỏ đại từ.\nVí dụ:\n- The students who passed the test will get a certificate. (Những học sinh qua bài kiểm tra sẽ được nhận chứng chỉ.)\n- My mother, who is a teacher, loves reading. (Mẹ tôi, một giáo viên, rất thích đọc sách.)"
+        },
+        {
+          "id": "gram_060",
+          "distance": 0.1915276050567627,
+          "text": "Mệnh đề quan hệ với who, which, that, whose — Cấu trúc\nMệnh đề quan hệ (relative clauses) với who, which, that, whose bổ sung thông tin cho danh từ đứng ngay trước nó.\nCông thức:\n- Chỉ người: N + who + V ... (the man who lives next door)\n- Chỉ vật, con vật: N + which + V ... (the book which is on the table)\n- Người hoặc vật: N + that + V ... (that thay được who, which trong mệnh đề xác định)\n- Sở hữu: N + whose + danh từ + V ... (the girl whose father is a doctor)\nĐại từ quan hệ làm chủ ngữ hoặc tân ngữ trong mệnh đề.\nWhom: dùng thay who khi làm tân ngữ, nhất là trong văn trang trọng và sau giới từ (the person to whom I spoke). Khi nói, người ta thường dùng who hoặc that.\nWhose dùng được cho cả người lẫn vật (a house whose roof is red).\nVí dụ:\n- The woman who works in this shop is my aunt. (Người phụ nữ làm việc ở cửa hàng này là dì tôi.)\n- I lost the umbrella which you gave me. (Tôi làm mất chiếc ô bạn tặng rồi.)\n- That's the boy whose bike was stolen. (Đó là cậu bé bị lấy trộm xe đạp.)"
+        },
+        {
+          "id": "gram_099",
+          "distance": 0.19325244426727295,
+          "text": "Convince và persuade — Phân biệt\nConvince (thuyết phục ai tin) và persuade (thuyết phục ai làm) đều dịch là \"thuyết phục\", nhưng thường khác nhau ở kết quả muốn đạt được.\n- Nghĩa: convince thường là làm cho ai tin một điều là đúng; persuade thường là khiến ai đồng ý làm việc gì.\n- Cấu trúc: convince sb that + mệnh đề, convince sb of sth; persuade sb to V.\n- Thực tế: hai từ hay dùng lẫn. Convince sb to V rất phổ biến, nhất là trong tiếng Anh Mỹ; persuade sb that cũng gặp. Cách phân biệt trên hữu ích nhất trong văn viết trang trọng và bài thi.\n- Tính từ liên quan: convinced (tin chắc), convincing (có sức thuyết phục); persuasive (có sức thuyết phục, khéo thuyết phục).\n- Lỗi điển hình: persuade sb doing (đúng: persuade sb to do); convince sb about that he is right (đúng: convince sb that he is right).\nMẹo nhớ: convince tác động vào suy nghĩ; persuade tác động vào hành động.\nVí dụ:\n- She convinced me that the plan would work. (Cô ấy làm tôi tin rằng kế hoạch sẽ thành công.)\n- I persuaded my dad to buy a new laptop. (Tôi đã thuyết phục được bố mua máy tính xách tay mới.)"
+        }
+      ],
+      "answer": "“colleague” (danh từ) có nghĩa là đồng nghiệp, người làm việc cùng trong một công ty hoặc tổ chức.\n\n- My colleagues are friendly. → Các đồng nghiệp của tôi rất thân thiện.\n- I often have lunch with my colleagues. → Tôi thường ăn trưa với các đồng nghiệp.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1234,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q030",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "vocab",
+      "gold": [
+        "word:participant"
+      ],
+      "question": "Từ “participant” dùng để chỉ ai?",
+      "candidates": [
+        "gram_029",
+        "gram_010",
+        "gram_042",
+        "gram_091",
+        "gram_008",
+        "gram_012",
+        "gram_069",
+        "gram_030"
+      ],
+      "vocab_sent": [
+        "participant",
+        "partisan",
+        "participle",
+        "partial"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.32320437787909434
+      },
+      "vocab": [
+        "participant",
+        "partisan",
+        "participle"
+      ],
+      "contexts": [
+        {
+          "id": "gram_029",
+          "distance": 0.1721489429473877,
+          "text": "Sở hữu cách 's và of — Cấu trúc\nSở hữu cách (possessive case) dùng 's hoặc of để nói một vật thuộc về ai hoặc thuộc về cái gì.\nCông thức:\n- Danh từ số ít: N + 's (my brother's car, Lan's bag)\n- Danh từ số nhiều tận cùng bằng -s: chỉ thêm dấu ' (my parents' house, the students' books)\n- Danh từ số nhiều không tận cùng bằng -s: N + 's (children's toys, women's rights)\n- Cấu trúc of: the + vật + of + người/vật (the end of the film, the name of the street)\nCách chọn: 's thường dùng cho người, động vật; of thường dùng cho đồ vật, nơi chốn, ý tưởng. Với thời gian, 's vẫn hay dùng: today's newspaper, two weeks' holiday.\nTên riêng tận cùng bằng s: cả James's và James' đều được chấp nhận.\nHai người cùng sở hữu một vật: chỉ thêm 's vào người sau (Tom and Mary's house).\nKhông dùng the trước người sở hữu có 's: nói Lan's bag, không nói the Lan's bag.\nVí dụ:\n- This is my sister's room. (Đây là phòng của chị tôi.)\n- My parents' house is near the river. (Nhà bố mẹ tôi ở gần sông.)\n- I don't remember the name of the hotel. (Tôi không nhớ tên khách sạn.)"
+        },
+        {
+          "id": "gram_010",
+          "distance": 0.17491960525512695,
+          "text": "Thì quá khứ tiếp diễn (Past Continuous) — Cấu trúc\nThì quá khứ tiếp diễn (Past Continuous) gồm was/were (dạng quá khứ của to be) và động từ thêm đuôi -ing, gọi tắt là V-ing.\nCông thức:\n- Khẳng định: S + was/were + V-ing\n- Phủ định: S + was/were + not + V-ing\n- Nghi vấn: Was/Were + S + V-ing?\nChọn was hay were theo chủ ngữ: I, he, she, it và danh từ số ít dùng was; you, we, they và danh từ số nhiều dùng were. Rút gọn: wasn't, weren't. Trả lời ngắn: Yes, I was. / No, they weren't.\nCâu hỏi có từ để hỏi: What/Where/Why + was/were + S + V-ing?\nQuy tắc thêm -ing:\n- Thông thường thêm -ing: walk → walking.\n- Tận cùng bằng -e câm (e không đọc): bỏ e (come → coming).\n- Từ một âm tiết kết thúc bằng phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối: swim → swimming (trừ khi phụ âm cuối là w, x, y: fix → fixing, snow → snowing).\n- Tận cùng bằng -ie thì đổi thành -y: lie → lying.\nVí dụ:\n- I was walking home at six o'clock. (Lúc sáu giờ tôi đang đi bộ về nhà.)\n- They weren't listening to the teacher. (Lúc đó họ không chú ý nghe thầy cô giảng.)\n- What were you doing at nine last night? (Chín giờ tối qua bạn đang làm gì?)"
+        },
+        {
+          "id": "gram_042",
+          "distance": 0.17964524030685425,
+          "text": "Trật tự tính từ (Adjective Order) — Cách dùng\nTrật tự tính từ (adjective order) là thứ tự thường gặp khi nhiều tính từ cùng đứng trước một danh từ.\nThứ tự hay gặp: ý kiến (nice, beautiful) → kích cỡ (big, small) → tuổi (old, new) → hình dạng (round) → màu sắc (red) → nguồn gốc (Japanese) → chất liệu (wooden, cotton) → mục đích (running shoes) → danh từ.\n1. Đây là xu hướng tự nhiên mà người bản ngữ cảm nhận được, không phải luật cứng. Đặt khác thứ tự thường không làm sai nghĩa nhưng nghe kém tự nhiên.\n2. Trong thực tế, người ta thường chỉ dùng 2–3 tính từ trước một danh từ. Nhiều hơn nghe nặng nề.\n3. Tính từ ý kiến (đánh giá chủ quan) thường đứng trước tính từ mô tả sự thật như kích cỡ, màu sắc.\n4. Hai tính từ cùng nhóm thường nối bằng and hoặc dấu phẩy (a cheap and comfortable hotel); tính từ khác nhóm thường không cần dấu phẩy.\nVí dụ:\n- She has a lovely little garden. (Cô ấy có một khu vườn nhỏ xinh.)\n- He bought an old red car. (Anh ấy đã mua một chiếc ô tô cũ màu đỏ.)\n- I like your new cotton shirt. (Tôi thích chiếc áo sơ mi vải bông mới của bạn.)"
+        },
+        {
+          "id": "gram_091",
+          "distance": 0.17976689338684082,
+          "text": "Especially và specially — Phân biệt\nEspecially (đặc biệt là, nhất là) và specially (riêng cho, một cách đặc biệt) gần giống nhau, nhưng thường dùng trong tình huống khác nhau.\n- Nghĩa: especially nhấn mạnh một đối tượng nổi bật hơn những đối tượng khác (nhất là); specially nói việc làm ra hoặc làm cho một mục đích riêng (được làm riêng cho).\n- Cấu trúc: especially thường đứng trước cụm được nhấn mạnh (I love fruit, especially mangoes); specially thường đi với V3 (specially designed, specially made for).\n- Cụm hay gặp: especially for, especially when, especially if; specially trained, specially made.\n- Trước tính từ: cả hai đều có thể mang nghĩa \"rất, đặc biệt\" (especially difficult), nhưng especially phổ biến hơn.\n- Lỗi điển hình: đặt especially đứng một mình ở đầu câu (Especially, I like mangoes); tự nhiên hơn là I especially like mangoes.\n- Khi nói, người bản ngữ đôi khi dùng hai từ thay cho nhau, nhưng trong văn viết nên giữ phân biệt trên.\nMẹo nhớ: especially là \"nhất là\"; specially là \"làm riêng cho\".\nVí dụ:\n- I like all sports, especially football. (Tôi thích mọi môn thể thao, nhất là bóng đá.)\n- This cake was specially made for your birthday. (Chiếc bánh này được làm riêng cho sinh nhật bạn.)"
+        },
+        {
+          "id": "gram_008",
+          "distance": 0.18166959285736084,
+          "text": "Thì quá khứ đơn (Past Simple) — Cấu trúc\nThì quá khứ đơn (Past Simple) có cấu trúc riêng cho động từ thường và động từ to be. V2 là dạng quá khứ, V là động từ nguyên mẫu.\nCông thức:\n- Khẳng định: S + V2 (V-ed hoặc dạng bất quy tắc)\n- Phủ định: S + did not (didn't) + V\n- Nghi vấn: Did + S + V?\nVới to be: I, he, she, it dùng was; you, we, they dùng were. Phủ định: wasn't, weren't; nghi vấn: đưa was/were lên đầu.\nThêm -ed cho động từ có quy tắc:\n- Thông thường thêm -ed: work → worked.\n- Tận cùng bằng -e: chỉ thêm -d (live → lived).\n- Phụ âm + y: đổi y thành i (study → studied); nguyên âm + y giữ nguyên (play → played).\n- Từ một âm tiết kết thúc bằng phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối: stop → stopped (trừ khi phụ âm cuối là w, x, y: fix → fixed, snow → snowed).\nĐộng từ bất quy tắc phải học thuộc: go → went, see → saw. Sau did/didn't, động từ chính ở dạng gốc.\nVí dụ:\n- We visited Hue last summer. (Mùa hè năm ngoái chúng tôi đi Huế.)\n- I didn't see him at the party. (Tôi không thấy anh ấy ở bữa tiệc.)\n- Did you buy any milk? (Bạn có mua sữa không?)"
+        }
+      ],
+      "answer": "“Participant” là danh từ chỉ người tham gia một hoạt động, sự kiện, cuộc họp, lớp học, … Ví dụ:\n\n- Each participant got a prize. → Mỗi người tham gia đều nhận được một phần thưởng.\n- The participants were asked to fill out a questionnaire. → Những người tham gia được yêu cầu điền vào bảng câu hỏi.\n- As a participant in the workshop, you will learn new skills. → Là người tham gia hội thảo, bạn sẽ học được những kỹ năng mới.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1541,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q035",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "vocab",
+      "gold": [
+        "word:device"
+      ],
+      "question": "In the vocabulary list, what part of speech is “device”, and what does it mean?",
+      "candidates": [
+        "gram_070",
+        "gram_054",
+        "gram_053",
+        "gram_025",
+        "gram_063",
+        "gram_069",
+        "gram_052",
+        "gram_068"
+      ],
+      "vocab_sent": [
+        "mean",
+        "part",
+        "list",
+        "speech",
+        "device",
+        "verbally",
+        "devoted"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.28339000648374724
+      },
+      "vocab": [
+        "mean",
+        "part",
+        "list"
+      ],
+      "contexts": [
+        {
+          "id": "gram_070",
+          "distance": 0.19011163711547852,
+          "text": "Câu hỏi đuôi (Tag Questions) — Cấu trúc\nCâu hỏi đuôi (tag questions) là phần hỏi ngắn gắn ở cuối câu để xác nhận thông tin hoặc mong người nghe đồng ý.\nCông thức:\n- Câu khẳng định → đuôi phủ định: ..., trợ động từ + n't + đại từ? (You are tired, aren't you?)\n- Câu phủ định → đuôi khẳng định: ..., trợ động từ + đại từ? (She doesn't eat meat, does she?)\nQuy tắc:\n- Đuôi lặp lại trợ động từ của câu (be, have, can ...); câu chỉ có động từ thường thì dùng do/does/did.\n- Chủ ngữ ở đuôi là đại từ (Lan → she, this → it).\n- Câu có never, nothing, nobody, hardly đã mang nghĩa phủ định nên đuôi ở dạng khẳng định (He never calls, does he?).\nNgoại lệ hay gặp:\n- I am → aren't I? (I'm late, aren't I?)\n- Let's → shall we? (Let's go, shall we?)\n- Câu mệnh lệnh → will you? hoặc can you? (Close the door, will you?)\nNgữ điệu: lên giọng ở đuôi khi thật sự hỏi; xuống giọng khi chỉ mong người nghe đồng ý.\nVí dụ:\n- It's a lovely day, isn't it? (Hôm nay trời đẹp nhỉ?)\n- You didn't call him, did you? (Bạn không gọi cho anh ấy, phải không?)"
+        },
+        {
+          "id": "gram_054",
+          "distance": 0.19388747215270996,
+          "text": "There is / there are — Cách dùng\nThere is / there are (có) dùng để nói một người hoặc vật tồn tại, có mặt ở một nơi nào đó.\n1. There is + danh từ số ít hoặc không đếm được; there are + danh từ số nhiều. Khi liệt kê nhiều thứ, be thường chia theo danh từ đứng ngay sau: There is a pen and two books on the desk.\n2. Phủ định: there isn't / there aren't, thường đi với a/an hoặc any (There aren't any chairs). Câu hỏi: Is there ...? / Are there ...?, trả lời ngắn Yes, there is. / No, there aren't.\n3. Dạng rút gọn there's dùng nhiều khi nói thân mật, kể cả trước danh từ số nhiều; khi viết chuẩn thì vẫn dùng there are.\n4. Theo sau thường là cụm chỉ nơi chốn: There is a bank near my house.\nLỗi hay gặp của người Việt: dùng have để nói \"ở đâu đó có gì\". Sai: In my room has a TV. Đúng: There is a TV in my room.\nVí dụ:\n- There is a supermarket at the end of the street. (Cuối phố có một siêu thị.)\n- There are thirty students in my class. (Lớp tôi có ba mươi học sinh.)\n- Is there a pharmacy near here? (Gần đây có hiệu thuốc nào không?)"
+        },
+        {
+          "id": "gram_053",
+          "distance": 0.1950620412826538,
+          "text": "Câu bị động (Passive Voice) — Cách dùng\nCâu bị động (Passive Voice) đưa người hoặc vật chịu tác động lên làm chủ ngữ, khi điều đó quan trọng hơn ai là người làm.\n1. Không biết hoặc không cần biết ai làm: My bike was stolen.\n2. Người làm quá rõ hoặc không quan trọng: The streets are cleaned every morning.\n3. Văn bản trang trọng, khoa học, tin tức, quy trình: nhấn mạnh sự việc và kết quả hơn người làm.\n4. Giữ chủ đề của câu chuyện: câu đang nói về vật nào thì để vật đó làm chủ ngữ.\nBy + người làm: chỉ thêm khi thông tin này cần thiết hoặc là thông tin mới, như tên tác giả, nhà phát minh. Thường bỏ by people, by someone, by them.\nLưu ý: thường chỉ ngoại động từ (động từ có tân ngữ như make, build, write) mới có dạng bị động. Nội động từ (không có tân ngữ như happen, arrive, die) không có bị động: nói The accident happened, không nói The accident was happened. Động từ + giới từ như look after vẫn có bị động (The baby was looked after by her grandmother).\nVí dụ:\n- English is spoken in many countries. (Tiếng Anh được nói ở nhiều nước.)\n- The Mona Lisa was painted by Leonardo da Vinci. (Bức Mona Lisa do Leonardo da Vinci vẽ.)\n- The meeting has been cancelled. (Cuộc họp đã bị huỷ.)"
+        },
+        {
+          "id": "gram_025",
+          "distance": 0.19696283340454102,
+          "text": "Mạo từ a/an/the (Articles) — Cách dùng\nMạo từ (articles) a, an và the là những từ nhỏ đứng trước danh từ, cho biết người nghe đã biết vật đó là cái nào hay chưa.\n1. A/an + danh từ đếm được số ít: khi nhắc tới lần đầu hoặc khi nói \"một cái bất kỳ\". Dùng a trước âm phụ âm (a book, a university) và an trước âm nguyên âm (an apple, an hour). Chọn theo âm đọc, không theo chữ cái.\n2. A/an khi nói về nghề nghiệp: She is a teacher.\n3. The khi người nghe đã biết vật nào: vật đã được nhắc tới, vật duy nhất (the sun, the moon) hoặc vật được xác định rõ bởi cụm phía sau (the book on the table).\n4. Không dùng mạo từ khi nói chung chung với danh từ số nhiều hoặc không đếm được (I like dogs). Cũng thường không dùng trước tên người, bữa ăn, môn học và hầu hết tên nước (ngoại lệ: the USA, the UK).\nVí dụ:\n- I saw a dog in the street. The dog was very small. (Tôi thấy một con chó ngoài đường. Con chó đó rất nhỏ.)\n- She is an engineer. (Cô ấy là kỹ sư.)\n- Can you close the window, please? (Bạn đóng giúp tôi cái cửa sổ nhé?)"
+        },
+        {
+          "id": "gram_063",
+          "distance": 0.20242446660995483,
+          "text": "Mệnh đề quan hệ (Relative Clauses) — Lỗi thường gặp\nMệnh đề quan hệ (relative clauses) hay bị dùng sai khi người học dịch từng chữ từ tiếng Việt.\n1. Sai: The man who he lives next door is a doctor. → Đúng: The man who lives next door is a doctor. Lý do: who đã làm chủ ngữ, không thêm he.\n2. Sai: The teacher which taught me English is very kind. → Đúng: The teacher who taught me English is very kind. Lý do: which dùng cho vật; với người dùng who hoặc that.\n3. Sai: Everything what she said was true. → Đúng: Everything that she said was true. Lý do: what đã mang nghĩa \"điều mà\", không đứng sau danh từ hay sau everything, something; khi đó dùng that.\n4. Sai: The girl is sitting there is my sister. → Đúng: The girl who is sitting there is my sister. Lý do: đại từ làm chủ ngữ không được lược bỏ. Có thể rút gọn thành The girl sitting there, nhưng phải bỏ cả is.\nVí dụ:\n- The woman who called you is my boss. (Người phụ nữ gọi cho bạn là sếp tôi.)\n- I liked the book that you lent me. (Tôi thích cuốn sách bạn cho tôi mượn.)\n- What she said surprised me. (Điều cô ấy nói làm tôi ngạc nhiên.)"
+        }
+      ],
+      "answer": "Kho tài liệu của mình hiện chưa có nội dung cho câu hỏi này, nên mình chưa trả lời để tránh nói sai. Bạn có thể hỏi về ngữ pháp, nghĩa và cách dùng từ, hoặc phân biệt những từ dễ nhầm.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1006,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q036",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "vocab",
+      "gold": [
+        "word:comfortable"
+      ],
+      "question": "Từ “comfortable” có nghĩa gì và thuộc từ loại nào?",
+      "candidates": [
+        "gram_036",
+        "gram_091",
+        "gram_049",
+        "gram_043",
+        "gram_051",
+        "gram_034",
+        "gram_037",
+        "gram_042"
+      ],
+      "vocab_sent": [
+        "comfortable",
+        "comfortably",
+        "uncomfortable",
+        "fashionable"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "nghia_tu",
+        "confidence": 0.44984064434358806
+      },
+      "vocab": [
+        "comfortable",
+        "comfortably",
+        "uncomfortable"
+      ],
+      "contexts": [
+        {
+          "id": "gram_036",
+          "distance": 0.16706061363220215,
+          "text": "Động từ khuyết thiếu + have + V3 (Modal Perfect) — Cách dùng\nĐộng từ khuyết thiếu + have + V3 (modal perfect) dùng để nói về quá khứ: suy đoán, tiếc nuối hoặc phê bình một việc đã xảy ra hay không.\n1. Must have + V3 (chắc hẳn đã): suy đoán gần như chắc chắn.\n2. Might/may/could have + V3 (có lẽ đã): suy đoán không chắc chắn về quá khứ. Could have + V3 còn có nghĩa \"lẽ ra đã có thể\": việc có thể xảy ra nhưng thực tế không xảy ra.\n3. Can't/couldn't have + V3 (không thể nào đã): chắc chắn việc đó đã không xảy ra.\n4. Should have + V3 (lẽ ra nên): tiếc nuối hoặc trách vì việc nên làm mà đã không làm; shouldn't have + V3 là việc không nên làm mà đã làm.\nKhi nói, should have thường rút gọn thành should've, nghe gần giống \"of\", nhưng không viết \"should of\".\nVí dụ:\n- The streets are wet. It must have rained last night. (Đường ướt hết. Chắc hẳn tối qua trời đã mưa.)\n- You should have told me earlier. (Lẽ ra bạn nên nói với tôi sớm hơn.)\n- She can't have seen us; she didn't say hello. (Chắc chắn cô ấy đã không thấy chúng ta, vì cô ấy chẳng chào gì cả.)"
+        },
+        {
+          "id": "gram_091",
+          "distance": 0.16827845573425293,
+          "text": "Especially và specially — Phân biệt\nEspecially (đặc biệt là, nhất là) và specially (riêng cho, một cách đặc biệt) gần giống nhau, nhưng thường dùng trong tình huống khác nhau.\n- Nghĩa: especially nhấn mạnh một đối tượng nổi bật hơn những đối tượng khác (nhất là); specially nói việc làm ra hoặc làm cho một mục đích riêng (được làm riêng cho).\n- Cấu trúc: especially thường đứng trước cụm được nhấn mạnh (I love fruit, especially mangoes); specially thường đi với V3 (specially designed, specially made for).\n- Cụm hay gặp: especially for, especially when, especially if; specially trained, specially made.\n- Trước tính từ: cả hai đều có thể mang nghĩa \"rất, đặc biệt\" (especially difficult), nhưng especially phổ biến hơn.\n- Lỗi điển hình: đặt especially đứng một mình ở đầu câu (Especially, I like mangoes); tự nhiên hơn là I especially like mangoes.\n- Khi nói, người bản ngữ đôi khi dùng hai từ thay cho nhau, nhưng trong văn viết nên giữ phân biệt trên.\nMẹo nhớ: especially là \"nhất là\"; specially là \"làm riêng cho\".\nVí dụ:\n- I like all sports, especially football. (Tôi thích mọi môn thể thao, nhất là bóng đá.)\n- This cake was specially made for your birthday. (Chiếc bánh này được làm riêng cho sinh nhật bạn.)"
+        },
+        {
+          "id": "gram_049",
+          "distance": 0.1706632375717163,
+          "text": "Too và enough — Phân biệt\nToo (quá) và enough (đủ) đều nói về mức độ so với một giới hạn.\n- Nghĩa: too thường tiêu cực, vượt mức nên gây vấn đề; enough là đạt mức cần, not enough là chưa đủ.\n- Vị trí với tính từ, trạng từ: too đứng trước (too hot, too slowly); enough đứng sau (old enough, fast enough).\n- Vị trí với danh từ: enough đứng trước danh từ (enough money); với too dùng too much + danh từ không đếm được, too many + danh từ số nhiều.\n- Cấu trúc: too + adj + (for sb) + to V (quá ... nên không thể); adj + enough + (for sb) + to V (đủ ... để).\n- Too khác very: very chỉ nhấn mạnh (rất), không hàm ý có vấn đề; too thường hàm ý \"quá mức nên không được\". It's very hot, but we can go out khác It's too hot to go out.\nMẹo nhớ: too + tính từ báo hiệu vấn đề; enough đứng sau tính từ, trước danh từ.\nVí dụ:\n- This coffee is too hot to drink. (Cà phê này nóng quá, không uống được.)\n- He isn't old enough to drive. (Cậu ấy chưa đủ tuổi lái xe.)\n- We don't have enough chairs for everyone. (Chúng tôi không có đủ ghế cho mọi người.)"
+        },
+        {
+          "id": "gram_043",
+          "distance": 0.17182934284210205,
+          "text": "Trạng từ chỉ cách thức (Adverbs of Manner) — Cấu trúc\nTrạng từ chỉ cách thức (adverbs of manner) cho biết hành động được làm như thế nào; phần lớn được tạo từ tính từ.\nCông thức:\n- Thông thường: tính từ + -ly (slow → slowly, careful → carefully)\n- Phụ âm + y: đổi y thành i rồi + -ly (easy → easily, happy → happily)\n- Tận cùng bằng -le: bỏ e, thêm -y (gentle → gently, simple → simply)\n- Tận cùng bằng -ic: thường + -ally (basic → basically); ngoại lệ public → publicly\nBất quy tắc: good → well.\nKhông thêm -ly: fast, hard, late, early giữ nguyên khi làm trạng từ (He works hard).\nChú ý nghĩa khác: hardly nghĩa là \"hầu như không\", lately nghĩa là \"gần đây\"; đây không phải trạng từ cách thức của hard, late.\nMột số từ tận cùng -ly là tính từ chứ không phải trạng từ: friendly, lovely, lonely.\nVí dụ:\n- Please drive carefully. (Hãy lái xe cẩn thận.)\n- She sings very well. (Cô ấy hát rất hay.)\n- I could hardly hear him. (Tôi gần như không nghe được anh ấy nói gì.)"
+        },
+        {
+          "id": "gram_051",
+          "distance": 0.1721760630607605,
+          "text": "Tính từ đi với giới từ (interested in, good at) — Cách dùng\nTính từ đi với giới từ (adjectives + prepositions) là những tính từ thường đi kèm một giới từ cố định khi có tân ngữ phía sau.\n1. Đi với at: good at (giỏi), bad at (kém).\n2. Đi với of: afraid of (sợ), proud of (tự hào về), tired of (chán).\n3. Đi với in và for: interested in (quan tâm đến), famous for (nổi tiếng vì).\n4. Đi với about và with: worried about, excited about (về một sự việc); angry with (giận một người).\nLưu ý:\n- Sau giới từ, động từ ở dạng V-ing (good at swimming, tired of waiting).\n- Có tính từ đổi giới từ theo đối tượng: angry with sb nhưng angry about sth; cũng có người nói angry at sb.\n- Giới từ thường không khớp với tiếng Việt: \"giỏi về\" là good at, không phải good about.\nVí dụ:\n- She is good at maths. (Cô ấy giỏi toán.)\n- I'm interested in learning Japanese. (Tôi quan tâm đến việc học tiếng Nhật.)\n- My parents are proud of me. (Bố mẹ tự hào về tôi.)"
+        }
+      ],
+      "answer": "- “comfortable” là tính từ, nghĩa là thoải mái, dễ chịu.\n- Ví dụ: This chair is very comfortable. → Cái ghế này rất thoải mái.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 902,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q037",
+      "kind": "pos",
+      "group": null,
+      "qgroup": "vocab",
+      "gold": [
+        "word:employment"
+      ],
+      "question": "What does “employment” mean in Vietnamese?",
+      "candidates": [
+        "gram_066",
+        "gram_064",
+        "gram_065",
+        "gram_100",
+        "gram_007",
+        "gram_067",
+        "gram_060",
+        "gram_055"
+      ],
+      "vocab_sent": [
+        "mean",
+        "employment",
+        "in",
+        "what",
+        "employ",
+        "employer"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "nghia_tu",
+        "confidence": 0.4061512382878973
+      },
+      "vocab": [
+        "mean",
+        "employment",
+        "in"
+      ],
+      "contexts": [
+        {
+          "id": "gram_066",
+          "distance": 0.1763860583305359,
+          "text": "V-ing sau giới từ (look forward to doing) — Lỗi thường gặp\nV-ing sau giới từ (gerunds after prepositions): sau giới từ, động từ thường ở dạng V-ing. Lỗi hay gặp nhất là nhầm to giới từ với to của to V.\n1. Sai: I look forward to hear from you. → Đúng: I look forward to hearing from you. Lý do: to trong look forward to là giới từ, nên sau nó là V-ing hoặc danh từ.\n2. Sai: She is used to get up early. → Đúng: She is used to getting up early. Lý do: be used to (quen với) có to là giới từ; khác với used to + V nguyên mẫu (đã từng).\n3. Sai: He objected to pay the fee. → Đúng: He objected to paying the fee. Lý do: object to (phản đối) cũng có to là giới từ.\n4. Sai: I'm interested in learn Korean. → Đúng: I'm interested in learning Korean. Lý do: in, at, of, about là giới từ (good at drawing).\nCách kiểm tra: nếu đặt được danh từ ngay sau to (look forward to the holiday) thì to là giới từ.\nVí dụ:\n- We're looking forward to seeing you. (Chúng tôi rất mong được gặp bạn.)\n- I'm not used to working at night. (Tôi chưa quen làm việc ban đêm.)"
+        },
+        {
+          "id": "gram_064",
+          "distance": 0.18015426397323608,
+          "text": "Động từ theo sau bởi V-ing hoặc to V — Cách dùng\nĐộng từ theo sau bởi V-ing hoặc to V (verb patterns): khi hai động từ đứng liền nhau, động từ thứ hai ở dạng V-ing hay to V tuỳ vào động từ đứng trước. Phần lớn phải học theo từng động từ.\n1. Động từ + V-ing: enjoy, avoid, finish, mind, keep, practise.\n2. Động từ + to V: want, decide, hope, plan, agree, need.\n3. Dùng được cả hai mà nghĩa gần như không đổi: like, love, hate, start, begin. Riêng would like, would love chỉ đi với to V.\n4. Một số động từ đổi nghĩa khi đổi dạng, như remember, stop, try; nhóm này cần học riêng.\nGợi ý giúp nhớ: nhiều động từ + to V nói về ý định, mong muốn hướng tới tương lai; nhiều động từ + V-ing nói về việc đang làm hoặc đã làm. Đây chỉ là xu hướng, không đúng cho mọi động từ.\nVí dụ:\n- I enjoy cooking for my family. (Tôi thích nấu ăn cho gia đình.)\n- They decided to move to Da Nang. (Họ đã quyết định chuyển đến Đà Nẵng.)\n- It started to rain at noon. (Trời bắt đầu mưa lúc giữa trưa.)"
+        },
+        {
+          "id": "gram_065",
+          "distance": 0.1835324764251709,
+          "text": "Remember, stop, try + V-ing và + to V — Phân biệt\nRemember, forget, stop, try, regret đi được với cả V-ing và to V nhưng đổi nghĩa.\n- Remember: + V-ing là nhớ việc đã làm (I remember meeting her); + to V là nhớ phải làm (Remember to call her).\n- Forget: + V-ing là quên việc đã làm (I'll never forget seeing the sea); + to V là quên phải làm (I forgot to lock the door).\n- Stop: + V-ing là thôi hẳn việc đang làm (He stopped smoking); + to V là dừng lại để làm việc khác (He stopped to buy water).\n- Try: + V-ing là thử làm xem có được không (Try restarting the computer); + to V là cố gắng làm việc khó (I tried to lift the box).\n- Regret: + V-ing là hối tiếc vì đã làm (I regret saying that); + to V là lấy làm tiếc phải báo tin, dùng trang trọng (We regret to inform you ...).\nMẹo nhớ: V-ing thường nhìn về việc đã xảy ra hoặc đang diễn ra; to V thường nhìn về việc sắp làm.\nVí dụ:\n- I remember meeting her at a party. (Tôi nhớ là đã gặp cô ấy ở một bữa tiệc.)\n- Please remember to call her tonight. (Tối nay nhớ gọi cho cô ấy nhé.)"
+        },
+        {
+          "id": "gram_100",
+          "distance": 0.18384957313537598,
+          "text": "Job và work — Phân biệt\nJob (việc làm, công việc cụ thể) và work (công việc, sự làm việc) khác nhau về từ loại và cách đếm.\n- Nghĩa: job là một công việc cụ thể, một vị trí có lương (a job as a teacher); work là hoạt động làm việc nói chung, hoặc nơi làm việc.\n- Đếm được hay không: job đếm được (a job, two jobs); work với nghĩa \"công việc\" không đếm được, nên không nói a work.\n- Work còn là động từ; job chỉ là danh từ.\n- Cụm cố định: get a job, a part-time job, do a good job; go to work, at work, hard work.\n- Nghĩa khác: works là tác phẩm (the works of Nguyen Du); a work of art là một tác phẩm nghệ thuật.\n- Lỗi điển hình: I'm looking for a work (đúng: a job); I have a lot of works today (đúng: a lot of work).\nMẹo nhớ: việc làm cụ thể là a job; việc nói chung là work, không thêm a hay -s.\nVí dụ:\n- She got a new job at a hospital. (Cô ấy đã có việc làm mới ở một bệnh viện.)\n- I have too much work this week. (Tuần này tôi có quá nhiều việc.)"
+        },
+        {
+          "id": "gram_007",
+          "distance": 0.18690001964569092,
+          "text": "Động từ trạng thái với thì tiếp diễn (Stative Verbs) — Lỗi thường gặp\nĐộng từ trạng thái (stative verbs) chỉ suy nghĩ, cảm xúc, sự sở hữu hoặc giác quan chứ không chỉ hành động, nên thường không dùng ở thì hiện tại tiếp diễn (Present Continuous) hay các thì tiếp diễn khác.\nNhóm hay gặp: know, understand, believe (suy nghĩ); like, love, hate, want, need (cảm xúc, mong muốn); own, belong, have với nghĩa \"có\" (sở hữu); seem, mean, cost.\n1. Sai: I am knowing the answer. → Đúng: I know the answer. Lý do: know chỉ trạng thái hiểu biết, không phải hành động đang làm.\n2. Sai: She is wanting a new phone. → Đúng: She wants a new phone. Lý do: want chỉ mong muốn; dùng hiện tại đơn kể cả khi nói về lúc này.\n3. Sai: This bag is belonging to me. → Đúng: This bag belongs to me. Lý do: belong chỉ sự sở hữu.\n4. Sai: We are having a big house. → Đúng: We have a big house. Lý do: have nghĩa là \"sở hữu\" thì không dùng tiếp diễn. Khi have chỉ hành động như ăn, uống, tắm thì vẫn dùng được: We are having lunch.\nVí dụ:\n- I don't understand this word. (Tôi không hiểu từ này.)\n- Do you need any help? (Bạn có cần giúp gì không?)\n- They are having dinner now. (Bây giờ họ đang ăn tối.)"
+        }
+      ],
+      "answer": "employment (n): việc làm, sự tuyển dụng.\n- She is looking for employment. → Cô ấy đang tìm việc làm.\n- The company offers employment to many graduates. → Công ty cung cấp việc làm cho nhiều sinh viên tốt nghiệp.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1068,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q044",
+      "kind": "neg",
+      "group": "gap",
+      "qgroup": null,
+      "gold": [],
+      "question": "Explain the licensing conditions of negative polarity items under downward-entailing contexts.",
+      "candidates": [
+        "gram_039",
+        "gram_097",
+        "gram_030",
+        "gram_025",
+        "gram_060",
+        "gram_063",
+        "gram_068",
+        "gram_057"
+      ],
+      "vocab_sent": [
+        "explain",
+        "negative",
+        "of",
+        "under",
+        "downward",
+        "polar",
+        "means",
+        "downstairs"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.34106882390573784
+      },
+      "vocab": [
+        "explain",
+        "negative",
+        "of"
+      ],
+      "contexts": [
+        {
+          "id": "gram_039",
+          "distance": 0.20994329452514648,
+          "text": "Câu điều kiện loại 2 (Second Conditional) — Cách dùng\nCâu điều kiện loại 2 (Second Conditional) nói về tình huống không có thật hoặc khó xảy ra ở hiện tại hay tương lai, cùng kết quả tưởng tượng.\nCấu trúc: If + S + quá khứ đơn, S + would + V nguyên mẫu. Dù dùng quá khứ đơn, câu nói về hiện tại hoặc tương lai; quá khứ ở đây báo hiệu điều không có thật.\n1. Tình huống trái với thực tế hiện tại: người nói biết điều đó không đúng lúc này.\n2. Tình huống tưởng tượng, khó xảy ra trong tương lai, như trúng xổ số.\n3. Lời khuyên: If I were you, I would ...\nVới to be, were dùng được cho mọi chủ ngữ (nhất là trong If I were you); khi nói, was cũng hay gặp với I, he, she, it. Vế kết quả có thể dùng could hoặc might thay cho would.\nVí dụ:\n- If I had more time, I would learn to play the guitar. (Giá mà có nhiều thời gian hơn, tôi sẽ học chơi đàn ghi-ta.)\n- If I were you, I would apologise to her. (Nếu tôi là bạn, tôi sẽ xin lỗi cô ấy.)\n- What would you do if you won the lottery? (Nếu trúng xổ số thì bạn sẽ làm gì?)"
+        },
+        {
+          "id": "gram_097",
+          "distance": 0.21979033946990967,
+          "text": "Few và a few — Phân biệt\nFew (rất ít, hầu như không) và a few (một vài) đều đi với danh từ đếm được số nhiều, nhưng mang sắc thái ngược nhau.\n- Nghĩa: few nhấn mạnh sự thiếu, mang ý tiêu cực (ít đến mức không đủ); a few nói có một số lượng nhỏ, mang ý tích cực (có một vài).\n- Little / a little theo cùng quy tắc nhưng đi với danh từ không đếm được (little time là hầu như không có thời gian; a little time là có chút thời gian).\n- Few, little nghe khá trang trọng; khi nói hay dùng not many, not much.\n- Cụm hay gặp: quite a few (khá nhiều), only a few (chỉ vài).\n- Lỗi điển hình: a few money (đúng: a little money); I have few time (đúng: I have little time hoặc I don't have much time).\nMẹo nhớ: có a thì \"có một chút\"; không có a thì \"gần như không có\".\nVí dụ:\n- Few people know about this place. (Rất ít người biết nơi này.)\n- I have a few questions for you. (Tôi có vài câu hỏi cho bạn.)\n- There's a little milk left. (Vẫn còn một ít sữa.)"
+        },
+        {
+          "id": "gram_030",
+          "distance": 0.22222089767456055,
+          "text": "Lượng từ all, both, each, every, either, neither — Cách dùng\nLượng từ (quantifiers) all, both, each, every, either, neither cho biết nói về cả nhóm hay từng thành viên.\n1. All (tất cả): đi với danh từ số nhiều (nhóm từ ba trở lên) hoặc danh từ không đếm được. Có thể dùng all of the/my.\n2. Both (cả hai): chỉ cho hai người, hai vật; đi với danh từ và động từ số nhiều.\n3. Each và every (mỗi, mọi): đi với danh từ số ít và động từ số ít. Each nhấn mạnh từng cái riêng lẻ (nhóm từ hai trở lên); every nhìn cả nhóm (thường từ ba trở lên). Chỉ each đi được với of (each of the students).\n4. Either (một trong hai, cái nào cũng được) và neither (không cái nào trong hai): đi với danh từ số ít. Neither đã mang nghĩa phủ định nên không thêm not.\nLưu ý: either of/neither of + danh từ số nhiều; động từ sau đó thường chia số ít, khi nói đôi khi gặp số nhiều.\nVí dụ:\n- Both my brothers live in Da Nang. (Cả hai anh trai tôi đều sống ở Đà Nẵng.)\n- Every student has a laptop. (Học sinh nào cũng có máy tính xách tay.)\n- Neither answer is correct. (Cả hai đáp án đều không đúng.)"
+        },
+        {
+          "id": "gram_025",
+          "distance": 0.22425061464309692,
+          "text": "Mạo từ a/an/the (Articles) — Cách dùng\nMạo từ (articles) a, an và the là những từ nhỏ đứng trước danh từ, cho biết người nghe đã biết vật đó là cái nào hay chưa.\n1. A/an + danh từ đếm được số ít: khi nhắc tới lần đầu hoặc khi nói \"một cái bất kỳ\". Dùng a trước âm phụ âm (a book, a university) và an trước âm nguyên âm (an apple, an hour). Chọn theo âm đọc, không theo chữ cái.\n2. A/an khi nói về nghề nghiệp: She is a teacher.\n3. The khi người nghe đã biết vật nào: vật đã được nhắc tới, vật duy nhất (the sun, the moon) hoặc vật được xác định rõ bởi cụm phía sau (the book on the table).\n4. Không dùng mạo từ khi nói chung chung với danh từ số nhiều hoặc không đếm được (I like dogs). Cũng thường không dùng trước tên người, bữa ăn, môn học và hầu hết tên nước (ngoại lệ: the USA, the UK).\nVí dụ:\n- I saw a dog in the street. The dog was very small. (Tôi thấy một con chó ngoài đường. Con chó đó rất nhỏ.)\n- She is an engineer. (Cô ấy là kỹ sư.)\n- Can you close the window, please? (Bạn đóng giúp tôi cái cửa sổ nhé?)"
+        },
+        {
+          "id": "gram_060",
+          "distance": 0.2245294451713562,
+          "text": "Mệnh đề quan hệ với who, which, that, whose — Cấu trúc\nMệnh đề quan hệ (relative clauses) với who, which, that, whose bổ sung thông tin cho danh từ đứng ngay trước nó.\nCông thức:\n- Chỉ người: N + who + V ... (the man who lives next door)\n- Chỉ vật, con vật: N + which + V ... (the book which is on the table)\n- Người hoặc vật: N + that + V ... (that thay được who, which trong mệnh đề xác định)\n- Sở hữu: N + whose + danh từ + V ... (the girl whose father is a doctor)\nĐại từ quan hệ làm chủ ngữ hoặc tân ngữ trong mệnh đề.\nWhom: dùng thay who khi làm tân ngữ, nhất là trong văn trang trọng và sau giới từ (the person to whom I spoke). Khi nói, người ta thường dùng who hoặc that.\nWhose dùng được cho cả người lẫn vật (a house whose roof is red).\nVí dụ:\n- The woman who works in this shop is my aunt. (Người phụ nữ làm việc ở cửa hàng này là dì tôi.)\n- I lost the umbrella which you gave me. (Tôi làm mất chiếc ô bạn tặng rồi.)\n- That's the boy whose bike was stolen. (Đó là cậu bé bị lấy trộm xe đạp.)"
+        }
+      ],
+      "answer": "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 959,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q045",
+      "kind": "neg",
+      "group": "gap",
+      "qgroup": null,
+      "gold": [],
+      "question": "So sánh tần suất sử dụng “shall” và “will” qua các giai đoạn lịch sử bằng dữ liệu ngữ liệu.",
+      "candidates": [
+        "gram_021",
+        "gram_057",
+        "gram_094",
+        "gram_020",
+        "gram_039",
+        "gram_066",
+        "gram_038",
+        "gram_040"
+      ],
+      "vocab_sent": [
+        "so",
+        "will",
+        "historically",
+        "usage",
+        "download"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.3528245940983495
+      },
+      "vocab": [
+        "so",
+        "will",
+        "historically"
+      ],
+      "contexts": [
+        {
+          "id": "gram_021",
+          "distance": 0.13468223810195923,
+          "text": "Used to — Cách dùng\nUsed to (đã từng) dùng để nói về thói quen hoặc tình trạng trong quá khứ mà bây giờ không còn nữa.\n1. Thói quen trong quá khứ: việc trước đây làm thường xuyên, nay đã thôi. Cấu trúc: S + used to + V nguyên mẫu.\n2. Tình trạng trong quá khứ nay đã thay đổi: nơi ở, ngoại hình, sở thích, công việc trước đây. Dùng được cả với be, have, live, like.\n3. Câu phủ định và câu hỏi: dùng did, và used to đổi thành use to (S + didn't use to + V; Did + S + use to + V?). Đôi khi vẫn gặp cách viết didn't used to, nhưng dạng chuẩn là use to.\nLưu ý: used to không có dạng hiện tại. Không nhầm với be used to + V-ing (quen với việc gì), một cấu trúc khác hẳn. Việc chỉ xảy ra một lần thì dùng quá khứ đơn.\nVí dụ:\n- I used to play football every weekend. (Hồi trước cuối tuần nào tôi cũng đá bóng.)\n- She used to live in Hue, but now she lives in Hanoi. (Trước đây cô ấy sống ở Huế, còn bây giờ thì sống ở Hà Nội.)\n- Did you use to have long hair? (Hồi trước bạn từng để tóc dài à?)"
+        },
+        {
+          "id": "gram_057",
+          "distance": 0.13493770360946655,
+          "text": "Câu hỏi tường thuật (Reported Questions) — Cấu trúc\nCâu hỏi tường thuật (Reported Questions) thuật lại câu hỏi của người khác dưới dạng câu kể.\nCông thức:\n- Câu hỏi Yes/No: S + asked (+ người) + if/whether + S + V (lùi thì)\n- Câu hỏi Wh-: S + asked (+ người) + từ để hỏi + S + V (lùi thì)\nQuy tắc:\n- Không đảo ngữ: chủ ngữ đứng trước động từ như câu kể; bỏ do/does/did của câu hỏi.\n- Không có dấu chấm hỏi ở cuối câu.\n- If và whether đều dùng cho câu hỏi Yes/No; whether trang trọng hơn một chút và hay đi với or not.\n- Lùi thì và đổi đại từ, từ chỉ thời gian như câu kể tường thuật: is → was, can → could, will → would.\n- Động từ tường thuật hay dùng: ask, want to know, wonder.\nMẫu chuyển đổi: Where do you live? → She asked me where I lived.\nVí dụ:\n- She asked me where I worked. (Cô ấy hỏi tôi làm việc ở đâu.)\n- He asked if I could help him. (Anh ấy hỏi tôi có giúp anh ấy được không.)\n- They wanted to know when the train would leave. (Họ muốn biết khi nào tàu chạy.)"
+        },
+        {
+          "id": "gram_094",
+          "distance": 0.13717025518417358,
+          "text": "During và for — Phân biệt\nDuring (trong lúc, trong suốt) và for (trong khoảng) đều có thể dịch là \"trong\", nhưng trả lời cho hai câu hỏi khác nhau.\n- Nghĩa: during trả lời When?, tức việc xảy ra vào dịp nào, giai đoạn nào; for trả lời How long?, tức việc kéo dài bao lâu.\n- Cấu trúc: during + danh từ chỉ sự kiện hoặc giai đoạn (during the meeting, during the summer); for + khoảng thời gian có số lượng (for two hours, for a week).\n- Phạm vi: during có thể chỉ việc kéo dài suốt giai đoạn, hoặc chỉ xảy ra tại một lúc trong giai đoạn đó (He called during lunch).\n- During không đi với mệnh đề; khi có chủ ngữ và động từ thì dùng while (while I was eating).\n- Lỗi điển hình: during three days (đúng: for three days); during I was sleeping (đúng: while I was sleeping).\nMẹo nhớ: during + tên sự kiện hoặc giai đoạn; for + con số thời gian.\nVí dụ:\n- I fell asleep during the film. (Tôi ngủ quên trong lúc xem phim.)\n- We stayed in Da Lat for four days. (Chúng tôi ở Đà Lạt bốn ngày.)\n- Please don't use your phone during the exam. (Vui lòng không dùng điện thoại trong giờ thi.)"
+        },
+        {
+          "id": "gram_020",
+          "distance": 0.13892138004302979,
+          "text": "Will và be going to — Phân biệt\nThì tương lai đơn (Future Simple) với will và cấu trúc be going to đều nói về tương lai, nhưng khác nhau ở thời điểm quyết định và căn cứ để dự đoán.\n- Quyết định: will cho quyết định đưa ra ngay lúc nói; be going to cho dự định đã có từ trước.\n- Dự đoán: will cho dự đoán theo ý kiến, cảm nghĩ (I think, I'm sure); be going to cho dự đoán có dấu hiệu nhìn thấy ngay trước mắt.\n- Lời hứa, lời đề nghị: dùng will; không dùng be going to để đề nghị giúp đỡ.\n- Cấu trúc: will + V nguyên mẫu, không đổi theo chủ ngữ; be going to + V, trong đó be chia am/is/are theo chủ ngữ.\nMẹo nhớ: đã tính từ trước hoặc có dấu hiệu rõ ràng thì dùng be going to; vừa nghĩ ra hoặc chỉ là ý kiến thì dùng will.\nVí dụ:\n- The phone is ringing. I'll answer it. (Điện thoại reo kìa. Để tôi nghe.)\n- I'm going to study medicine next year. I've already applied. (Năm sau tôi sẽ học ngành y. Tôi nộp hồ sơ rồi.)\n- Look at those dark clouds! It's going to rain. (Nhìn mấy đám mây đen kia kìa! Trời sắp mưa rồi.)"
+        },
+        {
+          "id": "gram_039",
+          "distance": 0.143576979637146,
+          "text": "Câu điều kiện loại 2 (Second Conditional) — Cách dùng\nCâu điều kiện loại 2 (Second Conditional) nói về tình huống không có thật hoặc khó xảy ra ở hiện tại hay tương lai, cùng kết quả tưởng tượng.\nCấu trúc: If + S + quá khứ đơn, S + would + V nguyên mẫu. Dù dùng quá khứ đơn, câu nói về hiện tại hoặc tương lai; quá khứ ở đây báo hiệu điều không có thật.\n1. Tình huống trái với thực tế hiện tại: người nói biết điều đó không đúng lúc này.\n2. Tình huống tưởng tượng, khó xảy ra trong tương lai, như trúng xổ số.\n3. Lời khuyên: If I were you, I would ...\nVới to be, were dùng được cho mọi chủ ngữ (nhất là trong If I were you); khi nói, was cũng hay gặp với I, he, she, it. Vế kết quả có thể dùng could hoặc might thay cho would.\nVí dụ:\n- If I had more time, I would learn to play the guitar. (Giá mà có nhiều thời gian hơn, tôi sẽ học chơi đàn ghi-ta.)\n- If I were you, I would apologise to her. (Nếu tôi là bạn, tôi sẽ xin lỗi cô ấy.)\n- What would you do if you won the lottery? (Nếu trúng xổ số thì bạn sẽ làm gì?)"
+        }
+      ],
+      "answer": "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1001,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q047",
+      "kind": "neg",
+      "group": "gap",
+      "qgroup": null,
+      "gold": [],
+      "question": "Giải thích nguồn gốc lịch sử của nhóm động từ bất quy tắc strong verbs trong tiếng Anh cổ.",
+      "candidates": [
+        "gram_008",
+        "gram_064",
+        "gram_012",
+        "gram_007",
+        "gram_053",
+        "gram_071",
+        "gram_068",
+        "gram_010"
+      ],
+      "vocab_sent": [
+        "strong",
+        "verb",
+        "prehistoric",
+        "verbal"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.44092145907565694
+      },
+      "vocab": [
+        "strong",
+        "verb",
+        "prehistoric"
+      ],
+      "contexts": [
+        {
+          "id": "gram_008",
+          "distance": 0.14388835430145264,
+          "text": "Thì quá khứ đơn (Past Simple) — Cấu trúc\nThì quá khứ đơn (Past Simple) có cấu trúc riêng cho động từ thường và động từ to be. V2 là dạng quá khứ, V là động từ nguyên mẫu.\nCông thức:\n- Khẳng định: S + V2 (V-ed hoặc dạng bất quy tắc)\n- Phủ định: S + did not (didn't) + V\n- Nghi vấn: Did + S + V?\nVới to be: I, he, she, it dùng was; you, we, they dùng were. Phủ định: wasn't, weren't; nghi vấn: đưa was/were lên đầu.\nThêm -ed cho động từ có quy tắc:\n- Thông thường thêm -ed: work → worked.\n- Tận cùng bằng -e: chỉ thêm -d (live → lived).\n- Phụ âm + y: đổi y thành i (study → studied); nguyên âm + y giữ nguyên (play → played).\n- Từ một âm tiết kết thúc bằng phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối: stop → stopped (trừ khi phụ âm cuối là w, x, y: fix → fixed, snow → snowed).\nĐộng từ bất quy tắc phải học thuộc: go → went, see → saw. Sau did/didn't, động từ chính ở dạng gốc.\nVí dụ:\n- We visited Hue last summer. (Mùa hè năm ngoái chúng tôi đi Huế.)\n- I didn't see him at the party. (Tôi không thấy anh ấy ở bữa tiệc.)\n- Did you buy any milk? (Bạn có mua sữa không?)"
+        },
+        {
+          "id": "gram_064",
+          "distance": 0.14946269989013672,
+          "text": "Động từ theo sau bởi V-ing hoặc to V — Cách dùng\nĐộng từ theo sau bởi V-ing hoặc to V (verb patterns): khi hai động từ đứng liền nhau, động từ thứ hai ở dạng V-ing hay to V tuỳ vào động từ đứng trước. Phần lớn phải học theo từng động từ.\n1. Động từ + V-ing: enjoy, avoid, finish, mind, keep, practise.\n2. Động từ + to V: want, decide, hope, plan, agree, need.\n3. Dùng được cả hai mà nghĩa gần như không đổi: like, love, hate, start, begin. Riêng would like, would love chỉ đi với to V.\n4. Một số động từ đổi nghĩa khi đổi dạng, như remember, stop, try; nhóm này cần học riêng.\nGợi ý giúp nhớ: nhiều động từ + to V nói về ý định, mong muốn hướng tới tương lai; nhiều động từ + V-ing nói về việc đang làm hoặc đã làm. Đây chỉ là xu hướng, không đúng cho mọi động từ.\nVí dụ:\n- I enjoy cooking for my family. (Tôi thích nấu ăn cho gia đình.)\n- They decided to move to Da Nang. (Họ đã quyết định chuyển đến Đà Nẵng.)\n- It started to rain at noon. (Trời bắt đầu mưa lúc giữa trưa.)"
+        },
+        {
+          "id": "gram_012",
+          "distance": 0.151894211769104,
+          "text": "Thì hiện tại hoàn thành (Present Perfect) — Cấu trúc\nThì hiện tại hoàn thành (Present Perfect) gồm have/has và V3, tức là quá khứ phân từ (dạng thứ ba trong bảng động từ bất quy tắc).\nCông thức:\n- Khẳng định: S + have/has + V3\n- Phủ định: S + have/has + not + V3\n- Nghi vấn: Have/Has + S + V3?\nChọn have hay has: I, you, we, they và danh từ số nhiều dùng have; he, she, it và danh từ số ít dùng has. Dạng rút gọn: I've, she's, haven't, hasn't. Chú ý she's có thể là she is hoặc she has; she's + been/V3 thường là she has (She's finished).\nCách tạo V3:\n- Động từ có quy tắc: V3 giống V2, thêm -ed (work → worked, live → lived, stop → stopped).\n- Động từ bất quy tắc: học thuộc cột thứ ba. Có từ V2 và V3 giống nhau (buy – bought – bought), có từ khác nhau (go – went – gone, see – saw – seen, eat – ate – eaten).\nTrả lời ngắn: Yes, I have. / No, she hasn't.\nVí dụ:\n- I have finished my homework. (Tôi làm xong bài tập rồi.)\n- She hasn't seen that film. (Cô ấy chưa xem bộ phim đó.)\n- Have you ever eaten durian? (Bạn đã bao giờ ăn sầu riêng chưa?)"
+        },
+        {
+          "id": "gram_007",
+          "distance": 0.15598666667938232,
+          "text": "Động từ trạng thái với thì tiếp diễn (Stative Verbs) — Lỗi thường gặp\nĐộng từ trạng thái (stative verbs) chỉ suy nghĩ, cảm xúc, sự sở hữu hoặc giác quan chứ không chỉ hành động, nên thường không dùng ở thì hiện tại tiếp diễn (Present Continuous) hay các thì tiếp diễn khác.\nNhóm hay gặp: know, understand, believe (suy nghĩ); like, love, hate, want, need (cảm xúc, mong muốn); own, belong, have với nghĩa \"có\" (sở hữu); seem, mean, cost.\n1. Sai: I am knowing the answer. → Đúng: I know the answer. Lý do: know chỉ trạng thái hiểu biết, không phải hành động đang làm.\n2. Sai: She is wanting a new phone. → Đúng: She wants a new phone. Lý do: want chỉ mong muốn; dùng hiện tại đơn kể cả khi nói về lúc này.\n3. Sai: This bag is belonging to me. → Đúng: This bag belongs to me. Lý do: belong chỉ sự sở hữu.\n4. Sai: We are having a big house. → Đúng: We have a big house. Lý do: have nghĩa là \"sở hữu\" thì không dùng tiếp diễn. Khi have chỉ hành động như ăn, uống, tắm thì vẫn dùng được: We are having lunch.\nVí dụ:\n- I don't understand this word. (Tôi không hiểu từ này.)\n- Do you need any help? (Bạn có cần giúp gì không?)\n- They are having dinner now. (Bây giờ họ đang ăn tối.)"
+        },
+        {
+          "id": "gram_053",
+          "distance": 0.1566845178604126,
+          "text": "Câu bị động (Passive Voice) — Cách dùng\nCâu bị động (Passive Voice) đưa người hoặc vật chịu tác động lên làm chủ ngữ, khi điều đó quan trọng hơn ai là người làm.\n1. Không biết hoặc không cần biết ai làm: My bike was stolen.\n2. Người làm quá rõ hoặc không quan trọng: The streets are cleaned every morning.\n3. Văn bản trang trọng, khoa học, tin tức, quy trình: nhấn mạnh sự việc và kết quả hơn người làm.\n4. Giữ chủ đề của câu chuyện: câu đang nói về vật nào thì để vật đó làm chủ ngữ.\nBy + người làm: chỉ thêm khi thông tin này cần thiết hoặc là thông tin mới, như tên tác giả, nhà phát minh. Thường bỏ by people, by someone, by them.\nLưu ý: thường chỉ ngoại động từ (động từ có tân ngữ như make, build, write) mới có dạng bị động. Nội động từ (không có tân ngữ như happen, arrive, die) không có bị động: nói The accident happened, không nói The accident was happened. Động từ + giới từ như look after vẫn có bị động (The baby was looked after by her grandmother).\nVí dụ:\n- English is spoken in many countries. (Tiếng Anh được nói ở nhiều nước.)\n- The Mona Lisa was painted by Leonardo da Vinci. (Bức Mona Lisa do Leonardo da Vinci vẽ.)\n- The meeting has been cancelled. (Cuộc họp đã bị huỷ.)"
+        }
+      ],
+      "answer": "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 985,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q056",
+      "kind": "neg",
+      "group": "off",
+      "qgroup": null,
+      "gold": [],
+      "question": "Explain how to configure a PostgreSQL replication cluster.",
+      "candidates": [
+        "gram_070",
+        "gram_068",
+        "gram_031",
+        "gram_052",
+        "gram_010",
+        "gram_057",
+        "gram_039",
+        "gram_069"
+      ],
+      "vocab_sent": [
+        "how",
+        "explain",
+        "to",
+        "cluster",
+        "configuration",
+        "picky"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngu_phap",
+        "confidence": 0.420171846936887
+      },
+      "vocab": [
+        "how",
+        "explain",
+        "to"
+      ],
+      "contexts": [
+        {
+          "id": "gram_070",
+          "distance": 0.23007702827453613,
+          "text": "Câu hỏi đuôi (Tag Questions) — Cấu trúc\nCâu hỏi đuôi (tag questions) là phần hỏi ngắn gắn ở cuối câu để xác nhận thông tin hoặc mong người nghe đồng ý.\nCông thức:\n- Câu khẳng định → đuôi phủ định: ..., trợ động từ + n't + đại từ? (You are tired, aren't you?)\n- Câu phủ định → đuôi khẳng định: ..., trợ động từ + đại từ? (She doesn't eat meat, does she?)\nQuy tắc:\n- Đuôi lặp lại trợ động từ của câu (be, have, can ...); câu chỉ có động từ thường thì dùng do/does/did.\n- Chủ ngữ ở đuôi là đại từ (Lan → she, this → it).\n- Câu có never, nothing, nobody, hardly đã mang nghĩa phủ định nên đuôi ở dạng khẳng định (He never calls, does he?).\nNgoại lệ hay gặp:\n- I am → aren't I? (I'm late, aren't I?)\n- Let's → shall we? (Let's go, shall we?)\n- Câu mệnh lệnh → will you? hoặc can you? (Close the door, will you?)\nNgữ điệu: lên giọng ở đuôi khi thật sự hỏi; xuống giọng khi chỉ mong người nghe đồng ý.\nVí dụ:\n- It's a lovely day, isn't it? (Hôm nay trời đẹp nhỉ?)\n- You didn't call him, did you? (Bạn không gọi cho anh ấy, phải không?)"
+        },
+        {
+          "id": "gram_068",
+          "distance": 0.23313629627227783,
+          "text": "Câu hỏi Yes/No và trợ động từ do — Cấu trúc\nCâu hỏi Yes/No (Yes/No questions) là câu hỏi trả lời được bằng yes hoặc no; trợ động từ (từ giúp tạo câu hỏi như do, be, can) đứng đầu câu.\nCông thức:\n- Động từ thường, hiện tại: Do/Does + S + V nguyên mẫu?\n- Động từ thường, quá khứ: Did + S + V nguyên mẫu?\n- To be: Am/Is/Are/Was/Were + S + ...?\n- Động từ khuyết thiếu: Can/Will/Should + S + V nguyên mẫu?\n- Thì hoàn thành: Have/Has + S + V3?\nQuy tắc:\n- Does dùng với he, she, it. Khi có does hoặc did, động từ chính về dạng nguyên mẫu (Does she like ...?, không nói Does she likes ...?).\n- Với to be, động từ khuyết thiếu và have trong thì hoàn thành, không dùng do; chỉ cần đảo chính từ đó lên đầu câu.\n- Trả lời ngắn: Yes/No + đại từ + trợ động từ (Yes, I do. / No, she doesn't. / No, I can't.).\n- Câu hỏi Yes/No thường lên giọng ở cuối.\nVí dụ:\n- Do you like spicy food? (Bạn có thích đồ ăn cay không?)\n- Did they come to the party? (Họ có đến bữa tiệc không?)\n- Can you speak Chinese? (Bạn có nói được tiếng Trung không?)"
+        },
+        {
+          "id": "gram_031",
+          "distance": 0.23501062393188477,
+          "text": "Động từ khuyết thiếu (Modal Verbs) — Cấu trúc\nĐộng từ khuyết thiếu (modal verbs) là các từ như can, could, may, might, must, should, will, would, đứng trước động từ chính để thêm nghĩa khả năng, cho phép, bắt buộc, lời khuyên.\nCông thức:\n- Khẳng định: S + modal + V nguyên mẫu\n- Phủ định: S + modal + not + V nguyên mẫu\n- Nghi vấn: Modal + S + V nguyên mẫu?\nQuy tắc chung:\n- Động từ sau modal ở dạng nguyên mẫu, không có to: She can swim (không nói can to swim hay can swims).\n- Modal không thêm -s với he, she, it: He must go.\n- Không dùng do/does/did để tạo câu hỏi hay câu phủ định.\n- Hai modal không đứng cạnh nhau: không nói will can, mà nói will be able to.\nDạng phủ định rút gọn: can't (cannot), couldn't, mustn't, shouldn't, won't (will not), wouldn't.\nNgoại lệ: ought to có to phía sau; have to (phải) chia theo chủ ngữ (she has to) và dùng do/does khi phủ định.\nVí dụ:\n- You should drink more water. (Bạn nên uống nhiều nước hơn.)\n- He can't come to the meeting. (Anh ấy không đến cuộc họp được.)\n- May I sit here? (Tôi ngồi đây được không?)"
+        },
+        {
+          "id": "gram_052",
+          "distance": 0.2393205165863037,
+          "text": "Câu bị động (Passive Voice) — Cấu trúc\nCâu bị động (Passive Voice) được tạo bằng be + V3; be chia theo thì và theo chủ ngữ mới, còn V3 (quá khứ phân từ) giữ nguyên.\nCông thức:\n- Khẳng định: S + be + V3 (+ by + người làm)\n- Phủ định: S + be + not + V3\n- Nghi vấn: Be + S + V3? (với thì có trợ động từ thì đưa trợ động từ đầu tiên lên trước)\nBe theo từng thì:\n- Hiện tại đơn: am/is/are + V3 (is made)\n- Quá khứ đơn: was/were + V3 (was built)\n- Hiện tại tiếp diễn: am/is/are being + V3 (is being repaired)\n- Hiện tại hoàn thành: have/has been + V3 (has been sold)\n- Tương lai và động từ khuyết thiếu: will/can/must be + V3\nChuyển từ câu chủ động: tân ngữ của câu chủ động thành chủ ngữ của câu bị động; chủ ngữ cũ (nếu cần nêu) đứng sau by.\nVí dụ:\n- This bridge was built in 1990. (Cây cầu này được xây năm 1990.)\n- The room is being cleaned now. (Căn phòng đang được dọn.)\n- Has the letter been sent? (Lá thư đã được gửi đi chưa?)"
+        },
+        {
+          "id": "gram_010",
+          "distance": 0.24053114652633667,
+          "text": "Thì quá khứ tiếp diễn (Past Continuous) — Cấu trúc\nThì quá khứ tiếp diễn (Past Continuous) gồm was/were (dạng quá khứ của to be) và động từ thêm đuôi -ing, gọi tắt là V-ing.\nCông thức:\n- Khẳng định: S + was/were + V-ing\n- Phủ định: S + was/were + not + V-ing\n- Nghi vấn: Was/Were + S + V-ing?\nChọn was hay were theo chủ ngữ: I, he, she, it và danh từ số ít dùng was; you, we, they và danh từ số nhiều dùng were. Rút gọn: wasn't, weren't. Trả lời ngắn: Yes, I was. / No, they weren't.\nCâu hỏi có từ để hỏi: What/Where/Why + was/were + S + V-ing?\nQuy tắc thêm -ing:\n- Thông thường thêm -ing: walk → walking.\n- Tận cùng bằng -e câm (e không đọc): bỏ e (come → coming).\n- Từ một âm tiết kết thúc bằng phụ âm + nguyên âm + phụ âm thì gấp đôi phụ âm cuối: swim → swimming (trừ khi phụ âm cuối là w, x, y: fix → fixing, snow → snowing).\n- Tận cùng bằng -ie thì đổi thành -y: lie → lying.\nVí dụ:\n- I was walking home at six o'clock. (Lúc sáu giờ tôi đang đi bộ về nhà.)\n- They weren't listening to the teacher. (Lúc đó họ không chú ý nghe thầy cô giảng.)\n- What were you doing at nine last night? (Chín giờ tối qua bạn đang làm gì?)"
+        }
+      ],
+      "answer": "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 1192,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q058",
+      "kind": "neg",
+      "group": "off",
+      "qgroup": null,
+      "gold": [],
+      "question": "Create a weekly workout plan for a beginner.",
+      "candidates": [
+        "gram_064",
+        "gram_050",
+        "gram_003",
+        "gram_047",
+        "gram_021",
+        "gram_012",
+        "gram_022",
+        "gram_069"
+      ],
+      "vocab_sent": [
+        "plan",
+        "create",
+        "for",
+        "weekly",
+        "beginner",
+        "workout",
+        "exercise"
+      ],
+      "decision": "answer",
+      "reason": "ok",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.5331359391058769
+      },
+      "vocab": [
+        "plan",
+        "create",
+        "for"
+      ],
+      "contexts": [
+        {
+          "id": "gram_064",
+          "distance": 0.22170579433441162,
+          "text": "Động từ theo sau bởi V-ing hoặc to V — Cách dùng\nĐộng từ theo sau bởi V-ing hoặc to V (verb patterns): khi hai động từ đứng liền nhau, động từ thứ hai ở dạng V-ing hay to V tuỳ vào động từ đứng trước. Phần lớn phải học theo từng động từ.\n1. Động từ + V-ing: enjoy, avoid, finish, mind, keep, practise.\n2. Động từ + to V: want, decide, hope, plan, agree, need.\n3. Dùng được cả hai mà nghĩa gần như không đổi: like, love, hate, start, begin. Riêng would like, would love chỉ đi với to V.\n4. Một số động từ đổi nghĩa khi đổi dạng, như remember, stop, try; nhóm này cần học riêng.\nGợi ý giúp nhớ: nhiều động từ + to V nói về ý định, mong muốn hướng tới tương lai; nhiều động từ + V-ing nói về việc đang làm hoặc đã làm. Đây chỉ là xu hướng, không đúng cho mọi động từ.\nVí dụ:\n- I enjoy cooking for my family. (Tôi thích nấu ăn cho gia đình.)\n- They decided to move to Da Nang. (Họ đã quyết định chuyển đến Đà Nẵng.)\n- It started to rain at noon. (Trời bắt đầu mưa lúc giữa trưa.)"
+        },
+        {
+          "id": "gram_050",
+          "distance": 0.22696733474731445,
+          "text": "Động từ đi với giới từ (depend on, listen to) — Cách dùng\nĐộng từ đi với giới từ (verbs + prepositions) là những động từ thường cần một giới từ cố định trước tân ngữ; giới từ này nên học theo cụm.\n1. Đi với to: listen to (nghe), belong to (thuộc về).\n2. Đi với on và for: depend on (phụ thuộc vào), wait for (đợi), look for (tìm).\n3. Đi với about: think about (nghĩ về), worry about (lo lắng về).\n4. Đi với at và with: look at (nhìn), agree with (đồng ý với).\nLưu ý:\n- Giới từ đứng trước tân ngữ; nếu sau giới từ là động từ thì dùng V-ing (think about moving).\n- Trong câu hỏi, giới từ thường đứng cuối câu (What are you looking at?).\n- Một số động từ không cần giới từ dù tiếng Việt có chữ \"về\", \"với\": discuss sth (không nói discuss about), marry sb (không nói marry with).\nVí dụ:\n- It depends on the weather. (Còn tuỳ vào thời tiết.)\n- I'm waiting for my friend. (Tôi đang đợi bạn tôi.)\n- We discussed the plan yesterday. (Hôm qua chúng tôi đã bàn về kế hoạch.)"
+        },
+        {
+          "id": "gram_003",
+          "distance": 0.2311350703239441,
+          "text": "Thì hiện tại đơn (Present Simple) — Dấu hiệu nhận biết\nThì hiện tại đơn (Present Simple) thường đi kèm các từ chỉ tần suất, tức là từ cho biết một việc xảy ra thường xuyên đến mức nào.\nNhóm 1 — trạng từ tần suất (adverbs of frequency): always (luôn luôn), usually (thường xuyên), often (hay), sometimes (thỉnh thoảng), rarely (hiếm khi), never (không bao giờ).\nVị trí: đứng trước động từ thường nhưng đứng sau động từ to be. Chẳng hạn: She always walks to school, nhưng She is always late. Riêng sometimes còn có thể đứng đầu hoặc cuối câu.\nNhóm 2 — cụm chỉ sự lặp lại: every day, every week, every morning, once a week (mỗi tuần một lần), twice a month (mỗi tháng hai lần), on Mondays (vào các ngày thứ Hai).\nVị trí: thường ở cuối câu; cũng có thể đặt ở đầu câu, khi đó nên có dấu phẩy phía sau.\nLưu ý: dấu hiệu chỉ giúp đoán nhanh. Hãy xem cả nghĩa của câu: nếu câu nói về thói quen hoặc sự thật thì dùng hiện tại đơn.\nVí dụ:\n- He often plays football after school. (Cậu ấy hay chơi bóng đá sau giờ học.)\n- We visit our grandparents twice a month. (Chúng tôi về thăm ông bà mỗi tháng hai lần.)\n- My sister is never late for work. (Chị tôi không bao giờ đi làm muộn.)"
+        },
+        {
+          "id": "gram_047",
+          "distance": 0.23240351676940918,
+          "text": "Giới từ chỉ thời gian in, on, at — Phân biệt\nGiới từ chỉ thời gian in, on, at (vào, lúc) đều đứng trước mốc thời gian, nhưng mỗi từ đi với một loại mốc khác nhau.\n- At + thời điểm cụ thể: giờ (at 7 o'clock), lúc (at noon, at midnight), dịp lễ ngắn (at Christmas). Ngoại lệ hay gặp: at night.\n- On + ngày: thứ (on Monday), ngày tháng (on 2 September), ngày đặc biệt (on my birthday). Một buổi của ngày cụ thể cũng dùng on (on Monday morning).\n- In + khoảng thời gian dài hơn: tháng (in May), năm (in 2010), mùa (in summer), và buổi trong ngày nói chung (in the morning, in the evening).\n- Cuối tuần: at the weekend (tiếng Anh Anh), on the weekend (tiếng Anh Mỹ).\n- Không dùng giới từ trước this, next, last, every, tomorrow, yesterday (next week, last Monday).\nMẹo nhớ: từ nhỏ đến lớn — at cho giờ, on cho ngày, in cho tháng, năm, mùa.\nVí dụ:\n- The meeting starts at 9 a.m. (Cuộc họp bắt đầu lúc 9 giờ sáng.)\n- We have English on Tuesdays and Thursdays. (Chúng tôi học tiếng Anh vào thứ Ba và thứ Năm.)\n- My sister was born in 2005. (Em gái tôi sinh năm 2005.)"
+        },
+        {
+          "id": "gram_021",
+          "distance": 0.2327365279197693,
+          "text": "Used to — Cách dùng\nUsed to (đã từng) dùng để nói về thói quen hoặc tình trạng trong quá khứ mà bây giờ không còn nữa.\n1. Thói quen trong quá khứ: việc trước đây làm thường xuyên, nay đã thôi. Cấu trúc: S + used to + V nguyên mẫu.\n2. Tình trạng trong quá khứ nay đã thay đổi: nơi ở, ngoại hình, sở thích, công việc trước đây. Dùng được cả với be, have, live, like.\n3. Câu phủ định và câu hỏi: dùng did, và used to đổi thành use to (S + didn't use to + V; Did + S + use to + V?). Đôi khi vẫn gặp cách viết didn't used to, nhưng dạng chuẩn là use to.\nLưu ý: used to không có dạng hiện tại. Không nhầm với be used to + V-ing (quen với việc gì), một cấu trúc khác hẳn. Việc chỉ xảy ra một lần thì dùng quá khứ đơn.\nVí dụ:\n- I used to play football every weekend. (Hồi trước cuối tuần nào tôi cũng đá bóng.)\n- She used to live in Hue, but now she lives in Hanoi. (Trước đây cô ấy sống ở Huế, còn bây giờ thì sống ở Hà Nội.)\n- Did you use to have long hair? (Hồi trước bạn từng để tóc dài à?)"
+        }
+      ],
+      "answer": "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 987,
+      "retried": false,
+      "first_reason": null
+    },
+    {
+      "qid": "q059",
+      "kind": "neg",
+      "group": "off",
+      "qgroup": null,
+      "gold": [],
+      "question": "Lập lịch trình du lịch Đà Nẵng trong 3 ngày.",
+      "candidates": [
+        "gram_064",
+        "gram_094",
+        "gram_050",
+        "gram_005",
+        "gram_010",
+        "gram_014",
+        "gram_040",
+        "gram_007"
+      ],
+      "vocab_sent": [
+        "backpacking",
+        "guidebook",
+        "schedule"
+      ],
+      "decision": "out_of_scope",
+      "reason": "intent_out_of_scope",
+      "intent": {
+        "label": "ngoai_pham_vi",
+        "confidence": 0.6258777226676867
+      },
+      "vocab": [],
+      "contexts": [],
+      "answer": "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé.",
+      "source_ids": [],
+      "degraded": false,
+      "error_reason": null,
+      "latency_ms": 20,
+      "retried": false,
+      "first_reason": null
+    }
+  ]
+}

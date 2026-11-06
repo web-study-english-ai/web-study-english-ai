@@ -14,9 +14,10 @@ import {
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
-export async function getReadingList( 
+export async function getReadingList(
   params: ReadingListParams
 ): Promise<ReadingListResult> {
+  
   const q = new URLSearchParams();
   if (params.search.trim()) q.set("search", params.search.trim());
   if (params.cefr !== "all") q.set("cefr", params.cefr);
@@ -31,6 +32,7 @@ export async function getReadingList(
 }
 
 export async function getReadingDetail(id: string): Promise<ReadingDetailData> {
+
   const raw = await apiFetch<Record<string, unknown>>(`/reading/${id}`);
   return mapReadingDetail(raw);
 }
@@ -39,6 +41,7 @@ export async function saveReadingDraft(
   id: string,
   payload: AttemptPayload
 ): Promise<void> {
+
   await apiFetch<unknown>(`/reading/${id}/draft`, {
     method: "PUT",
     headers: JSON_HEADERS,
@@ -50,6 +53,7 @@ export async function submitReading(
   id: string,
   payload: AttemptPayload
 ): Promise<SubmitResult> {
+
   const raw = await apiFetch<Record<string, unknown>>(`/reading/${id}/submit`, {
     method: "POST",
     headers: JSON_HEADERS,

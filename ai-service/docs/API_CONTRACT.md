@@ -3,7 +3,7 @@
 Đây là nguồn sự thật cho giao diện giữa dịch vụ AI và backend.
 **Sửa file này TRƯỚC khi sửa code.** Mọi thay đổi trường, kiểu dữ liệu hoặc mã lỗi phải báo Backend (Thạc Duy Anh) trước.
 
-Phiên bản: 0.2 · Cập nhật lần cuối: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
+Phiên bản: **0.4 (NHÁP — chưa chốt với Duy Anh)** · 2026-11-05 (WSEA-153): thay mục `POST /vision/detect` (chưa từng triển khai) bằng `POST /recognize/image` (trường multipart `image`, trả top-10 `{word, score}` + `low_confidence`); `/health` có thể liệt kê `"vision"` · Bản 0.3.2: 2026-11-02 (WSEA-140, v0.3.2 — bổ sung, **không phá vỡ**): `POST /assistant/ask` đã triển khai JSON + SSE; `decision` ≠ `"answer"` trả câu cố định, `source_ids` rỗng, không gọi LLM; `503` có `detail` ghi mã lý do; gọi lại 1 lần bằng model dự phòng khi `429`; ngân sách 12 s (JSON) / 40 s (SSE); `delta` không chứa ký hiệu trích; thêm bảng biến môi trường LLM của dịch vụ AI · Bản 0.3.1: 2026-11-02 (WSEA-127, bổ sung, không phá vỡ): thêm `POST /assistant/rank` (backend không bắt buộc gọi); `/assistant/ask` ghi rõ `contexts` không bắt buộc đã sắp; `/health` có thể liệt kê `"intent"` · Bản 0.3: 2026-10-31 (WSEA-111): `POST /assistant/embed` đã triển khai; `GET /health` có thể liệt kê `"embedder"` trong `models` — **không đổi giao diện** · 2026-10-31 (WSEA-110): thay mục `POST /chat` (chưa từng triển khai) bằng `POST /assistant/embed` + `POST /assistant/ask`, chốt với Duy Anh 2026-10-30 · Bản 0.2: 2026-09-28 (WSEA-81) · 2026-10-17 và 2026-10-19: chỉ sửa phần triển khai (HF Spaces → Render → quay lại HF Spaces), **không đổi giao diện** · 2026-10-22 (WSEA-97): thêm header `Server-Timing` ở response 200 của `POST /predict-retention` — tương thích ngược, body và mã lỗi không đổi
 
 ## Quy ước chung
 
@@ -44,12 +44,16 @@ Nạp mô hình thành công → **200**:
   "service": "web-study-english-ai-service",
   "version": "0.1.0",
   "environment": "production",
-  "models": ["fsrs"],
+  "models": ["fsrs", "embedder"],
   "model_version": "v1"
 }
 ```
 
-Nạp mô hình thất bại → **503**, body giữ nguyên hình dạng:
+- `models` liệt kê mọi mô hình đã nạp: `"fsrs"`; từ WSEA-111, `"embedder"` (mô hình vector của `/assistant/embed`); từ WSEA-127 (v0.3.1), `"intent"` (bộ phân loại ý định của pipeline trợ lý). Thứ tự: `["fsrs", "embedder", "intent"]`; từ WSEA-153 (nháp v0.4) có thể thêm `"vision"` (CLIP của `/recognize/image`) ở cuối. `vision` nạp thất bại không làm `/health` `degraded`.
+- Bộ ý định nạp thất bại cũng không làm `degraded`: pipeline bỏ luật chặn theo ý định, `reason` gắn thêm `;intent_unavailable`.
+- Trạng thái `503` / `degraded` **chỉ phụ thuộc `fsrs`**. Embedder nạp thất bại thì `/health` vẫn `200` với `models: ["fsrs"]`; riêng `/assistant/embed` trả `503` và backend fallback.
+
+Nạp mô hình dự báo (`fsrs`) thất bại → **503**, body giữ nguyên hình dạng:
 
 ```json
 {
@@ -171,54 +175,298 @@ quyết định nghiệp vụ. Body JSON không đổi. Response `401`/`422`/`50
 
 **Fallback backend**: `simple-scheduler.ts` (TypeScript), trả `interval_days` tương đương. Không phải SM-2 — xem `docs/DECISIONS.md` mục 2026-10-11.
 
-## POST /vision/detect
+## POST /recognize/image
 
-Nhận diện vật thể trong ảnh rồi tra sang từ vựng. Không phải OCR.
+> **Nháp v0.4 (WSEA-153, 2026-11-05) — chưa chốt với Duy Anh.** Thay mục `POST /vision/detect` của v0.3 (chưa từng triển khai). Đường dẫn `/recognize/image` đã có từ bản đầu (trước đây trả `501`).
 
-**Request**: `multipart/form-data`
-- `image`: file ảnh, tối đa 5 MB, JPEG/PNG
-- `user_cefr`: string, một trong `A1 A2 B1 B2 C1 C2`, mặc định `A2`
-- `top_k`: int, 1–10, mặc định 8
+Nhận diện **vật thể** trong ảnh bằng CLIP zero-shot trên 449 nhãn từ vựng (`kb/vision_labels.csv`, danh từ cụ thể CEFR ≤ B1 lọc từ bảng `words`). Không phải OCR. Mỗi `word` trả về là một `term` có trong bảng `words`; backend tự JOIN để lấy IPA, nghĩa, CEFR.
 
-**Response**
+**Request**: `multipart/form-data`, header `x-api-key`.
+
+| Trường | Kiểu | Bắt buộc | Ràng buộc |
+|---|---|---|---|
+| `image` | file | có | ≤ 10 MB; JPEG, PNG, WEBP, BMP, GIF (cả JPEG nhiều khung MPO); ≤ 60 triệu điểm ảnh. Ảnh được xoay theo EXIF |
+
+**Response 200**
 
 ```json
 {
-  "results": [
-    { "word": "keyboard", "ipa": "/ˈkiːbɔːd/", "meaning": "ban phim", "cefr": "A2", "confidence": 0.042 }
+  "labels": [
+    { "word": "mug", "score": 0.743 },
+    { "word": "cup", "score": 0.091 }
   ],
-  "latency_ms": 380
+  "low_confidence": false,
+  "tau": 0.10
 }
 ```
 
-Trả mảng rỗng khi không có nhãn nào vượt ngưỡng tin cậy — đây là hành vi đúng, không phải lỗi.
+| Trường | Kiểu | Ý nghĩa |
+|---|---|---|
+| `labels` | mảng `{word, score}` | **top-10**, `score` giảm dần. `score` = xác suất softmax trên toàn bộ 449 nhãn (tổng mọi nhãn = 1), nên giá trị thường nhỏ |
+| `low_confidence` | bool | `true` khi `score` của nhãn đầu < `tau` — backend nên hiển thị "không chắc chắn" / gợi ý chọn tay thay vì khẳng định |
+| `tau` | float | ngưỡng đang dùng (biến `VISION_TAU` của dịch vụ AI), trả về để backend log |
 
-**Fallback backend**: báo người dùng chức năng tạm không khả dụng, gợi ý tra từ thủ công.
+- Header `Server-Timing` có `vision` (ms suy luận) và `app` — chỉ để chẩn đoán.
 
-## POST /chat
+**Lỗi**: `401` (thiếu/sai khoá) · `413` (ảnh > 10 MB hoặc quá nhiều điểm ảnh) · `422` (thiếu trường `image`, file rỗng, không phải ảnh, ảnh hỏng, định dạng không hỗ trợ; `detail` bắt đầu bằng mã `empty` / `not_image` / `unsupported_format`) · `503` (mô hình chưa nạp) · `500` (mô hình trả kết quả không hợp lệ).
 
-Trợ lý hỏi đáp qua pipeline RAG 6 bước.
+**Fallback backend**: báo người dùng chức năng tạm không khả dụng, gợi ý tra từ thủ công. Không có fallback TypeScript cho chức năng này.
+
+## Trợ lý hỏi đáp — kiến trúc (v0.3, chốt với Thạc Duy Anh 2026-10-30, Jira WSEA-110)
+
+> Thay mục `POST /chat` của v0.2 (chưa từng triển khai). Kiến trúc: **backend sở hữu cơ sở dữ liệu và chạy truy vấn pgvector; dịch vụ AI không kết nối DB, không giữ trạng thái**, nên một HF Space dùng chung được cho local, staging và production (`docs/DECISIONS.md` mục 2026-10-29).
+>
+> Quy ước chung ở đầu file vẫn giữ: header `x-api-key`, `snake_case`, `extra="forbid"` (trường lạ → `422`), không nhận `NaN`/`Infinity`.
+
+```
+Người học ──▶ Backend
+               │ 1. POST /assistant/embed {text}            ──▶ AI: trả vector 384 chiều
+               │ 2. SQL pgvector trên DB của môi trường mình  (kb_chunks + word_embeddings, words)
+               │ 3. POST /assistant/ask {question, contexts, vocab, ...} ──▶ AI: pipeline (quyết định + chọn top-5) + prompt + LLM
+               │    (POST /assistant/rank: cùng body, chỉ chạy pipeline, không gọi LLM — tuỳ chọn, để đánh giá/gỡ lỗi)
+               ▼
+            Trả lời (JSON hoặc SSE) + nguồn
+```
+
+## POST /assistant/embed
+
+Sinh vector cho câu hỏi để backend tìm đoạn tri thức gần nhất.
 
 **Request**
 
 ```json
-{ "question": "Khi nao dung present perfect?", "user_cefr": "B1", "history": [] }
+{ "text": "khi nào dùng hiện tại hoàn thành thay vì quá khứ đơn" }
 ```
 
-- `question`: 1–500 ký tự
-- `history`: tối đa 5 lượt gần nhất, mỗi lượt `{ "role": "user|assistant", "content": "..." }`
+| Trường | Kiểu | Bắt buộc | Ràng buộc |
+|---|---|---|---|
+| `text` | string | có | 1–1000 ký tự sau khi bỏ khoảng trắng hai đầu |
 
-**Response**
+- Gửi **câu hỏi gốc** của người học. Nếu đang hỏi về một từ cụ thể (`wordId`), nối thêm từ đó ở cuối: `"<câu hỏi> (<term>)"`. KHÔNG gửi chuỗi `[Từ đang học: …]`.
+- Backend **KHÔNG** tự thêm tiền tố `query: ` và KHÔNG tự chuẩn hoá vector. Dịch vụ AI làm việc này bằng đúng module đã dùng để nạp vector (`app/services/embedder.py`), nên lúc nạp và lúc truy vấn không thể lệch nhau.
+
+**Response 200**
 
 ```json
 {
-  "answer": "...",
-  "intent": "grammar",
-  "sources": [ { "chunk_id": "gr-014", "title": "Present perfect", "score": 0.81 } ],
-  "used_llm": true
+  "embedding": [0.0123, -0.0456, "... đủ 384 số ..."],
+  "model": "intfloat/multilingual-e5-small",
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "dim": 384
 }
 ```
 
-`sources` luôn phải có ít nhất một phần tử khi `answer` không rỗng. Câu trả lời không bám nguồn là lỗi cần ghi nhận.
+- `embedding`: 384 số thực, đã chuẩn hoá L2 (độ dài bằng 1).
+- **Backend phải kiểm** `dim === 384` và `model === AI_EMBED_MODEL`. Lệch thì không truy vấn, xử lý như lỗi → fallback.
 
-**Fallback backend**: trả câu xin lỗi kèm liên kết tới trang học liệu tương ứng.
+**Lỗi**: `401` · `422` (rỗng, quá 1000 ký tự, trường lạ) · `503` (mô hình chưa nạp xong) · `500`.
+**Timeout backend**: 5 giây (`AI_EMBED_TIMEOUT_MS`). `503` → thử lại 1 lần sau 2 giây rồi fallback.
+**Trạng thái**: đã triển khai trên Space 2026-10-31 (WSEA-111). Đo: phía server ~20 ms, khứ hồi từ VN 497–630 ms.
+
+## Truy vấn pgvector phía backend (tham khảo — backend sở hữu)
+
+```sql
+-- Đoạn tri thức: top-8 ứng viên
+SELECT id, content, source, topic, cefr::text AS cefr,
+       (embedding <=> $1::vector) AS distance
+FROM kb_chunks
+WHERE embedding IS NOT NULL
+  AND embedding_model = $2
+ORDER BY embedding <=> $1::vector
+LIMIT 8;
+
+-- Từ vựng (tra ngược Việt → Anh): top-3. LẤY TOP-K TRƯỚC RỒI MỚI JOIN words
+SELECT w.term, w.pos::text AS pos, w.meaning_vi, w.example_en, t.distance
+FROM (
+    SELECT word_id, (embedding <=> $1::vector) AS distance
+    FROM word_embeddings
+    WHERE model = $2
+    ORDER BY embedding <=> $1::vector
+    LIMIT 3
+) t
+JOIN words w ON w.id = t.word_id
+ORDER BY t.distance;
+```
+
+- `$1` là chuỗi `'[0.0123,-0.0456,...]'` truyền qua `$queryRaw`; `$2` là `AI_EMBED_MODEL`. Lọc theo `embedding_model` / `model` để chỉ dùng vector sinh bằng đúng mô hình đang chạy.
+- `ORDER BY` phải dùng đúng biểu thức `embedding <=> $1::vector` thì Postgres mới dùng được chỉ mục HNSW.
+- Đo trên staging 2026-10-31: viết `JOIN words` rồi mới `LIMIT` có lúc chậm (p50 2–13 ms, đỉnh 80 ms); dạng truy vấn con ở trên ổn định p50 0,89 ms, tối đa 1,2 ms.
+- Nếu thêm điều kiện lọc (ví dụ theo `cefr`), chạy `SET LOCAL hnsw.iterative_scan = relaxed_order;` trong cùng transaction (pgvector 0.8.2) để vẫn lấy đủ k dòng.
+- `distance` là khoảng cách cosine: 0 = giống hệt, càng nhỏ càng gần (e5-small: đa số 0,08–0,21). **Backend không tự đặt ngưỡng loại bỏ**; ngưỡng "không đủ ngữ cảnh" do dịch vụ AI quyết định.
+- (Nên có) **Tra chính xác**: các từ tiếng Anh trong câu hỏi (chuỗi a–z, viết thường) → `SELECT … FROM words WHERE term = ANY($1)` → đưa vào `vocab` với `match: "exact"`, `distance: 0`.
+
+## POST /assistant/ask
+
+Sinh câu trả lời từ các đoạn ngữ cảnh do backend gửi kèm. Cùng một URL phục vụ JSON và SSE, chọn bằng header `Accept`.
+
+**Request**
+
+```json
+{
+  "question": "khi nào dùng hiện tại hoàn thành thay vì quá khứ đơn",
+  "word": { "term": "already", "pos": "adv", "meaning_vi": "đã, rồi" },
+  "user_cefr": "B1",
+  "contexts": [
+    {
+      "id": "gram_015",
+      "content": "Hiện tại hoàn thành và quá khứ đơn — Phân biệt\n...",
+      "source": "WSEA biên soạn · tham chiếu: Wikipedia — Present perfect",
+      "topic": "present_perfect",
+      "cefr": "B1",
+      "distance": 0.086
+    }
+  ],
+  "vocab": [
+    { "term": "already", "pos": "adv", "meaning_vi": "đã, rồi", "example_en": "I have already finished.", "match": "exact", "distance": 0.0 }
+  ],
+  "history": [
+    { "role": "user", "content": "thì hiện tại hoàn thành là gì" },
+    { "role": "assistant", "content": "..." }
+  ]
+}
+```
+
+| Trường | Kiểu | Bắt buộc | Ràng buộc |
+|---|---|---|---|
+| `question` | string | có | 1–1000 ký tự. Câu gốc, không nối ngữ cảnh |
+| `word` | object \| null | không | `term` 1–100 ký tự, `pos`, `meaning_vi`. Thay cho `word_id` (AI không có DB để tra id) |
+| `user_cefr` | `"A1"`…`"B2"` \| null | không | Điều chỉnh độ khó của lời giải thích |
+| `contexts` | mảng | có (được rỗng) | 0–20 phần tử, `id` không trùng (trùng → `422`), nên sắp theo `distance` tăng dần (từ v0.3.1 không bắt buộc); `content` ≤ 4000 ký tự; `distance` trong [0, 2] |
+| `vocab` | mảng | không, mặc định `[]` | 0–10 phần tử; `match` là `"exact"` hoặc `"vector"`; `example_en` có thể null |
+| `history` | mảng | không, mặc định `[]` | 0–6 lượt gần nhất, `role` là `"user"` hoặc `"assistant"`, `content` ≤ 2000 ký tự |
+
+- Backend gửi khoảng 8 ứng viên (`AI_ASSISTANT_TOP_K`, tối đa 20). Dịch vụ AI được phép xếp lại (rerank) và cắt bớt trước khi đưa vào prompt.
+- (v0.3.1) `contexts` **không bắt buộc đã sắp**: AI tự sắp theo `distance` tăng dần (hoà thì giữ thứ tự gửi), bỏ id trùng (giữ lần đầu; dù vậy request có id trùng vẫn bị `422` theo bảng trên), rồi cắt top-5. Rerank đã tắt (WSEA-126). `/ask` sẽ chạy cùng pipeline như `POST /assistant/rank` trước khi gọi LLM.
+
+**Response 200 — JSON** (`Accept: application/json`)
+
+```json
+{ "answer": "Dùng hiện tại hoàn thành khi ...", "source_ids": ["gram_015", "gram_013"] }
+```
+
+- `source_ids` ⊂ `contexts[].id`, xếp theo mức độ đã dùng. Bằng `[]` khi câu trả lời không dựa trên đoạn nào; khi đó `answer` phải nói rõ là trong kho chưa có tài liệu cho câu hỏi này.
+- Backend vẫn lọc lại `source_ids` theo các id đã gửi.
+- Từ v0.3 chỉ dùng `source_ids` (bỏ dạng `sources: [{source_id}]` của khung cũ).
+
+**Response 200 — SSE** (`Accept: text/event-stream`, cùng URL)
+
+```
+data: {"delta": "Thì hiện tại"}
+
+data: {"delta": " hoàn thành dùng khi ..."}
+
+data: {"answer": "<toàn văn câu trả lời>", "source_ids": ["gram_015"]}
+
+data: [DONE]
+
+```
+
+- Khung cuối luôn có `answer` (toàn văn) và `source_ids`, rồi tới `[DONE]`.
+- Backend chỉ coi là **thành công khi nhận được khung cuối**. Luồng đứt trước khung cuối → `degraded = true` và trả kèm 3 nguồn đầu đã truy hồi (Duy Anh chốt 2026-10-30).
+- Lỗi xảy ra trước khung đầu tiên thì trả mã HTTP như bảng lỗi; đã bắt đầu luồng rồi thì AI chỉ có thể đóng luồng.
+
+**Lỗi**: `401` · `422` · `503` (không gọi được LLM, hết hạn mức) · `500`.
+**Timeout backend**: 15 giây (JSON) / 45 giây (SSE), như hiện tại.
+
+**Hành vi đã triển khai (v0.3.2, WSEA-140)** — JSON và SSE đều chạy; bổ sung, không đổi tên trường hay mã lỗi.
+
+- `/ask` chạy đúng pipeline của `POST /assistant/rank` trước. **`decision` ≠ `"answer"` thì KHÔNG gọi LLM**, trả một trong hai câu cố định, `source_ids = []`:
+  - `out_of_scope`: "Xin lỗi, câu này nằm ngoài phạm vi mình hỗ trợ. Mình là trợ lý học tiếng Anh, có thể giúp bạn về ngữ pháp, nghĩa và cách dùng từ, và phân biệt những từ dễ nhầm. Nếu câu hỏi của bạn có liên quan đến tiếng Anh, bạn thử diễn đạt lại rõ hơn nhé."
+  - `no_context`: "Kho tài liệu của mình hiện chưa có nội dung cho câu hỏi này, nên mình chưa trả lời để tránh nói sai. Bạn có thể hỏi về ngữ pháp, nghĩa và cách dùng từ, hoặc phân biệt những từ dễ nhầm."
+  - LLM cũng được dặn dùng đúng hai câu này khi tự từ chối (câu lạc đề lọt pipeline, câu trong lĩnh vực nhưng kho chưa có). Khi đó `answer` là đúng nguyên văn câu cố định và `source_ids = []`. Backend có thể so khớp nguyên văn hai câu này nếu cần phân biệt.
+- **`source_ids`**: LLM trích bằng số thứ tự đoạn; dịch vụ đổi số → `id`, chỉ giữ id thuộc các đoạn đã chọn (⊂ `contexts[].id` của request), bỏ trùng, theo thứ tự xuất hiện. `answer` không còn ký hiệu trích (`[1]`, `【1】`, `[Tài liệu 1]`) và không còn dấu nhấn mạnh markdown `**x**` / `*x*` (gạch đầu dòng giữ nguyên).
+- **Ca chỉ có `word`** (không có `contexts`, `vocab`): `decision = "answer"`, LLM trả lời từ `word`, `source_ids = []` — đây không phải câu "kho chưa có".
+- **`503`**: `detail` có dạng `"Khong goi duoc LLM (<reason>)"`, `<reason>` là một trong:
+
+  | `reason` | Khi nào |
+  |---|---|
+  | `no_key` | Dịch vụ thiếu `LLM_API_KEY` |
+  | `rate_limited` | Model chính `429`, gọi lại 1 lần bằng model dự phòng vẫn `429` |
+  | `timeout` | Hết ngân sách thời gian (dưới) |
+  | `upstream_error` | Nhà cung cấp LLM trả `5xx`/`4xx` khác, hoặc lỗi kết nối |
+  | `empty_content` | LLM trả nội dung rỗng (kể cả khi suy luận ăn hết giới hạn token), hoặc rỗng sau khi bỏ ký hiệu trích (JSON; với SSE ca rỗng sau khi bỏ ký hiệu chỉ biết ở cuối luồng → đóng luồng, không khung cuối) |
+  | `bad_response` | Phản hồi của nhà cung cấp hỏng (JSON sai dạng) |
+
+  Ngoài ra `503` `"Mo hinh embedding chua nap"` như `/assistant/rank`. Mọi `5xx` vẫn là tín hiệu fallback.
+- **Model dự phòng**: model chính trả `429` → dịch vụ gọi lại **đúng 1 lần** bằng model dự phòng (hạn mức Groq tính riêng từng model), trong phần thời gian còn lại. Lỗi khác không thử lại.
+- **Ngân sách thời gian phía dịch vụ** (tính tổng cả lần dự phòng): **12 s** cho JSON (dưới 15 s của backend), **40 s** cho SSE (dưới 45 s của backend).
+- **SSE**:
+  - Lỗi xảy ra **trước token đầu tiên** (kể cả `429` hai lần, hết giờ, thiếu khoá) → trả mã HTTP + JSON `detail` như trên, **không mở luồng**.
+  - `decision` ≠ `"answer"`: đúng 3 khung — `{"delta": <câu cố định>}`, `{"answer": <câu cố định>, "source_ids": []}`, `[DONE]`.
+  - `delta` **không chứa ký hiệu trích hay dấu `**`**: dịch vụ giữ lại phần đuôi chưa chắc chắn tới khi biết rõ. Ghép mọi `delta` = `answer` của khung cuối, **trừ** khi khung cuối được thay bằng câu cố định — khi đó luôn dùng khung cuối.
+  - Lỗi **giữa luồng**: dịch vụ đóng luồng, **không gửi khung cuối, không gửi `[DONE]`** → backend `degraded = true` như đã chốt.
+  - Header: `Content-Type: text/event-stream`, `Cache-Control: no-cache`, `X-Accel-Buffering: no`.
+- `Server-Timing` (chỉ để chẩn đoán): JSON có `intent`, `select`, `llm`, `app`; SSE có `intent`, `select`, `llm_first` (tới token đầu), `app` (tới lúc mở luồng).
+
+## POST /assistant/rank
+
+(v0.3.1, WSEA-127) Chạy **pipeline truy hồi** của dịch vụ AI (phần sau khi nhận ứng viên, trước LLM) và trả quyết định cùng các đoạn đã chọn. **Không gọi LLM, không tốn token.**
+
+- **Backend KHÔNG bắt buộc gọi.** Endpoint dùng để đánh giá (bộ câu WSEA-141) và gỡ lỗi. `/assistant/ask` sẽ chạy đúng pipeline này trước khi gọi LLM.
+- Cùng khoá `x-api-key`, cùng quy ước `extra="forbid"`.
+
+**Request**: body **giống hệt** `POST /assistant/ask` (cùng bảng ràng buộc).
+
+**Response 200**
+
+```json
+{
+  "decision": "answer",
+  "reason": "ok",
+  "intent": { "label": "ngu_phap", "confidence": 0.81 },
+  "contexts": [
+    { "id": "gram_015", "distance": 0.086, "rank": 1 },
+    { "id": "gram_013", "distance": 0.097, "rank": 2 }
+  ],
+  "vocab": ["already"]
+}
+```
+
+| Trường | Kiểu | Ý nghĩa |
+|---|---|---|
+| `decision` | `"answer"` \| `"no_context"` \| `"out_of_scope"` | Quyết định của pipeline (bảng dưới) |
+| `reason` | string | Mã lý do cố định (bảng dưới). Thêm hậu tố `;intent_unavailable` khi bộ ý định chưa nạp |
+| `intent` | `{label, confidence}` \| null | Ý định đoán được. `null` khi không chạy bước ý định (luật 1 khớp, hoặc bộ ý định chưa nạp) |
+| `contexts` | mảng `{id, distance, rank}` | Đoạn sẽ đưa vào prompt: tối đa 5, `rank` từ 1. `id` ⊂ `contexts[].id` của request. Rỗng khi `decision` ≠ `"answer"` |
+| `vocab` | mảng string (`term`) | Từ vựng sẽ đưa vào prompt: `exact` trước, rồi `vector` theo `distance`, tối đa 3. Rỗng khi `decision` ≠ `"answer"` |
+
+Luật áp theo thứ tự, luật đầu tiên khớp thì dừng (chi tiết và lý do: `docs/DECISIONS.md` mục 2026-11-02 — WSEA-127):
+
+| `decision` | `reason` | Khi nào |
+|---|---|---|
+| `no_context` | `empty_candidates` | `contexts` rỗng VÀ `vocab` rỗng VÀ `word` null |
+| `out_of_scope` | `intent_out_of_scope` | Ý định `ngoai_pham_vi` với độ tin cậy ≥ τ (0,40) VÀ `word` null VÀ không có `vocab` exact VÀ `history` rỗng |
+| `no_context` | `top1_too_far` | `distance` nhỏ nhất của `contexts` > 0,22 VÀ không có `vocab` exact VÀ `word` null |
+| `answer` | `ok` | Còn lại. Có `word` mà không có ứng viên nào thì vẫn `answer` với `contexts` và `vocab` rỗng |
+
+**Lỗi**: `401` (thiếu/sai khoá) · `422` (body sai, kể cả `contexts` có id trùng) · `503` (mô hình embedding chưa nạp) · `500` (embedding hoặc bộ ý định trả kết quả không hợp lệ).
+Response 200 có header `Server-Timing` (`intent`, `select`, `app`; ms) khi pipeline chạy tới các bước đó — chỉ để chẩn đoán.
+
+## Fallback trợ lý phía backend
+
+| Hỏng ở đâu | Backend làm gì |
+|---|---|
+| `/assistant/embed` lỗi hoặc timeout, hoặc `dim`/`model` lệch | Không truy hồi; trả câu dự phòng, `degraded = true` |
+| SQL pgvector lỗi | Như trên |
+| `/assistant/ask` lỗi, timeout, hoặc SSE đứt trước khung cuối | Câu dự phòng **kèm 3 nguồn đầu đã truy hồi được** (tiêu đề + link nguồn), `degraded = true` |
+
+## Biến môi trường mới phía backend (trợ lý)
+
+| Biến | Giá trị mặc định | Ghi chú |
+|---|---|---|
+| `AI_EMBED_MODEL` | `intfloat/multilingual-e5-small` | Phải khớp `kb_chunks.embedding_model` và `word_embeddings.model` |
+| `AI_EMBED_TIMEOUT_MS` | `5000` | Timeout riêng cho `/assistant/embed` |
+| `AI_ASSISTANT_TOP_K` | `8` | Số đoạn ứng viên gửi sang `/assistant/ask` (tối đa 20) |
+
+## Biến môi trường của dịch vụ AI — trợ lý (v0.3.2, WSEA-140)
+
+Đặt trên Space (Settings → Variables and secrets). Backend không cần biết các biến này; ghi ở đây để hai bên hiểu ngân sách thời gian.
+
+| Biến | Loại | Mặc định | Ghi chú |
+|---|---|---|---|
+| `LLM_API_KEY` | **Secret** | — | Khoá nhà cung cấp LLM (Groq). Thiếu → `/ask` trả `503` `no_key` khi cần gọi LLM; các endpoint khác không ảnh hưởng |
+| `LLM_BASE_URL` | Variable | `https://api.groq.com/openai/v1` | API tương thích OpenAI, gọi bằng `httpx` với `User-Agent` riêng |
+| `LLM_MODEL` | Variable | `openai/gpt-oss-120b` | Model chính |
+| `LLM_FALLBACK_MODEL` | Variable | `openai/gpt-oss-20b` | Chỉ dùng khi model chính trả `429` |
+| `LLM_TIMEOUT_S` | Variable | `12` | Ngân sách tổng cho `/ask` JSON (phải < 15 s của backend) |
+| `LLM_STREAM_TIMEOUT_S` | Variable | `40` | Ngân sách tổng cho `/ask` SSE (phải < 45 s của backend) |

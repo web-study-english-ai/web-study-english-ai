@@ -21,7 +21,7 @@ export function ReviewSummary({ totalCards, elapsedLabel, ratingCounts }: Props)
   const totalRatings = ROWS.reduce((sum, r) => sum + ratingCounts[r.value], 0);
 
   return (
-    <div className="mt-8 rounded-2xl border border-border bg-white p-8 text-center shadow-sm">
+    <div className="mt-8 rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
       <h2 className="font-heading text-xl font-semibold text-foreground">
         🎉 Bạn đã ôn xong {totalCards} từ đến hạn hôm nay!
       </h2>

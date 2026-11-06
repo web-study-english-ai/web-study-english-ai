@@ -1,0 +1,32 @@
+qid,question,gold_ids,lang
+q01,khi nào dùng hiện tại hoàn thành thay vì quá khứ đơn,gram_015|gram_013,vi
+q02,"khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",gram_006,vi
+q03,sao người ta nói I am knowing him là sai ngữ pháp,gram_007,mixed
+q04,tôi học tiếng Anh từ năm 2020 đến giờ thì dùng since hay for,gram_016,mixed
+q05,kể chuyện có hai việc trong quá khứ thì việc xảy ra trước chia thế nào,gram_018,vi
+q06,nói về kế hoạch đã quyết định từ trước thì dùng will hay be going to,gram_020,mixed
+q07,muốn nói hồi nhỏ tôi hay đi câu cá nhưng giờ không còn nữa thì dùng cấu trúc gì,gram_021,vi
+q08,Why is 'I have seen him yesterday' wrong?,gram_015,en
+q09,vì sao có những danh từ không thêm s và không đi với a được,gram_023,vi
+q10,"khi nào dùng a, khi nào dùng the",gram_025|gram_026,mixed
+q11,nước thì nói much water hay many water,gram_027,mixed
+q12,Is there any difference between must and have to?,gram_033,en
+q13,"muốn đoán chắc chắn về hiện tại, kiểu anh ấy chắc hẳn đang mệt, thì dùng động từ nào",gram_035,vi
+q14,nói đáng lẽ ra hôm qua tôi nên học bài thì viết thế nào,gram_036,vi
+q15,"If I were you hay If I was you, cái nào đúng",gram_039,mixed
+q16,"muốn diễn tả tiếc nuối về chuyện đã không xảy ra, kiểu giá mà hôm đó tôi đã đi, thì dùng cấu trúc gì",gram_041|gram_040,vi
+q17,more better có đúng không,gram_046,mixed
+q18,"vào thứ hai dùng in hay on, còn vào buổi sáng thì dùng gì",gram_047,mixed
+q19,"Where do I put enough, before or after an adjective?",gram_049,en
+q20,khi nào nên viết câu nhấn mạnh vật bị tác động thay vì người làm hành động,gram_053,vi
+q21,chuyển câu Where do you live sang câu gián tiếp có cần đảo trợ động từ không,gram_057,mixed
+q22,When do I need commas around a which clause?,gram_061,en
+q23,stop smoking với stop to smoke khác nhau chỗ nào,gram_065,mixed
+q24,look forward to meet hay look forward to meeting mới đúng,gram_066,mixed
+q25,"câu hỏi ngắn ở cuối câu để xác nhận, kiểu phải không, thì đặt thế nào",gram_070,vi
+q26,làm bài tập về nhà là make homework hay do homework,gram_076,mixed
+q27,Can I say 'He said me the truth'?,gram_077,en
+q28,mượn sách của bạn và cho bạn mượn sách khác nhau thế nào trong tiếng Anh,gram_079,vi
+q29,lỡ chuyến xe buýt và làm mất chìa khoá thì dùng động từ nào,gram_086,vi
+q30,Is it 'the effect of the weather' or 'the affect of the weather'?,gram_089,en
+q31,nhắc ai đó nhớ làm việc gì thì dùng remember hay remind,gram_098,mixed

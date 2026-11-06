@@ -1,0 +1,1682 @@
+{
+  "task": "WSEA-110",
+  "created_at": "2026-10-30T18:35:01+00:00",
+  "env": "staging",
+  "target": "aws-0-ap-southeast-1.pooler.supabase.com:5432/postgres",
+  "server": "PostgreSQL 17.6 on x86_64-pc-linux-gnu",
+  "pgvector_version": "0.8.2",
+  "model": "intfloat/multilingual-e5-small",
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "dim": 384,
+  "query_prefix": "query: ",
+  "passage_prefix": "passage: ",
+  "rows": {
+    "kb_chunks": 100,
+    "word_embeddings": 6998
+  },
+  "n_questions": 31,
+  "method": {
+    "warmup": 3,
+    "repeat": 5,
+    "server_execution": "EXPLAIN (ANALYZE, BUFFERS, FORMAT JSON), 1 lần mỗi câu",
+    "round_trip": "perf_counter quanh execute + fetchall từ máy chạy script",
+    "transactions": "READ ONLY, mỗi (bảng, chế độ) một transaction, luôn rollback"
+  },
+  "encode": {
+    "batch_all_ms": 191.1,
+    "per_question": {
+      "n": 31,
+      "p50_ms": 15.648,
+      "p95_ms": 21.949
+    }
+  },
+  "queries": {
+    "kb_chunks": {
+      "k": 8,
+      "sql": "SELECT id, content, source, topic, cefr::text AS cefr,\n       (embedding <=> %(v)s::vector) AS distance\nFROM kb_chunks\nWHERE embedding IS NOT NULL\n  AND embedding_model = %(model)s\nORDER BY embedding <=> %(v)s::vector\nLIMIT 8"
+    },
+    "word_embeddings": {
+      "k": 3,
+      "sql": "SELECT w.term, w.pos::text AS pos, w.meaning_vi, w.example_en,\n       (we.embedding <=> %(v)s::vector) AS distance\nFROM word_embeddings we\nJOIN words w ON w.id = we.word_id\nWHERE we.model = %(model)s\nORDER BY we.embedding <=> %(v)s::vector\nLIMIT 3"
+    }
+  },
+  "results": {
+    "kb_chunks": {
+      "default": {
+        "settings": [],
+        "hnsw_ef_search": "40",
+        "scan_nodes": [
+          "Seq Scan on kb_chunks"
+        ],
+        "server_execution": {
+          "n": 31,
+          "p50_ms": 0.504,
+          "p95_ms": 0.751
+        },
+        "round_trip": {
+          "n": 155,
+          "p50_ms": 51.865,
+          "p95_ms": 53.885
+        },
+        "top_keys": [
+          [
+            "gram_015",
+            "gram_013",
+            "gram_018",
+            "gram_014",
+            "gram_017",
+            "gram_009",
+            "gram_012",
+            "gram_021"
+          ],
+          [
+            "gram_064",
+            "gram_070",
+            "gram_003",
+            "gram_021",
+            "gram_009",
+            "gram_004",
+            "gram_002",
+            "gram_010"
+          ],
+          [
+            "gram_007",
+            "gram_063",
+            "gram_026",
+            "gram_001",
+            "gram_035",
+            "gram_046",
+            "gram_031",
+            "gram_022"
+          ],
+          [
+            "gram_016",
+            "gram_009",
+            "gram_013",
+            "gram_021",
+            "gram_017",
+            "gram_014",
+            "gram_026",
+            "gram_094"
+          ],
+          [
+            "gram_018",
+            "gram_011",
+            "gram_009",
+            "gram_017",
+            "gram_013",
+            "gram_005",
+            "gram_015",
+            "gram_010"
+          ],
+          [
+            "gram_020",
+            "gram_019",
+            "gram_064",
+            "gram_050",
+            "gram_021",
+            "gram_018",
+            "gram_066",
+            "gram_038"
+          ],
+          [
+            "gram_001",
+            "gram_008",
+            "gram_057",
+            "gram_021",
+            "gram_010",
+            "gram_003",
+            "gram_013",
+            "gram_041"
+          ],
+          [
+            "gram_036",
+            "gram_017",
+            "gram_012",
+            "gram_062",
+            "gram_056",
+            "gram_007",
+            "gram_063",
+            "gram_066"
+          ],
+          [
+            "gram_026",
+            "gram_025",
+            "gram_029",
+            "gram_023",
+            "gram_051",
+            "gram_001",
+            "gram_061",
+            "gram_010"
+          ],
+          [
+            "gram_025",
+            "gram_026",
+            "gram_021",
+            "gram_004",
+            "gram_001",
+            "gram_010",
+            "gram_003",
+            "gram_012"
+          ],
+          [
+            "gram_027",
+            "gram_024",
+            "gram_037",
+            "gram_030",
+            "gram_031",
+            "gram_097",
+            "gram_035",
+            "gram_019"
+          ],
+          [
+            "gram_033",
+            "gram_035",
+            "gram_036",
+            "gram_034",
+            "gram_049",
+            "gram_031",
+            "gram_068",
+            "gram_054"
+          ],
+          [
+            "gram_035",
+            "gram_019",
+            "gram_059",
+            "gram_003",
+            "gram_050",
+            "gram_071",
+            "gram_092",
+            "gram_005"
+          ],
+          [
+            "gram_026",
+            "gram_039",
+            "gram_056",
+            "gram_021",
+            "gram_025",
+            "gram_005",
+            "gram_014",
+            "gram_019"
+          ],
+          [
+            "gram_039",
+            "gram_040",
+            "gram_063",
+            "gram_057",
+            "gram_010",
+            "gram_038",
+            "gram_037",
+            "gram_046"
+          ],
+          [
+            "gram_041",
+            "gram_021",
+            "gram_040",
+            "gram_018",
+            "gram_056",
+            "gram_057",
+            "gram_036",
+            "gram_011"
+          ],
+          [
+            "gram_044",
+            "gram_046",
+            "gram_045",
+            "gram_040",
+            "gram_013",
+            "gram_014",
+            "gram_001",
+            "gram_041"
+          ],
+          [
+            "gram_047",
+            "gram_048",
+            "gram_094",
+            "gram_021",
+            "gram_074",
+            "gram_003",
+            "gram_039",
+            "gram_054"
+          ],
+          [
+            "gram_021",
+            "gram_017",
+            "gram_014",
+            "gram_054",
+            "gram_049",
+            "gram_018",
+            "gram_062",
+            "gram_050"
+          ],
+          [
+            "gram_053",
+            "gram_052",
+            "gram_060",
+            "gram_055",
+            "gram_010",
+            "gram_017",
+            "gram_029",
+            "gram_062"
+          ],
+          [
+            "gram_057",
+            "gram_068",
+            "gram_062",
+            "gram_052",
+            "gram_069",
+            "gram_056",
+            "gram_070",
+            "gram_050"
+          ],
+          [
+            "gram_057",
+            "gram_094",
+            "gram_069",
+            "gram_070",
+            "gram_063",
+            "gram_062",
+            "gram_054",
+            "gram_050"
+          ],
+          [
+            "gram_033",
+            "gram_064",
+            "gram_037",
+            "gram_054",
+            "gram_029",
+            "gram_008",
+            "gram_024",
+            "gram_065"
+          ],
+          [
+            "gram_014",
+            "gram_017",
+            "gram_005",
+            "gram_066",
+            "gram_013",
+            "gram_012",
+            "gram_020",
+            "gram_018"
+          ],
+          [
+            "gram_069",
+            "gram_057",
+            "gram_068",
+            "gram_070",
+            "gram_010",
+            "gram_003",
+            "gram_025",
+            "gram_037"
+          ],
+          [
+            "gram_076",
+            "gram_012",
+            "gram_026",
+            "gram_029",
+            "gram_022",
+            "gram_055",
+            "gram_074",
+            "gram_003"
+          ],
+          [
+            "gram_059",
+            "gram_056",
+            "gram_058",
+            "gram_063",
+            "gram_077",
+            "gram_017",
+            "gram_035",
+            "gram_036"
+          ],
+          [
+            "gram_079",
+            "gram_063",
+            "gram_072",
+            "gram_027",
+            "gram_096",
+            "gram_060",
+            "gram_029",
+            "gram_058"
+          ],
+          [
+            "gram_086",
+            "gram_053",
+            "gram_008",
+            "gram_064",
+            "gram_052",
+            "gram_050",
+            "gram_010",
+            "gram_013"
+          ],
+          [
+            "gram_089",
+            "gram_017",
+            "gram_069",
+            "gram_053",
+            "gram_075",
+            "gram_060",
+            "gram_037",
+            "gram_070"
+          ],
+          [
+            "gram_098",
+            "gram_065",
+            "gram_076",
+            "gram_011",
+            "gram_060",
+            "gram_058",
+            "gram_062",
+            "gram_080"
+          ]
+        ]
+      },
+      "index": {
+        "settings": [
+          "SET LOCAL enable_seqscan = off"
+        ],
+        "hnsw_ef_search": "40",
+        "scan_nodes": [
+          "Index Scan using kb_chunks_embedding_idx"
+        ],
+        "server_execution": {
+          "n": 31,
+          "p50_ms": 0.233,
+          "p95_ms": 0.34
+        },
+        "round_trip": {
+          "n": 155,
+          "p50_ms": 51.299,
+          "p95_ms": 53.561
+        },
+        "top_keys": [
+          [
+            "gram_015",
+            "gram_013",
+            "gram_018",
+            "gram_014",
+            "gram_017",
+            "gram_009",
+            "gram_012",
+            "gram_021"
+          ],
+          [
+            "gram_064",
+            "gram_070",
+            "gram_003",
+            "gram_021",
+            "gram_009",
+            "gram_004",
+            "gram_002",
+            "gram_010"
+          ],
+          [
+            "gram_007",
+            "gram_063",
+            "gram_026",
+            "gram_001",
+            "gram_035",
+            "gram_046",
+            "gram_031",
+            "gram_022"
+          ],
+          [
+            "gram_016",
+            "gram_009",
+            "gram_013",
+            "gram_021",
+            "gram_017",
+            "gram_014",
+            "gram_026",
+            "gram_094"
+          ],
+          [
+            "gram_018",
+            "gram_011",
+            "gram_009",
+            "gram_017",
+            "gram_013",
+            "gram_005",
+            "gram_015",
+            "gram_010"
+          ],
+          [
+            "gram_020",
+            "gram_019",
+            "gram_064",
+            "gram_050",
+            "gram_021",
+            "gram_018",
+            "gram_066",
+            "gram_038"
+          ],
+          [
+            "gram_001",
+            "gram_008",
+            "gram_057",
+            "gram_021",
+            "gram_010",
+            "gram_003",
+            "gram_013",
+            "gram_041"
+          ],
+          [
+            "gram_036",
+            "gram_017",
+            "gram_012",
+            "gram_062",
+            "gram_056",
+            "gram_007",
+            "gram_063",
+            "gram_066"
+          ],
+          [
+            "gram_026",
+            "gram_025",
+            "gram_029",
+            "gram_023",
+            "gram_051",
+            "gram_001",
+            "gram_061",
+            "gram_010"
+          ],
+          [
+            "gram_025",
+            "gram_026",
+            "gram_021",
+            "gram_004",
+            "gram_001",
+            "gram_010",
+            "gram_003",
+            "gram_012"
+          ],
+          [
+            "gram_027",
+            "gram_024",
+            "gram_037",
+            "gram_030",
+            "gram_031",
+            "gram_097",
+            "gram_035",
+            "gram_019"
+          ],
+          [
+            "gram_033",
+            "gram_035",
+            "gram_036",
+            "gram_034",
+            "gram_049",
+            "gram_031",
+            "gram_068",
+            "gram_054"
+          ],
+          [
+            "gram_035",
+            "gram_019",
+            "gram_059",
+            "gram_003",
+            "gram_050",
+            "gram_071",
+            "gram_092",
+            "gram_005"
+          ],
+          [
+            "gram_026",
+            "gram_039",
+            "gram_056",
+            "gram_021",
+            "gram_025",
+            "gram_005",
+            "gram_014",
+            "gram_019"
+          ],
+          [
+            "gram_039",
+            "gram_040",
+            "gram_063",
+            "gram_057",
+            "gram_010",
+            "gram_038",
+            "gram_037",
+            "gram_046"
+          ],
+          [
+            "gram_041",
+            "gram_021",
+            "gram_040",
+            "gram_018",
+            "gram_056",
+            "gram_057",
+            "gram_036",
+            "gram_011"
+          ],
+          [
+            "gram_044",
+            "gram_046",
+            "gram_045",
+            "gram_040",
+            "gram_013",
+            "gram_014",
+            "gram_001",
+            "gram_041"
+          ],
+          [
+            "gram_047",
+            "gram_048",
+            "gram_094",
+            "gram_021",
+            "gram_074",
+            "gram_003",
+            "gram_039",
+            "gram_054"
+          ],
+          [
+            "gram_021",
+            "gram_017",
+            "gram_014",
+            "gram_054",
+            "gram_049",
+            "gram_018",
+            "gram_062",
+            "gram_050"
+          ],
+          [
+            "gram_053",
+            "gram_052",
+            "gram_060",
+            "gram_055",
+            "gram_010",
+            "gram_017",
+            "gram_029",
+            "gram_062"
+          ],
+          [
+            "gram_057",
+            "gram_068",
+            "gram_062",
+            "gram_052",
+            "gram_069",
+            "gram_056",
+            "gram_070",
+            "gram_050"
+          ],
+          [
+            "gram_057",
+            "gram_094",
+            "gram_069",
+            "gram_070",
+            "gram_063",
+            "gram_062",
+            "gram_054",
+            "gram_050"
+          ],
+          [
+            "gram_033",
+            "gram_064",
+            "gram_037",
+            "gram_054",
+            "gram_029",
+            "gram_008",
+            "gram_024",
+            "gram_065"
+          ],
+          [
+            "gram_014",
+            "gram_017",
+            "gram_005",
+            "gram_066",
+            "gram_013",
+            "gram_012",
+            "gram_020",
+            "gram_018"
+          ],
+          [
+            "gram_069",
+            "gram_057",
+            "gram_068",
+            "gram_070",
+            "gram_010",
+            "gram_003",
+            "gram_025",
+            "gram_037"
+          ],
+          [
+            "gram_076",
+            "gram_012",
+            "gram_026",
+            "gram_029",
+            "gram_022",
+            "gram_055",
+            "gram_074",
+            "gram_003"
+          ],
+          [
+            "gram_059",
+            "gram_056",
+            "gram_058",
+            "gram_063",
+            "gram_077",
+            "gram_017",
+            "gram_035",
+            "gram_036"
+          ],
+          [
+            "gram_079",
+            "gram_063",
+            "gram_072",
+            "gram_027",
+            "gram_096",
+            "gram_060",
+            "gram_029",
+            "gram_058"
+          ],
+          [
+            "gram_086",
+            "gram_053",
+            "gram_008",
+            "gram_064",
+            "gram_052",
+            "gram_050",
+            "gram_010",
+            "gram_013"
+          ],
+          [
+            "gram_089",
+            "gram_017",
+            "gram_069",
+            "gram_053",
+            "gram_075",
+            "gram_060",
+            "gram_037",
+            "gram_070"
+          ],
+          [
+            "gram_098",
+            "gram_065",
+            "gram_076",
+            "gram_011",
+            "gram_060",
+            "gram_058",
+            "gram_062",
+            "gram_080"
+          ]
+        ]
+      },
+      "exact": {
+        "settings": [
+          "SET LOCAL enable_indexscan = off",
+          "SET LOCAL enable_bitmapscan = off"
+        ],
+        "hnsw_ef_search": "40",
+        "scan_nodes": [
+          "Seq Scan on kb_chunks"
+        ],
+        "server_execution": {
+          "n": 31,
+          "p50_ms": 0.456,
+          "p95_ms": 0.53
+        },
+        "round_trip": {
+          "n": 155,
+          "p50_ms": 51.554,
+          "p95_ms": 53.351
+        },
+        "top_keys": [
+          [
+            "gram_015",
+            "gram_013",
+            "gram_018",
+            "gram_014",
+            "gram_017",
+            "gram_009",
+            "gram_012",
+            "gram_021"
+          ],
+          [
+            "gram_064",
+            "gram_070",
+            "gram_003",
+            "gram_021",
+            "gram_009",
+            "gram_004",
+            "gram_002",
+            "gram_010"
+          ],
+          [
+            "gram_007",
+            "gram_063",
+            "gram_026",
+            "gram_001",
+            "gram_035",
+            "gram_046",
+            "gram_031",
+            "gram_022"
+          ],
+          [
+            "gram_016",
+            "gram_009",
+            "gram_013",
+            "gram_021",
+            "gram_017",
+            "gram_014",
+            "gram_026",
+            "gram_094"
+          ],
+          [
+            "gram_018",
+            "gram_011",
+            "gram_009",
+            "gram_017",
+            "gram_013",
+            "gram_005",
+            "gram_015",
+            "gram_010"
+          ],
+          [
+            "gram_020",
+            "gram_019",
+            "gram_064",
+            "gram_050",
+            "gram_021",
+            "gram_018",
+            "gram_066",
+            "gram_038"
+          ],
+          [
+            "gram_001",
+            "gram_008",
+            "gram_057",
+            "gram_021",
+            "gram_010",
+            "gram_003",
+            "gram_013",
+            "gram_041"
+          ],
+          [
+            "gram_036",
+            "gram_017",
+            "gram_012",
+            "gram_062",
+            "gram_056",
+            "gram_007",
+            "gram_063",
+            "gram_066"
+          ],
+          [
+            "gram_026",
+            "gram_025",
+            "gram_029",
+            "gram_023",
+            "gram_051",
+            "gram_001",
+            "gram_061",
+            "gram_010"
+          ],
+          [
+            "gram_025",
+            "gram_026",
+            "gram_021",
+            "gram_004",
+            "gram_001",
+            "gram_010",
+            "gram_003",
+            "gram_012"
+          ],
+          [
+            "gram_027",
+            "gram_024",
+            "gram_037",
+            "gram_030",
+            "gram_031",
+            "gram_097",
+            "gram_035",
+            "gram_019"
+          ],
+          [
+            "gram_033",
+            "gram_035",
+            "gram_036",
+            "gram_034",
+            "gram_049",
+            "gram_031",
+            "gram_068",
+            "gram_054"
+          ],
+          [
+            "gram_035",
+            "gram_019",
+            "gram_059",
+            "gram_003",
+            "gram_050",
+            "gram_071",
+            "gram_092",
+            "gram_005"
+          ],
+          [
+            "gram_026",
+            "gram_039",
+            "gram_056",
+            "gram_021",
+            "gram_025",
+            "gram_005",
+            "gram_014",
+            "gram_019"
+          ],
+          [
+            "gram_039",
+            "gram_040",
+            "gram_063",
+            "gram_057",
+            "gram_010",
+            "gram_038",
+            "gram_037",
+            "gram_046"
+          ],
+          [
+            "gram_041",
+            "gram_021",
+            "gram_040",
+            "gram_018",
+            "gram_056",
+            "gram_057",
+            "gram_036",
+            "gram_011"
+          ],
+          [
+            "gram_044",
+            "gram_046",
+            "gram_045",
+            "gram_040",
+            "gram_013",
+            "gram_014",
+            "gram_001",
+            "gram_041"
+          ],
+          [
+            "gram_047",
+            "gram_048",
+            "gram_094",
+            "gram_021",
+            "gram_074",
+            "gram_003",
+            "gram_039",
+            "gram_054"
+          ],
+          [
+            "gram_021",
+            "gram_017",
+            "gram_014",
+            "gram_054",
+            "gram_049",
+            "gram_018",
+            "gram_062",
+            "gram_050"
+          ],
+          [
+            "gram_053",
+            "gram_052",
+            "gram_060",
+            "gram_055",
+            "gram_010",
+            "gram_017",
+            "gram_029",
+            "gram_062"
+          ],
+          [
+            "gram_057",
+            "gram_068",
+            "gram_062",
+            "gram_052",
+            "gram_069",
+            "gram_056",
+            "gram_070",
+            "gram_050"
+          ],
+          [
+            "gram_057",
+            "gram_094",
+            "gram_069",
+            "gram_070",
+            "gram_063",
+            "gram_062",
+            "gram_054",
+            "gram_050"
+          ],
+          [
+            "gram_033",
+            "gram_064",
+            "gram_037",
+            "gram_054",
+            "gram_029",
+            "gram_008",
+            "gram_024",
+            "gram_065"
+          ],
+          [
+            "gram_014",
+            "gram_017",
+            "gram_005",
+            "gram_066",
+            "gram_013",
+            "gram_012",
+            "gram_020",
+            "gram_018"
+          ],
+          [
+            "gram_069",
+            "gram_057",
+            "gram_068",
+            "gram_070",
+            "gram_010",
+            "gram_003",
+            "gram_025",
+            "gram_037"
+          ],
+          [
+            "gram_076",
+            "gram_012",
+            "gram_026",
+            "gram_029",
+            "gram_022",
+            "gram_055",
+            "gram_074",
+            "gram_003"
+          ],
+          [
+            "gram_059",
+            "gram_056",
+            "gram_058",
+            "gram_063",
+            "gram_077",
+            "gram_017",
+            "gram_035",
+            "gram_036"
+          ],
+          [
+            "gram_079",
+            "gram_063",
+            "gram_072",
+            "gram_027",
+            "gram_096",
+            "gram_060",
+            "gram_029",
+            "gram_058"
+          ],
+          [
+            "gram_086",
+            "gram_053",
+            "gram_008",
+            "gram_064",
+            "gram_052",
+            "gram_050",
+            "gram_010",
+            "gram_013"
+          ],
+          [
+            "gram_089",
+            "gram_017",
+            "gram_069",
+            "gram_053",
+            "gram_075",
+            "gram_060",
+            "gram_037",
+            "gram_070"
+          ],
+          [
+            "gram_098",
+            "gram_065",
+            "gram_076",
+            "gram_011",
+            "gram_060",
+            "gram_058",
+            "gram_062",
+            "gram_080"
+          ]
+        ]
+      }
+    },
+    "word_embeddings": {
+      "default": {
+        "settings": [],
+        "hnsw_ef_search": "40",
+        "scan_nodes": [
+          "Index Scan using word_embeddings_embedding_idx"
+        ],
+        "server_execution": {
+          "n": 31,
+          "p50_ms": 12.77,
+          "p95_ms": 80.466
+        },
+        "round_trip": {
+          "n": 155,
+          "p50_ms": 50.821,
+          "p95_ms": 53.857
+        },
+        "top_keys": [
+          [
+            "ago",
+            "current",
+            "former"
+          ],
+          [
+            "scheduled",
+            "schedule",
+            "frequent"
+          ],
+          [
+            "idiom",
+            "misconception",
+            "informed"
+          ],
+          [
+            "since",
+            "from",
+            "for"
+          ],
+          [
+            "scenario",
+            "formerly",
+            "precede"
+          ],
+          [
+            "precede",
+            "proposed",
+            "supposed"
+          ],
+          [
+            "compact",
+            "successive",
+            "persuade"
+          ],
+          [
+            "yesterday",
+            "wrongly",
+            "shy"
+          ],
+          [
+            "unpopular",
+            "indescribable",
+            "wordlessly"
+          ],
+          [
+            "at",
+            "ago",
+            "ever"
+          ],
+          [
+            "water",
+            "much",
+            "numerous"
+          ],
+          [
+            "necessary",
+            "mandatory",
+            "importantly"
+          ],
+          [
+            "timely",
+            "steadily",
+            "prompt"
+          ],
+          [
+            "quotable",
+            "blog",
+            "lesson"
+          ],
+          [
+            "if",
+            "whether",
+            "invariably"
+          ],
+          [
+            "scenario",
+            "coincidence",
+            "tale"
+          ],
+          [
+            "preferably",
+            "better",
+            "moreover"
+          ],
+          [
+            "on",
+            "onto",
+            "in"
+          ],
+          [
+            "accordingly",
+            "crucial",
+            "adequate"
+          ],
+          [
+            "destructive",
+            "distract",
+            "action"
+          ],
+          [
+            "anywhere",
+            "nowhere",
+            "somewhere"
+          ],
+          [
+            "whereas",
+            "which",
+            "wherever"
+          ],
+          [
+            "non-smoking",
+            "smoking",
+            "smoker"
+          ],
+          [
+            "meeting",
+            "reunion",
+            "greet"
+          ],
+          [
+            "shortly",
+            "answer",
+            "ultimately"
+          ],
+          [
+            "homework",
+            "housework",
+            "schoolwork"
+          ],
+          [
+            "truth",
+            "honest",
+            "genuinely"
+          ],
+          [
+            "you",
+            "differently",
+            "preferably"
+          ],
+          [
+            "lost",
+            "bust",
+            "missing"
+          ],
+          [
+            "affect",
+            "effect",
+            "weather"
+          ],
+          [
+            "reminder",
+            "remind",
+            "remembrance"
+          ]
+        ]
+      },
+      "index": {
+        "settings": [
+          "SET LOCAL enable_seqscan = off"
+        ],
+        "hnsw_ef_search": "40",
+        "scan_nodes": [
+          "Index Scan using word_embeddings_embedding_idx"
+        ],
+        "server_execution": {
+          "n": 31,
+          "p50_ms": 0.926,
+          "p95_ms": 1.094
+        },
+        "round_trip": {
+          "n": 155,
+          "p50_ms": 50.767,
+          "p95_ms": 107.431
+        },
+        "top_keys": [
+          [
+            "ago",
+            "current",
+            "former"
+          ],
+          [
+            "scheduled",
+            "schedule",
+            "frequent"
+          ],
+          [
+            "idiom",
+            "misconception",
+            "informed"
+          ],
+          [
+            "since",
+            "from",
+            "for"
+          ],
+          [
+            "scenario",
+            "formerly",
+            "precede"
+          ],
+          [
+            "precede",
+            "proposed",
+            "supposed"
+          ],
+          [
+            "compact",
+            "successive",
+            "persuade"
+          ],
+          [
+            "yesterday",
+            "wrongly",
+            "shy"
+          ],
+          [
+            "unpopular",
+            "indescribable",
+            "wordlessly"
+          ],
+          [
+            "at",
+            "ago",
+            "ever"
+          ],
+          [
+            "water",
+            "much",
+            "numerous"
+          ],
+          [
+            "necessary",
+            "mandatory",
+            "importantly"
+          ],
+          [
+            "timely",
+            "steadily",
+            "prompt"
+          ],
+          [
+            "quotable",
+            "blog",
+            "lesson"
+          ],
+          [
+            "if",
+            "whether",
+            "invariably"
+          ],
+          [
+            "scenario",
+            "coincidence",
+            "tale"
+          ],
+          [
+            "preferably",
+            "better",
+            "moreover"
+          ],
+          [
+            "on",
+            "onto",
+            "in"
+          ],
+          [
+            "accordingly",
+            "crucial",
+            "adequate"
+          ],
+          [
+            "destructive",
+            "distract",
+            "action"
+          ],
+          [
+            "anywhere",
+            "nowhere",
+            "somewhere"
+          ],
+          [
+            "whereas",
+            "which",
+            "wherever"
+          ],
+          [
+            "non-smoking",
+            "smoking",
+            "smoker"
+          ],
+          [
+            "meeting",
+            "reunion",
+            "greet"
+          ],
+          [
+            "shortly",
+            "answer",
+            "ultimately"
+          ],
+          [
+            "homework",
+            "housework",
+            "schoolwork"
+          ],
+          [
+            "truth",
+            "honest",
+            "genuinely"
+          ],
+          [
+            "you",
+            "differently",
+            "preferably"
+          ],
+          [
+            "lost",
+            "bust",
+            "missing"
+          ],
+          [
+            "affect",
+            "effect",
+            "weather"
+          ],
+          [
+            "reminder",
+            "remind",
+            "remembrance"
+          ]
+        ]
+      },
+      "exact": {
+        "settings": [
+          "SET LOCAL enable_indexscan = off",
+          "SET LOCAL enable_bitmapscan = off"
+        ],
+        "hnsw_ef_search": "40",
+        "scan_nodes": [
+          "Seq Scan on word_embeddings"
+        ],
+        "server_execution": {
+          "n": 31,
+          "p50_ms": 12.954,
+          "p95_ms": 14.132
+        },
+        "round_trip": {
+          "n": 155,
+          "p50_ms": 61.617,
+          "p95_ms": 66.275
+        },
+        "top_keys": [
+          [
+            "ago",
+            "current",
+            "former"
+          ],
+          [
+            "scheduled",
+            "schedule",
+            "frequent"
+          ],
+          [
+            "him",
+            "idiom",
+            "misconception"
+          ],
+          [
+            "since",
+            "from",
+            "for"
+          ],
+          [
+            "scenario",
+            "formerly",
+            "precede"
+          ],
+          [
+            "precede",
+            "proposed",
+            "supposed"
+          ],
+          [
+            "structural",
+            "compact",
+            "fishing"
+          ],
+          [
+            "yesterday",
+            "wrongly",
+            "shy"
+          ],
+          [
+            "unpopular",
+            "indescribable",
+            "wordlessly"
+          ],
+          [
+            "at",
+            "ago",
+            "ever"
+          ],
+          [
+            "water",
+            "much",
+            "numerous"
+          ],
+          [
+            "necessary",
+            "mandatory",
+            "importantly"
+          ],
+          [
+            "timely",
+            "steadily",
+            "prompt"
+          ],
+          [
+            "quotable",
+            "blog",
+            "lesson"
+          ],
+          [
+            "if",
+            "whether",
+            "invariably"
+          ],
+          [
+            "deduction",
+            "scenario",
+            "coincidence"
+          ],
+          [
+            "preferably",
+            "better",
+            "moreover"
+          ],
+          [
+            "on",
+            "onto",
+            "in"
+          ],
+          [
+            "accordingly",
+            "crucial",
+            "adequate"
+          ],
+          [
+            "destructive",
+            "distract",
+            "action"
+          ],
+          [
+            "anywhere",
+            "nowhere",
+            "somewhere"
+          ],
+          [
+            "clause",
+            "punctuation",
+            "whereas"
+          ],
+          [
+            "non-smoking",
+            "smoking",
+            "smoker"
+          ],
+          [
+            "meeting",
+            "reunion",
+            "greet"
+          ],
+          [
+            "shortly",
+            "answer",
+            "ultimately"
+          ],
+          [
+            "homework",
+            "housework",
+            "schoolwork"
+          ],
+          [
+            "truth",
+            "honest",
+            "genuinely"
+          ],
+          [
+            "bookish",
+            "you",
+            "differently"
+          ],
+          [
+            "lost",
+            "bust",
+            "verb"
+          ],
+          [
+            "affect",
+            "effect",
+            "weather"
+          ],
+          [
+            "reminder",
+            "remind",
+            "remembrance"
+          ]
+        ]
+      }
+    }
+  },
+  "ann_recall_vs_exact": {
+    "kb_chunks": {
+      "k": 8,
+      "index_vs_exact": 1.0,
+      "default_vs_exact": 1.0
+    },
+    "word_embeddings": {
+      "k": 3,
+      "index_vs_exact": 0.914,
+      "default_vs_exact": 0.914
+    }
+  },
+  "sample_top3_kb": [
+    {
+      "question": "khi nào dùng hiện tại hoàn thành thay vì quá khứ đơn",
+      "top3": [
+        {
+          "id": "gram_015",
+          "title": "Hiện tại hoàn thành và quá khứ đơn — Phân biệt",
+          "distance": 0.0862
+        },
+        {
+          "id": "gram_013",
+          "title": "Thì hiện tại hoàn thành (Present Perfect) — Cách dùng",
+          "distance": 0.0909
+        },
+        {
+          "id": "gram_018",
+          "title": "Thì quá khứ hoàn thành (Past Perfect) — Cách dùng",
+          "distance": 0.1089
+        }
+      ]
+    },
+    {
+      "question": "khi nào chia động từ đuôi ing cho việc đang diễn ra, khi nào chỉ dùng dạng thường cho thói quen",
+      "top3": [
+        {
+          "id": "gram_064",
+          "title": "Động từ theo sau bởi V-ing hoặc to V — Cách dùng",
+          "distance": 0.1336
+        },
+        {
+          "id": "gram_070",
+          "title": "Câu hỏi đuôi (Tag Questions) — Cấu trúc",
+          "distance": 0.1413
+        },
+        {
+          "id": "gram_003",
+          "title": "Thì hiện tại đơn (Present Simple) — Dấu hiệu nhận biết",
+          "distance": 0.1434
+        }
+      ]
+    },
+    {
+      "question": "sao người ta nói I am knowing him là sai ngữ pháp",
+      "top3": [
+        {
+          "id": "gram_007",
+          "title": "Động từ trạng thái với thì tiếp diễn (Stative Verbs) — Lỗi thường gặp",
+          "distance": 0.1453
+        },
+        {
+          "id": "gram_063",
+          "title": "Mệnh đề quan hệ (Relative Clauses) — Lỗi thường gặp",
+          "distance": 0.1481
+        },
+        {
+          "id": "gram_026",
+          "title": "Mạo từ a/an/the (Articles) — Lỗi thường gặp",
+          "distance": 0.1543
+        }
+      ]
+    },
+    {
+      "question": "tôi học tiếng Anh từ năm 2020 đến giờ thì dùng since hay for",
+      "top3": [
+        {
+          "id": "gram_016",
+          "title": "Since và for — Phân biệt",
+          "distance": 0.111
+        },
+        {
+          "id": "gram_009",
+          "title": "Thì quá khứ đơn (Past Simple) — Cách dùng",
+          "distance": 0.1243
+        },
+        {
+          "id": "gram_013",
+          "title": "Thì hiện tại hoàn thành (Present Perfect) — Cách dùng",
+          "distance": 0.1257
+        }
+      ]
+    },
+    {
+      "question": "kể chuyện có hai việc trong quá khứ thì việc xảy ra trước chia thế nào",
+      "top3": [
+        {
+          "id": "gram_018",
+          "title": "Thì quá khứ hoàn thành (Past Perfect) — Cách dùng",
+          "distance": 0.1204
+        },
+        {
+          "id": "gram_011",
+          "title": "Thì quá khứ tiếp diễn (Past Continuous) với when và while — Cách dùng",
+          "distance": 0.123
+        },
+        {
+          "id": "gram_009",
+          "title": "Thì quá khứ đơn (Past Simple) — Cách dùng",
+          "distance": 0.1407
+        }
+      ]
+    }
+  ]
+}

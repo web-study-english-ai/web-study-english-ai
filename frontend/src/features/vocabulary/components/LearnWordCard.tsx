@@ -48,7 +48,7 @@ export function LearnWordCard({ card, onRate }: Props) {
           className="relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d]"
           style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
         >
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-border bg-white p-10 text-center shadow-sm [backface-visibility:hidden]">
+          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-10 text-center shadow-sm [backface-visibility:hidden]">
             <h2 className="font-heading text-4xl font-bold text-foreground">{card.word.term}</h2>
             <div className="mt-2 flex items-center justify-center gap-2 text-muted-foreground">
               <span>{card.word.ipa}</span>

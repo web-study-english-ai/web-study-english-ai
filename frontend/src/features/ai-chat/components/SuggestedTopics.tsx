@@ -6,7 +6,7 @@ interface Props {
 
 export function SuggestedTopics({ topics, disabled, onPick }: Props) {
   return (
-    <aside className="rounded-2xl border border-border bg-white p-4">
+    <aside className="rounded-2xl border border-border bg-card p-4">
       <h2 className="mb-3 text-sm font-semibold text-foreground">Gợi ý chủ đề hỏi đáp AI</h2>
       <div className="space-y-2">
         {topics.map((t) => (

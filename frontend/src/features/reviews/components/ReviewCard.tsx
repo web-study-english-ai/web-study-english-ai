@@ -19,7 +19,7 @@ export function ReviewCard({ card, revealed, onReveal }: Props) {
   }
 
   return (
-    <div className="flex h-80 flex-col items-center justify-center rounded-2xl border border-border bg-white p-8 text-center shadow-sm">
+    <div className="flex h-80 flex-col items-center justify-center rounded-2xl border border-border bg-card p-8 text-center shadow-sm">
       <Badge variant="secondary" className="mb-4 text-xs">
         Từ vựng hôm nay
       </Badge>

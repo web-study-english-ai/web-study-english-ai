@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Bot, X } from "lucide-react";
 import { ChatWindow } from "@/features/ai-chat/components/ChatWindow";
-import { useChatMock } from "@/features/ai-chat/hooks/useChatMock";
+import { useChat } from "@/features/ai-chat/hooks/useChat";
 
 const BUTTON_SIZE = 56; // h-14 w-14
 const SCREEN_MARGIN = 8;
@@ -31,7 +31,7 @@ export function FloatingChatBubble() {
   const [open, setOpen] = useState(false);
   const [position, setPosition] = useState<Position>(DEFAULT_POSITION);
   // Gọi hook ở đây (không phải trong panel) để cuộc trò chuyện không mất khi đóng/mở lại
-  const { messages, isSending, isStreaming, sendMessage, retryMessage } = useChatMock();
+  const { messages, isSending, isStreaming, sendMessage, retryMessage } = useChat();
 
   const dragStartRef = useRef<{ x: number; y: number; right: number; bottom: number } | null>(null);
   const wasDraggedRef = useRef(false);
@@ -106,14 +106,14 @@ export function FloatingChatBubble() {
             <button
               onClick={() => setOpen(false)}
               aria-label="Đóng trợ lý AI"
-              className="rounded-full p-1 text-primary-foreground/80 hover:bg-white/10 hover:text-primary-foreground"
+              className="rounded-full p-1 text-primary-foreground/80 hover:bg-card/10 hover:text-primary-foreground"
             >
               <X className="h-4 w-4" />
             </button>
           </div>
 
           {/* Bỏ bo góc/viền sẵn có của ChatWindow vì panel đã có khung riêng */}
-          <div className="min-h-0 flex-1 bg-white [&>div]:rounded-none [&>div]:border-0">
+          <div className="min-h-0 flex-1 bg-card [&>div]:rounded-none [&>div]:border-0">
             <ChatWindow
               messages={messages}
               isSending={isSending}

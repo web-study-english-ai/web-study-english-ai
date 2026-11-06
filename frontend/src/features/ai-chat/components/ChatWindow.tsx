@@ -24,7 +24,7 @@ function TypingIndicator() {
   return (
     <div className="flex items-start gap-3" aria-label="Trợ lý đang trả lời">
       <AssistantAvatar />
-      <div className="flex items-center gap-1 rounded-2xl rounded-tl-sm border border-teal-200 bg-teal-50/60 px-4 py-3.5">
+      <div className="flex items-center gap-1 rounded-2xl rounded-tl-sm border border-teal-200 bg-teal-50/60 dark:border-teal-800 dark:bg-teal-950/30 px-4 py-3.5">
         {[0, 150, 300].map((d) => (
           <span
             key={d}
@@ -46,7 +46,7 @@ export function ChatWindow({ messages, isSending, isStreaming, onSend, onRetryMe
   }, [messages, isSending]);
 
   return (
-    <div className="flex h-full min-h-0 flex-col rounded-2xl border border-border bg-white">
+    <div className="flex h-full min-h-0 flex-col rounded-2xl border border-border bg-card">
       <div
         ref={listRef}
         role="log"

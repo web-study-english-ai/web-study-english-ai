@@ -21,7 +21,7 @@ function StatCard({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-2xl border border-border bg-white p-5">
+    <div className="rounded-2xl border border-border bg-card p-5">
       <div className="flex items-start justify-between gap-2">
         <p className="text-sm text-muted-foreground">{title}</p>
         <span
@@ -84,7 +84,7 @@ export function ProgressStatCards({ stats }: { stats: ProgressStats }) {
         <p
           className={cn(
             "mt-1 text-sm",
-            stats.memoryStrengthDelta < 0 ? "text-destructive" : "text-purple-600"
+            stats.memoryStrengthDelta < 0 ? "text-destructive" : "text-purple-600 dark:text-purple-400"
           )}
         >
           {deltaNote(stats.memoryStrengthDelta)}

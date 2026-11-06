@@ -28,7 +28,7 @@ export function ProgressError({ onRetry }: { onRetry: () => void }) {
 
 export function ProgressEmpty() {
   return (
-    <div className="mt-6 rounded-2xl border border-dashed border-border bg-white p-12 text-center">
+    <div className="mt-6 rounded-2xl border border-dashed border-border bg-card p-12 text-center">
       <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-muted">
         <BarChart3 className="h-6 w-6 text-muted-foreground" />
       </span>

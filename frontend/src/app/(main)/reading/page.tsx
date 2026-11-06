@@ -85,7 +85,7 @@ export default function ReadingPage() {
           <button
             type="button"
             onClick={() => refetch()}
-            className="mt-4 rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium hover:bg-muted"
+            className="mt-4 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted"
           >
             Thử lại
           </button>
@@ -107,7 +107,7 @@ export default function ReadingPage() {
               <select
                 value={filters.sort}
                 onChange={(e) => handleFilterChange({ sort: e.target.value })}
-                className="h-9 rounded-lg border border-border bg-white px-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/30"
+                className="h-9 rounded-lg border border-border bg-card px-2 text-sm text-foreground outline-none focus:ring-2 focus:ring-primary/30"
               >
                 {SORT_OPTIONS.map((s) => (
                   <option key={s.value} value={s.value}>
@@ -119,14 +119,14 @@ export default function ReadingPage() {
           </div>
 
           {data.items.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-border bg-white p-12 text-center">
+            <div className="rounded-2xl border border-dashed border-border bg-card p-12 text-center">
               <p className="text-sm text-muted-foreground">
                 Không tìm thấy bài đọc phù hợp với bộ lọc hiện tại.
               </p>
               <button
                 type="button"
                 onClick={resetFilters}
-                className="mt-4 rounded-lg border border-border bg-white px-4 py-2 text-sm font-medium hover:bg-muted"
+                className="mt-4 rounded-lg border border-border bg-card px-4 py-2 text-sm font-medium hover:bg-muted"
               >
                 Xóa bộ lọc
               </button>
@@ -134,7 +134,7 @@ export default function ReadingPage() {
           ) : (
             <div
               className={cn(
-                "overflow-hidden rounded-2xl border border-border bg-white transition-opacity",
+                "overflow-hidden rounded-2xl border border-border bg-card transition-opacity",
                 isPlaceholderData && "opacity-60"
               )}
             >

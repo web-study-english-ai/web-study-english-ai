@@ -1,0 +1,67 @@
+{
+  "task": "WSEA-110",
+  "created_at": "2026-10-30T18:48:42+00:00",
+  "model": "intfloat/multilingual-e5-small",
+  "revision": "614241f622f53c4eeff9890bdc4f31cfecc418b3",
+  "dim": 384,
+  "query_prefix": "query: ",
+  "passage_prefix": "passage: ",
+  "normalize": "L2 (normalize_embeddings=True), điểm = tích vô hướng",
+  "dtype": "float32",
+  "inputs": {
+    "kb": {
+      "path": "ai-service/kb/grammar_chunks.jsonl",
+      "rows": 100,
+      "sha256": "6369a86a46a310e3058f72d281e903ade9164ce240184dfbe5a587e0c3556ee4"
+    },
+    "vocab": {
+      "path": "backend/prisma/data/vocab_7000.csv",
+      "rows": 7000,
+      "sha256": "546776fd6defeb7c4fa2ff6a8a3c850d83d5caad743be6939fdfa515b03793d7"
+    }
+  },
+  "templates": {
+    "kb": "passage: {content}",
+    "word": "passage: {word} ({pos}): {meaning_vi}",
+    "query": "query: {question}"
+  },
+  "outputs": {
+    "kb": {
+      "file": "kb_e5-small.npz",
+      "keys": [
+        "ids",
+        "vectors"
+      ],
+      "shape": [
+        100,
+        384
+      ],
+      "sha256": "9ee14b8486212acfc58546a5773660d9539b09aca270bbcf6efde3efe6d65978"
+    },
+    "words": {
+      "file": "words_e5-small.npz",
+      "keys": [
+        "terms",
+        "vectors"
+      ],
+      "shape": [
+        7000,
+        384
+      ],
+      "sha256": "637f287327bdc36660343f4f2ac6d6c24b19f3baa8f3580eb48a79591ac03cc4"
+    }
+  },
+  "timing_seconds": {
+    "model_load": 17.78,
+    "encode_kb": 9.4,
+    "encode_words": 32.54
+  },
+  "environment": {
+    "python": "3.13.12",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "torch": "2.14.0+cpu",
+    "sentence_transformers": "6.2.0",
+    "transformers": "5.22.0",
+    "numpy": "2.4.6"
+  }
+}

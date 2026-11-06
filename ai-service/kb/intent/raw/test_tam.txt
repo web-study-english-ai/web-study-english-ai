@@ -1,0 +1,34 @@
+# WSEA-112 · tập kiểm tra · tác giả: Phạm Văn Tâm (file "Câu hỏi cho AI.docx", tạo 31/10/2026)
+# Câu giữ nguyên văn (kể cả lỗi gõ); chỉ bỏ số thứ tự và nhãn trong ngoặc.
+# Nhãn cuối theo LABELING.md; nhãn tác giả khác thì ghi ở note.
+# @lang vi
+cach_dung | từ do dùng thế nào
+nghia_tu | từ nào đồng nghĩa với father
+nghia_tu | mùa đông tiếng anh là gì
+# @lang vi_nodau
+phan_biet | phan biet giua home và house
+phan_biet | khi nao dung what khi nao dung which
+nghia_tu | have nghia la gi
+# @lang vi
+nghia_tu | tìm từ trái nghĩa với easy
+# @lang en
+ngoai_pham_vi | what time is it
+ngoai_pham_vi | how are you
+ngoai_pham_vi | what dose the fox say
+# @lang vi
+cach_dung | đằng sau động từ suggest thì dùng V-ing hay to V
+cach_dung | từ congratulate đi kèm với giới từ gì
+nghia_tu | tìm giúp mình 3 từ đồng nghĩa với từ important
+ngu_phap | dịch câu tôi đã học tiếng anh được 5 năm rồi sang tiếng anh
+ngu_phap | câu yesterday I go to the market and buy some apples viết đúng k
+phan_biet | phân biệt in the end và at the end
+ngoai_pham_vi | gợi ý cho mình lộ trình tự học tiếng anh cho người mới bắt đầu
+ngu_phap | she don't like playing soccer câu này viết đúng chưa
+phan_biet | khi nào thì dùng thì quá khứ đơn, khi nào dùng quá khư tiếp diễn
+nghia_tu | thành ngữ "under the weather" có nghĩa là gì vậy
+cach_dung | đặt một với từ rage baite
+ngoai_pham_vi | đuôi ed có mấy cách phát âm
+ngoai_pham_vi | có hỗ trợ dịch văn bản từ tiếng pháp sang tiếng việt k thằng nhóc
+# @lang en
+ngoai_pham_vi | you are chicken
+ngoai_pham_vi | Am I handsome

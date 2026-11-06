@@ -12,12 +12,59 @@ from starlette.types import ASGIApp, Message, Receive, Scope, Send
 from app.config import settings
 from app.models.weights import load_fsrs
 from app.routers import health, rag, retention, vision
+from app.services.embedder import Embedder
+from app.services.intent import IntentClassifier
+from app.services.llm import LLMClient
 
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 logger = logging.getLogger(__name__)
+
+
+def load_embedder() -> Embedder | None:
+    """Nap mo hinh embedding va encode thu mot cau de ep nap ngay luc khoi dong.
+
+    Giong load_fsrs: loi thi tra None, dich vu van len. /assistant/embed tra 503
+    con /predict-retention khong bi anh huong.
+    """
+    started = time.perf_counter()
+    try:
+        embedder = Embedder(local_files_only=settings.embedder_local_files_only)
+        embedder.encode_queries(["warmup"])
+    except Exception:
+        logger.exception("Nap mo hinh embedding that bai")
+        return None
+    logger.info("Da nap mo hinh embedding trong %.1f giay", time.perf_counter() - started)
+    return embedder
+
+
+def load_intent() -> IntentClassifier | None:
+    """Nap bo phan loai y dinh (file JSON, numpy). Loi thi None: pipeline bo luat 2, dich vu van len."""
+    try:
+        clf = IntentClassifier.load()
+    except Exception:
+        logger.exception("Nap bo phan loai y dinh that bai")
+        return None
+    logger.info("Da nap bo phan loai y dinh (tau=%.2f)", clf.tau)
+    return clf
+
+
+def load_vision():
+    """Nap CLIP (ghim revision) + vector nhan tinh san (app/resources). Loi thi None: /recognize/image tra 503."""
+    started = time.perf_counter()
+    try:
+        from app.vision import classifier as vc  # import torch/transformers chi khi bat
+        words, vectors, _ = vc.load_label_vectors()
+        backend = vc.HFClipBackend(local_files_only=settings.vision_local_files_only, num_threads=2)
+        clf = vc.ZeroShotClassifier(backend, words, vectors)
+    except Exception:
+        logger.exception("Nap mo hinh nhan dien anh that bai")
+        return None
+    logger.info("Da nap CLIP (%d nhan, tau=%.2f) trong %.1f giay", len(words), settings.vision_tau,
+                time.perf_counter() - started)
+    return clf
 
 
 @asynccontextmanager
@@ -28,10 +75,19 @@ async def lifespan(app: FastAPI):
     de /health bao degraded thay vi container crash-loop tren HF Spaces.
     """
     model, meta = load_fsrs(settings)
-    app.state.models = {"fsrs": model}
+    embedder = load_embedder() if settings.embedder_enabled else None
+    # Client LLM (WSEA-140): mot AsyncClient cho moi request; thieu khoa van tao, /ask tra 503 no_key.
+    # De o app.state.llm, KHONG o models: /health liet ke models (hop dong), LLM khong phai mo hinh nap.
+    llm = LLMClient.from_settings(settings)
+    if settings.llm_api_key is None:
+        logger.warning("Chua co LLM_API_KEY: /assistant/ask se tra 503 khi can goi LLM")
+    vision = load_vision() if settings.vision_enabled else None
+    app.state.models = {"fsrs": model, "embedder": embedder, "intent": load_intent(), "vision": vision}
+    app.state.llm = llm
     app.state.model_meta = meta
     yield
     app.state.models.clear()
+    await llm.aclose()
 
 
 app = FastAPI(

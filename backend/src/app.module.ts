@@ -17,6 +17,7 @@ import { ProgressModule } from '@modules/progress/progress.module';
 import { AssistantModule } from '@modules/assistant/assistant.module';
 import { ReadingModule } from '@modules/reading/reading.module';
 import { AiMonitorModule } from '@modules/ai-monitor/ai-monitor.module';
+import { InfraResilienceModule } from '@modules/infra-resilience/infra-resilience.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AiMonitorModule } from '@modules/ai-monitor/ai-monitor.module';
       envFilePath: '.env',
     }),
     AiMonitorModule,
+    InfraResilienceModule,
     PrismaModule,
     AuthModule,
     UsersModule,

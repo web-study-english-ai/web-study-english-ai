@@ -266,7 +266,7 @@ def test_health_ok_without_api_key(client):
 
     assert res.status_code == 200
     assert body["status"] == "ok"
-    assert body["models"] == ["fsrs"]
+    assert body["models"] == ["fsrs", "intent"]
     assert body["model_version"] == "default-untrained"
 
 
@@ -277,7 +277,7 @@ def test_health_degraded_returns_503(client, monkeypatch):
 
     assert res.status_code == 503
     assert res.json()["status"] == "degraded"
-    assert res.json()["models"] == []
+    assert res.json()["models"] == ["intent"]
 
 
 # --- Server-Timing (WSEA-97) -------------------------------------------------

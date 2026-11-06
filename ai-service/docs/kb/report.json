@@ -1,0 +1,85 @@
+{
+  "mode": "final",
+  "chunks": 100,
+  "missing_ids": [],
+  "by_cefr": {
+    "A1": 22,
+    "A2": 29,
+    "B1": 36,
+    "B2": 13
+  },
+  "by_facet": {
+    "form": 20,
+    "usage": 35,
+    "signals": 2,
+    "contrast": 38,
+    "mistakes": 5
+  },
+  "words": {
+    "min": 189,
+    "mean": 223.6,
+    "max": 249
+  },
+  "tokens": {
+    "measured": true,
+    "tokenizer": "intfloat/multilingual-e5-small",
+    "max": 391
+  },
+  "errors": [],
+  "warnings": [],
+  "similarity": {
+    "measured": true,
+    "top_pairs": [
+      {
+        "a": "gram_013",
+        "b": "gram_015",
+        "score": 0.5435
+      },
+      {
+        "a": "gram_039",
+        "b": "gram_040",
+        "score": 0.5242
+      },
+      {
+        "a": "gram_004",
+        "b": "gram_010",
+        "score": 0.5092
+      },
+      {
+        "a": "gram_037",
+        "b": "gram_038",
+        "score": 0.4882
+      },
+      {
+        "a": "gram_038",
+        "b": "gram_039",
+        "score": 0.485
+      },
+      {
+        "a": "gram_005",
+        "b": "gram_006",
+        "score": 0.4541
+      },
+      {
+        "a": "gram_037",
+        "b": "gram_039",
+        "score": 0.4417
+      },
+      {
+        "a": "gram_013",
+        "b": "gram_014",
+        "score": 0.441
+      },
+      {
+        "a": "gram_044",
+        "b": "gram_046",
+        "score": 0.4375
+      },
+      {
+        "a": "gram_035",
+        "b": "gram_036",
+        "score": 0.4243
+      }
+    ]
+  }
+}

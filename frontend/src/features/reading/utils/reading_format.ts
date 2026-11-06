@@ -1,6 +1,6 @@
 import { CefrLevel, ReadingStatus } from "../types/reading_types";
 
-export const CEFR_FILTERS: (CefrLevel | "all")[] = ["all", "A1", "A2", "B1", "B2", "C1"];
+export const CEFR_FILTERS: (CefrLevel | "all")[] = ["all", "A1", "A2", "B1", "B2"];
 
 export const STATUS_OPTIONS: { value: ReadingStatus | "all"; label: string }[] = [
   { value: "all", label: "Tất cả" },
