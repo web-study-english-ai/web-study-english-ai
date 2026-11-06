@@ -18,7 +18,7 @@ import { AssistantModule } from '@modules/assistant/assistant.module';
 import { ReadingModule } from '@modules/reading/reading.module';
 import { AiMonitorModule } from '@modules/ai-monitor/ai-monitor.module';
 import { InfraResilienceModule } from '@modules/infra-resilience/infra-resilience.module';
-
+import { VisionModule } from '@modules/vision/vision.module';
 @Module({
   imports: [
     SentryModule.forRoot(),
@@ -39,6 +39,7 @@ import { InfraResilienceModule } from '@modules/infra-resilience/infra-resilienc
     ProgressModule,
     AssistantModule,
     ReadingModule,
+    VisionModule,
   ],
   controllers: [AppController],
   providers: [
