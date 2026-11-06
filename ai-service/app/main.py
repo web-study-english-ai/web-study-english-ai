@@ -51,6 +51,22 @@ def load_intent() -> IntentClassifier | None:
     return clf
 
 
+def load_vision():
+    """Nap CLIP (ghim revision) + vector nhan tinh san (app/resources). Loi thi None: /recognize/image tra 503."""
+    started = time.perf_counter()
+    try:
+        from app.vision import classifier as vc  # import torch/transformers chi khi bat
+        words, vectors, _ = vc.load_label_vectors()
+        backend = vc.HFClipBackend(local_files_only=settings.vision_local_files_only, num_threads=2)
+        clf = vc.ZeroShotClassifier(backend, words, vectors)
+    except Exception:
+        logger.exception("Nap mo hinh nhan dien anh that bai")
+        return None
+    logger.info("Da nap CLIP (%d nhan, tau=%.2f) trong %.1f giay", len(words), settings.vision_tau,
+                time.perf_counter() - started)
+    return clf
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Nap model ML mot lan khi khoi dong, giai phong khi tat (quy tac 4).
@@ -65,7 +81,8 @@ async def lifespan(app: FastAPI):
     llm = LLMClient.from_settings(settings)
     if settings.llm_api_key is None:
         logger.warning("Chua co LLM_API_KEY: /assistant/ask se tra 503 khi can goi LLM")
-    app.state.models = {"fsrs": model, "embedder": embedder, "intent": load_intent()}
+    vision = load_vision() if settings.vision_enabled else None
+    app.state.models = {"fsrs": model, "embedder": embedder, "intent": load_intent(), "vision": vision}
     app.state.llm = llm
     app.state.model_meta = meta
     yield

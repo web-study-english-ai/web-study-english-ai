@@ -1,0 +1,1813 @@
+{
+  "task": "WSEA-153",
+  "part": "test",
+  "created_at": "2026-11-05T16:29:01+00:00",
+  "official": true,
+  "runs": 1,
+  "tau": 0.4,
+  "manifest_sha256": "42d219c79386ec4ba96141f0395c650cc29fb63d400f0e67d4bee286681e93b7",
+  "missing": [
+    "beef",
+    "chicken"
+  ],
+  "metrics": {
+    "n": 48,
+    "tau": 0.4,
+    "top1_strict": {
+      "hits": 34,
+      "n": 48,
+      "rate": 0.7083
+    },
+    "top5_strict": {
+      "hits": 46,
+      "n": 48,
+      "rate": 0.9583
+    },
+    "top1_relaxed": {
+      "hits": 36,
+      "n": 48,
+      "rate": 0.75
+    },
+    "top5_relaxed": {
+      "hits": 47,
+      "n": 48,
+      "rate": 0.9792
+    },
+    "coverage": {
+      "answered": 42,
+      "n": 48,
+      "rate": 0.875
+    },
+    "acc_answered_strict": {
+      "hits": 33,
+      "n": 42,
+      "rate": 0.7857
+    },
+    "acc_answered_relaxed": {
+      "hits": 35,
+      "n": 42,
+      "rate": 0.8333
+    }
+  },
+  "by_cefr": {
+    "A1": {
+      "n": 7,
+      "tau": 0.4,
+      "top1_strict": {
+        "hits": 6,
+        "n": 7,
+        "rate": 0.8571
+      },
+      "top5_strict": {
+        "hits": 7,
+        "n": 7,
+        "rate": 1.0
+      },
+      "top1_relaxed": {
+        "hits": 6,
+        "n": 7,
+        "rate": 0.8571
+      },
+      "top5_relaxed": {
+        "hits": 7,
+        "n": 7,
+        "rate": 1.0
+      },
+      "coverage": {
+        "answered": 6,
+        "n": 7,
+        "rate": 0.8571
+      },
+      "acc_answered_strict": {
+        "hits": 6,
+        "n": 6,
+        "rate": 1.0
+      },
+      "acc_answered_relaxed": {
+        "hits": 6,
+        "n": 6,
+        "rate": 1.0
+      }
+    },
+    "A2": {
+      "n": 18,
+      "tau": 0.4,
+      "top1_strict": {
+        "hits": 14,
+        "n": 18,
+        "rate": 0.7778
+      },
+      "top5_strict": {
+        "hits": 18,
+        "n": 18,
+        "rate": 1.0
+      },
+      "top1_relaxed": {
+        "hits": 15,
+        "n": 18,
+        "rate": 0.8333
+      },
+      "top5_relaxed": {
+        "hits": 18,
+        "n": 18,
+        "rate": 1.0
+      },
+      "coverage": {
+        "answered": 17,
+        "n": 18,
+        "rate": 0.9444
+      },
+      "acc_answered_strict": {
+        "hits": 14,
+        "n": 17,
+        "rate": 0.8235
+      },
+      "acc_answered_relaxed": {
+        "hits": 15,
+        "n": 17,
+        "rate": 0.8824
+      }
+    },
+    "B1": {
+      "n": 23,
+      "tau": 0.4,
+      "top1_strict": {
+        "hits": 14,
+        "n": 23,
+        "rate": 0.6087
+      },
+      "top5_strict": {
+        "hits": 21,
+        "n": 23,
+        "rate": 0.913
+      },
+      "top1_relaxed": {
+        "hits": 15,
+        "n": 23,
+        "rate": 0.6522
+      },
+      "top5_relaxed": {
+        "hits": 22,
+        "n": 23,
+        "rate": 0.9565
+      },
+      "coverage": {
+        "answered": 19,
+        "n": 23,
+        "rate": 0.8261
+      },
+      "acc_answered_strict": {
+        "hits": 13,
+        "n": 19,
+        "rate": 0.6842
+      },
+      "acc_answered_relaxed": {
+        "hits": 14,
+        "n": 19,
+        "rate": 0.7368
+      }
+    }
+  },
+  "latency_ms": {
+    "n": 47,
+    "first_ms": 1510.9,
+    "p50": 170.8,
+    "p95": 192.7,
+    "max": 250.5,
+    "mean": 173.3
+  },
+  "rows": [
+    {
+      "file": "banana_01.webp",
+      "label": "banana",
+      "cefr": "A1",
+      "top1": "banana",
+      "top1_score": 0.9428,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "banana",
+          "score": 0.9428
+        },
+        {
+          "word": "vegetable",
+          "score": 0.0108
+        },
+        {
+          "word": "snack",
+          "score": 0.0049
+        },
+        {
+          "word": "fruit",
+          "score": 0.0026
+        },
+        {
+          "word": "hip",
+          "score": 0.0026
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "bandage_01.jpg",
+      "label": "bandage",
+      "cefr": "B1",
+      "top1": "bandage",
+      "top1_score": 0.7127,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "bandage",
+          "score": 0.7127
+        },
+        {
+          "word": "wrist",
+          "score": 0.1395
+        },
+        {
+          "word": "arm",
+          "score": 0.0467
+        },
+        {
+          "word": "sleeve",
+          "score": 0.0378
+        },
+        {
+          "word": "elbow",
+          "score": 0.0175
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "beard_01.jpg",
+      "label": "beard",
+      "cefr": "B1",
+      "top1": "beard",
+      "top1_score": 0.3188,
+      "low_confidence": true,
+      "top5": [
+        {
+          "word": "beard",
+          "score": 0.3188
+        },
+        {
+          "word": "jacket",
+          "score": 0.0507
+        },
+        {
+          "word": "button",
+          "score": 0.026
+        },
+        {
+          "word": "beef",
+          "score": 0.025
+        },
+        {
+          "word": "face",
+          "score": 0.0216
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "cod_01.jpg",
+      "label": "cod",
+      "cefr": "B1",
+      "top1": "cod",
+      "top1_score": 0.832,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "cod",
+          "score": 0.832
+        },
+        {
+          "word": "fish",
+          "score": 0.1211
+        },
+        {
+          "word": "shark",
+          "score": 0.0126
+        },
+        {
+          "word": "tuna",
+          "score": 0.0116
+        },
+        {
+          "word": "salmon",
+          "score": 0.0095
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "coffee_01.jpg",
+      "label": "coffee",
+      "cefr": "B1",
+      "top1": "coffee",
+      "top1_score": 0.5788,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "coffee",
+          "score": 0.5788
+        },
+        {
+          "word": "mug",
+          "score": 0.1135
+        },
+        {
+          "word": "cup",
+          "score": 0.0725
+        },
+        {
+          "word": "saucepan",
+          "score": 0.0472
+        },
+        {
+          "word": "tablespoon",
+          "score": 0.0188
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "coin_01.jpg",
+      "label": "coin",
+      "cefr": "A2",
+      "top1": "coin",
+      "top1_score": 0.5432,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "coin",
+          "score": 0.5432
+        },
+        {
+          "word": "cash",
+          "score": 0.0614
+        },
+        {
+          "word": "jar",
+          "score": 0.0371
+        },
+        {
+          "word": "medal",
+          "score": 0.0278
+        },
+        {
+          "word": "button",
+          "score": 0.0214
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "cup_01.jpg",
+      "label": "cup",
+      "cefr": "B1",
+      "top1": "mug",
+      "top1_score": 0.4862,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "mug",
+          "score": 0.4862
+        },
+        {
+          "word": "cup",
+          "score": 0.3269
+        },
+        {
+          "word": "tea",
+          "score": 0.0764
+        },
+        {
+          "word": "jug",
+          "score": 0.0246
+        },
+        {
+          "word": "coffee",
+          "score": 0.0194
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "cupboard_01.jpg",
+      "label": "cupboard",
+      "cefr": "A2",
+      "top1": "cupboard",
+      "top1_score": 0.4589,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "cupboard",
+          "score": 0.4589
+        },
+        {
+          "word": "bookcase",
+          "score": 0.2329
+        },
+        {
+          "word": "shelf",
+          "score": 0.1113
+        },
+        {
+          "word": "wardrobe",
+          "score": 0.0948
+        },
+        {
+          "word": "bookshelf",
+          "score": 0.0792
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "duvet_01.jpg",
+      "label": "duvet",
+      "cefr": "B1",
+      "top1": "duvet",
+      "top1_score": 0.4922,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "duvet",
+          "score": 0.4922
+        },
+        {
+          "word": "bed",
+          "score": 0.4399
+        },
+        {
+          "word": "pillow",
+          "score": 0.0409
+        },
+        {
+          "word": "cushion",
+          "score": 0.0118
+        },
+        {
+          "word": "blanket",
+          "score": 0.0091
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "earring_01.jpg",
+      "label": "earring",
+      "cefr": "A2",
+      "top1": "earring",
+      "top1_score": 0.9314,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "earring",
+          "score": 0.9314
+        },
+        {
+          "word": "jewelry",
+          "score": 0.0546
+        },
+        {
+          "word": "headphone",
+          "score": 0.0025
+        },
+        {
+          "word": "jewel",
+          "score": 0.0016
+        },
+        {
+          "word": "cheek",
+          "score": 0.0013
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "face_01.jpg",
+      "label": "face",
+      "cefr": "A1",
+      "top1": "makeup",
+      "top1_score": 0.2716,
+      "low_confidence": true,
+      "top5": [
+        {
+          "word": "makeup",
+          "score": 0.2716
+        },
+        {
+          "word": "face",
+          "score": 0.2661
+        },
+        {
+          "word": "forehead",
+          "score": 0.0917
+        },
+        {
+          "word": "portrait",
+          "score": 0.087
+        },
+        {
+          "word": "chin",
+          "score": 0.0235
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "forehead_01.jpg",
+      "label": "forehead",
+      "cefr": "B1",
+      "top1": "forehead",
+      "top1_score": 0.8529,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "forehead",
+          "score": 0.8529
+        },
+        {
+          "word": "makeup",
+          "score": 0.1235
+        },
+        {
+          "word": "hair",
+          "score": 0.0044
+        },
+        {
+          "word": "head",
+          "score": 0.0033
+        },
+        {
+          "word": "face",
+          "score": 0.0027
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "freezer_01.jpg",
+      "label": "freezer",
+      "cefr": "B1",
+      "top1": "pc",
+      "top1_score": 0.2373,
+      "low_confidence": true,
+      "top5": [
+        {
+          "word": "pc",
+          "score": 0.2373
+        },
+        {
+          "word": "modem",
+          "score": 0.1593
+        },
+        {
+          "word": "freezer",
+          "score": 0.1001
+        },
+        {
+          "word": "refrigerator",
+          "score": 0.0906
+        },
+        {
+          "word": "fridge",
+          "score": 0.0656
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "grass_01.jpg",
+      "label": "grass",
+      "cefr": "A1",
+      "top1": "grass",
+      "top1_score": 0.9717,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "grass",
+          "score": 0.9717
+        },
+        {
+          "word": "rice",
+          "score": 0.0129
+        },
+        {
+          "word": "moss",
+          "score": 0.002
+        },
+        {
+          "word": "seaweed",
+          "score": 0.0009
+        },
+        {
+          "word": "vegetable",
+          "score": 0.0007
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "ham_01.jpg",
+      "label": "ham",
+      "cefr": "A2",
+      "top1": "ham",
+      "top1_score": 0.8879,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "ham",
+          "score": 0.8879
+        },
+        {
+          "word": "pork",
+          "score": 0.0489
+        },
+        {
+          "word": "tuna",
+          "score": 0.0109
+        },
+        {
+          "word": "beef",
+          "score": 0.0058
+        },
+        {
+          "word": "sandwich",
+          "score": 0.0057
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "handkerchief_01.jpg",
+      "label": "handkerchief",
+      "cefr": "B1",
+      "top1": "handkerchief",
+      "top1_score": 0.5671,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "handkerchief",
+          "score": 0.5671
+        },
+        {
+          "word": "napkin",
+          "score": 0.2143
+        },
+        {
+          "word": "underpants",
+          "score": 0.073
+        },
+        {
+          "word": "diaper",
+          "score": 0.0525
+        },
+        {
+          "word": "shorts",
+          "score": 0.0293
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "knee_01.png",
+      "label": "knee",
+      "cefr": "A1",
+      "top1": "knee",
+      "top1_score": 0.9856,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "knee",
+          "score": 0.9856
+        },
+        {
+          "word": "leg",
+          "score": 0.0055
+        },
+        {
+          "word": "ankle",
+          "score": 0.0038
+        },
+        {
+          "word": "hip",
+          "score": 0.0021
+        },
+        {
+          "word": "elbow",
+          "score": 0.0012
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "knife_01.jpg",
+      "label": "knife",
+      "cefr": "A1",
+      "top1": "knife",
+      "top1_score": 0.8598,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "knife",
+          "score": 0.8598
+        },
+        {
+          "word": "scissors",
+          "score": 0.0175
+        },
+        {
+          "word": "razor",
+          "score": 0.0131
+        },
+        {
+          "word": "beaver",
+          "score": 0.0108
+        },
+        {
+          "word": "hip",
+          "score": 0.0069
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "magazine_01.jpg",
+      "label": "magazine",
+      "cefr": "A2",
+      "top1": "magazine",
+      "top1_score": 0.7339,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "magazine",
+          "score": 0.7339
+        },
+        {
+          "word": "closet",
+          "score": 0.0334
+        },
+        {
+          "word": "shelf",
+          "score": 0.032
+        },
+        {
+          "word": "cereal",
+          "score": 0.0245
+        },
+        {
+          "word": "cupboard",
+          "score": 0.0205
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "modem_01.jpg",
+      "label": "modem",
+      "cefr": "B1",
+      "top1": "modem",
+      "top1_score": 0.9076,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "modem",
+          "score": 0.9076
+        },
+        {
+          "word": "pc",
+          "score": 0.0144
+        },
+        {
+          "word": "webcam",
+          "score": 0.0128
+        },
+        {
+          "word": "alarm",
+          "score": 0.0115
+        },
+        {
+          "word": "box",
+          "score": 0.0075
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "newspaper_01.jpg",
+      "label": "newspaper",
+      "cefr": "A2",
+      "top1": "paper",
+      "top1_score": 0.3897,
+      "low_confidence": true,
+      "top5": [
+        {
+          "word": "paper",
+          "score": 0.3897
+        },
+        {
+          "word": "newspaper",
+          "score": 0.377
+        },
+        {
+          "word": "poster",
+          "score": 0.1441
+        },
+        {
+          "word": "magazine",
+          "score": 0.0289
+        },
+        {
+          "word": "letter",
+          "score": 0.0076
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "novel_01.jpg",
+      "label": "novel",
+      "cefr": "B1",
+      "top1": "shelf",
+      "top1_score": 0.1759,
+      "low_confidence": true,
+      "top5": [
+        {
+          "word": "shelf",
+          "score": 0.1759
+        },
+        {
+          "word": "bookshelf",
+          "score": 0.1626
+        },
+        {
+          "word": "bookcase",
+          "score": 0.1454
+        },
+        {
+          "word": "magazine",
+          "score": 0.1323
+        },
+        {
+          "word": "encyclopedia",
+          "score": 0.0688
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": true
+    },
+    {
+      "file": "pasta_01.jpg",
+      "label": "pasta",
+      "cefr": "A2",
+      "top1": "pasta",
+      "top1_score": 0.8773,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "pasta",
+          "score": 0.8773
+        },
+        {
+          "word": "butter",
+          "score": 0.0225
+        },
+        {
+          "word": "sauce",
+          "score": 0.0213
+        },
+        {
+          "word": "gravy",
+          "score": 0.0145
+        },
+        {
+          "word": "spaghetti",
+          "score": 0.0106
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "phone_01.jpg",
+      "label": "phone",
+      "cefr": "A1",
+      "top1": "phone",
+      "top1_score": 0.6845,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "phone",
+          "score": 0.6845
+        },
+        {
+          "word": "finger",
+          "score": 0.0841
+        },
+        {
+          "word": "hand",
+          "score": 0.0209
+        },
+        {
+          "word": "screen",
+          "score": 0.0152
+        },
+        {
+          "word": "thumb",
+          "score": 0.0124
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "pie_01.jpg",
+      "label": "pie",
+      "cefr": "B1",
+      "top1": "pie",
+      "top1_score": 0.9845,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "pie",
+          "score": 0.9845
+        },
+        {
+          "word": "dessert",
+          "score": 0.0085
+        },
+        {
+          "word": "snack",
+          "score": 0.0011
+        },
+        {
+          "word": "pan",
+          "score": 0.0008
+        },
+        {
+          "word": "apple",
+          "score": 0.0007
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "pillow_01.jpg",
+      "label": "pillow",
+      "cefr": "B1",
+      "top1": "pillow",
+      "top1_score": 0.7293,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "pillow",
+          "score": 0.7293
+        },
+        {
+          "word": "cushion",
+          "score": 0.2574
+        },
+        {
+          "word": "duvet",
+          "score": 0.0093
+        },
+        {
+          "word": "bed",
+          "score": 0.0023
+        },
+        {
+          "word": "couch",
+          "score": 0.0005
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "postcard_01.jpg",
+      "label": "postcard",
+      "cefr": "B1",
+      "top1": "guidebook",
+      "top1_score": 0.7898,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "guidebook",
+          "score": 0.7898
+        },
+        {
+          "word": "magazine",
+          "score": 0.0451
+        },
+        {
+          "word": "album",
+          "score": 0.0359
+        },
+        {
+          "word": "postcard",
+          "score": 0.0355
+        },
+        {
+          "word": "calendar",
+          "score": 0.0286
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "printer_01.jpg",
+      "label": "printer",
+      "cefr": "A2",
+      "top1": "printer",
+      "top1_score": 0.9469,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "printer",
+          "score": 0.9469
+        },
+        {
+          "word": "pc",
+          "score": 0.0192
+        },
+        {
+          "word": "computer",
+          "score": 0.0187
+        },
+        {
+          "word": "antique",
+          "score": 0.0031
+        },
+        {
+          "word": "folder",
+          "score": 0.0012
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "purse_01.jpg",
+      "label": "purse",
+      "cefr": "B1",
+      "top1": "handbag",
+      "top1_score": 0.7327,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "handbag",
+          "score": 0.7327
+        },
+        {
+          "word": "purse",
+          "score": 0.1922
+        },
+        {
+          "word": "bag",
+          "score": 0.0672
+        },
+        {
+          "word": "backpack",
+          "score": 0.0013
+        },
+        {
+          "word": "gift",
+          "score": 0.001
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "saucepan_01.jpg",
+      "label": "saucepan",
+      "cefr": "B1",
+      "top1": "saucepan",
+      "top1_score": 0.8092,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "saucepan",
+          "score": 0.8092
+        },
+        {
+          "word": "pan",
+          "score": 0.0421
+        },
+        {
+          "word": "soup",
+          "score": 0.0201
+        },
+        {
+          "word": "tablespoon",
+          "score": 0.0195
+        },
+        {
+          "word": "curry",
+          "score": 0.0145
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "shampoo_01.jpg",
+      "label": "shampoo",
+      "cefr": "A2",
+      "top1": "shampoo",
+      "top1_score": 0.5548,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "shampoo",
+          "score": 0.5548
+        },
+        {
+          "word": "perfume",
+          "score": 0.1664
+        },
+        {
+          "word": "bottle",
+          "score": 0.1638
+        },
+        {
+          "word": "shower",
+          "score": 0.0143
+        },
+        {
+          "word": "gift",
+          "score": 0.0131
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "shower_01.jpg",
+      "label": "shower",
+      "cefr": "A1",
+      "top1": "shower",
+      "top1_score": 0.9804,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "shower",
+          "score": 0.9804
+        },
+        {
+          "word": "toilet",
+          "score": 0.004
+        },
+        {
+          "word": "mirror",
+          "score": 0.0025
+        },
+        {
+          "word": "closet",
+          "score": 0.0018
+        },
+        {
+          "word": "shampoo",
+          "score": 0.0014
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "shrimp_01.jpg",
+      "label": "shrimp",
+      "cefr": "B1",
+      "top1": "seafood",
+      "top1_score": 0.421,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "seafood",
+          "score": 0.421
+        },
+        {
+          "word": "shrimp",
+          "score": 0.3944
+        },
+        {
+          "word": "snack",
+          "score": 0.049
+        },
+        {
+          "word": "spice",
+          "score": 0.0342
+        },
+        {
+          "word": "cooker",
+          "score": 0.0129
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "skin_01.jpg",
+      "label": "skin",
+      "cefr": "B1",
+      "top1": "shoulder",
+      "top1_score": 0.4852,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "shoulder",
+          "score": 0.4852
+        },
+        {
+          "word": "elbow",
+          "score": 0.2886
+        },
+        {
+          "word": "skin",
+          "score": 0.0773
+        },
+        {
+          "word": "arm",
+          "score": 0.0629
+        },
+        {
+          "word": "sleeve",
+          "score": 0.0228
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "snack_01.jpg",
+      "label": "snack",
+      "cefr": "A2",
+      "top1": "snack",
+      "top1_score": 0.4438,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "snack",
+          "score": 0.4438
+        },
+        {
+          "word": "bag",
+          "score": 0.1129
+        },
+        {
+          "word": "cereal",
+          "score": 0.0969
+        },
+        {
+          "word": "carton",
+          "score": 0.0716
+        },
+        {
+          "word": "drawer",
+          "score": 0.029
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "sock_01.jpg",
+      "label": "sock",
+      "cefr": "A2",
+      "top1": "sock",
+      "top1_score": 0.4408,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "sock",
+          "score": 0.4408
+        },
+        {
+          "word": "boot",
+          "score": 0.1013
+        },
+        {
+          "word": "tights",
+          "score": 0.07
+        },
+        {
+          "word": "wardrobe",
+          "score": 0.0334
+        },
+        {
+          "word": "heel",
+          "score": 0.0329
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "spinach_01.jpg",
+      "label": "spinach",
+      "cefr": "B1",
+      "top1": "spinach",
+      "top1_score": 0.8313,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "spinach",
+          "score": 0.8313
+        },
+        {
+          "word": "salad",
+          "score": 0.0352
+        },
+        {
+          "word": "vegetable",
+          "score": 0.0329
+        },
+        {
+          "word": "cabbage",
+          "score": 0.0261
+        },
+        {
+          "word": "broccoli",
+          "score": 0.0158
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "spoon_01.jpg",
+      "label": "spoon",
+      "cefr": "A2",
+      "top1": "tablespoon",
+      "top1_score": 0.6398,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "tablespoon",
+          "score": 0.6398
+        },
+        {
+          "word": "spoon",
+          "score": 0.3551
+        },
+        {
+          "word": "sugar",
+          "score": 0.0017
+        },
+        {
+          "word": "fork",
+          "score": 0.0012
+        },
+        {
+          "word": "cereal",
+          "score": 0.0002
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "stair_01.jpg",
+      "label": "stair",
+      "cefr": "A2",
+      "top1": "stair",
+      "top1_score": 0.6491,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "stair",
+          "score": 0.6491
+        },
+        {
+          "word": "ladder",
+          "score": 0.1808
+        },
+        {
+          "word": "escalator",
+          "score": 0.0434
+        },
+        {
+          "word": "elevator",
+          "score": 0.0413
+        },
+        {
+          "word": "cart",
+          "score": 0.0176
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "sticker_01.jpg",
+      "label": "sticker",
+      "cefr": "B1",
+      "top1": "diary",
+      "top1_score": 0.2793,
+      "low_confidence": true,
+      "top5": [
+        {
+          "word": "diary",
+          "score": 0.2793
+        },
+        {
+          "word": "album",
+          "score": 0.1034
+        },
+        {
+          "word": "folder",
+          "score": 0.0963
+        },
+        {
+          "word": "calendar",
+          "score": 0.0916
+        },
+        {
+          "word": "guidebook",
+          "score": 0.0659
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": false
+    },
+    {
+      "file": "sweater_01.jpg",
+      "label": "sweater",
+      "cefr": "A2",
+      "top1": "pullover",
+      "top1_score": 0.8197,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "pullover",
+          "score": 0.8197
+        },
+        {
+          "word": "sweater",
+          "score": 0.1233
+        },
+        {
+          "word": "sweatshirt",
+          "score": 0.0485
+        },
+        {
+          "word": "clothes",
+          "score": 0.0026
+        },
+        {
+          "word": "tracksuit",
+          "score": 0.002
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "sweatshirt_01.jpg",
+      "label": "sweatshirt",
+      "cefr": "B1",
+      "top1": "tracksuit",
+      "top1_score": 0.5291,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "tracksuit",
+          "score": 0.5291
+        },
+        {
+          "word": "sweatshirt",
+          "score": 0.3287
+        },
+        {
+          "word": "pullover",
+          "score": 0.1035
+        },
+        {
+          "word": "sweater",
+          "score": 0.0186
+        },
+        {
+          "word": "shorts",
+          "score": 0.0058
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "tablespoon_01.jpg",
+      "label": "tablespoon",
+      "cefr": "A2",
+      "top1": "tablespoon",
+      "top1_score": 0.6701,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "tablespoon",
+          "score": 0.6701
+        },
+        {
+          "word": "spoon",
+          "score": 0.2725
+        },
+        {
+          "word": "fork",
+          "score": 0.0364
+        },
+        {
+          "word": "brush",
+          "score": 0.0038
+        },
+        {
+          "word": "pan",
+          "score": 0.003
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "thumb_01.jpg",
+      "label": "thumb",
+      "cefr": "B1",
+      "top1": "thumb",
+      "top1_score": 0.5938,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "thumb",
+          "score": 0.5938
+        },
+        {
+          "word": "finger",
+          "score": 0.3469
+        },
+        {
+          "word": "toe",
+          "score": 0.0183
+        },
+        {
+          "word": "hand",
+          "score": 0.0072
+        },
+        {
+          "word": "elbow",
+          "score": 0.0026
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "tissue_01.jpg",
+      "label": "tissue",
+      "cefr": "B1",
+      "top1": "tissue",
+      "top1_score": 0.4494,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "tissue",
+          "score": 0.4494
+        },
+        {
+          "word": "napkin",
+          "score": 0.1239
+        },
+        {
+          "word": "carton",
+          "score": 0.0786
+        },
+        {
+          "word": "bandage",
+          "score": 0.0734
+        },
+        {
+          "word": "diaper",
+          "score": 0.0662
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "toothbrush_01.jpg",
+      "label": "toothbrush",
+      "cefr": "A2",
+      "top1": "toothbrush",
+      "top1_score": 0.9749,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "toothbrush",
+          "score": 0.9749
+        },
+        {
+          "word": "toothpaste",
+          "score": 0.0214
+        },
+        {
+          "word": "razor",
+          "score": 0.0014
+        },
+        {
+          "word": "brush",
+          "score": 0.0009
+        },
+        {
+          "word": "racket",
+          "score": 0.0002
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "tree_01.jpg",
+      "label": "tree",
+      "cefr": "A2",
+      "top1": "oak",
+      "top1_score": 0.7019,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "oak",
+          "score": 0.7019
+        },
+        {
+          "word": "tree",
+          "score": 0.2421
+        },
+        {
+          "word": "maple",
+          "score": 0.0233
+        },
+        {
+          "word": "branch",
+          "score": 0.0119
+        },
+        {
+          "word": "root",
+          "score": 0.0013
+        }
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "wallet_01.jpg",
+      "label": "wallet",
+      "cefr": "A2",
+      "top1": "wallet",
+      "top1_score": 0.865,
+      "low_confidence": false,
+      "top5": [
+        {
+          "word": "wallet",
+          "score": 0.865
+        },
+        {
+          "word": "cash",
+          "score": 0.0554
+        },
+        {
+          "word": "purse",
+          "score": 0.0312
+        },
+        {
+          "word": "handbag",
+          "score": 0.0061
+        },
+        {
+          "word": "gift",
+          "score": 0.0049
+        }
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    }
+  ]
+}

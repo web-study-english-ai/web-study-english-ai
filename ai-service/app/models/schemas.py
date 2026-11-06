@@ -88,12 +88,16 @@ class PredictRetentionResponse(BaseModel):
 
 
 class RecognizedLabel(BaseModel):
-    label: str
-    confidence: float = Field(..., ge=0, le=1)
+    """Mot nhan du doan (WSEA-153, hop dong nhap v0.4). word = term trong bang words."""
+
+    word: str
+    score: float = Field(..., ge=0, le=1)
 
 
 class VisionResponse(BaseModel):
-    labels: list[RecognizedLabel]
+    labels: list[RecognizedLabel]  # top-10, score giam dan
+    low_confidence: bool           # top-1 score < tau
+    tau: float
 
 
 class EmbedRequest(BaseModel):

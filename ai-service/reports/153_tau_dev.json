@@ -1,0 +1,526 @@
+{
+  "task": "WSEA-153",
+  "part": "tau_dev",
+  "created_at": "2026-11-05T16:02:20+00:00",
+  "dev_dirs": [
+    "data/vision_samples",
+    "data/vision_dev"
+  ],
+  "rule": {
+    "grid": [
+      0.05,
+      0.1,
+      0.15,
+      0.2,
+      0.25,
+      0.3,
+      0.35,
+      0.4,
+      0.45,
+      0.5,
+      0.55,
+      0.6
+    ],
+    "min_coverage": 0.7,
+    "fallback": 0.05
+  },
+  "n_scored": 18,
+  "n_out_of_label_set": 1,
+  "table": [
+    {
+      "tau": 0.05,
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
+    },
+    {
+      "tau": 0.1,
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
+    },
+    {
+      "tau": 0.15,
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
+    },
+    {
+      "tau": 0.2,
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
+    },
+    {
+      "tau": 0.25,
+      "answered": 17,
+      "n": 18,
+      "coverage": 0.9444,
+      "acc_strict": 0.4706,
+      "acc_relaxed": 0.7647
+    },
+    {
+      "tau": 0.3,
+      "answered": 16,
+      "n": 18,
+      "coverage": 0.8889,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.8125
+    },
+    {
+      "tau": 0.35,
+      "answered": 15,
+      "n": 18,
+      "coverage": 0.8333,
+      "acc_strict": 0.5333,
+      "acc_relaxed": 0.8
+    },
+    {
+      "tau": 0.4,
+      "answered": 14,
+      "n": 18,
+      "coverage": 0.7778,
+      "acc_strict": 0.5714,
+      "acc_relaxed": 0.8571
+    },
+    {
+      "tau": 0.45,
+      "answered": 12,
+      "n": 18,
+      "coverage": 0.6667,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.8333
+    },
+    {
+      "tau": 0.5,
+      "answered": 11,
+      "n": 18,
+      "coverage": 0.6111,
+      "acc_strict": 0.4545,
+      "acc_relaxed": 0.8182
+    },
+    {
+      "tau": 0.55,
+      "answered": 10,
+      "n": 18,
+      "coverage": 0.5556,
+      "acc_strict": 0.5,
+      "acc_relaxed": 0.8
+    },
+    {
+      "tau": 0.6,
+      "answered": 9,
+      "n": 18,
+      "coverage": 0.5,
+      "acc_strict": 0.5556,
+      "acc_relaxed": 0.8889
+    }
+  ],
+  "tau_by_rule": 0.4,
+  "latency_ms": {
+    "n": 18,
+    "first_ms": 1225.4,
+    "p50": 179.0,
+    "p95": 194.6,
+    "max": 201.1,
+    "mean": 179.9
+  },
+  "rows": [
+    {
+      "file": "data/vision_samples/arm_01.jpg",
+      "sha256": "904adf6e89da05bf8bf2ca8264950a8a578befd562f5dfc01943eee85a57a517",
+      "label": "arm",
+      "top1": "arm",
+      "top1_score": 0.4166,
+      "top5": [
+        "arm",
+        "sleeve",
+        "bandage",
+        "elbow",
+        "wrist"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/book_03.jpg",
+      "sha256": "61ec2fd192e1bbe5160e9073bd3d89b5717a0df6bf87915d9b7cfb6441448701",
+      "label": "book",
+      "top1": "textbook",
+      "top1_score": 0.6287,
+      "top5": [
+        "textbook",
+        "guidebook",
+        "dictionary",
+        "book",
+        "folder"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/computer_07.jpg",
+      "sha256": "3039b5803e684abb13131b39ffb95fedf147463a76443a02f0783f81871830c3",
+      "label": "computer",
+      "top1": "screen",
+      "top1_score": 0.3377,
+      "top5": [
+        "screen",
+        "computer",
+        "pc",
+        "desk",
+        "webcam"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/cup_09.jpg",
+      "sha256": "bbbd4880a41a4f8ca9003192dd0d34d1a42bf2ebc2fd96f873c3025d6d4d2d26",
+      "label": "cup",
+      "top1": "mug",
+      "top1_score": 0.7433,
+      "top5": [
+        "mug",
+        "cup",
+        "tea",
+        "coffee",
+        "jug"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/floor_04.jpg",
+      "sha256": "8af4a050ec8bceb81be0b0f71ef5149389a26c5356ec7bc1ed90a1418e88e858",
+      "label": "floor",
+      "top1": "floor",
+      "top1_score": 0.7088,
+      "top5": [
+        "floor",
+        "carpet",
+        "pants",
+        "shower",
+        "wheelchair"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/hand_06.jpg",
+      "sha256": "174cb9328f1fbb5ed346aa407012e6867abc214b174613c9af875e94c77ec0fb",
+      "label": "hand",
+      "top1": "hand",
+      "top1_score": 0.4113,
+      "top5": [
+        "hand",
+        "finger",
+        "thumb",
+        "wrist",
+        "skin"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/head_02.jpg",
+      "sha256": "9aa4956224d49b83ab034986adb4be51531dc6049160dead9106ca610d8b2e11",
+      "label": "head",
+      "top1": "chin",
+      "top1_score": 0.0424,
+      "top5": [
+        "chin",
+        "earring",
+        "webcam",
+        "cheek",
+        "face"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": false
+    },
+    {
+      "file": "data/vision_samples/phone_08.jpg",
+      "sha256": "3ef5c82f666ec8a8271e5ee22f9e397c6f1dc019314917b735cf76e74fff9b0c",
+      "label": "phone",
+      "top1": "phone",
+      "top1_score": 0.4814,
+      "top5": [
+        "phone",
+        "filter",
+        "box",
+        "screen",
+        "calculator"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_samples/wall_05.jpg",
+      "sha256": "4f381d446e3194c1ddc8e4b89a6f4cf302add45447f4d03f34fdc378f7e00bc1",
+      "label": "wall",
+      "top1": "floor",
+      "top1_score": 0.2653,
+      "top5": [
+        "floor",
+        "shower",
+        "dishwasher",
+        "freezer",
+        "water"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": false
+    },
+    {
+      "file": "data/vision_dev/bag_05.jpg",
+      "sha256": "b8559cbf6aaaddc9bef4971d18189dafa21755669190db014d4fc863b9863742",
+      "label": "bag",
+      "top1": "backpack",
+      "top1_score": 0.8888,
+      "top5": [
+        "backpack",
+        "bag",
+        "luggage",
+        "baggage",
+        "jacket"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/bottle_01.jpg",
+      "sha256": "e0bffa85f0021cf1d0ea51183692d5201baa249ce65136786a5af98a921bafdc",
+      "label": "bottle",
+      "top1": "bottle",
+      "top1_score": 0.8031,
+      "top5": [
+        "bottle",
+        "water",
+        "soda",
+        "container",
+        "juice"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/chair_14.jpg",
+      "sha256": "bffe57120621aefd10932fe1f2065c857eecfe649f5d549aaedc80e9179f045d",
+      "label": "chair",
+      "top1": "chair",
+      "top1_score": 0.8361,
+      "top5": [
+        "chair",
+        "seat",
+        "armchair",
+        "wheelchair",
+        "desk"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/computer_13.jpg",
+      "sha256": "477fe85729fa4c910a3484ddae11efdd146dc4f6b9ff821da15979e3d554ce51",
+      "label": "computer",
+      "top1": "pc",
+      "top1_score": 0.5051,
+      "top5": [
+        "pc",
+        "computer",
+        "screen",
+        "antique",
+        "webcam"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/cooker_06.jpg",
+      "sha256": "5a8172d337f3a855da29fdeacab60550bae4ec549c7d1b9494f6be41a6a92c8e",
+      "label": "cooker",
+      "top1": "kettle",
+      "top1_score": 0.5744,
+      "top5": [
+        "kettle",
+        "robot",
+        "cooker",
+        "antique",
+        "pc"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/fridge_08.jpg",
+      "sha256": "a0ec3259199de25ba659e9d4660939fe467bfd5670a0b3386e67daf584c7bf40",
+      "label": "fridge",
+      "top1": "locker",
+      "top1_score": 0.3893,
+      "top5": [
+        "locker",
+        "refrigerator",
+        "elevator",
+        "fridge",
+        "freezer"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/keyboard_11.jpg",
+      "sha256": "facb9124ef7974007871d07fd53377124a0f41dde73c58d4f67f256cd3601eb3",
+      "label": "keyboard",
+      "top1": "keyboard",
+      "top1_score": 0.8005,
+      "top5": [
+        "keyboard",
+        "computer",
+        "pc",
+        "desk",
+        "fridge"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/mirror_03.jpg",
+      "sha256": "3a858f0fcd08e3bdc30fa78ee3b4840df66ccdf1d17080dc320c216a7fe9da29",
+      "label": "mirror",
+      "top1": "mirror",
+      "top1_score": 0.7519,
+      "top5": [
+        "mirror",
+        "filter",
+        "album",
+        "phone",
+        "glasses"
+      ],
+      "top1_strict": true,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    },
+    {
+      "file": "data/vision_dev/suitcase_07.jpg",
+      "sha256": "44d46b7629f0742260566a952f6fb79e1bee4b56fe4bdf7ade814ae5893b9d1d",
+      "label": "suitcase",
+      "top1": "luggage",
+      "top1_score": 0.6077,
+      "top5": [
+        "luggage",
+        "suitcase",
+        "baggage",
+        "refrigerator",
+        "fridge"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": true,
+      "top5_strict": true,
+      "top5_relaxed": true
+    }
+  ],
+  "out_of_label_set": [
+    {
+      "file": "data/vision_samples/fan_10.jpg",
+      "sha256": "dfa0fd4f4bb4bf7e3c182015398c152be1ff7c5a716f69b262a0b62dce86f9fa",
+      "label": "fan",
+      "top1": "heater",
+      "top1_score": 0.3897,
+      "top5": [
+        "heater",
+        "pc",
+        "antique",
+        "motor",
+        "alarm"
+      ],
+      "top1_strict": false,
+      "top1_relaxed": false,
+      "top5_strict": false,
+      "top5_relaxed": false
+    }
+  ],
+  "ngoai_nhan": {
+    "dir": "data/vision_dev_ngoai_nhan",
+    "tau": 0.4,
+    "used_for_tau": false,
+    "n": 5,
+    "low_confidence": 4,
+    "rows": [
+      {
+        "file": "computer_mouse_09.jpg",
+        "object": "computer_mouse",
+        "top1": "helmet",
+        "top1_score": 0.2568,
+        "low_confidence": true
+      },
+      {
+        "file": "notebook_12.jpg",
+        "object": "notebook",
+        "top1": "diary",
+        "top1_score": 0.4832,
+        "low_confidence": false
+      },
+      {
+        "file": "phone_charge_10.jpg",
+        "object": "phone_charge",
+        "top1": "modem",
+        "top1_score": 0.1315,
+        "low_confidence": true
+      },
+      {
+        "file": "screwdriver_15.jpg",
+        "object": "screwdriver",
+        "top1": "razor",
+        "top1_score": 0.1397,
+        "low_confidence": true
+      },
+      {
+        "file": "tablet_04.jpg",
+        "object": "tablet",
+        "top1": "phone",
+        "top1_score": 0.0699,
+        "low_confidence": true
+      }
+    ]
+  }
+}

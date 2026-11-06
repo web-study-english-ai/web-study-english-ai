@@ -55,6 +55,15 @@ class Settings(BaseSettings):
     # KHONG dung HF_HUB_OFFLINE toan cuc: load_fsrs van can tai params.json tu Hub.
     embedder_local_files_only: bool = False
 
+    # --- Nhan dien anh CLIP (WSEA-153). Nap luc khoi dong; tat trong pytest de khong tai mo hinh ---
+    vision_enabled: bool = True
+    vision_local_files_only: bool = False
+    # Nguong tin cay: top-1 score < tau -> low_confidence. Chon tren tap dev (docs/eval/WSEA-153_tieu_chi.md
+    # muc 4, scripts/tune_vision_tau.py), KHONG chinh theo tap test.
+    # KHOA 2026-11-05: 0,40 = tau theo luat tren dev 18 anh (9 spike + 9 vision_dev), reports/153_tau_dev.json.
+    # Khong chinh lai sau khi chay tap test.
+    vision_tau: float = Field(default=0.40, gt=0, lt=1)
+
     # --- Pipeline truy hoi (WSEA-127). Mac dinh = luat chot truoc trong pipeline_rules.py ---
     pipeline_k_prompt: int = Field(default=rules.K_PROMPT, ge=1, le=20)
     pipeline_k_vocab: int = Field(default=rules.K_VOCAB, ge=0, le=10)

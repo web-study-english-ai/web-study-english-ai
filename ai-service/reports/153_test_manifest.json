@@ -1,0 +1,688 @@
+{
+  "task": "WSEA-153",
+  "part": "test_manifest",
+  "created_at": "2026-11-05T16:26:53+00:00",
+  "dir": "data/vision_test",
+  "source": "ảnh thu thập từ web (tiêu chí mục 4b)",
+  "resize": "cạnh dài 1024 px",
+  "n": 48,
+  "missing": [
+    "beef",
+    "chicken"
+  ],
+  "overlap_with_dev_sha256": [],
+  "files": [
+    {
+      "file": "banana_01.webp",
+      "format": "WEBP",
+      "size_before": [
+        1280,
+        1128
+      ],
+      "size": [
+        1024,
+        902
+      ],
+      "bytes": 39116,
+      "sha256": "b68776576c80df27e3b9d2cdcecdbc91cb0d7d226a13edef426315404e4919a6"
+    },
+    {
+      "file": "bandage_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        612,
+        326
+      ],
+      "size": [
+        612,
+        326
+      ],
+      "bytes": 34282,
+      "sha256": "5e10152674652bd980ccbf35f321d103ebc1bc1b37085d40041d9e38b082a7ae"
+    },
+    {
+      "file": "beard_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        452,
+        678
+      ],
+      "size": [
+        452,
+        678
+      ],
+      "bytes": 48095,
+      "sha256": "3ef5a325156737b053ae0b87e2be30ac9780569aee0786878145a341d466feda"
+    },
+    {
+      "file": "cod_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        304,
+        166
+      ],
+      "size": [
+        304,
+        166
+      ],
+      "bytes": 9926,
+      "sha256": "e53950e515fb6eddfb63c52507bb3398fd737c23f7540b783792428203bf546e"
+    },
+    {
+      "file": "coffee_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        545,
+        366
+      ],
+      "size": [
+        545,
+        366
+      ],
+      "bytes": 32344,
+      "sha256": "361c4774640f7003ce2b7d7280cda64521b6c3e5c8962584801abee433cacd2c"
+    },
+    {
+      "file": "coin_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        200,
+        200
+      ],
+      "size": [
+        200,
+        200
+      ],
+      "bytes": 12114,
+      "sha256": "fb73524e3c4071538f588155d184c2f9840b5199967f05f6f81df1a6384161d2"
+    },
+    {
+      "file": "cup_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        200,
+        185
+      ],
+      "size": [
+        200,
+        185
+      ],
+      "bytes": 4383,
+      "sha256": "530545538b8d03e1a059c5ca9df49ed7218b6306eee8d4caebc362ddc9ace38c"
+    },
+    {
+      "file": "cupboard_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        201,
+        251
+      ],
+      "size": [
+        201,
+        251
+      ],
+      "bytes": 11673,
+      "sha256": "7ab8a8549e19b1d848e883a22648184c147a91f5625b5c28e75869fdb3ece61f"
+    },
+    {
+      "file": "duvet_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 42128,
+      "sha256": "373c1bedc30b0055d4a7c9ee7df47704fa98b02ba936558f3d073e71330479a8"
+    },
+    {
+      "file": "earring_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        380,
+        380
+      ],
+      "size": [
+        380,
+        380
+      ],
+      "bytes": 15062,
+      "sha256": "0c2b19997b97d3b419b9320d61495a8c9cfcf14da380dc32bbf7fdd3dfea6474"
+    },
+    {
+      "file": "face_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        554,
+        554
+      ],
+      "size": [
+        554,
+        554
+      ],
+      "bytes": 26719,
+      "sha256": "766dc5a682facc6d8cfb022d3091f30cad49838adbc4f9c28e8f5648efb39576"
+    },
+    {
+      "file": "forehead_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        515,
+        388
+      ],
+      "size": [
+        515,
+        388
+      ],
+      "bytes": 29794,
+      "sha256": "da7ba998c3156fd78c9b510f4744b3b4584e73ee2e92b90202812166abb55196"
+    },
+    {
+      "file": "freezer_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        446,
+        687
+      ],
+      "size": [
+        446,
+        687
+      ],
+      "bytes": 23273,
+      "sha256": "337f4379c68a37638d9307d3c3af2012622d95a5289e4b5fd44f7a8d8e5cbad9"
+    },
+    {
+      "file": "grass_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        420,
+        420
+      ],
+      "size": [
+        420,
+        420
+      ],
+      "bytes": 35568,
+      "sha256": "06745a891ceaee0b7d41adf3b84b579e0cd50c12d996f3f6499bedd08222ccb9"
+    },
+    {
+      "file": "ham_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        547,
+        365
+      ],
+      "size": [
+        547,
+        365
+      ],
+      "bytes": 32548,
+      "sha256": "a27ec39a927fa3a2ddf0830613a16be7bb6c66076857ee0b9e97988ba89d8f4e"
+    },
+    {
+      "file": "handkerchief_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        470,
+        425
+      ],
+      "size": [
+        470,
+        425
+      ],
+      "bytes": 35193,
+      "sha256": "cc06a713973aec0fc21f350bd067b516d7baf556570c3628e3eb5bdc0e6e7a2a"
+    },
+    {
+      "file": "knee_01.png",
+      "format": "PNG",
+      "size_before": [
+        610,
+        503
+      ],
+      "size": [
+        610,
+        503
+      ],
+      "bytes": 84637,
+      "sha256": "b1b7118c754ceeb9483484c1ea54f6285ef53410a5a65a91ca57d089f9c74ad4"
+    },
+    {
+      "file": "knife_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        369,
+        542
+      ],
+      "size": [
+        369,
+        542
+      ],
+      "bytes": 63536,
+      "sha256": "3cbd6bff69328568795527a74df4e8718fb210d708def18ffbf86b0ac85f5f93"
+    },
+    {
+      "file": "magazine_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        678,
+        452
+      ],
+      "size": [
+        678,
+        452
+      ],
+      "bytes": 158260,
+      "sha256": "39b7bd9bf9b39e933d35e7d05e284a43e996e4c4ff0ee35def2927a51ad697ec"
+    },
+    {
+      "file": "modem_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 8559,
+      "sha256": "e8897da29d27e1ba77bc3f5e19161f7023f117558b60f5ce95876db9c8723413"
+    },
+    {
+      "file": "newspaper_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        397,
+        503
+      ],
+      "size": [
+        397,
+        503
+      ],
+      "bytes": 98210,
+      "sha256": "468954eadc5cc847b710edea6b6650ff4965ffa7ed87d619a31b3a6c951fc1fe"
+    },
+    {
+      "file": "novel_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        515,
+        388
+      ],
+      "size": [
+        515,
+        388
+      ],
+      "bytes": 69516,
+      "sha256": "75f60ada5fdfe0a2f1f5f29ddaee896cf6924c119dd7d2387061e37c69e6ff91"
+    },
+    {
+      "file": "pasta_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        452,
+        678
+      ],
+      "size": [
+        452,
+        678
+      ],
+      "bytes": 55505,
+      "sha256": "4c5dbdbc7ef9c64d9bb207b42782f1538cde6ac5916cb937b68010679d5c8b9a"
+    },
+    {
+      "file": "phone_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 33324,
+      "sha256": "26c3bbe72805669c666a6c4924d99f2803a7a6a31fa9dc0b92dc630433e3627c"
+    },
+    {
+      "file": "pie_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        554,
+        554
+      ],
+      "size": [
+        554,
+        554
+      ],
+      "bytes": 56118,
+      "sha256": "effdd2e80d56b190088280fc3f8b00637039cdb97f83bd258da3e2124c5183f0"
+    },
+    {
+      "file": "pillow_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 30174,
+      "sha256": "847804c808c2c6b2465f8baeef3c560ee2f2c3db88916cf705cb7ac4151eb9b3"
+    },
+    {
+      "file": "postcard_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        554,
+        554
+      ],
+      "size": [
+        554,
+        554
+      ],
+      "bytes": 94706,
+      "sha256": "901ac97a089eb9b83f518794422d686b614a18942a56bb8c8ab522d045aa616c"
+    },
+    {
+      "file": "printer_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 20419,
+      "sha256": "bccc7cb938ca01082841d9168a324876e2351ff12e0999eb7bdbd798f9260390"
+    },
+    {
+      "file": "purse_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        452,
+        442
+      ],
+      "size": [
+        452,
+        442
+      ],
+      "bytes": 40489,
+      "sha256": "d8325f2f68d2999c5f2455be6005c03d19fb7b35e50bc033c26146c9f73e5c6b"
+    },
+    {
+      "file": "saucepan_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 41356,
+      "sha256": "b76250eaa9b452d3a8fe5a1321eb82939c4512a9b4b4c1d29b24e2f5b236b39b"
+    },
+    {
+      "file": "shampoo_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 31131,
+      "sha256": "bf44c266e17de780a49eac801dd9d24b8d7144f881aa378aef917f25e9dc752c"
+    },
+    {
+      "file": "shower_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        476,
+        644
+      ],
+      "size": [
+        476,
+        644
+      ],
+      "bytes": 46136,
+      "sha256": "cbac7895c47b3774cf3c7ea669a74370496033caf7247c3c593b81a879769001"
+    },
+    {
+      "file": "shrimp_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        554,
+        554
+      ],
+      "size": [
+        554,
+        554
+      ],
+      "bytes": 105440,
+      "sha256": "010174bcccc2b2b4dd29a7dba0370c5de99eafc498a719a128c0ac3f6215b597"
+    },
+    {
+      "file": "skin_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        738,
+        414
+      ],
+      "size": [
+        738,
+        414
+      ],
+      "bytes": 27854,
+      "sha256": "3b1a3d89cad62ae84b1db27427082be8866ffae81018649b449bde44863f9fb5"
+    },
+    {
+      "file": "snack_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 88538,
+      "sha256": "79dfc09e9ee60cd90fd79205bf84e73523aadb247035e17b223cba41ad23de5e"
+    },
+    {
+      "file": "sock_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        399,
+        501
+      ],
+      "size": [
+        399,
+        501
+      ],
+      "bytes": 19515,
+      "sha256": "6c4759241b30ffb59692cf4b97aaf059b58aff63b9ec28f9422ce3368bbfb21f"
+    },
+    {
+      "file": "spinach_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        678,
+        452
+      ],
+      "size": [
+        678,
+        452
+      ],
+      "bytes": 117641,
+      "sha256": "68937cb6696ff2933daf9ec38a179a02de27d762131205b4754b1ad48757694f"
+    },
+    {
+      "file": "spoon_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        510,
+        392
+      ],
+      "size": [
+        510,
+        392
+      ],
+      "bytes": 44624,
+      "sha256": "04ffda2a2732006fe116e56431ea37df3f887a16cfa5ad9a3cd8bbf7af025f30"
+    },
+    {
+      "file": "stair_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        554,
+        554
+      ],
+      "size": [
+        554,
+        554
+      ],
+      "bytes": 84052,
+      "sha256": "30f594b26fe42b331c14d9624a14b524031142df23989fc41903b3a6b2dc15da"
+    },
+    {
+      "file": "sticker_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 97228,
+      "sha256": "5c4ce1edd9d9297174c0219c7fa225db4b48fe79fe8701d8c0c4e8f0b871417a"
+    },
+    {
+      "file": "sweater_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        387,
+        516
+      ],
+      "size": [
+        387,
+        516
+      ],
+      "bytes": 18788,
+      "sha256": "d3f6cca1e68efff895eab65714481a4c852b63ccb96f37252794db6c71ceadf0"
+    },
+    {
+      "file": "sweatshirt_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 32587,
+      "sha256": "21deeb0bc8824e2df5d79aac88d1485ff1290f11ec8b1923f0eaf190382a3f1c"
+    },
+    {
+      "file": "tablespoon_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        232,
+        218
+      ],
+      "size": [
+        232,
+        218
+      ],
+      "bytes": 10579,
+      "sha256": "9b034a51e7605b2eaabb93552113a165209c10793e8c7867aef7c06733aa01fb"
+    },
+    {
+      "file": "thumb_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        410,
+        487
+      ],
+      "size": [
+        410,
+        487
+      ],
+      "bytes": 20442,
+      "sha256": "05aaf627835465daa521e97b9dec54a3e41601ef7ba2240e9b230d755d09da29"
+    },
+    {
+      "file": "tissue_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        554,
+        554
+      ],
+      "size": [
+        554,
+        554
+      ],
+      "bytes": 16809,
+      "sha256": "b64b70029a36969326fff0ac4480a23c772ef454a4bfb37780521718fc6359f0"
+    },
+    {
+      "file": "toothbrush_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        200,
+        161
+      ],
+      "size": [
+        200,
+        161
+      ],
+      "bytes": 4041,
+      "sha256": "48add632f8cd543c442ca2e4fa7eb096a2ffc6729a9da786fcf5feb8cfc57400"
+    },
+    {
+      "file": "tree_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        211,
+        238
+      ],
+      "size": [
+        211,
+        238
+      ],
+      "bytes": 18821,
+      "sha256": "87bf1137ae1288b96d34bb288502fbb9b8249334fe9c04852905823c3d1cbd88"
+    },
+    {
+      "file": "wallet_01.jpg",
+      "format": "JPEG",
+      "size_before": [
+        447,
+        447
+      ],
+      "size": [
+        447,
+        447
+      ],
+      "bytes": 45092,
+      "sha256": "38c3d08ada1824b07bacd855824aab681ab4e49de1cc5038edd7d1b4fc7ff6ad"
+    }
+  ]
+}
