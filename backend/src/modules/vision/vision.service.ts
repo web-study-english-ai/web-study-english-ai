@@ -1,9 +1,15 @@
-import { BadRequestException, Injectable, PayloadTooLargeException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  Optional,
+  PayloadTooLargeException,
+} from '@nestjs/common';
 import { CefrLevel } from '@prisma/client';
 import { createHash } from 'node:crypto';
 import { PrismaService } from '@/prisma/prisma.service';
 import { VisionAiClient } from './vision-ai.client';
 import { KetQuaNhanDienAnh, PhanHoiNhanDienAi, TepAnhTaiLen, TuVungNhanDien } from './vision.types';
+import { VisionStorageService } from './vision-storage.service';
 
 /** Giới hạn dung lượng tệp ảnh tối đa: 5 MB */
 export const DUNG_LUONG_ANH_TOI_DA = 5 * 1024 * 1024;
@@ -37,6 +43,7 @@ export class VisionService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly aiClient: VisionAiClient,
+    @Optional() private readonly storage?: VisionStorageService,
   ) {}
 
   /**
@@ -51,6 +58,7 @@ export class VisionService {
 
     const batDau = Date.now();
     const imageHash = this.tinhMaBamAnh(file.buffer);
+    const imageUrl = (await this.storage?.luuAnh(imageHash, file)) ?? null;
 
     // Lấy trình độ CEFR hiện tại của người học (mặc định A1 nếu không tìm thấy)
     const user = await this.prisma.user.findUnique({
@@ -77,7 +85,7 @@ export class VisionService {
         items: [],
         results: [],
         imageHash,
-        imageUrl: null,
+        imageUrl,
         lowConfidence: false,
         tau: null,
         degraded: true,
@@ -97,7 +105,7 @@ export class VisionService {
       items: danhSachTu,
       results: danhSachTu,
       imageHash,
-      imageUrl: null,
+      imageUrl,
       lowConfidence,
       tau: phanHoiAi.tau,
       degraded: false,
@@ -107,6 +115,10 @@ export class VisionService {
         ? { message: 'Chưa chắc chắn kết quả nhận diện, bạn có thể chụp lại ảnh rõ hơn.' }
         : {}),
     };
+  }
+
+  async layTepAnhDaLuu(fileName: string) {
+    return (await this.storage?.docAnh(fileName)) ?? null;
   }
 
   /** Bước 1: Kiểm tra sự tồn tại, dung lượng và định dạng thực tế của tệp ảnh */
