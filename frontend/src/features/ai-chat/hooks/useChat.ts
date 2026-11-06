@@ -8,7 +8,7 @@ const WELCOME: ChatMessage = {
   id: "welcome",
   role: "assistant",
   content:
-    "Xin chào! Mình là trợ lý học tiếng Anh. Bạn có thể hỏi mình về ngữ pháp, từ vựng, cách phát âm hoặc nhờ mình sửa câu viết của bạn.",
+    "Xin chào! Mình là trợ lý học tiếng Anh. Bạn có thể hỏi mình về ngữ pháp, từ vựng, cách dùng từ, phân biệt từ dễ nhầm của bạn.",
 };
 
 // Backend (bản JSON) trả nguyên câu một lần, nên ta hiện dần ký tự ở client cho giống streaming.

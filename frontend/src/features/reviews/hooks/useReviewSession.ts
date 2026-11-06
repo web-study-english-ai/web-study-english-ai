@@ -69,7 +69,7 @@ export function useReviewSession() {
         if (cancelled) return;
         const list: ReviewCardData[] = cards
           .slice(0, MAX_CARDS_PER_SESSION)
-          .map((c) => ({ cardId: c.id, word: c.word }));
+          .map((c) => ({ cardId: c.id, word: c.word, imageUrl: c.imageUrl }));
         setQueue(list);
         setTotalDue(list.length);
       })

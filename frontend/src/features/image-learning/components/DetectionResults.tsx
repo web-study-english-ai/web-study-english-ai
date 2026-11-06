@@ -1,11 +1,11 @@
 "use client";
 
-import Link from "next/link";
 import { CloudOff, ScanLine } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { DetectErrorKind, Phase } from "../hooks/useImageDetection";
 import { DetectResult } from "../types/image-learning_types";
 import { DetectedWordList } from "./DetectedWordList";
+import { ManualWordSearch } from "./ManualWordSearch";
 
 interface Props {
   phase: Phase;
@@ -15,9 +15,6 @@ interface Props {
   errorMessage: string | null;
   onRetry: () => void;
 }
-
-const linkButton =
-  "inline-flex h-9 items-center justify-center rounded-lg border border-border bg-card px-4 text-sm font-semibold text-foreground transition-colors hover:bg-muted";
 
 function Placeholder() {
   return (
@@ -42,28 +39,37 @@ function ResultSkeleton() {
   );
 }
 
-function ServiceUnavailable({ onRetry }: { onRetry?: () => void }) {
+// AI lỗi hoặc chưa bật (degraded: true hoặc lỗi 503): cho người học gõ tìm từ thủ công
+function ServiceUnavailable({
+  imageUrl,
+  onRetry,
+}: {
+  imageUrl: string;
+  onRetry?: () => void;
+}) {
   return (
-    <div className="rounded-2xl border border-amber-300 bg-amber-50 p-6 text-center dark:border-amber-700/50 dark:bg-amber-950/30">
-      <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
-        <CloudOff className="h-6 w-6" />
-      </span>
-      <p className="mt-3 text-sm font-semibold text-amber-800 dark:text-amber-300">
-        Dịch vụ AI tạm thời không khả dụng.
-      </p>
-      <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
-        Bạn vẫn có thể tự tìm và thêm từ vựng thủ công.
-      </p>
-      <div className="mt-4 flex flex-wrap justify-center gap-3">
-        <Link href="/vocabulary" className={linkButton}>
-          Tìm từ vựng thủ công
-        </Link>
-        {onRetry && (
-          <Button type="button" variant="outline" onClick={onRetry}>
-            Thử lại
-          </Button>
-        )}
+    <div className="rounded-2xl border border-amber-300 bg-amber-50 p-6 dark:border-amber-700/50 dark:bg-amber-950/30">
+      <div className="text-center">
+        <span className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/40 dark:text-amber-300">
+          <CloudOff className="h-6 w-6" />
+        </span>
+        <p className="mt-3 text-sm font-semibold text-amber-800 dark:text-amber-300">
+          Dịch vụ AI tạm thời không khả dụng.
+        </p>
+        <p className="mt-1 text-sm text-amber-700 dark:text-amber-400">
+          Bạn vẫn có thể gõ tìm từ vựng thủ công bên dưới.
+        </p>
       </div>
+
+      <ManualWordSearch imageUrl={imageUrl} />
+
+      {onRetry && (
+        <div className="mt-4 text-center">
+          <Button type="button" variant="outline" onClick={onRetry}>
+            Thử nhận diện lại
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
@@ -95,7 +101,7 @@ export function DetectionResults({
   if (phase === "compressing" || phase === "detecting") return <ResultSkeleton />;
 
   if (phase === "error") {
-    if (errorKind === "unavailable") return <ServiceUnavailable onRetry={onRetry} />;
+    if (errorKind === "unavailable") return <ServiceUnavailable imageUrl="" onRetry={onRetry} />;
     if (errorKind === "compress") {
       return (
         <ErrorBox
@@ -112,7 +118,9 @@ export function DetectionResults({
   }
 
   if (!result) return <Placeholder />;
-  if (result.degraded) return <ServiceUnavailable onRetry={onRetry} />;
+  if (result.degraded) {
+    return <ServiceUnavailable imageUrl={result.imageUrl} onRetry={onRetry} />;
+  }
 
   if (result.items.length === 0) {
     return (
@@ -127,5 +135,12 @@ export function DetectionResults({
     );
   }
 
-  return <DetectedWordList key={resultId} result={result} />;
+  return (
+    <DetectedWordList
+      key={resultId}
+      items={result.items}
+      imageUrl={result.imageUrl}
+      lowConfidence={result.lowConfidence}
+    />
+  );
 }
