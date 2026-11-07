@@ -95,6 +95,7 @@ export const dailyActivityPointSchema = z.object({
 export const progressStatsResponseSchema = z.object({
   // Frontend WSEA-116 Flat Fields
   totalWords: z.number().int().min(0),
+  totalCards: z.number().int().min(0).optional(),
   weeklyGain: z.number().int(),
   statusCounts: cardStatusCountsSchema,
   retentionRate7d: z.number().min(0).max(100),

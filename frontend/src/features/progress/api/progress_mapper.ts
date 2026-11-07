@@ -32,13 +32,24 @@ export function mapProgressStats(raw: RawProgressResponse): ProgressStats {
   const s = raw.summary;
   const dist = raw.cardDistribution;
 
+  const mastered = raw.statusCounts?.mastered ?? dist?.mastered?.count ?? 0;
+  const learning = raw.statusCounts?.learning ?? dist?.learning?.count ?? 0;
+  const notLearned = raw.statusCounts?.notLearned ?? dist?.unlearned?.count ?? 0;
+
+  // Số từ đã học thực tế = Đã thuộc (mastered) + Đang học (learning)
+  // Không tính thẻ mới thêm vào bộ ở trạng thái Chưa học (notLearned / NEW)
+  const learnedWords =
+    mastered + learning > 0 || notLearned > 0
+      ? mastered + learning
+      : (s?.totalWords?.count ?? raw.totalWords ?? 0);
+
   return {
-    totalWords: s?.totalWords?.count ?? raw.totalWords ?? 0,
+    totalWords: learnedWords,
     weeklyGain: s?.totalWords?.changeVsLastWeek ?? raw.weeklyGain ?? 0,
     statusCounts: {
-      mastered: raw.statusCounts?.mastered ?? dist?.mastered?.count ?? 0,
-      learning: raw.statusCounts?.learning ?? dist?.learning?.count ?? 0,
-      notLearned: raw.statusCounts?.notLearned ?? dist?.unlearned?.count ?? 0,
+      mastered,
+      learning,
+      notLearned,
     },
     retentionRate7d: s?.retentionRate7Days?.rate ?? raw.retentionRate7d ?? 0,
     retentionStatusText: s?.retentionRate7Days?.statusText,

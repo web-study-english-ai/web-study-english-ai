@@ -104,7 +104,9 @@ describe('ProgressService', () => {
 
     const result = await service.getStats('active-user-456', 'week');
 
-    expect(result.totalWords).toBe(100);
+    // Tổng từ đã học = 65 mastered + 25 learning = 90 từ (10 thẻ NEW chưa học không được tính)
+    expect(result.totalWords).toBe(90);
+    expect(result.totalCards).toBe(100);
     expect(result.weeklyGain).toBe(12);
     expect(result.statusCounts.mastered).toBe(65);
     expect(result.statusCounts.learning).toBe(25);
@@ -113,7 +115,7 @@ describe('ProgressService', () => {
     expect(result.streakDays).toBeGreaterThanOrEqual(1);
     expect(result.totalWordsTimeline).toHaveLength(4);
 
-    expect(result.summary.totalWords.count).toBe(100);
+    expect(result.summary.totalWords.count).toBe(90);
     expect(result.summary.totalWords.changeVsLastWeek).toBe(12);
     expect(result.summary.retentionRate7Days.rate).toBe(90);
     expect(result.summary.retentionRate7Days.status).toBe('EXCELLENT');
@@ -132,6 +134,28 @@ describe('ProgressService', () => {
     expect(result.summary.memoryStability.score).toBe(90);
     expect(result.dailyActivity).toHaveLength(7);
     expect(result.stabilityTimeline).toHaveLength(4);
+  });
+
+  it('không tính các thẻ ở trạng thái NEW vào tổng từ đã học khi người dùng mới thêm từ vào bộ thẻ', async () => {
+    // Người dùng mới thêm 3 từ vào bộ thẻ (trạng thái NEW), chưa học ở trang học từ mới
+    prismaMock.userCard.groupBy.mockResolvedValue([{ state: CardState.NEW, _count: { id: 3 } }]);
+    prismaMock.userCard.count.mockResolvedValue(0);
+    prismaMock.userCard.findMany.mockResolvedValue([]);
+    prismaMock.review.findMany.mockResolvedValue([]);
+
+    const result = await service.getStats('new-learner-added-3');
+
+    // Tổng từ đã học phải là 0 vì chưa học từ nào
+    expect(result.totalWords).toBe(0);
+    expect(result.summary.totalWords.count).toBe(0);
+    // Tổng số thẻ trong bộ là 3
+    expect(result.totalCards).toBe(3);
+    expect(result.cardDistribution.total).toBe(3);
+    expect(result.cardDistribution.unlearned.count).toBe(3);
+    expect(result.cardDistribution.unlearned.percentage).toBe(100);
+    expect(result.statusCounts.notLearned).toBe(3);
+    expect(result.statusCounts.learning).toBe(0);
+    expect(result.statusCounts.mastered).toBe(0);
   });
 
   it('nên hỗ trợ range = day với 14 ngày dữ liệu', async () => {
