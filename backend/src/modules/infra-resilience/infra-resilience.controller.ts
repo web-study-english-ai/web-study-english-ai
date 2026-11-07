@@ -1,5 +1,6 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from '@common/guards/admin.guard';
 import { InfraResilienceService } from './infra-resilience.service';
 
 class TripCircuitDto {
@@ -7,6 +8,13 @@ class TripCircuitDto {
 }
 
 @ApiTags('infra-resilience')
+@ApiBearerAuth()
+@ApiHeader({
+  name: 'x-admin-key',
+  required: false,
+  description: 'Khóa quản trị hệ thống (thay thế Bearer JWT token cho automation/DevOps)',
+})
+@UseGuards(AdminGuard)
 @Controller('infra-resilience')
 export class InfraResilienceController {
   constructor(private readonly resilienceService: InfraResilienceService) {}

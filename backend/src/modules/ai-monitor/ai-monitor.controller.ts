@@ -1,5 +1,6 @@
-import { Body, Controller, Get, HttpCode, HttpStatus, Post } from '@nestjs/common';
-import { ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Body, Controller, Get, HttpCode, HttpStatus, Post, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiHeader, ApiOperation, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { AdminGuard } from '@common/guards/admin.guard';
 import { AiMonitorService } from './ai-monitor.service';
 import { RecordCallDto } from './dto/record-call.dto';
 
@@ -8,6 +9,13 @@ class CircuitBreakerDto {
 }
 
 @ApiTags('ai-monitor')
+@ApiBearerAuth()
+@ApiHeader({
+  name: 'x-admin-key',
+  required: false,
+  description: 'Khóa quản trị hệ thống (thay thế Bearer JWT token cho automation/DevOps)',
+})
+@UseGuards(AdminGuard)
 @Controller('ai-monitor')
 export class AiMonitorController {
   constructor(private readonly aiMonitorService: AiMonitorService) {}
