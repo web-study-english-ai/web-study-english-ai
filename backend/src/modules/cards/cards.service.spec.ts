@@ -12,6 +12,7 @@ const prismaMock = {
     count: vi.fn(),
     aggregate: vi.fn(),
     createMany: vi.fn(),
+    updateMany: vi.fn(),
     delete: vi.fn(),
   },
   $transaction: vi.fn(),
@@ -98,6 +99,29 @@ describe('CardsService', () => {
       await expect(service.addCards(USER_ID, { wordIds: [W1], force: false })).rejects.toThrow(
         NotFoundException,
       );
+    });
+    it('gắn imageUrl vào thẻ mới và cập nhật imageUrl cho thẻ đã có sẵn (WSEA-156)', async () => {
+      prismaMock.word.findMany.mockResolvedValue([{ id: W1 }, { id: W2 }]);
+      prismaMock.userCard.findMany.mockResolvedValue([{ wordId: W1 }]);
+      prismaMock.userCard.count.mockResolvedValueOnce(0).mockResolvedValueOnce(1);
+      prismaMock.userCard.createMany.mockResolvedValue({ count: 1 });
+      prismaMock.userCard.updateMany.mockResolvedValue({ count: 1 });
+      const imageUrl = 'http://localhost:3001/api/vision/images/abc.jpg';
+      const result = await service.addCards(USER_ID, {
+        wordIds: [W1, W2],
+        imageUrl,
+        force: false,
+      });
+      expect(result.added).toBe(1);
+      expect(result.skippedExisting).toBe(1);
+      expect(prismaMock.userCard.createMany).toHaveBeenCalledWith({
+        data: [{ userId: USER_ID, wordId: W2, state: 'NEW', imageUrl }],
+        skipDuplicates: true,
+      });
+      expect(prismaMock.userCard.updateMany).toHaveBeenCalledWith({
+        where: { userId: USER_ID, wordId: { in: [W1] } },
+        data: { imageUrl },
+      });
     });
   });
 

@@ -161,6 +161,7 @@ model UserCard {
   lapses              Int       @default(0)
   dueAt               DateTime? @map("due_at")
   lastReviewedAt      DateTime? @map("last_reviewed_at")
+  imageUrl             String?   @map("image_url")
   createdAt           DateTime  @default(now()) @map("created_at")
   updatedAt           DateTime  @updatedAt @map("updated_at")
 
