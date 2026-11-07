@@ -1,6 +1,7 @@
 import { ExecutionContext, ForbiddenException, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { describe, expect, it, vi, beforeEach } from 'vitest';
+import type { AuthUser } from '@modules/auth/strategies/jwt.strategy';
 import { AdminGuard } from './admin.guard';
 
 describe('AdminGuard', () => {
@@ -22,7 +23,10 @@ describe('AdminGuard', () => {
     guard = new AdminGuard(configService);
   });
 
-  const createMockContext = (headers: Record<string, string> = {}, user?: any): ExecutionContext => {
+  const createMockContext = (
+    headers: Record<string, string> = {},
+    user?: Partial<AuthUser>,
+  ): ExecutionContext => {
     const request = {
       headers,
       user,

@@ -7,7 +7,11 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthGuard } from '@nestjs/passport';
+import type { Request } from 'express';
 import { firstValueFrom, isObservable } from 'rxjs';
+import type { AuthUser } from '@modules/auth/strategies/jwt.strategy';
+
+type AuthenticatedRequest = Request & { user?: AuthUser };
 
 @Injectable()
 export class AdminGuard extends AuthGuard('jwt') implements CanActivate {
@@ -16,23 +20,25 @@ export class AdminGuard extends AuthGuard('jwt') implements CanActivate {
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
 
     // 1. Xác thực qua header khóa quản trị (x-admin-key)
     // Phục vụ DevOps, automation scripts, cron jobs và inter-service calls
-    const adminKey = request.headers['x-admin-key'] as string | undefined;
+    const adminKey = request.headers['x-admin-key'];
     const configuredAdminKey = this.configService.get<string>('ADMIN_API_KEY');
     const aiServiceKey = this.configService.get<string>('AI_SERVICE_KEY');
 
+    const adminKeyString = typeof adminKey === 'string' ? adminKey : undefined;
+
     if (
-      (configuredAdminKey && adminKey === configuredAdminKey) ||
-      (aiServiceKey && adminKey === aiServiceKey)
+      (configuredAdminKey && adminKeyString === configuredAdminKey) ||
+      (aiServiceKey && adminKeyString === aiServiceKey)
     ) {
       return true;
     }
 
     // 2. Kiểm tra nếu token trong Authorization Bearer trùng với ADMIN_API_KEY / AI_SERVICE_KEY
-    const authHeader = request.headers['authorization'] as string | undefined;
+    const authHeader = request.headers['authorization'];
     const bearerToken = authHeader?.startsWith('Bearer ') ? authHeader.slice(7).trim() : null;
 
     if (
