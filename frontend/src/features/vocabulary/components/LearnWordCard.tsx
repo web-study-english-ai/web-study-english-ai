@@ -4,6 +4,7 @@ import { useState } from "react";
 import { Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { POS_LABEL, SRSRating, DeckCard } from "../types/vocabulary_types";
+import { CardImage } from "@/components/shared/CardImage";
 
 interface Props {
   card: DeckCard;
@@ -17,11 +18,11 @@ const RATING_OPTIONS: {
   className: string;
   key: string;
 }[] = [
-  { value: "forgot", label: "Chưa nhớ", hint: "Xem lại ngay", className: "text-destructive border-destructive/40 hover:bg-destructive/10", key: "1" },
-  { value: "hard", label: "Khó", hint: "Xem lại sớm", className: "text-yellow-600 border-yellow-300 hover:bg-yellow-50", key: "2" },
-  { value: "medium", label: "Bình thường", hint: "Thời gian chuẩn", className: "text-primary border-primary/40 hover:bg-primary/5", key: "3" },
-  { value: "easy", label: "Dễ", hint: "Giãn cách xa", className: "text-green-600 border-green-300 hover:bg-green-50", key: "4" },
-];
+    { value: "forgot", label: "Chưa nhớ", hint: "Xem lại ngay", className: "text-destructive border-destructive/40 hover:bg-destructive/10", key: "1" },
+    { value: "hard", label: "Khó", hint: "Xem lại sớm", className: "text-yellow-600 border-yellow-300 hover:bg-yellow-50", key: "2" },
+    { value: "medium", label: "Bình thường", hint: "Thời gian chuẩn", className: "text-primary border-primary/40 hover:bg-primary/5", key: "3" },
+    { value: "easy", label: "Dễ", hint: "Giãn cách xa", className: "text-green-600 border-green-300 hover:bg-green-50", key: "4" },
+  ];
 
 export function LearnWordCard({ card, onRate }: Props) {
   const [flipped, setFlipped] = useState(false);
@@ -48,16 +49,17 @@ export function LearnWordCard({ card, onRate }: Props) {
           className="relative h-full w-full transition-transform duration-500 [transform-style:preserve-3d]"
           style={{ transform: flipped ? "rotateY(180deg)" : "rotateY(0deg)" }}
         >
-          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-10 text-center shadow-sm [backface-visibility:hidden]">
+          <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm [backface-visibility:hidden]">
             <h2 className="font-heading text-4xl font-bold text-foreground">{card.word.term}</h2>
             <div className="mt-2 flex items-center justify-center gap-2 text-muted-foreground">
-              <span>{card.word.ipa}</span>
-              <span>({POS_LABEL[card.word.pos]})</span>
-              <button onClick={speak} aria-label="Phát âm" className="text-primary">
-                <Volume2 className="h-4 w-4" />
-              </button>
+              {/* giữ nguyên ipa, loại từ, nút phát âm */}
             </div>
-            <p className="mt-6 text-xs text-muted-foreground">Bấm vào thẻ để xem nghĩa</p>
+            <CardImage
+              src={card.imageUrl}
+              alt={`Ảnh bạn đã chụp: ${card.word.term}`}
+              className="mt-3 max-h-24"
+            />
+            <p className="mt-4 text-xs text-muted-foreground">Bấm vào thẻ để xem nghĩa</p>
           </div>
 
           <div

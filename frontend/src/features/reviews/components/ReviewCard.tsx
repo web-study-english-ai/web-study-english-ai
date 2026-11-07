@@ -4,6 +4,7 @@ import { Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ReviewCardData } from "../types/review_types";
+import { CardImage } from "@/components/shared/CardImage";
 
 interface Props {
   card: ReviewCardData;
@@ -35,7 +36,11 @@ export function ReviewCard({ card, revealed, onReveal }: Props) {
       {revealed ? (
         <div className="mt-5 border-t border-border pt-5">
           <p className="font-semibold text-primary">{card.word.meaningVi}</p>
-          
+          <CardImage
+            src={card.imageUrl}
+            alt={`Ảnh bạn đã chụp: ${card.word.term}`}
+            className="mt-3 max-h-24"
+          />
         </div>
       ) : (
         <Button onClick={onReveal} className="mt-6 rounded-full bg-primary px-6">
