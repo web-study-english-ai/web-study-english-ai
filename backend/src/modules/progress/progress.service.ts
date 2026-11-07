@@ -68,37 +68,40 @@ export class ProgressService {
       }
     }
 
-    const totalWordsCount = masteredCount + learningCount + unlearnedCount;
+    const totalCardsCount = masteredCount + learningCount + unlearnedCount;
+    // Số từ đã học thực tế: chỉ tính thẻ đã học (Đã thuộc + Đang học), không tính thẻ NEW (Chưa học)
+    const learnedWordsCount = masteredCount + learningCount;
 
     const cardDistribution: CardDistribution = {
       mastered: {
         count: masteredCount,
-        percentage: totalWordsCount > 0 ? Math.round((masteredCount / totalWordsCount) * 100) : 0,
+        percentage: totalCardsCount > 0 ? Math.round((masteredCount / totalCardsCount) * 100) : 0,
       },
       learning: {
         count: learningCount,
-        percentage: totalWordsCount > 0 ? Math.round((learningCount / totalWordsCount) * 100) : 0,
+        percentage: totalCardsCount > 0 ? Math.round((learningCount / totalCardsCount) * 100) : 0,
       },
       unlearned: {
         count: unlearnedCount,
         percentage:
-          totalWordsCount > 0
+          totalCardsCount > 0
             ? Math.max(
                 0,
                 100 -
-                  Math.round((masteredCount / totalWordsCount) * 100) -
-                  Math.round((learningCount / totalWordsCount) * 100),
+                  Math.round((masteredCount / totalCardsCount) * 100) -
+                  Math.round((learningCount / totalCardsCount) * 100),
               )
             : 0,
       },
-      total: totalWordsCount,
+      total: totalCardsCount,
     };
 
-    // 2. Tổng từ học mới trong 7 ngày qua (changeVsLastWeek)
+    // 2. Tổng từ học mới trong 7 ngày qua (changeVsLastWeek) - chỉ tính từ đã học
     const wordsAddedLast7Days = await this.prisma.userCard.count({
       where: {
         userId,
         createdAt: { gte: sevenDaysAgo },
+        state: { not: CardState.NEW },
       },
     });
 
@@ -135,7 +138,7 @@ export class ProgressService {
         retentionStatus = 'POOR';
         retentionStatusText = 'Cần cố gắng';
       }
-    } else if (totalWordsCount > 0) {
+    } else if (learnedWordsCount > 0) {
       retentionRate = 100;
       retentionStatus = 'EXCELLENT';
       retentionStatusText = 'Xuất sắc';
@@ -148,7 +151,7 @@ export class ProgressService {
         select: { reviewedAt: true },
       }),
       this.prisma.userCard.findMany({
-        where: { userId },
+        where: { userId, state: { not: CardState.NEW } },
         select: { createdAt: true },
       }),
     ]);
@@ -417,7 +420,7 @@ export class ProgressService {
     let motivationalMessage =
       'Bạn đang tiến bộ rất tốt! Hãy duy trì chuỗi ngày học để giữ vững đà bứt phá nhé. 🚀';
 
-    if (totalWordsCount === 0) {
+    if (learnedWordsCount === 0) {
       motivationalMessage =
         'Chào mừng bạn! Hãy thêm và học những từ vựng đầu tiên ngay hôm nay nhé. 📚';
     } else if (currentStreak >= 7) {
@@ -433,7 +436,7 @@ export class ProgressService {
 
     const summary: ProgressSummary = {
       totalWords: {
-        count: totalWordsCount,
+        count: learnedWordsCount,
         changeVsLastWeek: wordsAddedLast7Days,
       },
       retentionRate7Days: {
@@ -454,7 +457,8 @@ export class ProgressService {
     };
 
     return {
-      totalWords: totalWordsCount,
+      totalWords: learnedWordsCount,
+      totalCards: totalCardsCount,
       weeklyGain: wordsAddedLast7Days,
       statusCounts: {
         mastered: masteredCount,
