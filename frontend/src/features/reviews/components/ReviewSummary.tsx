@@ -8,6 +8,7 @@ interface Props {
   totalCards: number;
   elapsedLabel: string;
   ratingCounts: Record<SRSRating, number>;
+  onContinue?: () => void;
 }
 
 const ROWS: { value: SRSRating; label: string; className: string }[] = [
@@ -17,7 +18,7 @@ const ROWS: { value: SRSRating; label: string; className: string }[] = [
   { value: "easy", label: "Dễ", className: "text-green-600 bg-green-50" },
 ];
 
-export function ReviewSummary({ totalCards, elapsedLabel, ratingCounts }: Props) {
+export function ReviewSummary({ totalCards, elapsedLabel, ratingCounts, onContinue }: Props) {
   const totalRatings = ROWS.reduce((sum, r) => sum + ratingCounts[r.value], 0);
 
   return (
@@ -45,10 +46,19 @@ export function ReviewSummary({ totalCards, elapsedLabel, ratingCounts }: Props)
         ))}
       </div>
 
-      <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+            <div className="mt-8 flex flex-col items-center justify-center gap-3 sm:flex-row">
+        {onContinue && ratingCounts.forgot > 0 && (
+          <button
+            type="button"
+            onClick={onContinue}
+            className="rounded-full bg-primary px-6 py-2 text-sm font-medium text-white hover:opacity-90"
+          >
+            Tiếp tục ({ratingCounts.forgot} từ chưa nhớ)
+          </button>
+        )}
         <Link
           href="/learn-words"
-          className="rounded-full bg-primary px-6 py-2 text-sm font-medium text-white hover:opacity-90"
+          className="rounded-full border border-border px-6 py-2 text-sm font-medium text-foreground hover:bg-muted"
         >
           Học từ mới
         </Link>

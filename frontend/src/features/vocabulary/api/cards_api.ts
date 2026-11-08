@@ -31,8 +31,11 @@ export function listNewCardsApi(
 export async function listDueCardsApi(): Promise<DeckCard[]> {
   const { items } = await listCardsApi(1, 100);
   const now = Date.now();
-
   return items.filter(
-    (c) => c.state !== "NEW" && c.dueAt !== null && new Date(c.dueAt).getTime() <= now,
+    (c) =>
+      c.state !== "NEW" &&
+      (c.state === "LEARNING" ||
+        c.state === "RELEARNING" ||
+        (c.dueAt !== null && new Date(c.dueAt).getTime() <= now)),
   );
 }

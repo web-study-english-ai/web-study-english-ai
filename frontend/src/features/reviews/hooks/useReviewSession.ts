@@ -9,8 +9,6 @@ import { enqueuePending, isNetworkError, useOfflineReviewSync } from "@/lib/hook
 
 // Số thẻ tối đa cho mỗi phiên ôn tập
 const MAX_CARDS_PER_SESSION = 20;
-// Thẻ "Chưa nhớ" phải cách ít nhất 5 thẻ khác mới được hỏi lại trong cùng phiên
-const MIN_REQUEUE_GAP = 5;
 
 const EMPTY_COUNTS: Record<SRSRating, number> = {
   forgot: 0,
@@ -26,16 +24,6 @@ function formatElapsed(seconds: number) {
 }
 
 // Chèn thẻ trở lại hàng chờ, cách vị trí hiện tại ít nhất MIN_REQUEUE_GAP thẻ
-function requeueWithGap(
-  queue: ReviewCardData[],
-  fromIndex: number,
-  card: ReviewCardData,
-): ReviewCardData[] {
-  const insertAt = Math.min(fromIndex + 1 + MIN_REQUEUE_GAP, queue.length);
-  const next = [...queue];
-  next.splice(insertAt, 0, card);
-  return next;
-}
 
 export function useReviewSession() {
   const [queue, setQueue] = useState<ReviewCardData[]>([]);
@@ -60,7 +48,7 @@ export function useReviewSession() {
   const isEmpty = !isLoading && queue.length === 0;
   const isRunning = !isLoading && queue.length > 0 && !isFinished;
 
-  // Tải các thẻ đến hạn từ backend
+    // Tải các thẻ đến hạn từ backend khi vào trang
   useEffect(() => {
     let cancelled = false;
 
@@ -85,6 +73,31 @@ export function useReviewSession() {
     };
   }, []);
 
+  // Tải đợt tiếp theo khi bấm nút "Tiếp tục" ở màn Tổng kết
+  function continueSession() {
+    setIsLoading(true);
+    setCurrentIndex(0);
+    setCompletedCount(0);
+    setRatingCounts(EMPTY_COUNTS);
+    setElapsedSeconds(0);
+    setRevealed(false);
+
+    listDueCardsApi()
+      .then((cards) => {
+        const list: ReviewCardData[] = cards
+          .slice(0, MAX_CARDS_PER_SESSION)
+          .map((c) => ({ cardId: c.id, word: c.word, imageUrl: c.imageUrl }));
+        setQueue(list);
+        setTotalDue(list.length);
+      })
+      .catch((err) => {
+        console.error("Không tải được danh sách thẻ đến hạn", err);
+      })
+      .finally(() => {
+        setIsLoading(false);
+      });
+  }
+
   // Đồng hồ chỉ chạy trong lúc đang ôn, dừng khi xong phiên
   useEffect(() => {
     if (!isRunning) return;
@@ -101,16 +114,14 @@ export function useReviewSession() {
     setRevealed(true);
   }
 
-  async function rateCurrentCard(rating: SRSRating) {
+    async function rateCurrentCard(rating: SRSRating) {
     if (!currentCard || isSubmitting) return;
 
     const card = currentCard;
-    const myIndex = currentIndex;
     const payload: CreateReviewPayload = {
       cardId: card.cardId,
       rating: RATING_VALUE[rating],
       durationMs: Date.now() - cardStartRef.current,
-      // Thời điểm người học thật sự bấm đánh giá, không phải lúc gửi lên server
       reviewedAt: new Date().toISOString(),
     };
 
@@ -118,42 +129,25 @@ export function useReviewSession() {
     setRatingCounts((c) => ({ ...c, [rating]: c[rating] + 1 }));
 
     try {
-      // Không có mạng: lưu tạm luôn, không chờ fetch thất bại mới biết
       if (typeof navigator !== "undefined" && navigator.onLine === false) {
         enqueuePending(payload);
-        if (rating === "forgot") {
-          setQueue((q) => requeueWithGap(q, myIndex, card));
-        } else {
-          setCompletedCount((n) => n + 1);
-        }
+        setCompletedCount((n) => n + 1);
         setRevealed(false);
         setCurrentIndex((i) => i + 1);
         return;
       }
 
-      const result = await createReviewApi(payload);
-      const stillLearning = result.card.state === "LEARNING" || result.card.state === "RELEARNING";
-      if (stillLearning) {
-        setQueue((q) => requeueWithGap(q, myIndex, card));
-      } else {
-        setCompletedCount((n) => n + 1);
-      }
-
+      await createReviewApi(payload);
+      setCompletedCount((n) => n + 1);
       setRevealed(false);
       setCurrentIndex((i) => i + 1);
     } catch (err) {
       if (isNetworkError(err)) {
-        // Mất mạng giữa chừng: lưu tạm để đồng bộ sau, không chặn người học
         enqueuePending(payload);
-        if (rating === "forgot") {
-          setQueue((q) => requeueWithGap(q, myIndex, card));
-        } else {
-          setCompletedCount((n) => n + 1);
-        }
+        setCompletedCount((n) => n + 1);
         setRevealed(false);
         setCurrentIndex((i) => i + 1);
       } else {
-        // Lỗi khác (không phải do mất mạng): giữ nguyên thẻ để người dùng bấm lại
         console.error("Không gửi được đánh giá", err);
       }
     } finally {
@@ -170,6 +164,7 @@ export function useReviewSession() {
     revealed,
     revealAnswer,
     rateCurrentCard,
+    continueSession,
     reviewedCount: completedCount,
     totalDue,
     ratingCounts,
