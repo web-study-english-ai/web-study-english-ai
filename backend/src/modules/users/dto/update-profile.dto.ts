@@ -24,11 +24,7 @@ export const updateProfileSchema = z
       .nullable()
       .optional(),
 
-    dateOfBirth: z
-      .string()
-      .trim()
-      .nullable()
-      .optional(),
+    dateOfBirth: z.string().trim().nullable().optional(),
 
     currentPassword: z.string().optional(),
 
