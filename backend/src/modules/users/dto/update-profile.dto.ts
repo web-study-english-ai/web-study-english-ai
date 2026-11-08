@@ -10,12 +10,27 @@ export const updateProfileSchema = z
       .max(100, { error: 'Họ và tên không được quá 100 ký tự' })
       .optional(),
 
-    name: z
+    phone: z
       .string()
       .trim()
-      .min(1, { error: 'Họ và tên không được để trống' })
-      .max(100, { error: 'Họ và tên không được quá 100 ký tự' })
+      .max(20, { error: 'Số điện thoại không được quá 20 ký tự' })
+      .nullable()
       .optional(),
+
+    address: z
+      .string()
+      .trim()
+      .max(255, { error: 'Địa chỉ không được quá 255 ký tự' })
+      .nullable()
+      .optional(),
+
+    dateOfBirth: z
+      .string()
+      .trim()
+      .nullable()
+      .optional(),
+
+    currentPassword: z.string().optional(),
 
     newPassword: z
       .string()
@@ -23,28 +38,7 @@ export const updateProfileSchema = z
       .max(72, { error: 'Mật khẩu không được quá 72 ký tự' })
       .optional(),
 
-    language: z.enum(['vi', 'en']).optional(),
-    avatarUrl: z.url({ error: 'Đường dẫn ảnh không hợp lệ' }).nullable().optional(),
-
-    level: z
-      .enum(['A1', 'A2', 'B1', 'B2'], {
-        error: 'Trình độ phải là một trong A1, A2, B1, B2',
-      })
-      .optional(),
-
-    newWordsPerDay: z
-      .number()
-      .int({ error: 'Số từ mới phải là số nguyên' })
-      .min(1, { error: 'Ít nhất 1 từ mỗi ngày' })
-      .max(100, { error: 'Nhiều nhất 100 từ mỗi ngày' })
-      .optional(),
-
-    maxReviewsPerDay: z
-      .number()
-      .int({ error: 'Số thẻ ôn tập phải là số nguyên' })
-      .min(1, { error: 'Ít nhất 1 thẻ mỗi ngày' })
-      .max(500, { error: 'Nhiều nhất 500 thẻ mỗi ngày' })
-      .optional(),
+    avatarUrl: z.string().nullable().optional(),
   })
   .refine((data) => Object.keys(data).length > 0, {
     error: 'Phải có ít nhất một trường cần cập nhật',
