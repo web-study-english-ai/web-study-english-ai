@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { POS_LABEL, DeckCard } from "../types/vocabulary_types";
+import { CardImage } from "@/components/shared/CardImage";
+
 
 interface Props {
   deck: DeckCard[];
@@ -37,14 +39,22 @@ export function VocabularyDeckList({ deck, selected, onSelect, onRemove }: Props
               : "border-border bg-card hover:bg-muted/50"
           )}
         >
-          <div>
-            <div className="flex items-center gap-2">
-              <p className="font-semibold text-foreground">{item.word.term}</p>
-              <Badge variant="secondary" className="text-xs">{POS_LABEL[item.word.pos]}</Badge>
-              <span className="text-xs text-muted-foreground">{item.word.ipa}</span>
-            </div>
+          <div className="flex items-center gap-3">
+            <CardImage
+              src={item.imageUrl}
+              alt={item.word.term}
+              className="h-14 w-14 shrink-0 rounded-lg"
+            />
+            <div>
+              <div className="flex items-center gap-2">
+                <p className="font-semibold text-foreground">{item.word.term}</p>
+                <Badge variant="secondary" className="text-xs">{POS_LABEL[item.word.pos]}</Badge>
+                <span className="text-xs text-muted-foreground">{item.word.ipa}</span>
+              </div>
               <p className="text-sm text-muted-foreground">{item.word.meaningVi}</p>
+            </div>
           </div>
+
 
           <Button
             size="icon"

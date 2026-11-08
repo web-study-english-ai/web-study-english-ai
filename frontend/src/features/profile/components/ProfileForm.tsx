@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -9,10 +9,13 @@ import { Button } from "@/components/ui/button";
 import { applyTheme, getStoredTheme } from "@/lib/theme";
 import { useUpdateProfile } from "../hooks/useUpdateProfile";
 import { ProfileData } from "../types/profile_types";
-import { LANGUAGE_OPTIONS } from "../utils/profile_options";
 import { Field, inputClass } from "./ProfileField";
+import { ProfileHeaderCard } from "./ProfileHeaderCard";
 import { SettingsCard } from "./SettingsCard";
 import { ThemeSwitch } from "./ThemeSwitch";
+
+const MAX_AVATAR_BYTES = 2 * 1024 * 1024; // 2MB
+const AVATAR_TYPES = ["image/png", "image/jpeg", "image/webp"];
 
 const passwordRules = z
   .string()
@@ -23,6 +26,19 @@ const passwordRules = z
 
 const profileSchema = z.object({
   name: z.string().trim().min(1, "Vui lòng nhập họ tên").max(100, "Họ tên quá dài"),
+  // Để trống = không cập nhật
+  phone: z
+    .string()
+    .trim()
+    .refine(
+      (v) => v === "" || /^(\+84|0)\d{9}$/.test(v.replace(/\s/g, "")),
+      "Số điện thoại không hợp lệ"
+    ),
+  address: z.string().trim().max(255, "Địa chỉ quá dài"),
+  birthDate: z
+    .string()
+    .refine((v) => v === "" || new Date(v) <= new Date(), "Ngày sinh không hợp lệ"),
+  currentPassword: z.string(),
   // Để trống = không đổi mật khẩu
   newPassword: z.string().superRefine((value, ctx) => {
     if (value === "") return;
@@ -31,8 +47,23 @@ const profileSchema = z.object({
       ctx.addIssue({ code: "custom", message: result.error.issues[0].message });
     }
   }),
-  language: z.enum(["vi", "en"]),
   darkMode: z.boolean(),
+  avatarFile: z.custom<File | null>((v) => v === null || v instanceof File),
+}).superRefine((values, ctx) => {
+  if (values.newPassword === "") return;
+  if (values.currentPassword === "") {
+    ctx.addIssue({
+      code: "custom",
+      path: ["currentPassword"],
+      message: "Vui lòng nhập mật khẩu hiện tại",
+    });
+  } else if (values.currentPassword === values.newPassword) {
+    ctx.addIssue({
+      code: "custom",
+      path: ["newPassword"],
+      message: "Mật khẩu mới phải khác mật khẩu hiện tại",
+    });
+  }
 });
 
 type ProfileFormValues = z.infer<typeof profileSchema>;
@@ -40,40 +71,88 @@ type ProfileFormValues = z.infer<typeof profileSchema>;
 function toFormValues(profile: ProfileData): ProfileFormValues {
   return {
     name: profile.name,
+    phone: profile.phone,
+    address: profile.address,
+    birthDate: profile.birthDate,
+    currentPassword: "",
     newPassword: "",
-    language: profile.language,
     darkMode: getStoredTheme() === "dark",
+    avatarFile: null,
   };
 }
 
 export function ProfileForm({ profile }: { profile: ProfileData }) {
   const [showPassword, setShowPassword] = useState(false);
-  const { mutate, isPending, isError, isSuccess, reset: resetMutation } = useUpdateProfile();
+  const [avatarError, setAvatarError] = useState("");
+  const [preview, setPreview] = useState<string | null>(null);
+  const { mutate, isPending, isError, error, isSuccess, reset: resetMutation } = useUpdateProfile();
 
   const {
     register,
     handleSubmit,
     control,
     reset,
+    watch,
+    setValue,
     formState: { errors, isDirty },
   } = useForm<ProfileFormValues>({
     resolver: zodResolver(profileSchema),
     defaultValues: toFormValues(profile),
   });
 
+  // Ảnh xem trước cho file vừa chọn, thu hồi URL khi đổi file hoặc rời trang
+  const avatarFile = watch("avatarFile");
+  const hasCurrentPassword = watch("currentPassword") !== "";
+  useEffect(() => {
+    if (!avatarFile) {
+      setPreview(null);
+      return;
+    }
+    const url = URL.createObjectURL(avatarFile);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [avatarFile]);
+
+  function handlePickAvatar(file: File) {
+    if (!AVATAR_TYPES.includes(file.type)) {
+      setAvatarError("Chỉ hỗ trợ ảnh PNG, JPG hoặc WebP.");
+      return;
+    }
+    if (file.size > MAX_AVATAR_BYTES) {
+      setAvatarError("Ảnh không được vượt quá 2MB.");
+      return;
+    }
+    setAvatarError("");
+    setValue("avatarFile", file, { shouldDirty: true });
+  }
+
   function onSubmit(values: ProfileFormValues) {
     const name = values.name.trim();
+    const phone = values.phone.replace(/\s/g, "");
+    const address = values.address.trim();
 
     mutate(
       {
         name,
-        language: values.language,
+        phone,
+        address,
+        birthDate: values.birthDate,
+        currentPassword: values.newPassword ? values.currentPassword : undefined,
         newPassword: values.newPassword || undefined,
+        avatarFile: values.avatarFile,
       },
       {
         onSuccess: () => {
           applyTheme(values.darkMode ? "dark" : "light");
-          reset({ ...values, name, newPassword: "" });
+          reset({
+            ...values,
+            name,
+            phone,
+            address,
+            currentPassword: "",
+            newPassword: "",
+            avatarFile: null,
+          });
           setShowPassword(false);
         },
       }
@@ -84,35 +163,79 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
     reset(toFormValues(profile));
     resetMutation();
     setShowPassword(false);
+    setAvatarError("");
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} noValidate>
+    <form onSubmit={handleSubmit(onSubmit)} noValidate className="space-y-4">
+      <ProfileHeaderCard
+        name={profile.name}
+        email={profile.email}
+        avatarUrl={preview ?? profile.avatarUrl}
+        avatarError={avatarError}
+        onPickAvatar={handlePickAvatar}
+      >
+        <Controller
+          control={control}
+          name="darkMode"
+          render={({ field }) => (
+            <ThemeSwitch id="dark-mode" checked={field.value} onChange={field.onChange} />
+          )}
+        />
+      </ProfileHeaderCard>
+
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <SettingsCard title="Thông tin cơ bản">
           <Field id="name" label="Họ tên" error={errors.name?.message}>
             <input id="name" type="text" className={inputClass} {...register("name")} />
           </Field>
 
-          <Field id="email" label="Email">
+          <Field id="phone" label="Số điện thoại" error={errors.phone?.message}>
             <input
-              id="email"
-              type="email"
-              readOnly
-              value={profile.email}
+              id="phone"
+              type="tel"
+              inputMode="tel"
+              autoComplete="tel"
+              placeholder="Ví dụ: 0912345678"
               className={inputClass}
+              {...register("phone")}
             />
           </Field>
 
-          <Field id="newPassword" label="Mật khẩu mới" error={errors.newPassword?.message}>
+          <Field id="address" label="Địa chỉ" error={errors.address?.message}>
+            <input
+              id="address"
+              type="text"
+              autoComplete="street-address"
+              className={inputClass}
+              {...register("address")}
+            />
+          </Field>
+
+          <Field id="birthDate" label="Ngày sinh" error={errors.birthDate?.message}>
+            <input id="birthDate" type="date" className={inputClass} {...register("birthDate")} />
+          </Field>
+        </SettingsCard>
+
+        <SettingsCard title="Đổi mật khẩu">
+          <Field
+            id="currentPassword"
+            label="Mật khẩu hiện tại"
+            error={errors.currentPassword?.message}
+          >
             <div className="relative">
               <input
-                id="newPassword"
+                id="currentPassword"
                 type={showPassword ? "text" : "password"}
-                autoComplete="new-password"
-                placeholder="Để trống nếu không đổi"
+                autoComplete="current-password"
+                placeholder="Nhập để mở khóa đổi mật khẩu"
                 className={`${inputClass} pr-10`}
-                {...register("newPassword")}
+                {...register("currentPassword", {
+                  // Xóa mật khẩu hiện tại thì xóa luôn mật khẩu mới đã nhập
+                  onChange: (e) => {
+                    if (!e.target.value) setValue("newPassword", "", { shouldValidate: true });
+                  },
+                })}
               />
               <button
                 type="button"
@@ -124,35 +247,32 @@ export function ProfileForm({ profile }: { profile: ProfileData }) {
               </button>
             </div>
           </Field>
-        </SettingsCard>
 
-        <SettingsCard title="Giao diện & ngôn ngữ">
-          <Field id="language" label="Ngôn ngữ hiển thị" error={errors.language?.message}>
-            <select id="language" className={inputClass} {...register("language")}>
-              {LANGUAGE_OPTIONS.map((opt) => (
-                <option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </option>
-              ))}
-            </select>
-          </Field>
-
-          <Field id="dark-mode" label="Chế độ giao diện">
-            <Controller
-              control={control}
-              name="darkMode"
-              render={({ field }) => (
-                <ThemeSwitch id="dark-mode" checked={field.value} onChange={field.onChange} />
-              )}
+          <Field id="newPassword" label="Mật khẩu mới" error={errors.newPassword?.message}>
+            <input
+              id="newPassword"
+              type={showPassword ? "text" : "password"}
+              autoComplete="new-password"
+              disabled={!hasCurrentPassword}
+              placeholder={
+                hasCurrentPassword ? "Để trống nếu không đổi" : "Nhập mật khẩu hiện tại trước"
+              }
+              className={inputClass}
+              {...register("newPassword")}
             />
           </Field>
+          <p className="text-xs text-muted-foreground">
+            Tối thiểu 8 ký tự, gồm chữ hoa, chữ thường và chữ số.
+          </p>
         </SettingsCard>
       </div>
 
-      <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
+      <div className="flex flex-wrap items-center justify-end gap-3">
         {isError && (
           <p role="alert" className="mr-auto text-sm text-destructive">
-            Không lưu được thay đổi, vui lòng thử lại.
+            {error instanceof Error && error.message
+              ? error.message
+              : "Không lưu được thay đổi, vui lòng thử lại."}
           </p>
         )}
         {isSuccess && !isDirty && (

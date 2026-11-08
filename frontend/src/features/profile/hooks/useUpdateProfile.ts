@@ -11,9 +11,18 @@ export function useUpdateProfile() {
 
   return useMutation({
     mutationFn: (payload: UpdateProfilePayload) => updateProfile(payload),
-    onSuccess: (_data, payload) => {
+    onSuccess: (data, payload) => {
       queryClient.setQueryData<ProfileData>(["profile"], (old) =>
-        old ? { ...old, name: payload.name, language: payload.language } : old
+        old
+          ? {
+              ...old,
+              name: payload.name,
+              phone: payload.phone,
+              address: payload.address,
+              birthDate: payload.birthDate,
+              avatarUrl: data.avatarUrl ?? old.avatarUrl,
+            }
+          : old
       );
       updateUser({ name: payload.name });
     },

@@ -2,7 +2,6 @@
 
 import { PageContainer } from "@/components/shared/PageContainer";
 import { useProfile } from "@/features/profile/hooks/useProfile";
-import { ProfileHeaderCard } from "@/features/profile/components/ProfileHeaderCard";
 import { ProfileForm } from "@/features/profile/components/ProfileForm";
 import { ProfileError, ProfileSkeleton } from "@/features/profile/components/ProfileStates";
 
@@ -14,12 +13,8 @@ export default function ProfilePage() {
       {isLoading && <ProfileSkeleton />}
       {isError && <ProfileError onRetry={() => refetch()} />}
 
-      {data && (
-        <div className="space-y-4">
-          <ProfileHeaderCard name={data.name} email={data.email} avatarUrl={data.avatarUrl} />
-          <ProfileForm profile={data} />
-        </div>
-      )}
+      {/* Header (ảnh đại diện + dark mode) nằm bên trong form để dùng chung trạng thái */}
+      {data && <ProfileForm profile={data} />}
     </PageContainer>
   );
 }

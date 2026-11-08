@@ -14,7 +14,7 @@ const navItems = [
   { href: "/learn-words", label: "Học từ mới" },
   { href: "/reviews", label: "Ôn tập theo lịch" },
   { href: "/progress", label: "Tiến trình học tập" },
-  { href: "/lessons", label: "Bài tập đọc hiểu" },
+  { href: "/reading", label: "Bài tập đọc hiểu" },
   { href: "/image-learning", label: "Nhận diện từ vựng" },
 ];
 
