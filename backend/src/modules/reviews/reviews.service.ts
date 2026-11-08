@@ -244,7 +244,7 @@ export class ReviewsService {
             state: lich.stateAfter,
             reps: { increment: 1 },
             ...(lich.laQuen ? { lapses: { increment: 1 } } : {}),
-            dueAt: lich.dueAt,
+            dueAt: card.state === CardState.NEW ? moc : lich.dueAt,
             lastReviewedAt: moc,
           },
           select: { id: true, state: true, dueAt: true, reps: true, lapses: true },
