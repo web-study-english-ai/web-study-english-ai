@@ -52,8 +52,10 @@ export default function VocabularyPage() {
         </div>
       )}
       <Tabs defaultValue="search" className="mt-6">
-        <TabsList>
-          <TabsTrigger value="search">Tìm kiếm & khám phá</TabsTrigger>
+                <TabsList>
+          <TabsTrigger value="search" onClick={() => void refetch()}>
+            Tìm kiếm & khám phá
+          </TabsTrigger>
           <TabsTrigger value="deck">Bộ thẻ của tôi ({deck.length})</TabsTrigger>
         </TabsList>
 
