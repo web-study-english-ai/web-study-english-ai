@@ -53,7 +53,9 @@ export class InfraResilienceService implements OnModuleInit {
       setTimeout(() => {
         this.warmupAiService()
           .then((res) => {
-            this.logger.log(`[Warmup-Background] Kết quả làm ấm AI Service: ${res.status} (${res.latencyMs}ms)`);
+            this.logger.log(
+              `[Warmup-Background] Kết quả làm ấm AI Service: ${res.status} (${res.latencyMs}ms)`,
+            );
           })
           .catch((err: unknown) => {
             this.logger.warn(
