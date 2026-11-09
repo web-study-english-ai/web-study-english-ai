@@ -47,6 +47,21 @@ export class InfraResilienceService implements OnModuleInit {
     this.logger.log(
       `🛡️ Khởi tạo InfraResilienceService: CircuitBreaker (Thresh: ${this.config.failureThreshold}, Timeout: ${this.config.resetTimeoutMs}ms), ConcurrencyLimit: ${this.config.concurrencyLimit}`,
     );
+
+    // Tự động kích hoạt làm ấm AI Service trong nền (Warm-up Buffer) để triệt tiêu Cold Start
+    if (process.env.NODE_ENV !== 'test') {
+      setTimeout(() => {
+        this.warmupAiService()
+          .then((res) => {
+            this.logger.log(`[Warmup-Background] Kết quả làm ấm AI Service: ${res.status} (${res.latencyMs}ms)`);
+          })
+          .catch((err: unknown) => {
+            this.logger.warn(
+              `[Warmup-Background] Chưa thể làm ấm AI Service lúc khởi động: ${err instanceof Error ? err.message : String(err)}`,
+            );
+          });
+      }, 1000);
+    }
   }
 
   /**
