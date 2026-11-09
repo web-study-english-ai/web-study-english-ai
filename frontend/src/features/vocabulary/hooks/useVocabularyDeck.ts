@@ -24,7 +24,13 @@ export function useVocabularyDeck() {
   const deck: DeckCard[] = data?.items ?? [];
   const wordIdsTrongBoThe = new Set(deck.map((c) => c.word.id));
 
-  const lamMoiBoThe = () => queryClient.invalidateQueries({ queryKey: ["cards"] });
+  const lamMoiBoThe = () => {
+    void queryClient.invalidateQueries({ queryKey: ["cards"] });
+    void queryClient.invalidateQueries({
+      queryKey: ["vocabulary"],
+      refetchType: "none",
+    });
+  };
 
   const themMutation = useMutation({
     mutationFn: ({ wordId, force }: { wordId: string; force: boolean }) =>

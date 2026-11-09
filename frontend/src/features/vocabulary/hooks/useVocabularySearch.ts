@@ -27,7 +27,7 @@ export function useVocabularySearch() {
     queryKey: ["vocabulary", debouncedFilters, page],
     queryFn: () => searchWordsApi(debouncedFilters, page),
     placeholderData: keepPreviousData,
-    staleTime: 5 * 60 * 1000,
+    staleTime: 0,
   });
 
   const results = data?.items ?? [];
