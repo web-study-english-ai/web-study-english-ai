@@ -15,16 +15,19 @@ export function useUpdateProfile() {
       queryClient.setQueryData<ProfileData>(["profile"], (old) =>
         old
           ? {
-              ...old,
-              name: payload.name,
-              phone: payload.phone,
-              address: payload.address,
-              birthDate: payload.birthDate,
-              avatarUrl: data.avatarUrl ?? old.avatarUrl,
-            }
+            ...old,
+            name: payload.name,
+            phone: payload.phone,
+            address: payload.address,
+            birthDate: payload.birthDate,
+            avatarUrl: data.avatarUrl ?? old.avatarUrl,
+          }
           : old
       );
-      updateUser({ name: payload.name });
+      updateUser({
+        name: payload.name,
+        ...(data.avatarUrl ? { avatarUrl: data.avatarUrl } : {}),
+      });
     },
   });
 }
