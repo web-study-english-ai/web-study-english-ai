@@ -83,6 +83,19 @@ export function LearnWordCard({ card, onRate, disabled = false }: Props) {
           <div className="absolute inset-0 flex flex-col items-center justify-center rounded-2xl border border-border bg-card p-6 text-center shadow-sm [backface-visibility:hidden]">
             <h2 className="font-heading text-4xl font-bold text-foreground">{card.word.term}</h2>
             <div className="mt-2 flex items-center justify-center gap-2 text-muted-foreground">
+              {card.word.ipa && <span>{card.word.ipa}</span>}
+              <span className="rounded bg-primary/10 px-1.5 py-0.5 text-xs font-medium text-primary">
+                {POS_LABEL[card.word.pos]}
+              </span>
+              <button
+                onClick={speak}
+                className="text-primary"
+                aria-label="Phát âm"
+              >
+                <Volume2 className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="mt-2 flex items-center justify-center gap-2 text-muted-foreground">
               {/* giữ nguyên ipa, loại từ, nút phát âm */}
             </div>
             <CardImage
