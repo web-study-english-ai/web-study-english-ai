@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { AdminTabs } from "@/features/admin/shared/components/AdminTabs";
 import { AdminNotice } from "@/features/admin/shared/components/AdminNotice";
@@ -8,7 +10,6 @@ import { ConfirmDialog } from "@/features/admin/shared/components/ConfirmDialog"
 import {
   AdminSearchInput,
   AdminSelect,
-  ComingSoonButton,
 } from "@/features/admin/shared/components/AdminFilters";
 import { tableStatus } from "@/features/admin/shared/components/AdminTableParts";
 import { useListState } from "@/features/admin/shared/hooks/useListState";
@@ -108,7 +109,13 @@ export default function AdminWordsPage() {
             onChange={(v) => list.onFilterChange("cefr", v)}
             options={CEFR_OPTIONS}
           />
-          <ComingSoonButton>Nạp dữ liệu</ComingSoonButton>
+          <Link
+            href="/admin/words/import"
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/90"
+          >
+            <Plus className="mr-1.5 h-4 w-4" />
+            Nạp dữ liệu
+          </Link>
         </div>
 
         <WordsTable
