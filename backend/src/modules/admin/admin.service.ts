@@ -329,9 +329,7 @@ export class AdminService implements OnModuleInit {
         ...(dto.content !== undefined ? { content: dto.content } : {}),
         ...(dto.topic !== undefined ? { topic: dto.topic } : {}),
         ...(dto.cefr !== undefined ? { cefr: dto.cefr } : {}),
-        ...(dto.estimatedMinutes !== undefined
-          ? { estimatedMinutes: dto.estimatedMinutes }
-          : {}),
+        ...(dto.estimatedMinutes !== undefined ? { estimatedMinutes: dto.estimatedMinutes } : {}),
       },
     });
   }

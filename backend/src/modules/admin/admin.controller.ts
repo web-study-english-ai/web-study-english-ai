@@ -58,10 +58,7 @@ export class AdminController {
 
   @Delete('words/:id')
   @ApiOperation({ summary: 'Xóa từ vựng (Admin)' })
-  deleteWord(
-    @CurrentUser() user: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  deleteWord(@CurrentUser() user: AuthUser, @Param('id', ParseUUIDPipe) id: string) {
     this.assertAdmin(user);
     return this.adminService.deleteWord(id);
   }
@@ -113,10 +110,7 @@ export class AdminController {
 
   @Delete('reading/:id')
   @ApiOperation({ summary: 'Xóa bài đọc hiểu (Admin)' })
-  deleteReading(
-    @CurrentUser() user: AuthUser,
-    @Param('id', ParseUUIDPipe) id: string,
-  ) {
+  deleteReading(@CurrentUser() user: AuthUser, @Param('id', ParseUUIDPipe) id: string) {
     this.assertAdmin(user);
     return this.adminService.deleteReading(id);
   }
