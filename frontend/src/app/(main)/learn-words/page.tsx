@@ -23,7 +23,7 @@ const KEY_TO_RATING: Record<string, SRSRating> = {
 };
 
 export default function LearnWordsPage() {
-    const {
+  const {
     currentCard,
     total,
     learnedCount,
@@ -83,11 +83,17 @@ export default function LearnWordsPage() {
             </div>
 
             <div className={isAway ? "pointer-events-none opacity-40" : ""}>
-              <LearnWordCard key={currentCard.id} card={currentCard} onRate={rateCurrentWord} />
+              <LearnWordCard
+                key={currentCard.id}
+                card={currentCard}
+                onRate={rateCurrentWord}
+                disabled={isAway}
+              />
             </div>
 
             <p className="mt-4 text-center text-xs text-muted-foreground">
-              Mẹo: dùng phím <kbd className="rounded bg-muted px-1.5 py-0.5">1</kbd>–
+              Mẹo: <kbd className="rounded bg-muted px-1.5 py-0.5">Space</kbd> để lật thẻ, phím{" "}
+              <kbd className="rounded bg-muted px-1.5 py-0.5">1</kbd>–
               <kbd className="rounded bg-muted px-1.5 py-0.5">4</kbd> để đánh giá nhanh
             </p>
           </>

@@ -16,18 +16,26 @@ const MOT_NGAY_MS = 24 * 60 * 60 * 1000;
 
 export async function seedDemoAccount() {
   const now = new Date();
-  console.log(`🚀 Khởi tạo / Làm mới tài khoản trình diễn (Demo Account v1.1) tại ${now.toISOString()}...`);
+  console.log(`🚀 Khởi tạo / Làm mới tài khoản trình diễn (Demo Account v1.2) tại ${now.toISOString()}...`);
 
   const email = 'demo@gmail.com';
   const password = 'password123';
-  const fullName = 'Học viên Trình diễn v1.1';
+  const fullName = 'Học viên Trình diễn v1.2';
+  const avatarUrl = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=400&auto=format&fit=crop';
+  const phone = '0987654321';
+  const address = 'Hà Nội, Việt Nam';
+  const dateOfBirth = new Date('2001-05-15');
   const passwordHash = await bcrypt.hash(password, 10);
 
-  // 1. Khởi tạo / Cập nhật người dùng demo
+  // 1. Khởi tạo / Cập nhật người dùng demo v1.2
   const user = await prisma.user.upsert({
     where: { email },
     update: {
       fullName,
+      avatarUrl,
+      phone,
+      address,
+      dateOfBirth,
       role: UserRole.USER,
       level: CefrLevel.B1,
       newWordsPerDay: 20,
@@ -40,6 +48,10 @@ export async function seedDemoAccount() {
       email,
       passwordHash,
       fullName,
+      avatarUrl,
+      phone,
+      address,
+      dateOfBirth,
       role: UserRole.USER,
       level: CefrLevel.B1,
       newWordsPerDay: 20,
@@ -70,13 +82,25 @@ export async function seedDemoAccount() {
     return;
   }
 
+  // Danh sách ảnh minh họa mẫu thực tế (tính năng Vision AI v1.2)
+  const sampleCardImages = [
+    'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&auto=format&fit=crop', // cat
+    'https://images.unsplash.com/photo-1543466835-00a7907e9de1?w=600&auto=format&fit=crop', // dog
+    'https://images.unsplash.com/photo-1502877338535-766e1452684a?w=600&auto=format&fit=crop', // car
+    'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?w=600&auto=format&fit=crop', // coffee
+    'https://images.unsplash.com/photo-1517336714731-489689fd1ca8?w=600&auto=format&fit=crop', // laptop
+    'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=600&auto=format&fit=crop', // books
+  ];
+
   // 15 thẻ MỚI (NEW)
   for (let i = 0; i < 15; i++) {
     if (!wordsB1[i]) break;
+    const cardImg = i < 2 ? sampleCardImages[i] : null;
     await prisma.userCard.create({
       data: {
         userId: user.id,
         wordId: wordsB1[i].id,
+        imageUrl: cardImg,
         state: CardState.NEW,
         createdAt: new Date(now.getTime() - 2 * MOT_NGAY_MS),
       },
@@ -88,10 +112,12 @@ export async function seedDemoAccount() {
     if (!wordsB1[i]) break;
     const cardLastRev = new Date(now.getTime() - 3 * MOT_GIO_MS);
     const cardDue = new Date(now.getTime() + 4 * MOT_GIO_MS);
+    const cardImg = i < 17 ? sampleCardImages[i - 13] : null;
     await prisma.userCard.create({
       data: {
         userId: user.id,
         wordId: wordsB1[i].id,
+        imageUrl: cardImg,
         state: CardState.LEARNING,
         reps: 2,
         lapses: 0,
@@ -110,10 +136,12 @@ export async function seedDemoAccount() {
     if (!wordsB1[i]) break;
     const cardLastRev = new Date(now.getTime() - (18 + (i % 6)) * MOT_GIO_MS);
     const cardDue = new Date(now.getTime() - (1 + (i % 3)) * MOT_GIO_MS); // Quá hạn 1-3 tiếng -> Sẵn sàng ôn ngay
+    const cardImg = i < 33 ? sampleCardImages[i - 26] : null;
     const card = await prisma.userCard.create({
       data: {
         userId: user.id,
         wordId: wordsB1[i].id,
+        imageUrl: cardImg,
         state: CardState.REVIEW,
         reps: 5,
         lapses: 0,
@@ -127,7 +155,7 @@ export async function seedDemoAccount() {
     reviewCards.push({ card, word: wordsB1[i] });
   }
 
-  console.log(` ✅ Đã tạo 60 thẻ học: 15 New, 15 Learning, 30 Review (sẵn sàng ôn tập).`);
+  console.log(` ✅ Đã tạo 60 thẻ học (có kèm ảnh minh họa Vision AI v1.2): 15 New, 15 Learning, 30 Review.`);
 
   // 3. Tạo nhật ký ôn tập 7 ngày liên tục tính ngược từ HÔM NAY
   // Đảm bảo: Streak = 7 ngày liên tục, Biểu đồ tuần đầy đủ 7 cột, Tỷ lệ nhớ ~94% (Xuất sắc)
@@ -272,9 +300,11 @@ export async function seedDemoAccount() {
   console.log(` ✅ Đã tạo lịch sử hội thoại và 2 truy vấn mẫu với Trợ lý ngữ pháp AI.`);
 
   console.log('\n============================================================');
-  console.log('🎉 TÀI KHOẢN TRÌNH DIỄN v1.1 ĐÃ ĐƯỢC NẠP SẴN SÀNG 100%!');
+  console.log('🎉 TÀI KHOẢN TRÌNH DIỄN v1.2 ĐÃ ĐƯỢC NẠP SẴN SÀNG 100%!');
   console.log(`   - Email:    ${email}`);
   console.log(`   - Mật khẩu: ${password}`);
+  console.log(`   - Họ tên:   ${fullName}`);
+  console.log(`   - Tính năng v1.2: Thẻ học gắn ảnh minh họa Vision AI, Profile cá nhân & Avatar`);
   console.log(`   - Chuỗi học liên tục: 7 ngày (hoạt động hôm nay)`);
   console.log(`   - Thẻ sẵn sàng ôn tập: 30 thẻ`);
   console.log(`   - Bài đọc hiểu: 1 Hoàn thành (5/5), 1 Đang làm dở (Draft)`);

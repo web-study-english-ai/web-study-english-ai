@@ -14,6 +14,7 @@ const cardSelect = {
   id: true,
   state: true,
   dueAt: true,
+  imageUrl: true,
   createdAt: true,
   word: {
     select: {
@@ -84,11 +85,28 @@ export class CardsService {
       });
     }
 
-    // 4. Tạo thẻ ở trạng thái chưa học
-    const result = await this.prisma.userCard.createMany({
-      data: toCreate.map((wordId) => ({ userId, wordId, state: CardState.NEW })),
-      skipDuplicates: true,
-    });
+    // 4. Tạo thẻ ở trạng thái chưa học (gắn kèm imageUrl nếu thêm từ nhận diện ảnh)
+    const result =
+      toCreate.length > 0
+        ? await this.prisma.userCard.createMany({
+            data: toCreate.map((wordId) => ({
+              userId,
+              wordId,
+              state: CardState.NEW,
+              ...(dto.imageUrl ? { imageUrl: dto.imageUrl } : {}),
+            })),
+            skipDuplicates: true,
+          })
+        : { count: 0 };
+
+    // Nếu từ đã có sẵn trong bộ thẻ mà người học chọn thêm từ màn nhận diện ảnh,
+    // cập nhật imageUrl cho thẻ hiện có mà không làm mất tiến độ ôn tập
+    if (dto.imageUrl && existingIds.size > 0) {
+      await this.prisma.userCard.updateMany({
+        where: { userId, wordId: { in: Array.from(existingIds) } },
+        data: { imageUrl: dto.imageUrl },
+      });
+    }
 
     const newCount = await this.prisma.userCard.count({
       where: { userId, state: CardState.NEW },

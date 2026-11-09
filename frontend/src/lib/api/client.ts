@@ -99,9 +99,18 @@ export async function apiFetch<T>(
   init: RequestInit = {},
   choPhepThuLai = true,
 ): Promise<T> {
+  // 1. Nếu chưa có accessToken trong RAM, chờ khôi phục phiên (từ Cookie hoặc localStorage)
+  // trước khi gửi request để không bị bắn request rỗng gây lỗi 401
+  if (!accessToken && choPhepThuLai && !path.startsWith("/auth/")) {
+    await lamMoiPhien();
+  }
+
+  const tokenLucGui = accessToken;
   const headers = new Headers(init.headers);
-  headers.set("Content-Type", "application/json");
-  if (accessToken) headers.set("Authorization", `Bearer ${accessToken}`);
+  if (!(init.body instanceof FormData) && !headers.has("Content-Type")) {
+    headers.set("Content-Type", "application/json");
+  }
+  if (tokenLucGui) headers.set("Authorization", `Bearer ${tokenLucGui}`);
 
   let res: Response;
   try {
@@ -110,7 +119,12 @@ export async function apiFetch<T>(
     throw new ApiError(0, "Không thể kết nối tới máy chủ.");
   }
 
-    if (res.status === 401 && choPhepThuLai && !path.startsWith("/auth/")) {
+  if (res.status === 401 && choPhepThuLai && !path.startsWith("/auth/")) {
+    // 2. Nếu trong lúc request đang bay mà SessionProvider đã lấy được accessToken mới rồi,
+    // dùng luôn token mới đó gọi lại chứ KHÔNG gọi /auth/refresh lần 2 (tránh làm hỏng token xoay vòng)
+    if (accessToken && accessToken !== tokenLucGui) {
+      return apiFetch<T>(path, init, false);
+    }
     const ketQua = await lamMoiPhien();
     if (ketQua) return apiFetch<T>(path, init, false);
   }

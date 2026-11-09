@@ -32,4 +32,5 @@ yarn-error.log*
 .windsurf/
 skills-lock.json
 prisma/sample-words.sql
+/uploads
 

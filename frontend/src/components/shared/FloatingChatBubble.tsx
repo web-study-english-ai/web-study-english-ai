@@ -1,9 +1,24 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import { Bot, X } from "lucide-react";
-import { ChatWindow } from "@/features/ai-chat/components/ChatWindow";
 import { useChat } from "@/features/ai-chat/hooks/useChat";
+
+const ChatWindow = dynamic(
+  () => import("@/features/ai-chat/components/ChatWindow").then((m) => m.ChatWindow),
+  {
+    ssr: false,
+    loading: () => (
+      <div className="flex h-full items-center justify-center p-8 text-sm text-muted-foreground">
+        <div className="flex items-center gap-2">
+          <div className="h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+          <span>Đang tải trợ lý AI...</span>
+        </div>
+      </div>
+    ),
+  },
+);
 
 const BUTTON_SIZE = 56; // h-14 w-14
 const SCREEN_MARGIN = 8;

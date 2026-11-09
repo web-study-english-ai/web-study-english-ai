@@ -18,6 +18,7 @@ export default function ReviewsPage() {
     revealed,
     revealAnswer,
     rateCurrentCard,
+    continueSession,
     reviewedCount,
     totalDue,
     ratingCounts,
@@ -49,6 +50,7 @@ export default function ReviewsPage() {
           totalCards={totalDue}
           elapsedLabel={elapsedLabel}
           ratingCounts={ratingCounts}
+          onContinue={continueSession}
         />
       )}
 

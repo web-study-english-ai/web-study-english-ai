@@ -37,6 +37,17 @@ allow_patterns=['*.json', 'model.safetensors', 'sentencepiece.bpe.model', 'READM
 # KHONG dat HF_HUB_OFFLINE: load_fsrs van tai params.json tu Hub luc khoi dong.
 ENV EMBEDDER_LOCAL_FILES_ONLY=true
 
+# CLIP (~600 MB) cho /vision: cung cach nhu e5, hang so lay tu classifier.py
+# (dau file chi import numpy; torch/transformers import trong HFClipBackend).
+# Revision da ghim chi co pytorch_model.bin (khong co model.safetensors).
+COPY --chown=appuser:appuser app/vision/__init__.py ./app/vision/__init__.py
+COPY --chown=appuser:appuser app/vision/classifier.py ./app/vision/classifier.py
+RUN python -c "from huggingface_hub import snapshot_download; \
+from app.vision.classifier import MODEL_NAME, MODEL_REVISION; \
+snapshot_download(MODEL_NAME, revision=MODEL_REVISION, \
+allow_patterns=['*.json', 'pytorch_model.bin', 'merges.txt', 'vocab.json'])"
+ENV VISION_LOCAL_FILES_ONLY=true
+
 COPY --chown=appuser:appuser app ./app
 
 EXPOSE 7860

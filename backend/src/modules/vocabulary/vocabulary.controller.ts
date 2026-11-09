@@ -1,6 +1,7 @@
 import { Controller, Get, Param, ParseUUIDPipe, Query, UseGuards } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
+import { CurrentUser } from '@common/decorators/current-user.decorator';
 import { VocabularyService } from './vocabulary.service';
 import { ListWordsDto } from './dto/list-words.dto';
 
@@ -26,8 +27,8 @@ export class VocabularyController {
   @ApiQuery({ name: 'topicId', required: false })
   @ApiQuery({ name: 'sort', required: false, enum: ['rank', 'term'] })
   @ApiResponse({ status: 400, description: 'Tham số truy vấn không hợp lệ' })
-  listWords(@Query() query: ListWordsDto) {
-    return this.vocabularyService.listWords(query);
+  listWords(@Query() query: ListWordsDto, @CurrentUser('id') userId?: string) {
+    return this.vocabularyService.listWords(query, userId);
   }
 
   @Get('words/:id')

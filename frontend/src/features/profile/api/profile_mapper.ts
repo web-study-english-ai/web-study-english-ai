@@ -1,4 +1,4 @@
-import { ProfileData, ProfileLanguage } from "../types/profile_types";
+import { ProfileData } from "../types/profile_types";
 
 type Raw = Record<string, unknown>;
 
@@ -18,8 +18,10 @@ const pick = (sources: Raw[], keys: string[]): unknown => {
   return undefined;
 };
 
-function toLanguage(v: unknown): ProfileLanguage {
-  return str(v).toLowerCase().startsWith("en") ? "en" : "vi";
+// Chấp nhận "2000-05-20" hoặc ISO "2000-05-20T00:00:00.000Z", trả về YYYY-MM-DD
+function toDateInput(v: unknown): string {
+  const s = str(v);
+  return /^\d{4}-\d{2}-\d{2}/.test(s) ? s.slice(0, 10) : "";
 }
 
 export function mapProfile(raw: Raw): ProfileData {
@@ -35,6 +37,8 @@ export function mapProfile(raw: Raw): ProfileData {
     name: str(pick(sources, ["name", "fullName", "displayName"])),
     email: str(pick(sources, ["email"])),
     avatarUrl: typeof avatar === "string" && avatar ? avatar : null,
-    language: toLanguage(pick(sources, ["language", "locale", "displayLanguage"])),
+    phone: str(pick(sources, ["phone", "phoneNumber"])),
+    address: str(pick(sources, ["address"])),
+    birthDate: toDateInput(pick(sources, ["dateOfBirth", "birthDate", "dob"])),
   };
 }

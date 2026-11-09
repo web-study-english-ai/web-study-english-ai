@@ -71,6 +71,7 @@ export interface DeckCard {
   state: CardState;
   dueAt: string | null;
   createdAt: string;
+  imageUrl: string | null;
   word: {
     id: string;
     term: string;

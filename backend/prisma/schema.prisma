@@ -69,6 +69,9 @@ model User {
   providerId       String?      @map("provider_id")
   fullName         String       @map("full_name")
   avatarUrl        String?      @map("avatar_url")
+  phone            String?
+  address          String?
+  dateOfBirth      DateTime?    @map("date_of_birth")
   level            CefrLevel    @default(A1)
   newWordsPerDay   Int          @default(20) @map("new_words_per_day")
   maxReviewsPerDay Int          @default(50) @map("max_reviews_per_day")
@@ -161,6 +164,7 @@ model UserCard {
   lapses              Int       @default(0)
   dueAt               DateTime? @map("due_at")
   lastReviewedAt      DateTime? @map("last_reviewed_at")
+  imageUrl            String?   @map("image_url")
   createdAt           DateTime  @default(now()) @map("created_at")
   updatedAt           DateTime  @updatedAt @map("updated_at")
 
