@@ -10,6 +10,7 @@ const PROTECTED_PREFIXES = [
   "/image-learning",
   "/ai-chat",
   "/profile",
+  "/admin",
 ];
 
 const AUTH_PAGES = ["/login", "/register"];
@@ -47,5 +48,6 @@ export const config = {
     "/profile/:path*",
     "/login",
     "/register",
+    "/admin/:path*",
   ],
 };
