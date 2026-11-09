@@ -63,7 +63,9 @@ export class VisionStorageService {
       this.logger.warn(`Không thể ghi tệp ảnh xuống đĩa, dùng bộ đệm RAM: ${String(err)}`);
     }
 
-    const publicBase = this.config.get<string>('BACKEND_PUBLIC_URL')?.replace(/\/+$/, '');
+    const publicBase =
+      this.config.get<string>('BACKEND_PUBLIC_URL')?.replace(/\/+$/, '') ??
+      this.config.get<string>('RENDER_EXTERNAL_URL')?.replace(/\/+$/, '');
     if (publicBase) {
       return `${publicBase}/api/vision/images/${fileName}`;
     }
