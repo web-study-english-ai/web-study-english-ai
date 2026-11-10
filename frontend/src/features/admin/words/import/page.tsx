@@ -73,8 +73,9 @@ export default function AdminImportWordsPage() {
     try {
       const res = await previewWordsFileApi(file);
       setPreviewData(res);
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Không đọc được file CSV. Vui lòng kiểm tra lại định dạng.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Không đọc được file CSV. Vui lòng kiểm tra lại định dạng.";
+      setErrorMsg(message);
       setPreviewData(null);
     } finally {
       setLoadingPreview(false);
@@ -113,8 +114,9 @@ export default function AdminImportWordsPage() {
       setTimeout(() => {
         router.push("/admin/words");
       }, 1500);
-    } catch (err: any) {
-      setErrorMsg(err?.message || "Có lỗi xảy ra khi nạp từ vựng.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Có lỗi xảy ra khi nạp từ vựng.";
+      setErrorMsg(message);
     } finally {
       setSubmitting(false);
     }
