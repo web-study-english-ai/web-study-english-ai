@@ -18,7 +18,7 @@ export default function DashboardPage() {
 
       <div className="relative h-[calc(100vh-4rem)] w-full overflow-hidden">
         <Image
-          src="/images/dashboard.jpeg"
+          src="/images/bg-db.jpg"
           alt="Học tiếng Anh"
           fill
           className="object-cover"

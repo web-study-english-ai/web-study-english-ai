@@ -18,11 +18,11 @@ export function mapAdminReading(raw: Raw): AdminReading {
   };
 }
 
-export const mapAdminReadingList = (raw: unknown, limit: number) =>
+export const mapReadingList = (raw: unknown, limit: number) =>
   mapList(raw, mapAdminReading, limit);
 
 // BE trả mảng chuỗi ["Giáo dục", "Du lịch", ...]
-export function mapReadingTopics(raw: unknown): string[] {
+export function mapTopics(raw: unknown): string[] {
   const list = Array.isArray(raw)
     ? raw
     : isObj(raw) && Array.isArray(raw.items)

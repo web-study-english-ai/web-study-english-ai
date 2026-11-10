@@ -2,15 +2,15 @@ import { apiFetch } from "@/lib/api/client";
 import { ListResult } from "@/features/admin/shared/types/admin_types";
 import {
   AdminReading,
-  AdminReadingListParams,
+  ReadingListParams,
   UpdateReadingBody,
 } from "../types/reading_admin_types";
-import { mapAdminReadingList, mapReadingTopics } from "./reading_admin_mapper";
+import { mapReadingList, mapTopics } from "./reading_admin_mapper";
 
 const JSON_HEADERS = { "Content-Type": "application/json" };
 
 export async function getAdminReadings(
-  params: AdminReadingListParams
+  params: ReadingListParams
 ): Promise<ListResult<AdminReading>> {
   const q = new URLSearchParams();
   q.set("page", String(params.page));
@@ -20,15 +20,18 @@ export async function getAdminReadings(
   if (params.cefr !== "all") q.set("cefr", params.cefr);
 
   const raw = await apiFetch<unknown>(`/admin/reading?${q.toString()}`);
-  return mapAdminReadingList(raw, params.limit);
+  return mapReadingList(raw, params.limit);
 }
 
 export async function getReadingTopics(): Promise<string[]> {
   const raw = await apiFetch<unknown>("/admin/reading/topics");
-  return mapReadingTopics(raw);
+  return mapTopics(raw);
 }
 
-export async function updateAdminReading(id: string, body: UpdateReadingBody): Promise<void> {
+export async function updateAdminReading(
+  id: string,
+  body: UpdateReadingBody
+): Promise<void> {
   await apiFetch<unknown>(`/admin/reading/${id}`, {
     method: "PATCH",
     headers: JSON_HEADERS,
@@ -38,4 +41,29 @@ export async function updateAdminReading(id: string, body: UpdateReadingBody): P
 
 export async function deleteAdminReading(id: string): Promise<void> {
   await apiFetch<unknown>(`/admin/reading/${id}`, { method: "DELETE" });
+}
+
+export interface CreateQuestionPayload {
+  questionText: string;
+  options: string[];
+  correctOptionIndex: number;
+  explanation?: string;
+}
+
+export interface CreateReadingPayload {
+  title: string;
+  summary?: string;
+  content: string;
+  topic: string;
+  cefr: string;
+  estimatedMinutes: number;
+  questions: CreateQuestionPayload[];
+}
+
+export async function createAdminReadingApi(body: CreateReadingPayload): Promise<void> {
+  await apiFetch<unknown>("/admin/reading", {
+    method: "POST",
+    headers: JSON_HEADERS,
+    body: JSON.stringify(body),
+  });
 }
