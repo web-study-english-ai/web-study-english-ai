@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
+import { Plus } from "lucide-react";
 import { PageContainer } from "@/components/shared/PageContainer";
 import { AdminTabs } from "@/features/admin/shared/components/AdminTabs";
 import { AdminNotice } from "@/features/admin/shared/components/AdminNotice";
@@ -8,7 +10,6 @@ import { ConfirmDialog } from "@/features/admin/shared/components/ConfirmDialog"
 import {
   AdminSearchInput,
   AdminSelect,
-  ComingSoonButton,
 } from "@/features/admin/shared/components/AdminFilters";
 import { tableStatus } from "@/features/admin/shared/components/AdminTableParts";
 import { useListState } from "@/features/admin/shared/hooks/useListState";
@@ -88,7 +89,7 @@ export default function AdminReadingPage() {
 
   return (
     <PageContainer>
-      <div className="space-y-5">
+<div className="space-y-5">
         <AdminTabs />
         <AdminNotice notice={notice} onClose={clear} />
 
@@ -110,7 +111,13 @@ export default function AdminReadingPage() {
             onChange={(v) => list.onFilterChange("cefr", v)}
             options={CEFR_OPTIONS}
           />
-          <ComingSoonButton>Thêm bài đọc</ComingSoonButton>
+          <Link
+            href="/admin/reading/create"
+            className="inline-flex h-10 items-center justify-center rounded-xl bg-primary px-4 text-sm font-semibold text-primary-foreground shadow hover:bg-primary/90"
+          >
+            <Plus className="mr-1.5 h-4 w-4" />
+            Thêm bài đọc
+          </Link>
         </div>
 
         <ReadingAdminTable
