@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -7,15 +8,21 @@ import {
   Param,
   ParseUUIDPipe,
   Patch,
+  Post,
   Query,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { ApiBearerAuth, ApiBody, ApiConsumes, ApiOperation, ApiTags } from '@nestjs/swagger';
+import type { Buffer } from 'node:buffer';
 import { JwtAuthGuard } from '@common/guards/jwt-auth.guard';
 import { CurrentUser } from '@common/decorators/current-user.decorator';
 import type { AuthUser } from '@modules/auth/strategies/jwt.strategy';
 import { AdminService } from './admin.service';
 import {
+  AdminImportWordsDto,
   AdminListReadingDto,
   AdminListUsersDto,
   AdminListWordsDto,
@@ -23,6 +30,13 @@ import {
   AdminUpdateUserDto,
   AdminUpdateWordDto,
 } from './dto/admin.dto';
+
+interface UploadedCsvFile {
+  buffer: Buffer;
+  mimetype?: string;
+  size?: number;
+  originalname?: string;
+}
 
 @ApiTags('admin')
 @ApiBearerAuth()
@@ -43,6 +57,32 @@ export class AdminController {
   listWords(@CurrentUser() user: AuthUser, @Query() query: AdminListWordsDto) {
     this.assertAdmin(user);
     return this.adminService.listWords(query);
+  }
+
+  @Post('words/preview-file')
+  @ApiOperation({ summary: 'Kiểm tra và xem trước file CSV từ vựng' })
+  @ApiConsumes('multipart/form-data')
+  @ApiBody({
+    schema: {
+      type: 'object',
+      properties: { file: { type: 'string', format: 'binary' } },
+      required: ['file'],
+    },
+  })
+  @UseInterceptors(FileInterceptor('file'))
+  previewWordsFile(@CurrentUser() user: AuthUser, @UploadedFile() file?: UploadedCsvFile) {
+    this.assertAdmin(user);
+    if (!file || !file.buffer) {
+      throw new BadRequestException('Vui lòng chọn file CSV để nạp');
+    }
+    return this.adminService.previewWordsFile(file.buffer);
+  }
+
+  @Post('words/import')
+  @ApiOperation({ summary: 'Nạp danh sách từ vựng đã kiểm tra vào cơ sở dữ liệu' })
+  importWords(@CurrentUser() user: AuthUser, @Body() dto: AdminImportWordsDto) {
+    this.assertAdmin(user);
+    return this.adminService.importWords(dto);
   }
 
   @Patch('words/:id')
