@@ -10,6 +10,7 @@ import { AuthProvider, CefrLevel, PartOfSpeech, Prisma, UserRole } from '@prisma
 import * as bcrypt from 'bcryptjs';
 import { PrismaService } from '@/prisma/prisma.service';
 import {
+  AdminCreateReadingDto,
   AdminImportWordsDto,
   AdminListReadingDto,
   AdminListUsersDto,
@@ -104,7 +105,7 @@ export class AdminService implements OnModuleInit {
         },
       });
     } catch {
-      // Bỏ qua nếu DB chưa sẵn sàng
+      // Ignored during testing/init
     }
   }
 
@@ -112,7 +113,6 @@ export class AdminService implements OnModuleInit {
   async listWords(query: AdminListWordsDto) {
     const { page, limit, search, topicId, cefr } = query;
     const skip = (page - 1) * limit;
-
     const where: Prisma.WordWhereInput = {
       ...(cefr ? { cefr } : {}),
       ...(topicId ? { topicId } : {}),
@@ -208,7 +208,6 @@ export class AdminService implements OnModuleInit {
     return { message: 'Đã xóa từ vựng thành công' };
   }
 
-  // Parse & Preview file CSV nạp từ vựng
   previewWordsFile(buffer: Buffer) {
     const content = buffer.toString('utf-8').replace(/^\uFEFF/, '');
     const lines = content.split(/\r?\n/).filter((l) => l.trim().length > 0);
@@ -287,7 +286,6 @@ export class AdminService implements OnModuleInit {
     };
   }
 
-  // Import danh sách từ vựng hợp lệ vào DB
   async importWords(dto: AdminImportWordsDto) {
     const { words } = dto;
 
@@ -296,7 +294,6 @@ export class AdminService implements OnModuleInit {
       select: { rank: true },
     });
     let currentRank = (maxRankWord?.rank ?? 0) + 1;
-
     const uniqueTopics = Array.from(new Set(words.map((w) => w.topic)));
     const topicMap = new Map<string, string>();
 
@@ -528,6 +525,51 @@ export class AdminService implements OnModuleInit {
         totalPages: Math.ceil(total / limit) || 1,
       },
     };
+  }
+
+  async createReading(dto: AdminCreateReadingDto) {
+    const slug =
+      dto.title
+        .toLowerCase()
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/(^-|-$)+/g, '') +
+      '-' +
+      Date.now().toString(36);
+
+    const summary = dto.summary || dto.content.trim().slice(0, 150) + '...';
+
+    const maxSort = await this.prisma.readingPassage.findFirst({
+      orderBy: { sortOrder: 'desc' },
+      select: { sortOrder: true },
+    });
+    const sortOrder = (maxSort?.sortOrder ?? 0) + 1;
+
+    return this.prisma.readingPassage.create({
+      data: {
+        slug,
+        title: dto.title,
+        summary,
+        content: dto.content,
+        topic: dto.topic,
+        cefr: dto.cefr,
+        estimatedMinutes: dto.estimatedMinutes,
+        sortOrder,
+        questions: {
+          create: dto.questions.map((q, index) => ({
+            orderIndex: index + 1,
+            questionText: q.questionText,
+            options: q.options,
+            correctOptionIndex: q.correctOptionIndex,
+            explanation: q.explanation || null,
+          })),
+        },
+      },
+      include: {
+        questions: true,
+      },
+    });
   }
 
   async updateReading(id: string, dto: AdminUpdateReadingDto) {

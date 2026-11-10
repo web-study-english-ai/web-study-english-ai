@@ -22,6 +22,7 @@ import { CurrentUser } from '@common/decorators/current-user.decorator';
 import type { AuthUser } from '@modules/auth/strategies/jwt.strategy';
 import { AdminService } from './admin.service';
 import {
+  AdminCreateReadingDto,
   AdminImportWordsDto,
   AdminListReadingDto,
   AdminListUsersDto,
@@ -135,6 +136,13 @@ export class AdminController {
   listReading(@CurrentUser() user: AuthUser, @Query() query: AdminListReadingDto) {
     this.assertAdmin(user);
     return this.adminService.listReading(query);
+  }
+
+  @Post('reading')
+  @ApiOperation({ summary: 'Tạo bài đọc hiểu mới kèm danh sách câu hỏi trắc nghiệm (Admin)' })
+  createReading(@CurrentUser() user: AuthUser, @Body() dto: AdminCreateReadingDto) {
+    this.assertAdmin(user);
+    return this.adminService.createReading(dto);
   }
 
   @Patch('reading/:id')

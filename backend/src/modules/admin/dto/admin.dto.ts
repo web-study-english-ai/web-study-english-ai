@@ -83,3 +83,23 @@ export const adminUpdateReadingSchema = z.object({
   estimatedMinutes: z.coerce.number().int().min(1).max(120).optional(),
 });
 export class AdminUpdateReadingDto extends createZodDto(adminUpdateReadingSchema) {}
+
+export const adminCreateQuestionSchema = z.object({
+  questionText: z.string().trim().min(1, 'Nội dung câu hỏi không được để trống'),
+  options: z
+    .array(z.string().trim().min(1, 'Phương án không được để trống'))
+    .length(4, 'Phải có đúng 4 phương án lựa chọn'),
+  correctOptionIndex: z.number().int().min(0).max(3, 'Chỉ số đáp án đúng từ 0 đến 3'),
+  explanation: z.string().trim().optional(),
+});
+
+export const adminCreateReadingSchema = z.object({
+  title: z.string().trim().min(1, 'Tiêu đề bài đọc không được để trống'),
+  summary: z.string().trim().optional(),
+  content: z.string().trim().min(10, 'Nội dung bài đọc phải có ít nhất 10 ký tự'),
+  topic: z.string().trim().min(1, 'Chủ đề không được để trống'),
+  cefr: cefrEnum,
+  estimatedMinutes: z.coerce.number().int().min(1).max(120).default(5),
+  questions: z.array(adminCreateQuestionSchema).min(1, 'Bài đọc phải có ít nhất 1 câu hỏi'),
+});
+export class AdminCreateReadingDto extends createZodDto(adminCreateReadingSchema) {}
