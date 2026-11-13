@@ -19,10 +19,12 @@ export default function OAuthCallbackPage() {
         router.replace("/login?oauth_error=Kh%C3%B4ng%20t%E1%BA%A1o%20%C4%91%C6%B0%E1%BB%A3c%20phi%C3%AAn");
         return;
       }
-      localStorage.setItem("auth_user", JSON.stringify(res.user));
+      const role = res.user.role?.toUpperCase() ?? "USER";
+      localStorage.setItem("auth_user", JSON.stringify({ ...res.user, role }));
       document.cookie = `has_session=1; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+      document.cookie = `user_role=${role}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
       window.dispatchEvent(new Event("auth-user-updated"));
-      router.replace("/dashboard");
+      window.location.replace(role === "ADMIN" ? "/admin/words" : "/dashboard");
     });
   }, [router]);
 

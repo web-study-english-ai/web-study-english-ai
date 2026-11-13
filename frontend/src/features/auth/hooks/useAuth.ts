@@ -10,9 +10,10 @@ const SESSION_COOKIE = "has_session";
 const ROLE_COOKIE = "user_role";
 
 function persistSession(user: User) {
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  const role = user.role?.toUpperCase() ?? "USER";
+  localStorage.setItem(USER_KEY, JSON.stringify({ ...user, role }));
   document.cookie = `${SESSION_COOKIE}=1; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
-  document.cookie = `${ROLE_COOKIE}=${user.role ?? "USER"}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+  document.cookie = `${ROLE_COOKIE}=${role}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
   window.dispatchEvent(new Event("auth-user-updated"));
 }
 
@@ -36,11 +37,8 @@ export function useAuth() {
     },
     onSuccess: (res) => {
       persistSession(res.user);
-      if (res.user.role === "ADMIN") {
-        router.push("/admin/words");
-      } else {
-        router.push("/dashboard");
-      }
+      const role = res.user.role?.toUpperCase() ?? "USER";
+      window.location.href = role === "ADMIN" ? "/admin/words" : "/dashboard";
     },
   });
 
@@ -62,7 +60,7 @@ export function useAuth() {
       await logoutApi();
     } finally {
       clearSession();
-      router.push("/");
+      window.location.href = "/";
     }
   }
 
