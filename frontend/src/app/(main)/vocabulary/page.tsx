@@ -7,10 +7,15 @@ import { VocabularySearchBar } from "@/features/vocabulary/components/Vocabulary
 import { VocabularyResultItem } from "@/features/vocabulary/components/VocabularyResultItem";
 import { VocabularyDetailPanel } from "@/features/vocabulary/components/VocabularyDetailPanel";
 import { VocabularyDeckList } from "@/features/vocabulary/components/VocabularyDeckList";
+import { DeckStatusBar } from "@/features/vocabulary/components/DeckStatusBar";
 import { useVocabularySearch } from "@/features/vocabulary/hooks/useVocabularySearch";
 import { useVocabularyDeck } from "@/features/vocabulary/hooks/useVocabularyDeck";
 import { useTopics } from "@/features/vocabulary/hooks/useTopics";
-import { DeckCard } from "@/features/vocabulary/types/vocabulary_types";
+import {
+  DeckCard,
+  DeckStatusFilter,
+  isCardLearned,
+} from "@/features/vocabulary/types/vocabulary_types";
 import { toast } from "@/components/ui/toast";
 import { LoadingState } from "@/components/shared/LoadingState";
 import { ErrorState } from "@/components/shared/ErrorState";
@@ -18,11 +23,29 @@ import { EmptyState } from "@/components/shared/EmptyState";
 import { Button } from "@/components/ui/button";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+// Số thẻ mỗi trang ở tab "Bộ thẻ của tôi", giống limit=20 của tab tìm kiếm
+const DECK_PAGE_SIZE = 20;
+
 export default function VocabularyPage() {
-  const { filters, setFilters, results, selected, setSelected, rawSelected, isLoading, isError, error, page, setPage, meta, refetch } = useVocabularySearch();
-   const {
+  const {
+    filters,
+    setFilters,
+    results,
+    selected,
+    setSelected,
+    rawSelected,
+    isLoading,
+    isError,
+    error,
+    page,
+    setPage,
+    meta,
+    refetch,
+  } = useVocabularySearch();
+  const {
     deck,
     isInDeck,
+    cardIdCuaTu,
     themTu,
     xoaThe,
     canhBaoHanMuc,
@@ -30,7 +53,38 @@ export default function VocabularyPage() {
     boQuaCanhBao,
   } = useVocabularyDeck();
   const [selectedDeckItem, setSelectedDeckItem] = useState<DeckCard | null>(null);
+  const [deckFilter, setDeckFilter] = useState<DeckStatusFilter>("all");
+  const [deckPage, setDeckPage] = useState(1);
   const topics = useTopics();
+
+  const learnedCount = deck.filter(isCardLearned).length;
+  const notLearnedCount = deck.length - learnedCount;
+  const visibleDeck =
+    deckFilter === "all"
+      ? deck
+      : deck.filter((c) => isCardLearned(c) === (deckFilter === "learned"));
+
+  const deckTotalPages = Math.max(1, Math.ceil(visibleDeck.length / DECK_PAGE_SIZE));
+  // Kẹp lại để khi xóa thẻ cuối của trang cuối thì tự lùi về trang trước, không bị trang trống
+  const currentDeckPage = Math.min(deckPage, deckTotalPages);
+  const pagedDeck = visibleDeck.slice(
+    (currentDeckPage - 1) * DECK_PAGE_SIZE,
+    currentDeckPage * DECK_PAGE_SIZE
+  );
+
+  // Dùng chung cho nút thùng rác ở tab tìm kiếm và tab Bộ thẻ của tôi
+  async function handleRemoveCard(cardId: string) {
+    try {
+      await xoaThe(cardId);
+      if (selectedDeckItem?.id === cardId) setSelectedDeckItem(null);
+    } catch {
+      toast.add({
+        title: "Không thể xóa khỏi bộ thẻ",
+        description: "Vui lòng thử lại.",
+        type: "error",
+      });
+    }
+  }
 
   return (
     <PageContainer>
@@ -38,7 +92,7 @@ export default function VocabularyPage() {
       <p className="mt-1 text-sm text-muted-foreground">
         Tìm kiếm, lọc và thêm từ vựng vào bộ thẻ học của bạn.
       </p>
-          {canhBaoHanMuc && (
+      {canhBaoHanMuc && (
         <div className="mt-4 rounded-xl border border-amber-500/40 bg-amber-500/10 p-4">
           <p className="text-sm text-amber-800">{canhBaoHanMuc.message}</p>
           <div className="mt-3 flex gap-2">
@@ -52,7 +106,7 @@ export default function VocabularyPage() {
         </div>
       )}
       <Tabs defaultValue="search" className="mt-6">
-                <TabsList>
+        <TabsList>
           <TabsTrigger value="search" onClick={() => void refetch()}>
             Tìm kiếm & khám phá
           </TabsTrigger>
@@ -98,10 +152,14 @@ export default function VocabularyPage() {
                         });
                       }
                     }}
+                    onRemove={() => {
+                      const cardId = cardIdCuaTu(item.id);
+                      return cardId ? handleRemoveCard(cardId) : Promise.resolve();
+                    }}
                   />
                 ))}
 
-                 {!isLoading && !isError && meta && meta.totalPages > 1 && (
+              {!isLoading && !isError && meta && meta.totalPages > 1 && (
                 <div className="mt-4 flex items-center justify-center gap-3">
                   <Button
                     size="sm"
@@ -139,17 +197,60 @@ export default function VocabularyPage() {
         </TabsContent>
 
         <TabsContent value="deck" className="mt-4">
+          {deck.length > 0 && (
+            // Trên mobile: ẩn thanh trạng thái khi đang xem chi tiết một thẻ
+            <div className={selectedDeckItem ? "hidden lg:block" : ""}>
+              <DeckStatusBar
+                filter={deckFilter}
+                onFilterChange={(f) => {
+                  setDeckFilter(f);
+                  setDeckPage(1);
+                  setSelectedDeckItem(null);
+                }}
+                total={deck.length}
+                learned={learnedCount}
+                notLearned={notLearnedCount}
+              />
+            </div>
+          )}
+
           <div className="grid grid-cols-1 gap-6 lg:grid-cols-[1fr_360px]">
             <div className={selectedDeckItem ? "hidden lg:block" : ""}>
               <VocabularyDeckList
-                deck={deck}
+                deck={pagedDeck}
                 selected={selectedDeckItem}
                 onSelect={setSelectedDeckItem}
-                onRemove={async (cardId) => {
-                  await xoaThe(cardId);
-                  if (selectedDeckItem?.id === cardId) setSelectedDeckItem(null);
-                }}
+                onRemove={(cardId) => void handleRemoveCard(cardId)}
+                emptyMessage={
+                  deck.length > 0 ? "Không có thẻ nào ở trạng thái này." : undefined
+                }
               />
+
+              {deckTotalPages > 1 && (
+                <div className="mt-4 flex items-center justify-center gap-3">
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={currentDeckPage <= 1}
+                    onClick={() => setDeckPage(currentDeckPage - 1)}
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                    Trước
+                  </Button>
+                  <span className="text-sm text-muted-foreground">
+                    Trang {currentDeckPage} / {deckTotalPages}
+                  </span>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    disabled={currentDeckPage >= deckTotalPages}
+                    onClick={() => setDeckPage(currentDeckPage + 1)}
+                  >
+                    Sau
+                    <ChevronRight className="h-4 w-4" />
+                  </Button>
+                </div>
+              )}
             </div>
 
             <div className={`lg:sticky lg:top-20 lg:self-start ${selectedDeckItem ? "" : "hidden lg:block"}`}>
