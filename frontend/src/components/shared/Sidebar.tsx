@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -14,7 +13,10 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useAuth } from "@/features/auth/hooks/useAuth";
+import {
+  LogoutConfirmDialog,
+  useLogoutConfirm,
+} from "@/components/shared/LogoutConfirmDialog";
 
 const navItems = [
   { href: "/vocabulary", label: "Quản lý từ vựng", icon: LayoutGrid },
@@ -27,16 +29,14 @@ const navItems = [
 
 export function Sidebar() {
   const pathname = usePathname();
-  const { logout } = useAuth();
-  const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
-
-  const handleLogoutClick = () => {
-    if (pathname.startsWith("/reviews")) {
-      setShowLogoutConfirm(true);
-      return;
-    }
-    void logout();
-  };
+  const {
+    showConfirm,
+    dueCount,
+    checking,
+    requestLogout,
+    cancelLogout,
+    confirmLogout,
+  } = useLogoutConfirm();
 
   return (
     <>
@@ -74,45 +74,23 @@ export function Sidebar() {
 
         <div className="border-t border-sidebar-border p-3">
           <button
-            onClick={handleLogoutClick}
-            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10"
+            type="button"
+            disabled={checking}
+            onClick={() => void requestLogout()}
+            className="flex w-full items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-50"
           >
             <LogOut className="h-4.5 w-4.5" />
             Đăng xuất
           </button>
         </div>
       </aside>
-{showLogoutConfirm && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
-          <div className="w-full max-w-md rounded-2xl border border-border bg-background p-6 shadow-xl">
-            <h3 className="text-lg font-semibold text-foreground">
-              Xác nhận đăng xuất
-            </h3>
-            <p className="mt-2 text-sm text-muted-foreground">
-              Bạn đang ở màn hình ôn tập. Nếu đăng xuất bây giờ, phiên ôn tập hiện tại sẽ bị tạm dừng. Bạn có chắc chắn muốn đăng xuất không?
-            </p>
-            <div className="mt-6 flex justify-end gap-3">
-              <button
-                type="button"
-                onClick={() => setShowLogoutConfirm(false)}
-                className="rounded-lg border border-border px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted"
-              >
-                Ở lại ôn tiếp
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setShowLogoutConfirm(false);
-                  void logout();
-                }}
-                className="rounded-lg bg-destructive px-4 py-2 text-sm font-semibold text-white transition-opacity hover:opacity-90"
-              >
-                Đăng xuất
-              </button>
-            </div>
-          </div>
-        </div>
-      )}
+
+      <LogoutConfirmDialog
+        open={showConfirm}
+dueCount={dueCount}
+        onCancel={cancelLogout}
+        onConfirm={confirmLogout}
+      />
     </>
   );
 }
