@@ -1,0 +1,1 @@
+export { default } from "@/features/admin/words/import/page";

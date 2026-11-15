@@ -19,6 +19,8 @@ import { ReadingModule } from '@modules/reading/reading.module';
 import { AiMonitorModule } from '@modules/ai-monitor/ai-monitor.module';
 import { InfraResilienceModule } from '@modules/infra-resilience/infra-resilience.module';
 import { VisionModule } from '@modules/vision/vision.module';
+import { AdminModule } from '@modules/admin/admin.module';
+
 @Module({
   imports: [
     SentryModule.forRoot(),
@@ -40,6 +42,7 @@ import { VisionModule } from '@modules/vision/vision.module';
     AssistantModule,
     ReadingModule,
     VisionModule,
+    AdminModule,
   ],
   controllers: [AppController],
   providers: [

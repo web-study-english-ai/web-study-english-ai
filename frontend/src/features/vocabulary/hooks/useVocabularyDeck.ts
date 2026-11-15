@@ -23,14 +23,15 @@ export function useVocabularyDeck() {
 
   const deck: DeckCard[] = data?.items ?? [];
   const wordIdsTrongBoThe = new Set(deck.map((c) => c.word.id));
+  const cardIdTheoWordId = new Map<string, string>(deck.map((c) => [c.word.id, c.id])); // Map từ id của từ sang id của thẻ
 
   const lamMoiBoThe = () => {
-    void queryClient.invalidateQueries({ queryKey: ["cards"] });
     void queryClient.invalidateQueries({
       queryKey: ["vocabulary"],
       refetchType: "none",
     });
-  };
+    return queryClient.invalidateQueries({ queryKey: ["cards"] });
+  }; // Làm mới cả danh sách từ vựng và bộ thẻ, vì khi thêm thẻ mới thì từ đó sẽ được đánh dấu là đã học
 
   const themMutation = useMutation({
     mutationFn: ({ wordId, force }: { wordId: string; force: boolean }) =>
@@ -66,7 +67,7 @@ export function useVocabularyDeck() {
     deck,
     isLoading,
     isError,
-    isInDeck: (wordId: string) => wordIdsTrongBoThe.has(wordId),
+    isInDeck: (wordId: string) => wordIdsTrongBoThe.has(wordId), cardIdCuaTu: (wordId: string) => cardIdTheoWordId.get(wordId) ?? null,
     themTu,
     xoaThe: (cardId: string) => xoaMutation.mutateAsync(cardId),
     canhBaoHanMuc,

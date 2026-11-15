@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { Trash2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -11,9 +13,31 @@ interface Props {
   isAdded: boolean;
   onSelect: () => void;
   onAdd: () => void;
+  /** Xóa từ này khỏi bộ thẻ, chỉ hiện khi isAdded */
+  onRemove?: () => Promise<void> | void;
 }
 
-export function VocabularyResultItem({ item, isActive, isAdded, onSelect, onAdd }: Props) {
+export function VocabularyResultItem({
+  item,
+  isActive,
+  isAdded,
+  onSelect,
+  onAdd,
+  onRemove,
+}: Props) {
+  const [removing, setRemoving] = useState(false);
+
+  async function handleRemove(e: React.MouseEvent) {
+    e.stopPropagation();
+    if (removing || !onRemove) return;
+    setRemoving(true);
+    try {
+      await onRemove();
+    } finally {
+      setRemoving(false);
+    }
+  }
+
   return (
     <div
       onClick={onSelect}
@@ -32,18 +56,33 @@ export function VocabularyResultItem({ item, isActive, isAdded, onSelect, onAdd 
         </div>
       </div>
 
-      <Button
-        size="sm"
-        variant={isAdded ? "secondary" : "outline"}
-        disabled={isAdded}
-        onClick={(e) => {
-          e.stopPropagation();
-          onAdd();
-        }}
-        className={isAdded ? "" : "text-primary"}
-      >
-        {isAdded ? "Đã thêm" : "Thêm vào bộ thẻ"}
-      </Button>
+      <div className="flex items-center gap-1">
+        <Button
+          size="sm"
+          variant={isAdded ? "secondary" : "outline"}
+          disabled={isAdded}
+          onClick={(e) => {
+            e.stopPropagation();
+            onAdd();
+          }}
+          className={isAdded ? "" : "text-primary"}
+        >
+          {isAdded ? "Đã thêm" : "Thêm vào bộ thẻ"}
+        </Button>
+
+        {isAdded && onRemove && (
+          <Button
+            size="icon"
+            variant="ghost"
+            disabled={removing}
+            onClick={(e) => void handleRemove(e)}
+            className="h-8 w-8 text-destructive hover:bg-destructive/10"
+            aria-label={`Xóa ${item.term} khỏi bộ thẻ`}
+          >
+            <Trash2 className="h-4 w-4" />
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

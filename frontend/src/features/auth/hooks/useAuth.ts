@@ -7,16 +7,20 @@ import { AuthError, LoginPayload, RegisterPayload, User } from "../types/auth_ty
 
 const USER_KEY = "auth_user";
 const SESSION_COOKIE = "has_session";
+const ROLE_COOKIE = "user_role";
 
 function persistSession(user: User) {
-  localStorage.setItem(USER_KEY, JSON.stringify(user));
+  const role = user.role?.toUpperCase() ?? "USER";
+  localStorage.setItem(USER_KEY, JSON.stringify({ ...user, role }));
   document.cookie = `${SESSION_COOKIE}=1; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
+  document.cookie = `${ROLE_COOKIE}=${role}; path=/; max-age=${60 * 60 * 24 * 7}; samesite=lax`;
   window.dispatchEvent(new Event("auth-user-updated"));
 }
 
 function clearSession() {
   localStorage.removeItem(USER_KEY);
   document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0`;
+  document.cookie = `${ROLE_COOKIE}=; path=/; max-age=0`;
   window.dispatchEvent(new Event("auth-user-updated"));
 }
 
@@ -33,7 +37,8 @@ export function useAuth() {
     },
     onSuccess: (res) => {
       persistSession(res.user);
-      router.push("/dashboard");
+      const role = res.user.role?.toUpperCase() ?? "USER";
+      window.location.href = role === "ADMIN" ? "/admin/words" : "/dashboard";
     },
   });
 
@@ -55,7 +60,7 @@ export function useAuth() {
       await logoutApi();
     } finally {
       clearSession();
-      router.push("/");
+      window.location.href = "/";
     }
   }
 
@@ -68,7 +73,7 @@ export function useAuth() {
     window.dispatchEvent(new Event("auth-user-updated"));
   }
 
-    return {
+  return {
     login: loginMutation.mutate,
     register: registerMutation.mutate,
     logout,

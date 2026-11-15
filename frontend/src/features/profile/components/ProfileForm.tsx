@@ -50,7 +50,18 @@ const profileSchema = z.object({
   darkMode: z.boolean(),
   avatarFile: z.custom<File | null>((v) => v === null || v instanceof File),
 }).superRefine((values, ctx) => {
+  // Đã nhập mật khẩu hiện tại nhưng chưa nhập mật khẩu mới
+  if (values.currentPassword !== "" && values.newPassword === "") {
+    ctx.addIssue({
+      code: "custom",
+      path: ["newPassword"],
+      message: "Vui lòng nhập mật khẩu mới",
+    });
+    return;
+  }
+
   if (values.newPassword === "") return;
+
   if (values.currentPassword === "") {
     ctx.addIssue({
       code: "custom",

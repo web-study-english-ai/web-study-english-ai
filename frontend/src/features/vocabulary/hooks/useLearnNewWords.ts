@@ -22,6 +22,7 @@ export function useLearnNewWords() {
   const startTimeRef = useRef<number>(0);
   const hiddenAccumMs = useRef<number>(0);
   const hiddenSinceRef = useRef<number | null>(null);
+  const ratedCardIdsRef = useRef<Set<string>>(new Set());
 
   // Tự đồng bộ hàng chờ offline (dùng chung với "Ôn tập theo lịch") khi mount và khi có mạng lại
   const pendingSyncCount = useOfflineReviewSync();
@@ -32,6 +33,29 @@ export function useLearnNewWords() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false, // mạng chập chờn cũng không được nạp lại giữa buổi
   });
+
+  // Khi rời khỏi trang Học từ mới, loại bỏ ngay các thẻ đã đánh giá khỏi cache ["cards", "new"]
+  // và làm mới dữ liệu để khi quay lại không bị hiện lại từ vừa học
+  useEffect(() => {
+    const ratedIds = ratedCardIdsRef.current;
+    return () => {
+      if (ratedIds.size > 0) {
+        queryClient.setQueryData<{ items: DeckCard[]; dailyLimit: number; count: number }>(
+          ["cards", "new"],
+          (old) => {
+            if (!old) return old;
+            const remaining = old.items.filter((c) => !ratedIds.has(c.id));
+            return {
+              ...old,
+              items: remaining,
+              count: remaining.length,
+            };
+          },
+        );
+        void queryClient.invalidateQueries({ queryKey: ["cards", "new"] });
+      }
+    };
+  }, [queryClient]);
 
   const cards: DeckCard[] = data?.items ?? [];
   const currentCard = cards[currentIndex] ?? null;
@@ -114,6 +138,8 @@ export function useLearnNewWords() {
     } finally {
       setIsQueuing(false);
     }
+
+    ratedCardIdsRef.current.add(currentCard.id);
 
     if (currentIndex + 1 >= total) {
       setIsFinished(true);

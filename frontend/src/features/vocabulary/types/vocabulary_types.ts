@@ -101,3 +101,11 @@ export const RATING_VALUE: Record<SRSRating, 1 | 2 | 3 | 4> = {
   medium: 3,
   easy: 4,
 };
+
+/** Bộ lọc trạng thái học trong tab "Bộ thẻ của tôi" */
+export type DeckStatusFilter = "all" | "learned" | "notLearned";
+
+/** Đã học = thẻ đã được đánh giá ít nhất một lần (state khác NEW) */
+export function isCardLearned(card: DeckCard): boolean {
+  return card.state !== "NEW";
+}
