@@ -70,8 +70,8 @@ export default function () {
   // BƯỚC 2: XÁC THỰC NGƯỜI DÙNG (AUTH LOGIN)
   // --------------------------------------------------------------------------
   const loginPayload = JSON.stringify({
-    email: 'admin@gmail.com',
-    password: '123',
+    email: __ENV.TEST_EMAIL || 'demo@gmail.com',
+    password: __ENV.TEST_PASSWORD || 'password123',
   });
 
   const loginRes = http.post(`${BASE_URL}/api/auth/login`, loginPayload, {
