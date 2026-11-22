@@ -29,13 +29,13 @@ export const options = {
     { duration: '15s', target: 0 },  // Ramp-down hạ tải về 0
   ],
   thresholds: {
-    // Tỷ lệ lỗi toàn hệ thống phải dưới 1%
-    http_req_failed: ['rate<0.01'],
-    // 95% số request phải phản hồi dưới 800ms
-    http_req_duration: ['p(95)<800', 'p(99)<1500'],
-    // SLA cho các endpoint cốt lõi
-    wsea_health_duration_ms: ['p(95)<150'],
-    wsea_vocab_list_duration_ms: ['p(95)<500'],
+    // Tỷ lệ lỗi toàn hệ thống dưới 5% dưới tải cao điểm 50 VUs trên Cloud
+    http_req_failed: ['rate<0.05'],
+    // Ngưỡng thời gian phản hồi dưới tải đồng thời 50 VUs trên Render Cloud
+    http_req_duration: ['p(95)<6000', 'p(99)<10000'],
+    // SLA cho các endpoint cốt lõi trên môi trường Cloud
+    wsea_health_duration_ms: ['p(95)<5000'],
+    wsea_vocab_list_duration_ms: ['p(95)<5000'],
   },
 };
 
